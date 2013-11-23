@@ -20,6 +20,8 @@ scripts
 tools/pls
 tools/t32
 rte
+*.exe
+*.EXE
 # std arccore directorys  >>>
 
 # use glob syntax.
