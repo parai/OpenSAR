@@ -108,7 +108,6 @@
  *    <empty>
   *
  */
-
 #if (CFG_OS_DEBUG == STD_ON)
 # if (SELECT_OS_CONSOLE==RAMLOG)
 #  ifndef USE_RAMLOG

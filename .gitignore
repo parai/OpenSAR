@@ -11,7 +11,8 @@ STM32F10x_StdPeriph_Driver
 arch/arm
 arch/hc1x
 arch/ppc
-arch/generic
+arch/generic/linux
+arch/generic/mingw/vc2010
 common
 clib
 drivers

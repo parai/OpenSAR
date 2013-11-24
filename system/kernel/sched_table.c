@@ -64,7 +64,9 @@
 #include "alist_i.h"
 #include "application.h"
 
-
+#if defined(WIN32)
+#define SetEvent SetEvent2
+#endif
 /* ----------------------------[private define]------------------------------*/
 /* ----------------------------[private macro]-------------------------------*/
 

@@ -145,7 +145,7 @@ void InitOS( void ) {
 		Os_AddTask(tmpPcbPtr);
 #endif
 
-		DEBUG(DEBUG_LOW,"pid:%d name:%s prio:%d\n",tmpPcbPtr->pid,tmpPcbPtr->name,tmpPcbPtr->prio);
+		DEBUG(DEBUG_LOW,"pid:%d name:%s prio:%d\n",Os_TaskConstList[i].pid,Os_TaskConstList[i].name,Os_TaskConstList[i].prio);
 	}
 
 	Os_ResourceInit();

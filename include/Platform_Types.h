@@ -26,6 +26,10 @@
 #ifndef PLATFORM_TYPES_H
 #define PLATFORM_TYPES_H
 
+#ifndef _Bool
+#define _Bool unsigned char
+#endif
+
 #define CPU_TYPE            CPU_TYPE_32 
 #define CPU_BIT_ORDER       MSB_FIRST 
 #define CPU_BYTE_ORDER      HIGH_BYTE_FIRST

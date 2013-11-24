@@ -29,7 +29,7 @@ OsTickType OsTickFreq = 1000;
 
 
 // ###############################    DEBUG OUTPUT     #############################
-uint32 os_dbg_mask = 0;
+uint32 os_dbg_mask = D_TASK|D_EVENT|D_ALARM;
  
 // ###############################    APPLICATIONS     #############################
 GEN_APPLICATION_HEAD = {
@@ -63,7 +63,7 @@ GEN_COUNTER_HEAD = {
 
 
 // ##################################    ALARMS     ################################
-GEN_ALARM_AUTOSTART(ALARM_ID_Alarm1, ALARM_AUTOSTART_RELATIVE, 100, 100, OSDEFAULTAPPMODE );
+GEN_ALARM_AUTOSTART(ALARM_ID_Alarm1, ALARM_AUTOSTART_RELATIVE, 100, 1000, OSDEFAULTAPPMODE );
 	
 
 GEN_ALARM_HEAD = {

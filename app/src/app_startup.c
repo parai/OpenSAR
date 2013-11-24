@@ -27,6 +27,8 @@ void PostTaskHook( void )
 }
 
 // to know how to use Os firstly, then ...
+extern void Os_IsrInit( void );
+extern void InitOS( void );
 void EcuM_Init(void)
 {
 	// Initialize the OS

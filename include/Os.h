@@ -24,6 +24,7 @@
 #define OS_SW_PATCH_VERSION    0
 
 #include <assert.h>
+#include <stdio.h>
 #include "Std_Types.h"
 #include "Os_Cfg.h"
 #include "MemMap.h"
@@ -190,7 +191,11 @@ typedef uint32 MemorySizeType;
 #define ClearEvent(...) SC_CALL(ClearEvent,3,1,__VA_ARGS__)
 #endif
 StatusType WaitEvent( EventMaskType Mask );
+#if defined(WIN32)
+StatusType SetEvent2( TaskType TaskID, EventMaskType Mask );
+#else
 StatusType SetEvent( TaskType TaskID, EventMaskType Mask );
+#endif
 StatusType ClearEvent( EventMaskType Mask);
 StatusType GetEvent( TaskType TaskId, EventMaskRefType Mask);
 
@@ -562,8 +567,11 @@ static inline OsServiceIdType OSErrorGetServiceId(void)  {
 typedef uint32 MessageType;
 typedef void *ApplicationDataRef;
 
-
+#if defined(WIN32)
+StatusType SendMessage2( MessageType message_id, ApplicationDataRef dataRef );
+#else
 StatusType SendMessage( MessageType message_id, ApplicationDataRef dataRef );
+#endif
 StatusType ReceiveMessage( MessageType message_id, ApplicationDataRef dataRef );
 
 /*

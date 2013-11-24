@@ -107,8 +107,11 @@ StatusType WaitEvent( EventMaskType Mask ) {
  * @param Mask - Mask of the events to be set
  * @return
  */
-
-StatusType SetEvent( TaskType TaskID, EventMaskType Mask ) {
+#if defined(WIN32)
+StatusType SetEvent2( TaskType TaskID, EventMaskType Mask ) {
+#else
+StatusType SetEvent( TaskType TaskID, EventMaskType Mask )
+#endif
 	StatusType rv = E_OK;
 	OsTaskVarType *destPcbPtr;
 	OsTaskVarType *currPcbPtr;

@@ -14,30 +14,31 @@
  * -------------------------------- Arctic Core ------------------------------*/
 
 
+#ifndef IRQ_TYPES_H
+#define IRQ_TYPES_H
 
-#ifndef CPU_H
-#define CPU_H
 
-#include "Std_Types.h"
-typedef uint32_t imask_t;
+#define Irq_SOI()
 
-#define Irq_Save(flags)		flags = arch_save_int()		// Dummy assignment to avoid compiler warnings
-#define Irq_Restore(flags)	arch_restore_int(flags)
+/**
+ * End-Of-Interrupt. Called by the OS it wants to clear the interrupt.
+ */
+void Irq_EOI( void );
 
-#define Irq_Disable()	arch_disable_int()
-#define Irq_Enable()	arch_enable_int()
 
-#define Irq_SuspendAll() 	Irq_Disable()
-#define Irq_ResumeAll() 	Irq_Enable()
+typedef enum
+{
+	SysTick_IRQn = 0UL,
+	NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS
+}IrqType;
 
-#define Irq_SuspendOs() 	Irq_Disable()
-#define Irq_ResumeOs() 		Irq_Enable()
+typedef enum
+{
+	CPU_CORE0,
+	CPU_CORE1
+} Cpu_t;
 
-#define ilog2(_x)			__builtin_ffs(_x)
+/* Offset from exceptions to interrupts */
+#define IRQ_INTERRUPT_OFFSET		0
 
-imask_t arch_save_int(void);
-void arch_restore_int(imask_t flags);
-void arch_disable_int(void);
-void arch_enable_int(void);
-
-#endif /* CPU_H */
+#endif /* IRQ_H_ */

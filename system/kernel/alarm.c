@@ -20,6 +20,9 @@
 #include "internal.h"
 #include "alarm_i.h"
 #include "sys.h"
+#if defined(WIN32)
+#define SetEvent SetEvent2
+#endif
 
 #if (OS_ALARM_CNT!=0)
 #define COUNTER_MAX(x) 			(x)->counter->alarm_base.maxallowedvalue
