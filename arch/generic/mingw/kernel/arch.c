@@ -38,6 +38,19 @@ typedef struct
 }Aach_Type;
 
 static Aach_Type sArch;
+
+void OsIdle(void)
+{
+	for(;;)
+	{
+		if(cArchIsrDisnabled == sArch.imask )
+		{
+			sArch.imask = cArchIsrEnabled;
+			// printf("System Error, as ISR disabled\n");
+		}
+		Sleep(1);
+	}
+}
 imask_t arch_save_int(void)
 {
 	imask_t mask = sArch.imask;
@@ -180,12 +193,14 @@ static void arch_swap_context(OsTaskVarType *old,OsTaskVarType *new){
 	pxThreadState = ( xThreadState * ) old->stack.curr;
 	SuspendThread(pxThreadState->pvThread);
 
+	sArch.imask = cArchIsrEnabled;
 	pxThreadState = ( xThreadState * ) new->stack.curr;
 	ResumeThread(pxThreadState->pvThread);
 	sArch.mgrState = cMgrIdle;
 }
 static void arch_swap_context_to(OsTaskVarType *old,OsTaskVarType *new){
 	xThreadState *pxThreadState = NULL;
+	sArch.imask = cArchIsrEnabled;
 	pxThreadState = ( xThreadState * ) new->stack.curr;
 	ResumeThread(pxThreadState->pvThread);
 	sArch.mgrState = cMgrIdle;
@@ -193,13 +208,17 @@ static void arch_swap_context_to(OsTaskVarType *old,OsTaskVarType *new){
 static void arch_isr_process(void)
 {
 	uint32_t i;
-	for(i=0;i<NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS;i++)
+	if(cArchIsrEnabled == sArch.imask)
 	{
-		if(0UL != (sArch.pendIsrB&(1UL<<i)))
+		for(i=0;i<NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS;i++)
 		{
-			if(SysTick_IRQn == i)
+			if(0UL != (sArch.pendIsrB&(1UL<<i)))
 			{
-				OsTick();
+				if(SysTick_IRQn == i)
+				{
+					OsTick();
+				}
+				sArch.pendIsrB &= ~(1UL<<i);
 			}
 		}
 	}
@@ -256,7 +275,7 @@ void Os_ArchSwapContextTo(OsTaskVarType *old,OsTaskVarType *new){
 	if(FALSE == sArch.isMgrRunning)
 	{
 		sArch.isMgrRunning = TRUE;
-		// printf("Start OpenSAR Manager.\n");
+		printf("^_^ Enjoy This Tool by parai@foxmail.com ^_^\n");
 		arch_os_manager();
 	}
 }

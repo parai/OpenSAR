@@ -29,7 +29,7 @@ OsTickType OsTickFreq = 1000;
 
 
 // ###############################    DEBUG OUTPUT     #############################
-uint32 os_dbg_mask = D_TASK|D_EVENT|D_ALARM;
+uint32 os_dbg_mask = 0; //D_TASK|D_EVENT|D_ALARM;
  
 // ###############################    APPLICATIONS     #############################
 GEN_APPLICATION_HEAD = {

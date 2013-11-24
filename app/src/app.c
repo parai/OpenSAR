@@ -2,23 +2,6 @@
 #if defined(WIN32)
 #define SetEvent SetEvent2
 #endif
-void OsIdle(void)
-{
-	static uint32_t count = 0;
-	printf("OsIdle is running.\n");
-	for(;;)
-	{
-		count ++;
-		if(0xFFFFFFFF == count)
-		{
-//			ActivateTask(TASK_ID_eTask2);
-//			ActivateTask(TASK_ID_eTask1);
-//			ActivateTask(TASK_ID_bTask3);
-			count = 0;
-		}
-
-	}
-}
 
 void bTask3(void)
 {
