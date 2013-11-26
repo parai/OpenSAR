@@ -23,6 +23,7 @@ class easySARGui(QMainWindow):
         self.resize(800,600)
         self.creMenu()
         self.creStatusBar()
+        self.easyOsCfg = easyOsGui()
     def creMenu(self):
         # File
         tMenu=self.menuBar().addMenu(self.tr('File'))
@@ -51,9 +52,13 @@ class easySARGui(QMainWindow):
         pass
     
     def measyOs(self):
-        if(self.easyOs==None or self.easyOs.isClosed==True):
+        if(self.easyOs==None):
             self.easyOs = easyDockWidget('easyOs', self)  
-            self.easyOs.setWidget(easyOsGui())  
+            self.easyOs.setWidget(self.easyOsCfg)  
+            self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyOs)
+        elif(self.easyOs.isClosed==True):
+            self.easyOs = easyDockWidget('easyOs', self)  
+            self.easyOs.setWidget(self.easyOsCfg)  
             self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyOs)
         else:
             print('easyOs already started.')
