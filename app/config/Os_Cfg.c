@@ -64,7 +64,6 @@ GEN_COUNTER_HEAD = {
 
 // ##################################    ALARMS     ################################
 GEN_ALARM_AUTOSTART(ALARM_ID_Alarm1, ALARM_AUTOSTART_RELATIVE, 100, 1000, OSDEFAULTAPPMODE );
-	
 
 GEN_ALARM_HEAD = {
 	GEN_ALARM(	ALARM_ID_Alarm1,
