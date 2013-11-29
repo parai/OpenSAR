@@ -1,2 +1,0 @@
-<?xml version='1.0' encoding='utf-8'?>
-<OSROOT><TaskList><Task activation="1" autostart="True" name="Task0" priority="0" schedule="NON" stacksz="512" /><Task activation="1" autostart="True" name="Task1" priority="1" schedule="NON" stacksz="512" /><Task activation="1" autostart="True" name="Task2" priority="2" schedule="NON" stacksz="512" /><Task activation="1" autostart="True" name="Task3" priority="3" schedule="NON" stacksz="512" /><Task activation="1" autostart="True" name="Task4" priority="4" schedule="NON" stacksz="512" /></TaskList></OSROOT>

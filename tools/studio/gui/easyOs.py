@@ -1,7 +1,7 @@
 from PyQt4 import QtCore, QtGui
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import sys
+import sys,os
 import xml.etree.ElementTree as ET
 
 __all__ = ['easyOsGui']            
@@ -20,6 +20,7 @@ class easyCounterCfgTree(QTreeWidget):
             treeI = self.topLevelItem(i)
             list.append(self.itemWidget(treeI,0).text()) 
         return list 
+
     def itemSelectionChanged(self):
         try:
             treeItem = self.currentItem()
@@ -32,21 +33,52 @@ class easyCounterCfgTree(QTreeWidget):
         except:
             self.root.qAction1.setDisabled(True)
             self.root.qAction2.setDisabled(True)
-
+    def toXML(self):
+        List = ET.Element('CounterList')
+        for i in range(0,self.topLevelItemCount()):
+            Counter = ET.Element('Counter')
+            tree = self.topLevelItem(i)
+            Counter.attrib['name'] = str(self.itemWidget(tree,0).text())
+            Counter.attrib['maxallowedvalue'] = str(self.itemWidget(tree,1).value())
+            Counter.attrib['ticksperbase'] = str(self.itemWidget(tree,2).value())
+            Counter.attrib['mincycle'] = str(self.itemWidget(tree,3).value())
+            List.append(Counter)
+        return List
+    def loadXML(self,OSROOT):
+        # delete all as reload
+        for i in range(0,self.topLevelItemCount()):
+            self.takeTopLevelItem(0)
+        # reload
+        CounterList = OSROOT.find('CounterList')
+        if(CounterList == None):
+            return
+        for Counter in CounterList:
+            self.addCounter(Counter)
     def deleteCounter(self):
         self.takeTopLevelItem(self.indexOfTopLevelItem(self.currentItem()))
-    def addCounter(self):
-        name = QLineEdit('Counter%s'%(self.counterid))
+    def addCounter(self,Counter=None):
+        if(Counter != None):
+            sName = Counter.attrib['name']
+            sMax  = int(Counter.attrib['maxallowedvalue'])
+            sTick = int(Counter.attrib['ticksperbase'])
+            sMin  = int(Counter.attrib['mincycle'])
+        else:
+            sName = 'Counter%s'%(self.counterid)
+            sMax  = 65535
+            sTick = 1
+            sMin  = 1
+        name = QLineEdit(sName)
         self.counterid += 1
         max = QSpinBox()
         max.setRange(0,0xFFFFFFF)
-        max.setValue(65535)
+        max.setValue(sMax)
         tick = QSpinBox()
         tick.setRange(1,0xFFFFFFF)
-        tick.setValue(1)
+        tick.setValue(sTick)
         min = QSpinBox()
         min.setRange(0,0xFFFFFFF)
-        min.setValue(1)
+        min.setValue(sMin)
+        min.setMaximumWidth(200)
         # add
         treeItem = QTreeWidgetItem()
         self.addTopLevelItem(treeItem)
@@ -64,6 +96,36 @@ class easyAlarmCfgTree(QTreeWidget):
                 'Start Time','Cycle','Action','Task/Counter/Cbk','Event']
         self.setHeaderLabels(QStringList(list))
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+    def toXML(self):
+        List = ET.Element('AlarmList')
+        for i in range(0,self.topLevelItemCount()):
+            Alarm = ET.Element('Alarm')
+            tree = self.topLevelItem(i)
+            Alarm.attrib['name'] = str(self.itemWidget(tree,0).text())
+            Alarm.attrib['owner'] = str(self.itemWidget(tree,1).currentText())
+            Alarm.attrib['autostart'] = str(self.itemWidget(tree,2).currentText())
+            Alarm.attrib['appmode'] = str(self.itemWidget(tree,3).currentText())
+            Alarm.attrib['starttime'] = str(self.itemWidget(tree,4).value())
+            Alarm.attrib['cycle'] = str(self.itemWidget(tree,5).value())
+            Alarm.attrib['action'] = str(self.itemWidget(tree,6).currentText())
+            if( Alarm.attrib['action'] == 'AlarmCallBack'):
+                 Alarm.attrib['tcc'] = str(self.itemWidget(tree,7).text())
+            else:
+                Alarm.attrib['tcc'] = str(self.itemWidget(tree,7).currentText())
+            if(Alarm.attrib['action'] == 'SetEvent'):
+                Alarm.attrib['event'] = str(self.itemWidget(tree,8).currentText())
+            List.append(Alarm)
+        return List
+    def loadXML(self,OSROOT):
+        # delete all as reload
+        for i in range(0,self.topLevelItemCount()):
+            self.takeTopLevelItem(0)
+        # reload
+        AlarmList = OSROOT.find('AlarmList')
+        if(AlarmList == None):
+            return
+        for Alarm in AlarmList:
+            self.addAlarm(Alarm)
     def currentIndexChanged_Task(self,Task):
         """ Only when Action is SetEvent"""
         try:
@@ -75,7 +137,6 @@ class easyAlarmCfgTree(QTreeWidget):
         event.setMaximumWidth(300)
         self.setItemWidget(treeItem,8,event)
         event.addItems(QStringList(self.root.easyTaskTree.getTaskEventList(str(Task))))
-        print Task,self.root.easyTaskTree.getTaskEventList(Task)
         event.setCurrentIndex(event.findText(currentEvent))
     def currentIndexChanged_Action(self,Action):
         """ Call Back for Action"""
@@ -153,27 +214,64 @@ class easyAlarmCfgTree(QTreeWidget):
     def deleteAlarm(self):
         self.takeTopLevelItem(self.indexOfTopLevelItem(self.currentItem())) 
         
-    def addAlarm(self):
-        name = QLineEdit('Alarm%s'%(self.alarmid))
+    def addAlarm(self,Alarm=None):
+        if(Alarm != None):
+            sname = Alarm.attrib['name']
+            sowner = Alarm.attrib['owner']
+            sautostart = Alarm.attrib['autostart']
+            sappmode = Alarm.attrib['appmode']
+            sstarttime = int(Alarm.attrib['starttime'])
+            scycle = int(Alarm.attrib['cycle'])
+            saction = Alarm.attrib['action']
+            stcc = Alarm.attrib['tcc']
+            if(saction == 'SetEvent'):
+                sevent = Alarm.attrib['event']
+            else:
+                sevent = ''
+        else:
+            sname = 'Alarm%s'%(self.alarmid)
+            sowner = ''
+            sautostart = 'False'
+            sappmode = 'OSDEFAULTAPPMODE'
+            sstarttime = 0
+            scycle = 0
+            saction = 'ActivateTask'
+            stcc = ''
+            sevent = ''
+        name = QLineEdit(sname)
         self.alarmid += 1
         owner = QComboBox()
+        if(sowner != ''):
+            owner.addItem(sowner)
+        owner.setCurrentIndex(owner.findText(sowner))
         autostart = QComboBox()
         autostart.addItems(QStringList(['False','Relative','Absolute']))
+        autostart.setCurrentIndex(autostart.findText(sautostart))
         appmode = QComboBox()
         appmode.addItems(QStringList(['OSDEFAULTAPPMODE']))
+        if(sappmode != 'OSDEFAULTAPPMODE' and sappmode != ''):
+            appmode.addItem(sappmode)
+        appmode.setCurrentIndex(appmode.findText(sappmode))
         start = QSpinBox()
         start.setRange(0,65535)
-        start.setValue(100)
+        start.setValue(sstarttime)
         cycle = QSpinBox()
         cycle.setRange(0,65535)
-        cycle.setValue(200)
+        cycle.setValue(scycle)
         action = QComboBox()
         action.addItems(QStringList(['ActivateTask','SetEvent','IncrementCounter','AlarmCallBack']))
         self.connect(action,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Action)
         action.setStatusTip('Note: Selected the item firstly, and then do a action!')
-        # default
-        task = QComboBox() # update it when the item clicked
-        
+        action.setCurrentIndex(action.findText(saction))
+        if(saction == 'AlarmCallBack'):
+            if(tcc != ''):
+                tcc = QLineEdit(stcc)
+            else:
+                tcc = QLineEdit('%s_Cbk'%(sname))
+        else:
+            tcc = QComboBox() # update it when the item clicked
+            if(tcc != ''):
+                tcc.addItem(stcc)
         # add 
         treeItem = QTreeWidgetItem()
         self.addTopLevelItem(treeItem)
@@ -184,7 +282,12 @@ class easyAlarmCfgTree(QTreeWidget):
         self.setItemWidget(treeItem,4,start)
         self.setItemWidget(treeItem,5,cycle)
         self.setItemWidget(treeItem,6,action)
-        self.setItemWidget(treeItem,7,task)
+        self.setItemWidget(treeItem,7,tcc)
+        if(saction == 'SetEvent'):
+            event =  QComboBox()
+            if(sevent != ''):
+                event.addItem(sevent)
+            self.setItemWidget(treeItem,8,event)
         
 class easyTaskCfgTree(QTreeWidget):
     taskid = 0
@@ -230,8 +333,27 @@ class easyTaskCfgTree(QTreeWidget):
             Task.attrib['activation'] = str(self.itemWidget(treeTask,3).value())
             Task.attrib['autostart'] = str(self.itemWidget(treeTask,4).currentText())
             Task.attrib['schedule'] = str(self.itemWidget(treeTask,5).currentText())
+            EventList = ET.Element('EventList')
+            for j in range(0,treeTask.childCount()):
+                Event = ET.Element('Event')
+                treeEvent = treeTask.child(j)
+                Event.attrib['name'] = str(self.itemWidget(treeEvent,0).text())
+                Event.attrib['mask'] = str(self.itemWidget(treeEvent,1).text())
+                EventList.append(Event)
+            Task.append(EventList)
             TaskList.append(Task)
         return TaskList
+    def loadXML(self,OSROOT):
+        """TaskList is in the format of ET"""
+        # delete all as reload
+        for i in range(0,self.topLevelItemCount()):
+            self.takeTopLevelItem(0)
+        # reload
+        if(OSROOT.find('TaskList') == None):
+            return
+        for Task in OSROOT.find('TaskList'):
+            self.addTask(Task)
+
     def getTaskNameList(self,option = None):
         list = []
         if(option == None):
@@ -254,29 +376,45 @@ class easyTaskCfgTree(QTreeWidget):
                     list.append(self.itemWidget(treeEvent,0).text())
                 break
         return list
-    def addTask(self):
+    def addTask(self,Task=None):
         treeItem = QTreeWidgetItem()
         self.addTopLevelItem(treeItem)
+        if(Task != None):
+            sName = Task.attrib['name']
+            sStackSz = int(Task.attrib['stacksz'])
+            sPriority = int(Task.attrib['priority'])
+            sActivation = int(Task.attrib['activation'])
+            sAutostart = Task.attrib['autostart']
+            sSchedule = Task.attrib['schedule']
+        else:
+            sName = 'Task%s'%(self.taskid)
+            sStackSz = 512
+            sPriority = self.taskid
+            sActivation = 1
+            sAutostart = 'True'
+            sSchedule = 'FULL'
         # task name 
-        taskName = QLineEdit('Task%s'%(self.taskid))
+        taskName = QLineEdit(sName)
         # stack size
         stackSize = QSpinBox()      
         stackSize.setRange(64,0xFFFFF)
-        stackSize.setValue(512) 
+        stackSize.setValue(sStackSz) 
         # Priority
         taskPrio = QSpinBox()
         taskPrio.setRange(0,256)
-        taskPrio.setValue(self.taskid) 
+        taskPrio.setValue(sPriority) 
         # Activation
         Activation = QSpinBox()
         Activation.setRange(1,256)
-        Activation.setValue(1)
+        Activation.setValue(sActivation)
         # Autostart
         autostart = QComboBox()
         autostart.addItems(QStringList(['True','False']))
+        autostart.setCurrentIndex(autostart.findText(sAutostart))
         # Schedule
         Schedule = QComboBox()
         Schedule.addItems(QStringList(['NON','FULL'])) 
+        Schedule.setCurrentIndex(Schedule.findText(sSchedule))
         Schedule.setMaximumWidth(100)
         self.setItemWidget(treeItem,0,taskName)    
         self.setItemWidget(treeItem,1,stackSize)  
@@ -285,14 +423,24 @@ class easyTaskCfgTree(QTreeWidget):
         self.setItemWidget(treeItem,4,autostart)  
         self.setItemWidget(treeItem,5,Schedule)
         self.taskid += 1 
+        if(Task != None):
+            self.setCurrentItem(treeItem)
+            for Event in Task.find('EventList'):
+                self.addEvent(Event)
           
-    def addEvent(self):
+    def addEvent(self,Event=None):
         taskItem = self.currentItem()
         eventItem = QTreeWidgetItem()
         taskItem.addChild(eventItem)
-        eventName = QLineEdit('Event%s'%(self.eventid%32))
+        if Event != None:
+            sName = Event.attrib['name']
+            sMask = Event.attrib['mask']
+        else:
+            sName = 'Event%s'%(self.eventid)
+            sMask = '0x%X'%(self.eventid%32)
+        eventName = QLineEdit(sName)
         eventName.setStatusTip('Name For Event, each Event must has a unique name.')
-        eventMask = QLineEdit('0x%X'%(self.eventid))
+        eventMask = QLineEdit(sMask)
         eventMask.setStatusTip('Mask For Event, 32 bits long.')
         self.setItemWidget(eventItem,0,eventName)
         self.setItemWidget(eventItem,1,eventMask)
@@ -432,12 +580,28 @@ class easyOsGui(QMainWindow):
         else:
             self.qAction1.setDisabled(True)
     def mOpen(self):
-        print 'Open the default location OpenSAR.wfxml'
+        wfxml=QFileDialog.getOpenFileName(self, 'Open OpenSAR OS Configuration File.', 
+                '.config/os.wfxml', 'OpenSAR OS(*.wfxml)');
+        if(wfxml==''):
+            return
+        root = ET.parse(wfxml).getroot();
+        self.easyTaskTree.loadXML(root)
+        self.easyCounterTree.loadXML(root)
+        self.easyAlarmTree.loadXML(root)
+        self.qAction1.setDisabled(True)
+        self.qAction2.setDisabled(True)
     def mSave(self):
-        print 'Save to default location OpenSAR.wfxml'
+        wfxml=QFileDialog.getSaveFileName(self, 'Save OpenSAR OS Configuration File.', 
+            '.config/os.wfxml', 'OpenSAR OS(*.wfxml)');
+        if(wfxml==''):
+            return
         OSROOT = ET.Element('OSROOT')
         OSROOT.append(self.easyTaskTree.toXML())
+        OSROOT.append(self.easyCounterTree.toXML())
+        OSROOT.append(self.easyAlarmTree.toXML())
         tree = ET.ElementTree(OSROOT)
-        tree.write('OpenSAR.wfxml', encoding="utf-8", xml_declaration=True);
+        if(os.path.exists('.config') == False):
+            os.mkdir('.config')
+        tree.write('.config/os.wfxml', encoding="utf-8", xml_declaration=True);
     def mGen(self):
         pass
