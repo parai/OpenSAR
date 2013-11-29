@@ -157,19 +157,21 @@ class easyAlarmCfgTree(QTreeWidget):
             except:
                 currentTask = ''
             try:
-                currentEvent = self.itemWidget(treeItem,7).currentText()
+                currentEvent = self.itemWidget(treeItem,8).currentText()
             except:
                 currentEvent = ''
+            print currentTask,currentEvent
             task = QComboBox()
-            self.connect(task,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Task)
             event = QComboBox()
             event.setMaximumWidth(300)
             self.setItemWidget(treeItem,7,task)
             self.setItemWidget(treeItem,8,event)
-            task.addItems(QStringList(self.root.easyTaskTree.getTaskNameList('Event')))
             event.addItems(QStringList(self.root.easyTaskTree.getTaskEventList(currentTask)))
-            task.setCurrentIndex(task.findText(currentTask))
             event.setCurrentIndex(event.findText(currentEvent))
+            task.addItems(QStringList(self.root.easyTaskTree.getTaskNameList('Event')))
+            task.setCurrentIndex(task.findText(currentTask))
+            self.connect(task,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Task)
+            
         elif('IncrementCounter' == Action):
             try:
                 currentCounter = self.itemWidget(treeItem,7).currentText()
@@ -604,4 +606,9 @@ class easyOsGui(QMainWindow):
             os.mkdir('.config')
         tree.write('.config/os.wfxml', encoding="utf-8", xml_declaration=True);
     def mGen(self):
-        pass
+        from gen.GenOS import GenOS
+        wfxml=QFileDialog.getOpenFileName(self, 'Get OpenSAR OS Configuration File.', 
+                '.config/os.wfxml', 'OpenSAR OS(*.wfxml)');
+        if(wfxml==''):
+            return
+        GenOS(str(wfxml))
