@@ -41,6 +41,13 @@
 #define TRUE		(boolean)true
 #endif
 
+#ifndef False
+#define False		(boolean)false
+#endif
+#ifndef True
+#define True		(boolean)true
+#endif
+
 typedef _Bool      			boolean;
 typedef int8_t         		sint8;
 typedef uint8_t       		uint8;

@@ -3,31 +3,43 @@
 #define SetEvent SetEvent2
 #endif
 
-void bTask3(void)
+void Task10ms(void)
 {
-	printf("bTask3 is running.\n");
-	TerminateTask();
-}
-void eTask1(void)
-{
-	printf("eTask1 is running.\n");
 	for(;;)
 	{
-		WaitEvent(EVENT_MASK_Event1);
-		ClearEvent(EVENT_MASK_Event1);
-		SetEvent(TASK_ID_eTask2,EVENT_MASK_Event2);
-		printf("eTask1 Wait Event Ok.\n");
+		(void)WaitEvent(EVENT_MASK_EventTask10ms);
+		//printf("Task10ms is running.\n");
+		(void)ClearEvent(EVENT_MASK_EventTask10ms);
 	}
 	TerminateTask();
 }
-void eTask2(void)
+void Task20ms(void)
 {
-	printf("eTask2 is running.\n");
 	for(;;)
 	{
-		WaitEvent(EVENT_MASK_Event2);
-		ClearEvent(EVENT_MASK_Event2);
-		printf("eTask2 Wait Event Ok.\n");
+		(void)WaitEvent(EVENT_MASK_EventTask20ms);
+		//printf("Task20ms is running.\n");
+		(void)ClearEvent(EVENT_MASK_EventTask20ms);
+	}
+	TerminateTask();
+}
+void Task100ms(void)
+{
+	for(;;)
+	{
+		(void)WaitEvent(EVENT_MASK_EventTask100ms);
+		//printf("Task100ms is running.\n");
+		(void)ClearEvent(EVENT_MASK_EventTask100ms);
+	}
+	TerminateTask();
+}
+void TaskEvent(void)
+{
+	for(;;)
+	{
+		(void)WaitEvent(EVENT_MASK_Event1000ms);
+		printf("TaskEvent is running.\n");
+		(void)ClearEvent(EVENT_MASK_Event1000ms);
 	}
 	TerminateTask();
 }

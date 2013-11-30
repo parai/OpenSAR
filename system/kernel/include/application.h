@@ -112,7 +112,7 @@ typedef struct OsAppVar {
  */
 typedef struct OsApplication {
 	uint32 	appId;
-	char 	name[16];
+	char 	name[32];
 	_Bool	trusted;
 	uint8_t core;
 

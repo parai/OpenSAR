@@ -128,11 +128,11 @@ class easyAlarmCfgTree(QTreeWidget):
             self.addAlarm(Alarm)
     def currentIndexChanged_Task(self,Task):
         """ Only when Action is SetEvent"""
+        treeItem = self.currentItem()
         try:
-            currentEvent = self.itemWidget(treeItem,7).currentText()
+            currentEvent = self.itemWidget(treeItem,8).currentText()
         except:
             currentEvent = ''
-        treeItem = self.currentItem()
         event = QComboBox()
         event.setMaximumWidth(300)
         self.setItemWidget(treeItem,8,event)
@@ -160,7 +160,7 @@ class easyAlarmCfgTree(QTreeWidget):
                 currentEvent = self.itemWidget(treeItem,8).currentText()
             except:
                 currentEvent = ''
-            print currentTask,currentEvent
+            #print currentTask,currentEvent
             task = QComboBox()
             event = QComboBox()
             event.setMaximumWidth(300)
@@ -170,8 +170,8 @@ class easyAlarmCfgTree(QTreeWidget):
             event.setCurrentIndex(event.findText(currentEvent))
             task.addItems(QStringList(self.root.easyTaskTree.getTaskNameList('Event')))
             task.setCurrentIndex(task.findText(currentTask))
+            self.currentIndexChanged_Task(currentTask)
             self.connect(task,SIGNAL('currentIndexChanged(QString)'),self.currentIndexChanged_Task)
-            
         elif('IncrementCounter' == Action):
             try:
                 currentCounter = self.itemWidget(treeItem,7).currentText()
@@ -439,7 +439,7 @@ class easyTaskCfgTree(QTreeWidget):
             sMask = Event.attrib['mask']
         else:
             sName = 'Event%s'%(self.eventid)
-            sMask = '0x%X'%(self.eventid%32)
+            sMask = '0x%X'%((1<<(self.eventid%32)))
         eventName = QLineEdit(sName)
         eventName.setStatusTip('Name For Event, each Event must has a unique name.')
         eventMask = QLineEdit(sMask)
@@ -583,7 +583,7 @@ class easyOsGui(QMainWindow):
             self.qAction1.setDisabled(True)
     def mOpen(self):
         wfxml=QFileDialog.getOpenFileName(self, 'Open OpenSAR OS Configuration File.', 
-                '.config/os.wfxml', 'OpenSAR OS(*.wfxml)');
+                '../../app/config/os.wfxml', 'OpenSAR OS(*.wfxml)');
         if(wfxml==''):
             return
         root = ET.parse(wfxml).getroot();
@@ -594,7 +594,7 @@ class easyOsGui(QMainWindow):
         self.qAction2.setDisabled(True)
     def mSave(self):
         wfxml=QFileDialog.getSaveFileName(self, 'Save OpenSAR OS Configuration File.', 
-            '.config/os.wfxml', 'OpenSAR OS(*.wfxml)');
+            '../../app/config/os.wfxml', 'OpenSAR OS(*.wfxml)');
         if(wfxml==''):
             return
         OSROOT = ET.Element('OSROOT')
@@ -602,13 +602,11 @@ class easyOsGui(QMainWindow):
         OSROOT.append(self.easyCounterTree.toXML())
         OSROOT.append(self.easyAlarmTree.toXML())
         tree = ET.ElementTree(OSROOT)
-        if(os.path.exists('.config') == False):
-            os.mkdir('.config')
-        tree.write('.config/os.wfxml', encoding="utf-8", xml_declaration=True);
+        tree.write(wfxml, encoding="utf-8", xml_declaration=True);
     def mGen(self):
         from gen.GenOS import GenOS
         wfxml=QFileDialog.getOpenFileName(self, 'Get OpenSAR OS Configuration File.', 
-                '.config/os.wfxml', 'OpenSAR OS(*.wfxml)');
+                '../../app/config/os.wfxml', 'OpenSAR OS(*.wfxml)');
         if(wfxml==''):
             return
         GenOS(str(wfxml))
