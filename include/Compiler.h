@@ -83,7 +83,9 @@
 
 #define P2FUNC(rettype,ptrclass,fctname) rettype (*fctname)
 
+#ifndef CONST // for WIN32
 #define CONST(consttype,memclass) const consttype
+#endif
 
 #define VAR(vartype,memclass) vartype
 

@@ -15,7 +15,7 @@ arch/generic/linux
 arch/generic/mingw/vc2010
 common
 clib
-drivers
+drivers_
 examples
 scripts
 tools/pls

@@ -93,7 +93,9 @@ typedef uint8 Std_ReturnType;
 #define E_PROTOCOL_NOT_ALLOWED	(Std_ReturnType)5
 #define E_REQUEST_NOT_ACCEPTED	(Std_ReturnType)8
 #define E_REQUEST_ENV_NOK		(Std_ReturnType)9
+#ifndef E_PENDING	// for WIN32
 #define E_PENDING				(Std_ReturnType)10
+#endif
 #define E_COMPARE_KEY_FAILED	(Std_ReturnType)11
 #define E_FORCE_RCRRP			(Std_ReturnType)12
 

@@ -4,7 +4,7 @@
 TARGET = OpenSAR
 
 #Base Directory
-BD = ../../..
+BD = ..
 
 OUT = $(BD)/out
 

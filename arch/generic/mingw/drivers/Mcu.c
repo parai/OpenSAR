@@ -14,36 +14,50 @@
  * -------------------------------- Arctic Core ------------------------------*/
 
 
-#ifndef IRQ_TYPES_H
-#define IRQ_TYPES_H
+#include <assert.h>
+#include <string.h>
+#include "Std_Types.h"
+#include "Mcu.h"
+#if defined(USE_DET)
+#include "Det.h"
+#endif
+#if defined(USE_DEM)
+#include "Dem.h"
+#endif
+#include "Cpu.h"
+#include "Ramlog.h"
+#include "Os.h"
+#include "isr.h"
+
+//#define USE_LDEBUG_PRINTF 1
+#include "debug.h"
 
 
-#define Irq_SOI()
+void Mcu_Init(const Mcu_ConfigType *configPtr)
+{
+
+}
+
+void Mcu_SetMode( Mcu_ModeType McuMode ) {
+	(void)McuMode;
+}
 
 /**
- * End-Of-Interrupt. Called by the OS it wants to clear the interrupt.
+ * Get the system clock in Hz. It calculates the clock from the
+ * different register settings in HW.
  */
-void Irq_EOI( void );
-
-
-typedef enum
+uint32_t McuE_GetSystemClock(void)
 {
-	SysTick_IRQn = 0UL,
-	SysCan_0_IRQn,
-	SysCan_1_IRQn,
-	SysCan_2_IRQn,
-	SysCan_3_IRQn,
-	SysCan_4_IRQn,
-	NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS
-}IrqType;
+  return 10;
+}
+Std_ReturnType Mcu_InitClock( const Mcu_ClockType ClockSetting ) {
+  return E_OK;
+}
 
-typedef enum
-{
-	CPU_CORE0,
-	CPU_CORE1
-} Cpu_t;
+void Mcu_PerformReset( void ) {
 
-/* Offset from exceptions to interrupts */
-#define IRQ_INTERRUPT_OFFSET		0
+}
 
-#endif /* IRQ_H_ */
+Mcu_PllStatusType Mcu_GetPllStatus( void ) {
+	return MCU_PLL_LOCKED;
+}

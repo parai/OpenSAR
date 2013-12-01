@@ -76,7 +76,7 @@ HANDLE arch_cre_secondary_thread(DWORD (*thread_entry)(PVOID),PVOID thread_param
 	interrupts.  The priority is set below that of the simulated
 	interrupt handler so the interrupt event mutex is used for the
 	handshake / overrun protection. */
-	HANDLE handle = CreateThread( NULL, 0, thread_entry, thread_param, 0, NULL );
+	HANDLE handle = CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)thread_entry, (PVOID)thread_param, 0, NULL );
 	if( handle != NULL )
 	{
 		SetThreadPriority( handle, THREAD_PRIORITY_BELOW_NORMAL );
@@ -158,6 +158,10 @@ void Os_ArchSetupContext( OsTaskVarType *pcb ) {
 	} else if( pcb->constPtr->proc_type == PROC_BASIC ) {
 		pxCode = (void*)Os_TaskStartBasic;
 	}
+	else
+	{
+		pxCode = (void*)Os_TaskStartBasic;
+	}
 	/* Create the thread itself. */
 	pxThreadState->pvThread = CreateThread( NULL, 0, ( LPTHREAD_START_ROUTINE ) pxCode, NULL, CREATE_SUSPENDED, NULL );
 	SetThreadAffinityMask( pxThreadState->pvThread, 0x01 );
@@ -205,6 +209,22 @@ static void arch_swap_context_to(OsTaskVarType *old,OsTaskVarType *new){
 	ResumeThread(pxThreadState->pvThread);
 	sArch.mgrState = cMgrIdle;
 }
+static void arch_isr_suspend_curtsk(void)
+{
+	xThreadState *pxThreadState = NULL;
+	OsTaskVarType *curtsk = Os_SysTaskGetCurr();
+
+	pxThreadState = ( xThreadState * ) curtsk->stack.curr;
+	SuspendThread(pxThreadState->pvThread);
+}
+static void arch_isr_resume_curtsk(void)
+{
+	xThreadState *pxThreadState = NULL;
+	OsTaskVarType *curtsk = Os_SysTaskGetCurr();
+
+	pxThreadState = ( xThreadState * ) curtsk->stack.curr;
+	ResumeThread(pxThreadState->pvThread);
+}
 static void arch_isr_process(void)
 {
 	uint32_t i;
@@ -217,6 +237,13 @@ static void arch_isr_process(void)
 				if(SysTick_IRQn == i)
 				{
 					OsTick();
+				}
+				else
+				{
+					// better do suspend curtsk for make sure only isr is running
+					arch_isr_suspend_curtsk();
+					Os_Isr(NULL,i);
+					arch_isr_resume_curtsk();
 				}
 				sArch.pendIsrB &= ~(1UL<<i);
 			}
@@ -282,6 +309,25 @@ void Os_ArchSwapContextTo(OsTaskVarType *old,OsTaskVarType *new){
 void *Os_ArchGetStackPtr( void ) {
 
 	return NULL; // Simualte on Win32
+}
+
+void arch_generate_irqn(IrqType IRQn)
+{
+	assert( (IRQn<NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS) && (IRQn > 0));
+	while(cMgrIdle != sArch.mgrState) Sleep(0);
+	WaitForSingleObject(sArch.cirticalM,INFINITE);
+	if(cMgrIdle == sArch.mgrState)
+	{
+		sArch.pendIsrB |= (1UL << IRQn);
+		sArch.mgrState = cMgrIsrReq;
+		SetEvent(sArch.mgrEvent);
+	}
+	else
+	{
+		// so waht maybe a system error
+		printf("X");
+	}
+	ReleaseMutex( sArch.cirticalM );
 }
 
 

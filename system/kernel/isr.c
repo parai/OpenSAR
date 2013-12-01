@@ -345,7 +345,9 @@ void *Os_Isr( void *stack, int16_t vector ) {
 
 		/* Save info for preempted pcb */
 		taskPtr = Os_SysTaskGetCurr();
+#if !defined(WIN32)	// don't do it as a simulation run on win32
 		taskPtr->stack.curr = stack;
+#endif
 		taskPtr->state = ST_READY;
 		OS_DEBUG(D_TASK,"Preempted %s\n",taskPtr->constPtr->name);
 

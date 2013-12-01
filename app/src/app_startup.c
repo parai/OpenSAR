@@ -5,9 +5,11 @@
  *      Author: parai
  */
 #include "Os.h"
+#include "Can.h"
 void StartupHook( void )
 {
-
+	Can_Init(&Can_ConfigData);
+	Can_SetControllerMode(CAN_CTRL_0,CAN_T_START);
 }
 void ShutdownHook( StatusType Error )
 {
@@ -19,7 +21,6 @@ void ErrorHook( StatusType Error )
 }
 void PreTaskHook( void )
 {
-
 }
 void PostTaskHook( void )
 {
