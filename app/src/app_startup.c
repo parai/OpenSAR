@@ -6,10 +6,13 @@
  */
 #include "Os.h"
 #include "Can.h"
+#include "CanIf.h"
 void StartupHook( void )
 {
 	Can_Init(&Can_ConfigData);
-	Can_SetControllerMode(CAN_CTRL_0,CAN_T_START);
+
+	CanIf_Init(&CanIf_Config);
+	CanIf_SetControllerMode(CAN_CTRL_0,CANIF_CS_STARTED);
 }
 void ShutdownHook( StatusType Error )
 {

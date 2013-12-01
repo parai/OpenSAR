@@ -34,20 +34,20 @@ typedef enum {
 } Can_IdTypeType;
 
 typedef enum {
-	CAN_CTRL_0_vCanHTH,
-	CAN_CTRL_1_vCanHTH,
-	CAN_CTRL_2_vCanHTH,
-	CAN_CTRL_3_vCanHTH,
-	CAN_CTRL_4_vCanHTH,
+	CAN_CTRL_0_HTH,
+	CAN_CTRL_1_HTH,
+	CAN_CTRL_2_HTH,
+	CAN_CTRL_3_HTH,
+	CAN_CTRL_4_HTH,
 	NUM_OF_HTHS
 } Can_Arc_HTHType;
 
 typedef enum {
-	CAN_CTRL_0_vCanHRH,
-	CAN_CTRL_1_vCanHRH,
-	CAN_CTRL_2_vCanHRH,
-	CAN_CTRL_3_vCanHRH,
-	CAN_CTRL_4_vCanHRH,
+	CAN_CTRL_0_HRH,
+	CAN_CTRL_1_HRH,
+	CAN_CTRL_2_HRH,
+	CAN_CTRL_3_HRH,
+	CAN_CTRL_4_HRH,
 	NUM_OF_HRHS
 } Can_Arc_HRHType;
 

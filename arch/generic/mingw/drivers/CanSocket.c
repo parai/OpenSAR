@@ -16,6 +16,7 @@ static void startSocketup(void)
 	{
 		WSADATA wsaData;
 		WSAStartup(MAKEWORD(2, 2), &wsaData);
+		started = True;
 	}
 }
 // Local Functions

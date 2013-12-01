@@ -16,7 +16,7 @@ void Task10ms(void)
 		pdu.length = 8;
 		pdu.sdu = "Task10ms";
 		pdu.swPduHandle = 0x55;
-		Can_Write(CAN_CTRL_0_vCanHTH,&pdu);
+		Can_Write(CAN_CTRL_0_HTH,&pdu);
 		(void)ClearEvent(EVENT_MASK_EventTask10ms);
 	}
 	TerminateTask();
@@ -52,13 +52,7 @@ void TaskEvent(void)
 	TerminateTask();
 }
 
-void CanIf_RxIndication(uint8 Hrh, Can_IdType CanId, uint8 CanDlc,
-              const uint8 *CanSduPtr)
+void CanIf_UserRxIndication(uint8 channel, PduIdType pduId, const uint8 *sduPtr,uint8 dlc, Can_IdType canId)
 {
-	printf("%s is running\n",CanSduPtr);
 }
 
-void CanIf_TxConfirmation(PduIdType canTxPduId)
-{
-
-}

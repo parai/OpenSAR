@@ -36,7 +36,8 @@ RMFLGS = -f
 dir-y =	$(BD)/app/config	\
 		$(BD)/arch/generic/mingw/kernel	\
 		$(BD)/arch/generic/mingw/drivers	\
-		$(BD)/app/src
+		$(BD)/app/src		\
+		$(BD)/communication/CanIf
 		
 src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
 obj-y = $(subst .c,.o,$(src-y))	
@@ -67,6 +68,7 @@ all:$(obj-y)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 run:
+	@(start python $(OUT)/CanBusServer.py --server 8000)
 	@(start $(OUT)/$(TARGET).exe)	
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)

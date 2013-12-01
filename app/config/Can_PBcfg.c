@@ -15,7 +15,7 @@ static const Can_HardwareObjectType CAN_CTRL_0_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_0_vCanHTH,
+		CAN_CTRL_0_HTH,
 		CAN_OBJECT_TYPE_TRANSMIT,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -25,7 +25,7 @@ static const Can_HardwareObjectType CAN_CTRL_0_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_0_vCanHRH,
+		CAN_CTRL_0_HRH,
 		CAN_OBJECT_TYPE_RECEIVE,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -42,7 +42,7 @@ static const Can_HardwareObjectType CAN_CTRL_1_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_1_vCanHTH,
+		CAN_CTRL_1_HTH,
 		CAN_OBJECT_TYPE_TRANSMIT,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -52,7 +52,7 @@ static const Can_HardwareObjectType CAN_CTRL_1_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_1_vCanHRH,
+		CAN_CTRL_1_HRH,
 		CAN_OBJECT_TYPE_RECEIVE,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -69,7 +69,7 @@ static const Can_HardwareObjectType CAN_CTRL_2_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_2_vCanHRH,
+		CAN_CTRL_2_HRH,
 		CAN_OBJECT_TYPE_RECEIVE,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -79,7 +79,7 @@ static const Can_HardwareObjectType CAN_CTRL_2_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_2_vCanHTH,
+		CAN_CTRL_2_HTH,
 		CAN_OBJECT_TYPE_TRANSMIT,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -96,7 +96,7 @@ static const Can_HardwareObjectType CAN_CTRL_3_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_3_vCanHRH,
+		CAN_CTRL_3_HRH,
 		CAN_OBJECT_TYPE_RECEIVE,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -106,7 +106,7 @@ static const Can_HardwareObjectType CAN_CTRL_3_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_3_vCanHTH,
+		CAN_CTRL_3_HTH,
 		CAN_OBJECT_TYPE_TRANSMIT,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -123,7 +123,7 @@ static const Can_HardwareObjectType CAN_CTRL_4_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_4_vCanHRH,
+		CAN_CTRL_4_HRH,
 		CAN_OBJECT_TYPE_RECEIVE,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
@@ -133,7 +133,7 @@ static const Can_HardwareObjectType CAN_CTRL_4_HOHCfgData[]=
 		CAN_ARC_HANDLE_TYPE_BASIC,
 		CAN_ID_TYPE_STANDARD,
 		0x00,
-		CAN_CTRL_4_vCanHTH,
+		CAN_CTRL_4_HTH,
 		CAN_OBJECT_TYPE_TRANSMIT,
 		&vCanFilterMask0,
 		0x00000000,/* mbMask */
