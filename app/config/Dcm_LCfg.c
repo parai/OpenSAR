@@ -531,13 +531,13 @@ const Dcm_DsdType Dsd = {
  *									DSL									*
  ************************************************************************/
 
-uint8 vDcmBuffer_1_RX[512];
-Dcm_DslBufferRuntimeType rxBufferParams_vDcmBuffer_1_RX =
+uint8 rxDcmBuffer_DiagP2P[512];
+Dcm_DslBufferRuntimeType rxBufferParams_DiagP2P =
 {
 	/* status = */ NOT_IN_USE
 };
-uint8 vDcmBuffer_1_TX[512];
-Dcm_DslBufferRuntimeType rxBufferParams_vDcmBuffer_1_TX =
+uint8 txDcmBuffer_DiagP2P[512];
+Dcm_DslBufferRuntimeType txBufferParams_DiagP2P =
 {
 	/* status = */ NOT_IN_USE
 };
@@ -546,19 +546,19 @@ const Dcm_DslBufferType DcmDslBufferList[DCM_DSL_BUFFER_LIST_LENGTH] = {
 		/* DslBufferID = */ 0,//? I am not that clear.
 		/* DslBufferSize = */ 512,/* ?Value is not configurable */
 		{ /* pduInfo */
-			/* SduDataPtr = */ vDcmBuffer_1_RX,
+			/* SduDataPtr = */ rxDcmBuffer_DiagP2P,
 			/* SduLength = */ 512,
 		},
-		/* externalBufferRuntimeData = */ &rxBufferParams_vDcmBuffer_1_RX
+		/* externalBufferRuntimeData = */ &rxBufferParams_DiagP2P
 	},
 	{ // vDcmBuffer_1_TX
 		/* DslBufferID = */ 1,//? I am not that clear.
 		/* DslBufferSize = */ 512,/* ?Value is not configurable */
 		{ /* pduInfo */
-			/* SduDataPtr = */ vDcmBuffer_1_TX,
+			/* SduDataPtr = */ txDcmBuffer_DiagP2P,
 			/* SduLength = */ 512,
 		},
-		/* externalBufferRuntimeData = */ &rxBufferParams_vDcmBuffer_1_TX
+		/* externalBufferRuntimeData = */ &txBufferParams_DiagP2P
 	},
 };
 
@@ -592,7 +592,7 @@ const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
 	{// vProtocol_1->vConnection0->vRxChannel0
 		/* DslMainConnectionParent = */ &DslMainConnectionList[0],
 		/* DslProtocolAddrType = */ DCM_PROTOCOL_PHYSICAL_ADDR_TYPE,
-		/* DcmDslProtocolRxPduId = */ PDUR_RX_vEcuC_Pdu_1,
+		/* DcmDslProtocolRxPduId = */ PDUR_RX_DIAG_P2P,
 		/* DcmDslProtocolRxTesterSourceAddr_v4 = */ 0,		/* Value is not configurable */
 		/* DcmDslProtocolRxChannelId_v4 = */ 0,				/* Value is not configurable */
 		/* Arc_EOL = */ FALSE
@@ -610,7 +610,7 @@ const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
 const Dcm_DslProtocolTxType DcmDslProtocolTxList[] = {
 	{// vProtocol_1->vConnection0->vTxChannel0
 		/* DslMainConnectionParent = */ &DslMainConnectionList[0],
-		/* DcmDslProtocolTxPduId = */ PDUR_TX_vEcuC_Pdu_1,
+		/* DcmDslProtocolTxPduId = */ PDUR_TX_DIAG_P2P,
 		/* Arc_EOL = */ FALSE
 	},
 	{// Dummy for EOL

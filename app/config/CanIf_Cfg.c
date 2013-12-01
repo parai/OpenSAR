@@ -21,10 +21,6 @@
 extern const Can_ControllerConfigType Can_ControllerCfgData[];
 extern const Can_ConfigSetType Can_ConfigSetData;
 
-extern void CanIf_UserRxIndication(uint8 channel, PduIdType pduId, const uint8 *sduPtr,uint8 dlc, Can_IdType canId);
-void CanIf_User_BusoffNotification(uint8 Controller){}
-void CanIf_User_ErrorNotification(uint8 Controller,Can_Arc_ErrorType Error){}
-
 // Contains the mapping from CanIf-specific Channels to Can Controllers
 const CanControllerIdType CanIf_Arc_ChannelToControllerMap[CANIF_CHANNEL_CNT] = {
 	CAN_CTRL_0,	/* CANIF_CHL_LS */
@@ -58,10 +54,10 @@ const CanIf_ControllerConfigType CanIfControllerConfig[] = {
 // Function callbacks for higher layers
 const CanIf_DispatchConfigType CanIfDispatchConfig =
 {
-	/*CanIfBusOffNotification =*/ CanIf_User_BusoffNotification,
+	/*CanIfBusOffNotification =*/ NULL,
 	/*CanIfWakeUpNotification =*/ NULL,        // Not used
 	/*CanIfWakeupValidNotification =*/ NULL,   // Not used
-	/*CanIfErrorNotificaton =*/ CanIf_User_ErrorNotification,
+	/*CanIfErrorNotificaton =*/ NULL,
 };
 
 // Data for init configuration CanIfInitConfiguration
@@ -83,6 +79,7 @@ const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_LS[]=
 		/*CanIfSoftwareFilterHrh =*/ FALSE,
 		/*CanIfCanControllerIdRef =*/ CANIF_CHL_LS,
 		/*CanIfHrhIdSymRef =*/ CAN_CTRL_0_HRH,
+		/*.CanIfHrhRangeConfig =*/ NULL,
 		/*CanIf_Arc_EOL =*/ TRUE
 	},
 };
@@ -104,6 +101,7 @@ const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_HS[]=
 		/*CanIfSoftwareFilterHrh =*/ FALSE,
 		/*CanIfCanControllerIdRef =*/ CANIF_CHL_HS,
 		/*CanIfHrhIdSymRef =*/ CAN_CTRL_1_HRH,
+		/*.CanIfHrhRangeConfig =*/ NULL,
 		/*CanIf_Arc_EOL =*/ TRUE
 	},
 };

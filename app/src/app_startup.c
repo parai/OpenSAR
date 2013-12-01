@@ -22,7 +22,7 @@ void StartupHook( void )
 	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
 
 	Can_PduType pdu;
-	pdu.id = 0x731;
+	pdu.id = 0;
 	pdu.length = 8;
 	pdu.sdu = "Notify";
 	pdu.swPduHandle = 0x55;

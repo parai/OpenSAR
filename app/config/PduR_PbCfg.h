@@ -14,11 +14,12 @@
 extern const PduR_PBConfigType PduR_Config;
 //  PduR Polite Defines.
 /* PduR Rx NSdu Id */
-#define PDUR_RX_vEcuC_Pdu_1 1
+#define PDUR_RX_DIAG_P2P		0
+#define PDUR_RX_DIAG_P2A		1
 #define vPduR_SrcPath1 1
 /* PduR Tx NSdu Id */
-#define PDUR_TX_vEcuC_Pdu_1 0
-#define PDUR_ALT_TX_vEcuC_Pdu_1 0
+#define PDUR_TX_DIAG_P2P		0
+#define PDUR_TX_DIAG_P2A		1
 #define vPduR_SrcPath0 0
 #endif /* PDUR_PB_CFG_H_H */
 

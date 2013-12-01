@@ -22,9 +22,11 @@
 #define DCM_PERIODICTRANSMIT_MEDIUM		30
 #define DCM_PERIODICTRANSMIT_FAST			15
 
-#define DCM_RX_vEcuC_Pdu_1 0
+#define DCM_RX_DIAG_P2P		0
+#define DCM_RX_DIAG_P2A		1
 
-#define DCM_TX_vEcuC_Pdu_1 0
+#define DCM_TX_DIAG_P2P		0
+#define DCM_TX_DIAG_P2A		1
 
 
 
