@@ -765,7 +765,6 @@ void CanIf_RxIndication(uint8 Hrh, Can_IdType CanId, uint8 CanDlc,
 {
   VALIDATE_NO_RV(CanIf_Global.initRun, CANIF_RXINDICATION_ID, CANIF_E_UNINIT);
   VALIDATE_NO_RV(CanSduPtr != NULL, CANIF_RXINDICATION_ID, CANIF_E_PARAM_POINTER);
-
   /* Check PDU mode before continue processing */
   CanIf_ChannelGetModeType mode;
   CanIf_Arc_ChannelIdType channel = CanIf_Arc_FindHrhChannel( (Can_Arc_HRHType) Hrh);

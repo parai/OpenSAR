@@ -549,7 +549,7 @@ void DslMain(void) {
 			}
 			switch (runtime->externalTxBufferStatus) { // #### TX buffer state. ####
 			case NOT_IN_USE:
-				DEBUG( DEBUG_MEDIUM, "state NOT_IN_USE!\n");
+				// DEBUG( DEBUG_MEDIUM, "state NOT_IN_USE!\n");
 				break;
 			case PROVIDED_TO_DSD: {
 				DECREMENT(runtime->stateTimeoutCount);

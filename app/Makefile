@@ -22,11 +22,17 @@ INCDIR = 	-I$(BD)/include 		\
 			-I$(BD)/include/sys		\
 			-I$(BD)/system/kernel/include \
 			-I$(BD)/app/config	\
-			-I$(BD)/app/inc	\
+			-I$(BD)/app/inc			\
 			-I$(BD)/arch/generic/mingw/kernel	\
-			-I$(BD)/system/EcuM	
+			-I$(BD)/system/EcuM			\
+			-I$(BD)/system/SchM			\
+			-I$(BD)/diagnostic/Dcm
 
-MACROS = -DWIN32 -DUSE_DEBUG_PRINTF
+MACROS = -DWIN32 -DUSE_DEBUG_PRINTF	\
+			-DUSE_CANIF	\
+			-DUSE_CANTP	\
+			-DUSE_PDUR	\
+			-DUSE_DCM
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
 ARFLGS = rv
@@ -37,7 +43,11 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/arch/generic/mingw/kernel	\
 		$(BD)/arch/generic/mingw/drivers	\
 		$(BD)/app/src		\
-		$(BD)/communication/CanIf
+		$(BD)/app/src/Dia		\
+		$(BD)/communication/CanIf	\
+		$(BD)/communication/CanTp	\
+		$(BD)/communication/PduR	\
+		$(BD)/diagnostic/Dcm
 		
 src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
 obj-y = $(subst .c,.o,$(src-y))	
@@ -68,8 +78,9 @@ all:$(obj-y)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 run:
-	@(start python $(OUT)/CanBusServer.py --server 8000)
+	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)
 	@(start $(OUT)/$(TARGET).exe)	
+	@(start python $(BD)/tools/can/uds.py --port 8999)
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)
 	@echo ">>>>>>>>>>>>>>>>>>>> CLEAN $(TARGET) Objs Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"		

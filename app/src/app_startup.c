@@ -7,12 +7,27 @@
 #include "Os.h"
 #include "Can.h"
 #include "CanIf.h"
+#include "CanTp.h"
+#include "PduR.h"
+#include "Dcm.h"
 void StartupHook( void )
 {
 	Can_Init(&Can_ConfigData);
 
 	CanIf_Init(&CanIf_Config);
-	CanIf_SetControllerMode(CAN_CTRL_0,CANIF_CS_STARTED);
+	CanTp_Init();
+	PduR_Init(&PduR_Config);
+	Dcm_Init();
+
+	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
+
+	Can_PduType pdu;
+	pdu.id = 0x731;
+	pdu.length = 8;
+	pdu.sdu = "Notify";
+	pdu.swPduHandle = 0x55;
+	Can_Write(CAN_CTRL_0_HTH,&pdu);
+
 }
 void ShutdownHook( StatusType Error )
 {

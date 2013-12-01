@@ -364,7 +364,6 @@ static void Can_RxIsr(int unit) {
   Can_UnitType *canUnit = GET_PRIVATE_DATA(unit);
 #endif
   const Can_HardwareObjectType *hohObj;
-
   // Loop over all the Hoh's
   hohObj= canHwConfig->Can_Arc_Hoh;
   --hohObj;

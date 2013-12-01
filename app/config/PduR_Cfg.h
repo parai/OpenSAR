@@ -13,13 +13,13 @@
 #define PDUR_FRTP_SUPPORT STD_OFF  /* Not supported */
 #define PDUR_LINIF_SUPPORT STD_OFF
 #define PDUR_LINTP_SUPPORT STD_OFF  /* Not supported */
-#define PDUR_COM_SUPPORT STD_ON
-#define PDUR_DCM_SUPPORT STD_OFF
+#define PDUR_COM_SUPPORT STD_OFF
+#define PDUR_DCM_SUPPORT STD_ON
 #define PDUR_IPDUM_SUPPORT STD_OFF  /* Not supported */
-#define PDUR_J1939TP_SUPPORT STD_ON
+#define PDUR_J1939TP_SUPPORT STD_OFF
 #define PDUR_SOAD_SUPPORT STD_OFF  /* Not supported */
 
-#define PDUR_DEV_ERROR_DETECT		STD_ON
+#define PDUR_DEV_ERROR_DETECT		STD_OFF
 #define PDUR_VERSION_INFO_API		STD_ON
 
 // Zero cost operation mode
