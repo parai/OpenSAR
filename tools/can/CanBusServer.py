@@ -80,6 +80,7 @@ def CanBusServerForward(msg,port = 8000):
 				continue  
 
 def CanBusServerHost(port = 8000):  
+    global server_port
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
     sock.bind(('127.0.0.1', port))  
     sock.listen(32)  
@@ -88,8 +89,18 @@ def CanBusServerHost(port = 8000):
         try:  
             connection.settimeout(5)  
             msg = connection.recv(1024) 
-            CanBusServerTrace(msg)
-            CanBusServerForward(msg,port);           
+            if(len(msg) == 4):
+                portR = (ord(msg[0])<<24)+(ord(msg[1])<<16)+(ord(msg[2])<<8)+(ord(msg[3]))
+                flag = False
+                for p in server_port:
+                    if(p == portR):
+                        flag = True
+                if(flag == False):
+                    server_port.append(portR)
+                    print ">>>>>>> port %s on <<<<<<<"%(portR)
+            else:
+                CanBusServerTrace(msg)
+                CanBusServerForward(msg,port);           
         except socket.timeout:  
             continue  
         connection.close()

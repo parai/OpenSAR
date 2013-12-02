@@ -103,16 +103,16 @@ const CanTp_NSduType CanTpNSduConfigList[] =
 
 const CanTp_RxIdType CanTp_RxIdList[] = 
 {
-	//RX_vEcuC_Pdu_1
+	//CANTP_RX_DIAG_P2P
 	{
 		.CanTpAddressingMode =  CANTP_STANDARD,
-		.CanTpNSduIndex =  0,
+		.CanTpNSduIndex =  CANTP_TX_DIAG_P2P,
 		.CanTpReferringTxIndex =  1,
 	},
-	//TX_vEcuC_Pdu_1
+	//CANTP_RX_DIAG_P2A
 	{
 		.CanTpAddressingMode =  CANTP_STANDARD,
-		.CanTpNSduIndex =  1,
+		.CanTpNSduIndex =  CANTP_TX_DIAG_P2A,
 		.CanTpReferringTxIndex =  0xFFFF,
 	},
 };

@@ -533,7 +533,7 @@ void Can_DeInit()
     Can_DisableControllerInterrupts(ctlrId);
 
     canUnit->lock_cnt = 0;
-
+    Can_SocketDeInit(ctlrId);
     // Clear stats
 #if (USE_CAN_STATISTICS == STD_ON)
     memset(&canUnit->stats, 0, sizeof(Can_Arc_StatisticsType));
@@ -542,7 +542,7 @@ void Can_DeInit()
 
   Can_Global.config = NULL;
   Can_Global.initRun = CAN_UNINIT;
-
+  (void)memset(Can_HwUnit,0,sizeof(Can_HwUnit));
   return;
 }
 

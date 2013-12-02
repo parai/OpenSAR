@@ -68,7 +68,7 @@ const PduRRoutingPath_type DiagTx_P2P_PduRRoutingPath = {
 	/* .SduLength = */ 8,
 	/* .TpChunkSize = */0xDEAD,
 	/* .PduRDefaultValue = */{0xDB,NULL},
-	/* .SrcPduId = */ COM_TX_vEcuC_Pdu_1,
+	/* .SrcPduId = */ DCM_TX_DIAG_P2P,
 	/* .SrcModule =  */ARC_PDUR_COM,
 	/* .PduRDestPdus = */ DiagTx_P2P_PduRDestinations
 };
@@ -76,8 +76,8 @@ const PduRRoutingPath_type DiagRx_P2P_PduRRoutingPath = {
 	/* .SduLength = */ 8,
 	/* .TpChunkSize = */0xDEAD,
 	/* .PduRDefaultValue = */{0xDB,NULL},
-	/* .SrcPduId = */ 0xdd,
-	/* .SrcModule =  */ARC_PDUR_CANIF,
+	/* .SrcPduId = */ CANTP_RX_DIAG_P2P,
+	/* .SrcModule =  */ARC_PDUR_CANTP,
 	/* .PduRDestPdus = */ DiagRx_P2P_PduRDestinations
 };
 
@@ -85,7 +85,7 @@ const PduRRoutingPath_type DiagTx_P2A_PduRRoutingPath = {
 	/* .SduLength = */ 8,
 	/* .TpChunkSize = */0xDEAD,
 	/* .PduRDefaultValue = */{0xDB,NULL},
-	/* .SrcPduId = */ DCM_RX_DIAG_P2A,
+	/* .SrcPduId = */ DCM_TX_DIAG_P2A,
 	/* .SrcModule =  */ARC_PDUR_COM,
 	/* .PduRDestPdus = */ DiagTx_P2A_PduRDestinations
 };
@@ -93,8 +93,8 @@ const PduRRoutingPath_type DiagRx_P2A_PduRRoutingPath = {
 	/* .SduLength = */ 8,
 	/* .TpChunkSize = */0xDEAD,
 	/* .PduRDefaultValue = */{0xDB,NULL},
-	/* .SrcPduId = */ CANIF_RX_DIAG_P2A,
-	/* .SrcModule =  */ARC_PDUR_CANIF,
+	/* .SrcPduId = */ CANTP_RX_DIAG_P2A,
+	/* .SrcModule =  */ARC_PDUR_CANTP,
 	/* .PduRDestPdus = */ DiagRx_P2A_PduRDestinations
 };
 const PduRRoutingPath_type * const PduRRoutingPaths[] = { 

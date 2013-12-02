@@ -157,6 +157,19 @@ static void Can_TxMainThread(uint32_t ctrl)
 	sockaddr.sin_family = AF_INET;
 	sockaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 	sockaddr.sin_port = (u_short)htons(8000+1000*ctrl);
+
+	{
+		// do fast to indicate the server a node port on
+		while(0u == canHw->port)Sleep(1);
+		msg[0] = (uint8)(canHw->port>>24);
+		msg[1] = (uint8)(canHw->port>>16);
+		msg[2] = (uint8)(canHw->port>>8);
+		msg[3] = (uint8)(canHw->port);
+		ConnectSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		connect(ConnectSocket, (SOCKADDR *) & sockaddr, sizeof (SOCKADDR));
+		send(ConnectSocket,(const char*)msg,4,0);
+		closesocket(ConnectSocket);
+	}
 	for(;;)
 	{
 		int i;

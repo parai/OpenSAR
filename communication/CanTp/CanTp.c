@@ -756,6 +756,7 @@ static INLINE void handleSingleFrame(const CanTp_RxNSduType *rxConfig,
 		PduR_CanTpRxIndication(rxConfig->PduR_PduId, NTFRSLT_OK);
 		rxRuntime->iso15765.state = IDLE;
 		rxRuntime->mode = CANTP_RX_WAIT;
+
 	} else if (ret == BUFREQ_BUSY) {
 		if (rxConfig->CanTpAddressingFormant == CANTP_STANDARD) {
 			data = &rxPduData->SduDataPtr[1];

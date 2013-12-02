@@ -21,13 +21,6 @@ void StartupHook( void )
 
 	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
 
-	Can_PduType pdu;
-	pdu.id = 0;
-	pdu.length = 8;
-	pdu.sdu = "Notify";
-	pdu.swPduHandle = 0x55;
-	Can_Write(CAN_CTRL_0_HTH,&pdu);
-
 }
 void ShutdownHook( StatusType Error )
 {

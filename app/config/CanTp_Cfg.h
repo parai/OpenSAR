@@ -15,13 +15,11 @@
 #define CANTP_VERSION_INFO_API STD_OFF   /**< Build version info API */
 #define CANTP_DEV_ERROR_DETECT STD_OFF
 
-/* CanTp Rx NSdu Id */
+/* CanTp NSdu Id */
 #define CANTP_RX_DIAG_P2P		0
 #define CANTP_RX_DIAG_P2A		1
-
-/* CanTp Tx NSdu Id */
-#define CANTP_TX_DIAG_P2P		0
-#define CANTP_TX_DIAG_P2A		1
+#define CANTP_TX_DIAG_P2P		2
+#define CANTP_TX_DIAG_P2A		3
 
 extern const CanTp_ConfigType CanTpConfig;
 extern const CanTp_NSduType CanTpNSduConfigList[];

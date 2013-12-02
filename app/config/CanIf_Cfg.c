@@ -125,7 +125,7 @@ const CanIf_InitHohConfigType CanIfHohConfigData[] =
 const CanIf_TxPduConfigType CanIfTxPduConfigData[] = 
 {
 	{
-		/*CanIfTxPduId =*/ CANIF_TX_DIAG_P2P,
+		/*CanIfTxPduId =*/ CANTP_TX_DIAG_P2P,
 		/*CanIfCanTxPduIdCanId =*/ 0x732, // DiagP2P
 		/*CanIfCanTxPduIdDlc =*/ 8,
 		/*CanIfCanTxPduType =*/ CANIF_PDU_TYPE_STATIC,
@@ -138,7 +138,7 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
 		/*PduIdRef =*/ NULL
 	},
 	{
-		/*CanIfTxPduId =*/ CANIF_TX_DIAG_P2A,
+		/*CanIfTxPduId =*/ CANTP_TX_DIAG_P2A,
 		/*CanIfCanTxPduIdCanId =*/ 0x742, // DiagP2A
 		/*CanIfCanTxPduIdDlc =*/ 8,
 		/*CanIfCanTxPduType =*/ CANIF_PDU_TYPE_STATIC,
@@ -155,7 +155,7 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
 const CanIf_RxPduConfigType CanIfRxPduConfigData[] = 
 {
 	{
-		/*CanIfCanRxPduId =*/ CANIF_RX_DIAG_P2P,
+		/*CanIfCanRxPduId =*/ CANTP_RX_DIAG_P2P,
 		/*CanIfCanRxPduCanId =*/ 0x731, // DiagP2P
 		/*CanIfCanRxPduDlc =*/ 3,
 #if ( CANIF_CANPDUID_READDATA_API == STD_ON )
@@ -173,7 +173,7 @@ const CanIf_RxPduConfigType CanIfRxPduConfigData[] =
 		/*CanIfCanRxPduCanIdMask =*/ 0x7FF
 	},
 	{
-		/*CanIfCanRxPduId =*/ CANIF_RX_DIAG_P2A,
+		/*CanIfCanRxPduId =*/ CANTP_RX_DIAG_P2A,
 		/*CanIfCanRxPduCanId =*/ 0x741, // DiagP2A
 		/*CanIfCanRxPduDlc =*/ 3,
 #if ( CANIF_CANPDUID_READDATA_API == STD_ON )
