@@ -69,7 +69,7 @@ const PduRRoutingPath_type DiagTx_P2P_PduRRoutingPath = {
 	/* .TpChunkSize = */0xDEAD,
 	/* .PduRDefaultValue = */{0xDB,NULL},
 	/* .SrcPduId = */ DCM_TX_DIAG_P2P,
-	/* .SrcModule =  */ARC_PDUR_COM,
+	/* .SrcModule =  */ARC_PDUR_DCM,
 	/* .PduRDestPdus = */ DiagTx_P2P_PduRDestinations
 };
 const PduRRoutingPath_type DiagRx_P2P_PduRRoutingPath = {
@@ -86,7 +86,7 @@ const PduRRoutingPath_type DiagTx_P2A_PduRRoutingPath = {
 	/* .TpChunkSize = */0xDEAD,
 	/* .PduRDefaultValue = */{0xDB,NULL},
 	/* .SrcPduId = */ DCM_TX_DIAG_P2A,
-	/* .SrcModule =  */ARC_PDUR_COM,
+	/* .SrcModule =  */ARC_PDUR_DCM,
 	/* .PduRDestPdus = */ DiagTx_P2A_PduRDestinations
 };
 const PduRRoutingPath_type DiagRx_P2A_PduRRoutingPath = {

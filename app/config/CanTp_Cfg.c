@@ -106,10 +106,22 @@ const CanTp_RxIdType CanTp_RxIdList[] =
 	//CANTP_RX_DIAG_P2P
 	{
 		.CanTpAddressingMode =  CANTP_STANDARD,
-		.CanTpNSduIndex =  CANTP_TX_DIAG_P2P,
-		.CanTpReferringTxIndex =  1,
+		.CanTpNSduIndex =  CANTP_RX_DIAG_P2P,
+		.CanTpReferringTxIndex =  CANTP_TX_DIAG_P2P,
 	},
 	//CANTP_RX_DIAG_P2A
+	{
+		.CanTpAddressingMode =  CANTP_STANDARD,
+		.CanTpNSduIndex =  CANTP_RX_DIAG_P2A,
+		.CanTpReferringTxIndex =  CANTP_TX_DIAG_P2A,
+	},
+	//CANTP_TX_DIAG_P2P
+	{
+		.CanTpAddressingMode =  CANTP_STANDARD,
+		.CanTpNSduIndex =  CANTP_TX_DIAG_P2P,
+		.CanTpReferringTxIndex =  0xFFFF,
+	},
+	//CANTP_TX_DIAG_P2A
 	{
 		.CanTpAddressingMode =  CANTP_STANDARD,
 		.CanTpNSduIndex =  CANTP_TX_DIAG_P2A,
