@@ -41,6 +41,7 @@ static Aach_Type sArch;
 
 void OsIdle(void)
 {
+
 	for(;;)
 	{
 		if(cArchIsrDisnabled == sArch.imask )
@@ -182,14 +183,26 @@ void Os_ArchSwapContext(OsTaskVarType *old,OsTaskVarType *new) {
 	}
 	else
 	{
+		boolean bSet = False;
 		while(cMgrIdle != sArch.mgrState) Sleep(0);
-		WaitForSingleObject(sArch.cirticalM,INFINITE);
-		assert(cMgrIdle == sArch.mgrState);
-		sArch.mgrState = cMgrSwapContext;
-		sArch.old = old;
-		sArch.new = new;
-		SetEvent(sArch.mgrEvent);
-		ReleaseMutex( sArch.cirticalM );
+		do
+		{
+			WaitForSingleObject(sArch.cirticalM,INFINITE);
+			if(cMgrIdle == sArch.mgrState)
+			{
+				sArch.mgrState = cMgrSwapContext;
+				sArch.old = old;
+				sArch.new = new;
+				bSet = True;
+				SetEvent(sArch.mgrEvent);
+			}
+			else
+			{
+				bSet = False;
+			}
+			ReleaseMutex( sArch.cirticalM );
+			Sleep(0);
+		}while(False == bSet);
 	}
 }
 static void arch_swap_context(OsTaskVarType *old,OsTaskVarType *new){
@@ -290,15 +303,27 @@ static void arch_os_manager(void)
 }
 void Os_ArchSwapContextTo(OsTaskVarType *old,OsTaskVarType *new){
 	// Here is the entry point to start Task
+	boolean bSet = False;
 	while(cMgrIdle != sArch.mgrState) Sleep(0);
-	WaitForSingleObject(sArch.cirticalM,INFINITE);
-	assert(cMgrIdle == sArch.mgrState);
-	sArch.mgrState = cMgrSwapContext2;
-	sArch.old = old;
-	sArch.new = new;
-	SetEvent(sArch.mgrEvent);
-	ReleaseMutex( sArch.cirticalM );
-	Sleep(0);
+	do
+	{
+		WaitForSingleObject(sArch.cirticalM,INFINITE);
+		if(cMgrIdle == sArch.mgrState)
+		{
+			sArch.mgrState = cMgrSwapContext2;
+			sArch.old = old;
+			sArch.new = new;
+			bSet = True;
+			SetEvent(sArch.mgrEvent);
+		}
+		else
+		{
+			bSet = False;
+		}
+		ReleaseMutex( sArch.cirticalM );
+		Sleep(0);
+	}while(False == bSet);
+
 	if(FALSE == sArch.isMgrRunning)
 	{
 		sArch.isMgrRunning = TRUE;
@@ -313,21 +338,29 @@ void *Os_ArchGetStackPtr( void ) {
 
 void arch_generate_irqn(IrqType IRQn)
 {
+	boolean bSet = False;
 	assert( (IRQn<NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS) && (IRQn > 0));
+	// From the test result, better do a printf
+	printf(">> IRQn = %d <<\n",IRQn);
 	while(cMgrIdle != sArch.mgrState) Sleep(0);
-	WaitForSingleObject(sArch.cirticalM,INFINITE);
-	if(cMgrIdle == sArch.mgrState)
+	assert(cMgrIdle == sArch.mgrState);
+	do
 	{
-		sArch.pendIsrB |= (1UL << IRQn);
-		sArch.mgrState = cMgrIsrReq;
-		SetEvent(sArch.mgrEvent);
-	}
-	else
-	{
-		// so waht maybe a system error
-		printf("X");
-	}
-	ReleaseMutex( sArch.cirticalM );
+		WaitForSingleObject(sArch.cirticalM,INFINITE);
+		if(cMgrIdle == sArch.mgrState)
+		{
+			sArch.pendIsrB |= (1UL << IRQn);
+			sArch.mgrState = cMgrIsrReq;
+			SetEvent(sArch.mgrEvent);
+			bSet = True;
+		}
+		else
+		{
+			bSet = False;
+		}
+		ReleaseMutex( sArch.cirticalM );
+		Sleep(0);
+	}while(False == bSet);
 }
 
 

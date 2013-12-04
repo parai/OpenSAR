@@ -42,7 +42,7 @@ void TaskEvent(void)
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_Event1000ms);
-		// printf("TaskEvent is running.\n");
+		printf("#");
 		(void)ClearEvent(EVENT_MASK_Event1000ms);
 	}
 	TerminateTask();
