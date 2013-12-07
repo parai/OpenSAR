@@ -296,6 +296,7 @@ static boolean findTxPduIdParentConfigurationLeafs(PduIdType dcmTxPduId,
 			*runtime = (*protocolRow)->DslRunTimeProtocolParameters;
 			if( (dcmTxPduId == (*protocolTx)->DcmDslProtocolDcmTxPduId) && (activeProtocol == (*protocolRow)->DslProtocolID) ) {
 				found = TRUE;
+				DEBUG( DEBUG_MEDIUM, "True=findTxPduIdParentConfigurationLeafs(dcmTxPduId=%d,i=%d)\n", dcmTxPduId,i);
 			}
 			i++;
 		}

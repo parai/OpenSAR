@@ -76,7 +76,7 @@ const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_LS[]=
 {
 	{
 		.CanIfHrhType = CAN_ARC_HANDLE_TYPE_BASIC,
-		.CanIfSoftwareFilterHrh = FALSE,
+		.CanIfSoftwareFilterHrh = TRUE, // Must Be True
 		.CanIfCanControllerHrhIdRef = CANIF_CHL_LS,
 		.CanIfHrhIdSymRef = CAN_CTRL_0_HRH,
 		.CanIfHrhRangeConfig = NULL,
@@ -98,7 +98,7 @@ const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_HS[]=
 {
 	{
 		.CanIfHrhType = CAN_ARC_HANDLE_TYPE_BASIC,
-		.CanIfSoftwareFilterHrh = FALSE,
+		.CanIfSoftwareFilterHrh = TRUE,	// Must Be True
 		.CanIfCanControllerHrhIdRef = CANIF_CHL_HS,
 		.CanIfHrhIdSymRef = CAN_CTRL_1_HRH,
 		.CanIfHrhRangeConfig = NULL,
@@ -157,7 +157,7 @@ const CanIf_RxPduConfigType CanIfRxPduConfigData[] =
 	{
 		.CanIfCanRxPduId = CANTP_DIAG_P2P_REQ,
 		.CanIfCanRxPduCanId = 0x731, // DiagP2P
-		.CanIfCanRxPduDlc = 3,
+		.CanIfCanRxPduDlc = 8,
 #if ( CANIF_CANPDUID_READDATA_API == STD_ON )
 		.CanIfReadRxPduData = TRUE,
 #endif
@@ -175,7 +175,7 @@ const CanIf_RxPduConfigType CanIfRxPduConfigData[] =
 	{
 		.CanIfCanRxPduId = CANTP_DIAG_P2A_REQ,
 		.CanIfCanRxPduCanId = 0x741, // DiagP2A
-		.CanIfCanRxPduDlc = 3,
+		.CanIfCanRxPduDlc = 8,
 #if ( CANIF_CANPDUID_READDATA_API == STD_ON )
 		.CanIfReadRxPduData = TRUE,
 #endif

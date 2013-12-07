@@ -22,10 +22,10 @@
 from Osek import *
 import re
 
-uds_tx_id = 0x731
-uds_rx_id = 0x732
-# uds_tx_id = 0x741
-# uds_rx_id = 0x742
+# uds_tx_id = 0x731
+# uds_rx_id = 0x732
+uds_tx_id = 0x741
+uds_rx_id = 0x742
 UdsAckEvent = DeclareEvent()
 
 uds_ack = []

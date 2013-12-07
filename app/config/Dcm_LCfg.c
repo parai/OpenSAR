@@ -518,7 +518,7 @@ const Dcm_DsdServiceTableType DsdServiceTable[] = {
 		 .DsdService =  vServiceTable_1_serviceList,
 		 .Arc_EOL =  FALSE
 	},
-	{ // Dummy For EOL 
+	{ // Dummy For EOL
 		 .DsdSidTabId =  0xDB,
 		 .DsdService =  NULL,
 		 .Arc_EOL =  TRUE
@@ -590,20 +590,17 @@ const Dcm_DslCallbackDCMRequestServiceType DCMRequestServiceList[] = {
 		.StopProtocol =  vRequestService_1_Stop,
 		.Arc_EOL =  FALSE
 	},
-	{ // Dummy For EOL
-		.StartProtocol =  NULL,
-		.StopProtocol =  NULL,
+	{
 		.Arc_EOL =  TRUE
 	}
 };
 
 const Dcm_DslServiceRequestIndicationType DCMServiceRequestIndicationList[] = {
-	{ // vRequestService_1
+	{
 		.Indication =  vRequestService_1_Indication,
 		.Arc_EOL =  FALSE
 	},
-	{ // Dummy For EOL
-		.Indication =  NULL,
+	{
 		.Arc_EOL =  TRUE
 	}
 };
@@ -620,7 +617,7 @@ const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
 		.Arc_EOL =  FALSE
 	},
 	{
-		.DslMainConnectionParent =  &DslMainConnectionList[0],
+		.DslMainConnectionParent =  &DslMainConnectionList[1],
 		.DslProtocolAddrType =  DCM_PROTOCOL_PHYSICAL_ADDR_TYPE,
 		.DcmDslProtocolRxPduId =  PDUR_DIAG_P2A_REQ,
 		.DcmDslProtocolRxTesterSourceAddr_v4 =  0,		//.Value is not configurable
@@ -633,19 +630,19 @@ const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
 };
 
 const Dcm_DslProtocolTxType DcmDslProtocolTxList[] = {
-	{// vProtocol_1->vConnection0->vTxChannel0
+	{
 		.DslMainConnectionParent =  &DslMainConnectionList[0],
 		.DcmDslProtocolTxPduId =  PDUR_DIAG_P2P_ACK,
+		.DcmDslProtocolDcmTxPduId = DCM_DIAG_P2P_ACK,
 		.Arc_EOL =  FALSE
 	},
-	{// vProtocol_1->vConnection0->vTxChannel0
+	{
 		.DslMainConnectionParent =  &DslMainConnectionList[1],
 		.DcmDslProtocolTxPduId =  PDUR_DIAG_P2A_ACK,
+		.DcmDslProtocolDcmTxPduId = DCM_DIAG_P2A_ACK,
 		.Arc_EOL =  FALSE
 	},
-	{// Dummy for EOL
-		.DslMainConnectionParent =  NULL,
-		.DcmDslProtocolTxPduId =  0xDB,
+	{
 		.Arc_EOL =  TRUE
 	}
 };
@@ -686,14 +683,14 @@ const Dcm_DslConnectionType DslConnectionList[] = {
 		.DslResponseOnEvent =  NULL,	//.Value is not configurable
 		.Arc_EOL =  FALSE
 	},
-	{//Dummy For EOL
+	{
 		.Arc_EOL =  TRUE
 	}
 };
 
 extern const Dcm_DslProtocolTimingRowType ProtocolTimingList[];
 
-Dcm_DslRunTimeProtocolParametersType dcmDslRuntimeVariables[1];
+Dcm_DslRunTimeProtocolParametersType dcmDslRuntimeVariables[2]; // for DIAG_P2P and DIAG_P2A
 const Dcm_DslProtocolRowType DslProtocolRowList[]= {
 	{
 		.DslProtocolID =  DCM_UDS_ON_CAN,
@@ -701,12 +698,26 @@ const Dcm_DslProtocolRowType DslProtocolRowList[]= {
 		.DslProtocolPreemptTimeout =  0,	// not supported
 		.DslProtocolPriority =  0,	// not supported
 		.DslProtocolTransType =  DCM_PROTOCOL_TRANS_TYPE_1,
-		.DslProtocolRxBufferID =  &DcmDslBufferList[0],//vDcmBuffer_1_RX
-		.DslProtocolTxBufferID =  &DcmDslBufferList[1],//vDcmBuffer_1_TX
-		.DslProtocolSIDTable =  &DsdServiceTable[0],//vServiceTable_1
+		.DslProtocolRxBufferID =  &DcmDslBufferList[0],//DIAG_P2P
+		.DslProtocolTxBufferID =  &DcmDslBufferList[1],
+		.DslProtocolSIDTable =  &DsdServiceTable[0],
 		.DslProtocolTimeLimit =  &ProtocolTimingList[0],//vTiming_1
 		.DslConnection =  DslConnectionList,
 		.DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[0],
+		.Arc_EOL =  FALSE
+	},
+	{
+		.DslProtocolID =  DCM_UDS_ON_CAN,
+		.DslProtocolIsParallelExecutab =  FALSE, // not supported
+		.DslProtocolPreemptTimeout =  0,	// not supported
+		.DslProtocolPriority =  0,	// not supported
+		.DslProtocolTransType =  DCM_PROTOCOL_TRANS_TYPE_1,
+		.DslProtocolRxBufferID =  &DcmDslBufferList[2],//DIAG_P2P
+		.DslProtocolTxBufferID =  &DcmDslBufferList[3],
+		.DslProtocolSIDTable =  &DsdServiceTable[0],
+		.DslProtocolTimeLimit =  &ProtocolTimingList[0],
+		.DslConnection =  DslConnectionList,
+		.DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[1],
 		.Arc_EOL =  FALSE
 	},
 	{
@@ -721,20 +732,15 @@ const Dcm_DslProtocolType DslProtocol = {
 };
 
 const Dcm_DslProtocolTimingRowType ProtocolTimingList[] = {
-	{//vTiming_1
-		.TimStrP2ServerMax =  10,
-		.TimStrP2ServerMin =  5,
+	{
+		.TimStrP2ServerMax =  5000,
+		.TimStrP2ServerMin =  3000,
 		.TimStrP2StarServerMax =  0,		//.Value is not configurable
 		.TimStrP2StarServerMin =  0,		//.Value is not configurable
-		.TimStrS3Server =  10,
+		.TimStrS3Server =  5000,
 		.Arc_EOL =  FALSE
 	},
-	{//Dummy For EOL
-		.TimStrP2ServerMax =  0,
-		.TimStrP2ServerMin =  0,
-		.TimStrP2StarServerMax =  0,		//.Value is not configurable
-		.TimStrP2StarServerMin =  0,		//.Value is not configurable
-		.TimStrS3Server =  0,
+	{
 		.Arc_EOL =  TRUE
 	},
 };
@@ -750,10 +756,7 @@ const Dcm_DslSessionControlType SessionControlList[] = {
 		 .ConfirmationRespPend =  NULL,
 		 .Arc_EOL =  FALSE
 	},
-	{//Dummy For EOL
-		 .GetSesChgPermission =  NULL,
-		 .ChangeIndication =  NULL,
-		 .ConfirmationRespPend =  NULL,
+	{
 		 .Arc_EOL =  TRUE
 	}
 };
