@@ -32,16 +32,16 @@ uds_ack = []
 
 def UdsOnCanUsage():
     print "Usage:"
-    print "\t python uds.py --port port"
-    print "Example: python uds.py --port 8999"
+    print "\t python uds.py --port port txid rxid"
+    print "Example: python uds.py --port 8999 0x731 0x732"
 
 def UdsConfig():
     global uds_tx_id, uds_rx_id
     print 'Welcome to OpenOSEK UDS client cnter!'
-    value = raw_input('Please Input the UDS client Tx CAN ID(default = 0x731):')
+    value = raw_input('Please Input the UDS client Tx CAN ID(default = %s):'%(hex(uds_tx_id)))
     if('' != value):
         uds_tx_id = int(value,16)
-    value = raw_input('Please Input the UDS client Rx CAN ID(default = 0x732):')
+    value = raw_input('Please Input the UDS client Rx CAN ID(default = %s):'%(hex(uds_rx_id)))
     if('' != value):
         uds_rx_id = int(value,16)
     print 'Tx = %s, Rx = %s.'%(hex(uds_tx_id),hex(uds_rx_id))
@@ -65,7 +65,7 @@ def Uds_RxIndication(data):
     SetEvent(UdsAckEvent)
 def UdsOnCanClient(port = 8999):
     global uds_tx_id, uds_rx_id
-    #UdsConfig()
+    UdsConfig()
     Can_Init(None,port,port-port%1000)
     CanTp_Init(Uds_RxIndication,uds_rx_id,uds_tx_id)
     while True:
@@ -224,10 +224,13 @@ UdsBuildIn = {
     'CT':biCT
 }
 def main(argc,argv):
-    if(argc != 3):
+    global uds_tx_id,uds_rx_id
+    if(argc != 5):
         UdsOnCanUsage()
         return
     if(argv[1] == '--port'):
+        uds_tx_id = int(argv[3],16)
+        uds_rx_id = int(argv[4],16)
         UdsOnCanClient(int(argv[2]))
        
 if __name__ == '__main__': 
