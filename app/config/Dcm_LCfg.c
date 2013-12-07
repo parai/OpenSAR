@@ -411,7 +411,7 @@ const Dcm_DspType Dsp = {
 //*									DSD									*
 //***********************************************************************
 
-const Dcm_DsdServiceType vServiceTable_1_serviceList[] = {
+const Dcm_DsdServiceType DIAG_P2P_serviceList[] = {
 	{ // vService0_session_control
 		 .DsdSidTabServiceId = SID_DIAGNOSTIC_SESSION_CONTROL,
 		 .DsdSidTabSubfuncAvail = FALSE,
@@ -513,14 +513,12 @@ const Dcm_DsdServiceType vServiceTable_1_serviceList[] = {
 };
 
 const Dcm_DsdServiceTableType DsdServiceTable[] = {	
-	{ // vServiceTable_1
+	{
 		 .DsdSidTabId =  0,
-		 .DsdService =  vServiceTable_1_serviceList,
+		 .DsdService =  DIAG_P2P_serviceList,
 		 .Arc_EOL =  FALSE
 	},
-	{ // Dummy For EOL
-		 .DsdSidTabId =  0xDB,
-		 .DsdService =  NULL,
+	{
 		 .Arc_EOL =  TRUE
 	}
 };
@@ -609,7 +607,7 @@ extern const Dcm_DslMainConnectionType DslMainConnectionList[];
 
 const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
 	{
-		.DslMainConnectionParent =  &DslMainConnectionList[0],
+		.DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2P_REQ],
 		.DslProtocolAddrType =  DCM_PROTOCOL_PHYSICAL_ADDR_TYPE,
 		.DcmDslProtocolRxPduId =  PDUR_DIAG_P2P_REQ,
 		.DcmDslProtocolRxTesterSourceAddr_v4 =  0,		//.Value is not configurable
@@ -617,7 +615,7 @@ const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
 		.Arc_EOL =  FALSE
 	},
 	{
-		.DslMainConnectionParent =  &DslMainConnectionList[1],
+		.DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2A_REQ],
 		.DslProtocolAddrType =  DCM_PROTOCOL_PHYSICAL_ADDR_TYPE,
 		.DcmDslProtocolRxPduId =  PDUR_DIAG_P2A_REQ,
 		.DcmDslProtocolRxTesterSourceAddr_v4 =  0,		//.Value is not configurable
@@ -631,13 +629,13 @@ const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
 
 const Dcm_DslProtocolTxType DcmDslProtocolTxList[] = {
 	{
-		.DslMainConnectionParent =  &DslMainConnectionList[0],
+		.DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2P_ACK],
 		.DcmDslProtocolTxPduId =  PDUR_DIAG_P2P_ACK,
 		.DcmDslProtocolDcmTxPduId = DCM_DIAG_P2P_ACK,
 		.Arc_EOL =  FALSE
 	},
 	{
-		.DslMainConnectionParent =  &DslMainConnectionList[1],
+		.DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2A_ACK],
 		.DcmDslProtocolTxPduId =  PDUR_DIAG_P2A_ACK,
 		.DcmDslProtocolDcmTxPduId = DCM_DIAG_P2A_ACK,
 		.Arc_EOL =  FALSE
@@ -651,18 +649,18 @@ extern const Dcm_DslConnectionType DslConnectionList[];
 
 const Dcm_DslMainConnectionType DslMainConnectionList[] = {
 	{
-		.DslConnectionParent =  &DslConnectionList[0],
+		.DslConnectionParent =  &DslConnectionList[DCM_DIAG_P2P_REQ],
 		.DslPeriodicTransmissionConRef =  NULL,		//.Value is not configurable
 		.DslROEConnectionRef =  NULL,				//.Value is not configurable
 		.DslProtocolRx =  NULL,						//.Value is not configurable
-		.DslProtocolTx =  &DcmDslProtocolTxList[0],
+		.DslProtocolTx =  &DcmDslProtocolTxList[DCM_DIAG_P2P_ACK],
 	},
 	{
-		.DslConnectionParent =  &DslConnectionList[1],
+		.DslConnectionParent =  &DslConnectionList[DCM_DIAG_P2A_REQ],
 		.DslPeriodicTransmissionConRef =  NULL,		//.Value is not configurable
 		.DslROEConnectionRef =  NULL,				//.Value is not configurable
 		.DslProtocolRx =  NULL,						//.Value is not configurable
-		.DslProtocolTx =  &DcmDslProtocolTxList[1],
+		.DslProtocolTx =  &DcmDslProtocolTxList[DCM_DIAG_P2A_ACK],
 	},
 };
 
@@ -670,15 +668,15 @@ extern const Dcm_DslProtocolRowType DslProtocolRowList[];
 
 const Dcm_DslConnectionType DslConnectionList[] = {
 	{
-		.DslProtocolRow =  &DslProtocolRowList[0],
-		.DslMainConnection =  &DslMainConnectionList[0],
+		.DslProtocolRow =  &DslProtocolRowList[DCM_DIAG_P2P_REQ],
+		.DslMainConnection =  &DslMainConnectionList[DCM_DIAG_P2P_REQ],
 		.DslPeriodicTransmission =  NULL,	//.Value is not configurable
 		.DslResponseOnEvent =  NULL,	//.Value is not configurable
 		.Arc_EOL =  FALSE
 	},
 	{
-		.DslProtocolRow =  &DslProtocolRowList[1],
-		.DslMainConnection =  &DslMainConnectionList[1],
+		.DslProtocolRow =  &DslProtocolRowList[DCM_DIAG_P2A_REQ],
+		.DslMainConnection =  &DslMainConnectionList[DCM_DIAG_P2A_REQ],
 		.DslPeriodicTransmission =  NULL,	//.Value is not configurable
 		.DslResponseOnEvent =  NULL,	//.Value is not configurable
 		.Arc_EOL =  FALSE
@@ -698,12 +696,12 @@ const Dcm_DslProtocolRowType DslProtocolRowList[]= {
 		.DslProtocolPreemptTimeout =  0,	// not supported
 		.DslProtocolPriority =  0,	// not supported
 		.DslProtocolTransType =  DCM_PROTOCOL_TRANS_TYPE_1,
-		.DslProtocolRxBufferID =  &DcmDslBufferList[0],//DIAG_P2P
-		.DslProtocolTxBufferID =  &DcmDslBufferList[1],
+		.DslProtocolRxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2P_REQ+0],
+		.DslProtocolTxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2P_REQ+1],
 		.DslProtocolSIDTable =  &DsdServiceTable[0],
-		.DslProtocolTimeLimit =  &ProtocolTimingList[0],//vTiming_1
+		.DslProtocolTimeLimit =  &ProtocolTimingList[0],
 		.DslConnection =  DslConnectionList,
-		.DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[0],
+		.DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[DCM_DIAG_P2P_REQ],
 		.Arc_EOL =  FALSE
 	},
 	{
@@ -712,12 +710,12 @@ const Dcm_DslProtocolRowType DslProtocolRowList[]= {
 		.DslProtocolPreemptTimeout =  0,	// not supported
 		.DslProtocolPriority =  0,	// not supported
 		.DslProtocolTransType =  DCM_PROTOCOL_TRANS_TYPE_1,
-		.DslProtocolRxBufferID =  &DcmDslBufferList[2],//DIAG_P2P
-		.DslProtocolTxBufferID =  &DcmDslBufferList[3],
+		.DslProtocolRxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2A_REQ+0],
+		.DslProtocolTxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2A_REQ+1],
 		.DslProtocolSIDTable =  &DsdServiceTable[0],
 		.DslProtocolTimeLimit =  &ProtocolTimingList[0],
 		.DslConnection =  DslConnectionList,
-		.DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[1],
+		.DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[DCM_DIAG_P2A_REQ],
 		.Arc_EOL =  FALSE
 	},
 	{
@@ -733,7 +731,7 @@ const Dcm_DslProtocolType DslProtocol = {
 
 const Dcm_DslProtocolTimingRowType ProtocolTimingList[] = {
 	{
-		.TimStrP2ServerMax =  5000,
+		.TimStrP2ServerMax =  5000,		// ms
 		.TimStrP2ServerMin =  3000,
 		.TimStrP2StarServerMax =  0,		//.Value is not configurable
 		.TimStrP2StarServerMin =  0,		//.Value is not configurable

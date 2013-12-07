@@ -296,7 +296,6 @@ static boolean findTxPduIdParentConfigurationLeafs(PduIdType dcmTxPduId,
 			*runtime = (*protocolRow)->DslRunTimeProtocolParameters;
 			if( (dcmTxPduId == (*protocolTx)->DcmDslProtocolDcmTxPduId) && (activeProtocol == (*protocolRow)->DslProtocolID) ) {
 				found = TRUE;
-				DEBUG( DEBUG_MEDIUM, "True=findTxPduIdParentConfigurationLeafs(dcmTxPduId=%d,i=%d)\n", dcmTxPduId,i);
 			}
 			i++;
 		}
@@ -535,6 +534,7 @@ void DslMain(void) {
 				if( TRUE == runtime->S3ServerStarted ) {
 					DECREMENT(runtime->S3ServerTimeoutCount);
 					if (runtime->S3ServerTimeoutCount == 0) {
+						DEBUG(DEBUG_MEDIUM,"S3Server Timeout!\n");
 						changeDiagnosticSession(runtime, DCM_DEFAULT_SESSION); /** @req DCM140 */
 						runtime->protocolStarted = FALSE;
 						if( (NULL != DcmDslRunTimeData.activeProtocol) &&
@@ -547,6 +547,13 @@ void DslMain(void) {
 						}
 					}
 				}
+			}
+			else
+			{
+				// TODO: what if no session control done by the client, such as just send some other service to cause
+				// protocolStarted= True, then when dead as ...
+				// No reset will be performed.
+				// A client mistake action will cause the server fixed to the protocol started.
 			}
 			switch (runtime->externalTxBufferStatus) { // #### TX buffer state. ####
 			case NOT_IN_USE:

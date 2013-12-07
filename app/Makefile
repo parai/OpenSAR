@@ -28,7 +28,8 @@ INCDIR = 	-I$(BD)/include 		\
 			-I$(BD)/system/SchM			\
 			-I$(BD)/diagnostic/Dcm
 
-MACROS = -DWIN32 -DUSE_DEBUG_PRINTF	\
+MACROS = 	-DWIN32 			\
+			-DUSE_DEBUG_PRINTF	\
 			-DUSE_CANIF	\
 			-DUSE_CANTP	\
 			-DUSE_PDUR	\
@@ -80,8 +81,8 @@ all:$(obj-y)
 run:
 	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)
 	@(start $(OUT)/$(TARGET).exe)	
-	@(start python $(BD)/tools/can/uds.py --port 8999 0x731 0x732)
-	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
+	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
+	@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)
 	@echo ">>>>>>>>>>>>>>>>>>>> CLEAN $(TARGET) Objs Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"		

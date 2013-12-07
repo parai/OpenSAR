@@ -22,6 +22,7 @@
 #define DCM_PERIODICTRANSMIT_MEDIUM			30
 #define DCM_PERIODICTRANSMIT_FAST			15
 
+// index
 #define DCM_DIAG_P2P_REQ		0
 #define DCM_DIAG_P2A_REQ		1
 
