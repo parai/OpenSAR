@@ -488,25 +488,6 @@ class easyOsGui(QMainWindow):
         self.creGui()
         self.creMenu()
     def creMenu(self):
-        sItem=QAction(self.tr('Open'),self) 
-        sItem.setStatusTip('Open a OpenSAR Os configure file.')
-        self.connect(sItem,SIGNAL('triggered()'),self.mOpen)   
-        self.menuBar().addAction(sItem) 
-        
-        sItem=QAction(self.tr('Save'),self) 
-        sItem.setStatusTip('Save the OpenSAR Os configure file.')
-        self.connect(sItem,SIGNAL('triggered()'),self.mSave)  
-        self.menuBar().addAction(sItem)  
-         
-        sItem=QAction(self.tr('Generate'),self) 
-        sItem.setStatusTip('Generate OpenSAR Os configure C file.')
-        self.connect(sItem,SIGNAL('triggered()'),self.mGen)  
-        self.menuBar().addAction(sItem)
-        
-        sItem=QAction(self.tr('       '),self) 
-        self.menuBar().addAction(sItem)
-        sItem.setDisabled(True)
-        
         #  create Three three Action
         self.qAction1=QAction(self.tr('Action1'),self) 
         self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
@@ -581,32 +562,23 @@ class easyOsGui(QMainWindow):
             self.qAction2.setDisabled(True)
         else:
             self.qAction1.setDisabled(True)
-    def mOpen(self):
-        wfxml=QFileDialog.getOpenFileName(self, 'Open OpenSAR OS Configuration File.', 
-                '../../app/config/os.wfxml', 'OpenSAR OS(*.wfxml)');
-        if(wfxml==''):
-            return
+    def mOpen(self,pdir):
+        wfxml = '%s/os.wfxml'%(pdir)
         root = ET.parse(wfxml).getroot();
         self.easyTaskTree.loadXML(root)
         self.easyCounterTree.loadXML(root)
         self.easyAlarmTree.loadXML(root)
         self.qAction1.setDisabled(True)
         self.qAction2.setDisabled(True)
-    def mSave(self):
-        wfxml=QFileDialog.getSaveFileName(self, 'Save OpenSAR OS Configuration File.', 
-            '../../app/config/os.wfxml', 'OpenSAR OS(*.wfxml)');
-        if(wfxml==''):
-            return
+    def mSave(self,pdir):
+        wfxml = '%s/os.wfxml'%(pdir)
         OSROOT = ET.Element('OSROOT')
         OSROOT.append(self.easyTaskTree.toXML())
         OSROOT.append(self.easyCounterTree.toXML())
         OSROOT.append(self.easyAlarmTree.toXML())
         tree = ET.ElementTree(OSROOT)
         tree.write(wfxml, encoding="utf-8", xml_declaration=True);
-    def mGen(self):
+    def mGen(self,pdir):
         from gen.GenOS import GenOS
-        wfxml=QFileDialog.getOpenFileName(self, 'Get OpenSAR OS Configuration File.', 
-                '../../app/config/os.wfxml', 'OpenSAR OS(*.wfxml)');
-        if(wfxml==''):
-            return
+        wfxml = '%s/os.wfxml'%(pdir)
         GenOS(str(wfxml))

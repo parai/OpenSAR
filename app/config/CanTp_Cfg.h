@@ -16,10 +16,10 @@
 #define CANTP_DEV_ERROR_DETECT STD_OFF
 
 /* CanTp NSdu Id */
-#define CANTP_RX_DIAG_P2P		0
-#define CANTP_RX_DIAG_P2A		1
-#define CANTP_TX_DIAG_P2P		2
-#define CANTP_TX_DIAG_P2A		3
+#define CANTP_DIAG_P2P_REQ		0
+#define CANTP_DIAG_P2P_ACK		1
+#define CANTP_DIAG_P2A_REQ		2
+#define CANTP_DIAG_P2A_ACK		3
 
 extern const CanTp_ConfigType CanTpConfig;
 extern const CanTp_NSduType CanTpNSduConfigList[];

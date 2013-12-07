@@ -31,11 +31,11 @@
 #define CANIF_READRXPDU_NOTIF_STATUS_API    STD_OFF   // Not supported
 
 /* Tx PduId For CanIF */
-#define CANIF_TX_DIAG_P2P		0
-#define CANIF_TX_DIAG_P2A		1
+#define CANIF_DIAG_P2P_ACK		0
+#define CANIF_DIAG_P2A_ACK		1
 /* Rx PduId For CanIF */
-#define CANIF_RX_DIAG_P2P		0
-#define CANIF_RX_DIAG_P2A		1
+#define CANIF_DIAG_P2P_REQ		0
+#define CANIF_DIAG_P2A_REQ		1
 // Identifiers for the elements in CanIfControllerConfig[]
 // This is the ConfigurationIndex in CanIf_InitController()
 typedef enum {

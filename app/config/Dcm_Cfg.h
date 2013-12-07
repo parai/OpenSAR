@@ -8,25 +8,25 @@
 #define DCM_REQUEST_INDICATION_ENABLED    STD_ON  // Activate/Deactivate indication request mechanism.
 #define DCM_PAGEDBUFFER_ENABLED           STD_OFF	// Enable/disable page buffer mechanism (currently only disabled supported)
 
-#define DCM_DSL_BUFFER_LIST_LENGTH		2
-#define DCM_DSL_TX_PDU_ID_LIST_LENGTH		1
-#define DCM_DSL_RX_PDU_ID_LIST_LENGTH		1
+#define DCM_DSL_BUFFER_LIST_LENGTH			4
+#define DCM_DSL_TX_PDU_ID_LIST_LENGTH		2
+#define DCM_DSL_RX_PDU_ID_LIST_LENGTH		2
 
 #define DCM_MAIN_FUNCTION_PERIOD_TIME_MS	10
 
 #define DCM_LIMITNUMBER_PERIODDATA		5  //MaxNumberofSimultaneousPeriodictransmissions
-#define DCM_MAX_DDDSOURCE_NUMBER			7  //MaxSourcesforOneDynamicIdentifier
+#define DCM_MAX_DDDSOURCE_NUMBER		7  //MaxSourcesforOneDynamicIdentifier
 #define DCM_MAX_DDD_NUMBER				1  
 
 #define DCM_PERIODICTRANSMIT_SLOW			50
-#define DCM_PERIODICTRANSMIT_MEDIUM		30
+#define DCM_PERIODICTRANSMIT_MEDIUM			30
 #define DCM_PERIODICTRANSMIT_FAST			15
 
-#define DCM_RX_DIAG_P2P		0
-#define DCM_RX_DIAG_P2A		1
+#define DCM_DIAG_P2P_REQ		0
+#define DCM_DIAG_P2A_REQ		1
 
-#define DCM_TX_DIAG_P2P		0
-#define DCM_TX_DIAG_P2A		1
+#define DCM_DIAG_P2P_ACK		0
+#define DCM_DIAG_P2A_ACK		1
 
 
 
