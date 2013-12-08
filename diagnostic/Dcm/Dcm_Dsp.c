@@ -42,6 +42,8 @@
 #include "Mcu.h"
 #endif
 
+#include "debug.h"
+
 /*
  * Macros
  */
@@ -416,6 +418,7 @@ boolean DspCheckSessionLevel(Dcm_DspSessionRowType const* const* sessionLevelRef
 		}
 	}
 
+	DEBUG(DEBUG_MEDIUM,"DspCheckSessionLevel()=%s\n",(TRUE==levelFound)?"True":"False");
 	return levelFound;
 }
 

@@ -5,57 +5,50 @@
 #include "CanTp.h"
 #include "PduR.h"
 #include <stdio.h>
-/* 通知回调函数 */
-Std_ReturnType vSecurityLevel_1_GetSeed (uint8 *securityAccessDataRecord, uint8 *seed,
+#include "Diag.h"
+
+static uint32  diagRandomSeed = 0xDEADBEEF;
+Std_ReturnType Diag_GetSeed (uint8 *securityAccessDataRecord, uint8 *seed,
                         Dcm_NegativeResponseCodeType *errorCode)
 {
-    printf("in vSecurityLevel_1_GetSeed().\r\n");
-    *seed = 0xEF;
+	diagRandomSeed = (diagRandomSeed<<1u)-7;
+    printf("Diag_GetSeed(seed=0x%x).\r\n",diagRandomSeed);
+    seed[0] = (uint8)(diagRandomSeed>>24u);
+    seed[1] = (uint8)(diagRandomSeed>>16u);
+    seed[2] = (uint8)(diagRandomSeed>>8u);
+    seed[3] = (uint8)(diagRandomSeed);
     *errorCode = E_OK;
     return E_OK;
 }
-Std_ReturnType vSecurityLevel_1_CompKey (uint8 *key)
+Std_ReturnType Diag_CompKey (uint8 *key)
 {
-    printf("in vSecurityLevel_1_CompKey().\r\n");
-    if(*key == 0xEF)
+	uint32 diagKey,diagKey2;
+	diagKey = ((uint32)key[0]<<24u)+((uint32)key[1]<<16u)+((uint32)key[0]<<8u)+((uint32)key[0]);
+    printf("Diag_CompKey(key=0x%x).\r\n",diagKey);
+    diagKey2 = ((diagRandomSeed/7)<<3) - 111;
+    if(diagKey == diagKey2)
     {
-        return E_OK;
+    	return E_OK;
     }
     else
     {
-        return E_NOT_OK;
+    	return E_NOT_OK;
     }
 }
 
-Std_ReturnType vSecurityLevel_Locked_GetSeed (uint8 *securityAccessDataRecord, uint8 *seed,
-                            Dcm_NegativeResponseCodeType *errorCode)
+Std_ReturnType Diag_RequestServiceStart (Dcm_ProtocolType protocolID)
 {
-    printf("in vSecurityLevel_Locked_GetSeed().\r\n");
-    *seed = 0xEF;
-    *errorCode = E_OK;
+     printf("in Diag_RequestServiceStart().\r\n");
     return E_OK;
 }
-Std_ReturnType vSecurityLevel_Locked_CompKey (uint8 *key)
+Std_ReturnType Diag_RequestServiceStop (Dcm_ProtocolType protocolID)
 {
-    printf("in vSecurityLevel_Locked_CompKey().\r\n");
-    if(*key == 0xEF)
-    {
-        return E_OK;
-    }
-    else
-    {
-        return E_NOT_OK;
-    }
-}
-
-Std_ReturnType vRequestService_1_Start (Dcm_ProtocolType protocolID)
-{
-     printf("in vRequestService_1_Start().\r\n");
+    printf("in Diag_RequestServiceStop().\r\n");
     return E_OK;
 }
-Std_ReturnType vRequestService_1_Stop (Dcm_ProtocolType protocolID)
+Std_ReturnType Diag_RequestServiceIndication(uint8 *requestData, uint16 dataSize)
 {
-    printf("in vRequestService_1_Stop().\r\n");
+    printf("in  Diag_RequestServiceIndication().\r\n");
     return E_OK;
 }
 
@@ -153,11 +146,7 @@ Std_ReturnType vDid_1__ShortTermAdj_cbk(uint8 *controlOptionRecord,
     printf("in  vDid_1__ShortTermAdj_cbk().\r\n");
     return E_OK;
 }
-Std_ReturnType vRequestService_1_Indication(uint8 *requestData, uint16 dataSize)
-{
-    printf("in  vRequestService_1_Indication().\r\n[");
-    return E_OK;
-}
+
 Std_ReturnType vRoutine_1_Start(uint8 *inBuffer, uint8 *outBuffer,
                             Dcm_NegativeResponseCodeType *errorCode)
 {
