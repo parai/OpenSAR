@@ -21,6 +21,7 @@
 """
 from Osek import *
 import re
+import traceback
 
 # uds_tx_id = 0x731
 # uds_rx_id = 0x732
@@ -86,6 +87,7 @@ def UdsOnCanClient(port = 8999):
                     ClearEvent(UdsAckEvent)
             except:
                 print 'Function <%s> is not build-in supported.'%(fnc)
+                print traceback.format_exc()
             continue
         elif(value != ''):
             for chr in re.compile(r'\s+').split(value):
@@ -141,47 +143,57 @@ def biTest(argv):
     CanTp_Transmit(data)
     WaitEvent(UdsAckEvent,5000)
     ClearEvent(UdsAckEvent)
+    level = 10
     """ Security Access, Request Seed"""
-    data = [0x27,0x01,0x01] 
-    print '    Send: [0x27,0x01,0x01]'
+    data = [0x27]
+    data.append(level*2-1)      
+    print '    Send:',data
     CanTp_Transmit(data)
     WaitEvent(UdsAckEvent,5000)
     ClearEvent(UdsAckEvent)
     if(uds_ack[2]==0 and uds_ack[3]==0 and uds_ack[4]==0 and uds_ack[5]==0):
-        print 'Already UnSecured!'
+        print '    Already UnSecured!'
     else:
-        """ Security Access, Send Key 0xDEADBEEF"""
-        data = [0x27,0x02,0xFE,0xEB,0xDA,0xED] 
-        print '    Send: [0x27,0x02,0xFE,0xEB,0xDA,0xED] '
+        """ Security Access, Send Key"""
+        seed = (uds_ack[2]<<24) + (uds_ack[3]<<16) + (uds_ack[4]<<8) + (uds_ack[5])
+        key = ((seed/7)<<3) - 111;
+        data = [0x27] 
+        data.append(level*2)  
+        data.append((key>>24)&0xFF)
+        data.append((key>>16)&0xFF)
+        data.append((key>>8)&0xFF)
+        data.append((key)&0xFF)
+        print '    Send: ',data
         CanTp_Transmit(data)
         WaitEvent(UdsAckEvent,5000)
         ClearEvent(UdsAckEvent)
-    """ Communication Control:enableRxAndDisableTx"""
-    data = [0x28,0x01,0x02] 
-    print '    Send: [0x28,0x01,0x02] '
+#     """ Communication Control:enableRxAndDisableTx"""
+#     data = [0x28,0x01,0x02] 
+#     print '    Send: [0x28,0x01,0x02] '
+#     CanTp_Transmit(data)
+#     WaitEvent(UdsAckEvent,5000)
+#     ClearEvent(UdsAckEvent)
+#     """ RDID : 0xFF01 0xFF09"""
+#     data = [0x22,0xFF,0x01,0xFF,0x09] 
+#     print '    Send: [0x22,0xFF,0x01,0xFF,0x09] '
+#     CanTp_Transmit(data)
+#     WaitEvent(UdsAckEvent,5000)
+#     ClearEvent(UdsAckEvent)
+    """ RDID : 0x010A"""
+    data = [0x22,0x01,0x0A] 
+    print '    Send: [0x22,0x01,0x0A] '
     CanTp_Transmit(data)
     WaitEvent(UdsAckEvent,5000)
     ClearEvent(UdsAckEvent)
-    """ RDID : 0xFF01 0xFF09"""
-    data = [0x22,0xFF,0x01,0xFF,0x09] 
-    print '    Send: [0x22,0xFF,0x01,0xFF,0x09] '
-    CanTp_Transmit(data)
-    WaitEvent(UdsAckEvent,5000)
-    ClearEvent(UdsAckEvent)
-    """ RDID : 0xFF09"""
-    data = [0x22,0xFF,0x09] 
-    print '    Send: [0x22,0xFF,0x09] '
-    CanTp_Transmit(data)
-    WaitEvent(UdsAckEvent,5000)
-    ClearEvent(UdsAckEvent)
-    """ WDID : 0xFE02"""
-    data = [0x2E,0xFE,0x02] 
+    """ WDID : 0x010A"""
+    data = [0x2E,0x01,0x0A] 
     for i in range(0,128):
         data.append(i)
-    print '    Send: [0x2E,0xFE,0x02,.....] '
+    print '    Send: [0x2E,0x01,0x0A,.....] '
     CanTp_Transmit(data)
     WaitEvent(UdsAckEvent,5000)
     ClearEvent(UdsAckEvent)
+    return 
     """ WDID : 0xFE09"""
     data = [0x2E,0xFE,0x09] 
     for i in range(0,64):

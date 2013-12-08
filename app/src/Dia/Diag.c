@@ -23,9 +23,9 @@ Std_ReturnType Diag_GetSeed (uint8 *securityAccessDataRecord, uint8 *seed,
 Std_ReturnType Diag_CompKey (uint8 *key)
 {
 	uint32 diagKey,diagKey2;
-	diagKey = ((uint32)key[0]<<24u)+((uint32)key[1]<<16u)+((uint32)key[0]<<8u)+((uint32)key[0]);
-    printf("Diag_CompKey(key=0x%x).\r\n",diagKey);
+	diagKey = ((uint32)key[0]<<24u)+((uint32)key[1]<<16u)+((uint32)key[2]<<8u)+((uint32)key[3]);
     diagKey2 = ((diagRandomSeed/7)<<3) - 111;
+    printf("Diag_CompKey(key=0x%x).\r\n",diagKey);
     if(diagKey == diagKey2)
     {
     	return E_OK;
@@ -52,54 +52,38 @@ Std_ReturnType Diag_RequestServiceIndication(uint8 *requestData, uint16 dataSize
     return E_OK;
 }
 
-Std_ReturnType vSessionControl_1_GetSesChgPer(Dcm_SesCtrlType sesCtrlTypeActive,
+Std_ReturnType Diag_GetSesChgPer(Dcm_SesCtrlType sesCtrlTypeActive,
                                             Dcm_SesCtrlType sesCtrlTypeNew)
 {
-    printf("in vSessionControl_1_GetSesChgPer().\r\n");
+    printf("in Diag_GetSesChgPer().\r\n");
     return E_OK;
 }
-Std_ReturnType vDid_1_ReadDataLength_Cbk(uint16 *didLength){
-    static uint8 callcnt = 0;
-    printf("in  vDid_1_ReadDataLength_Cbk().\r\n");
-    if(callcnt == 0)
-    {
-        *didLength = 128;   //for read test
-    }
-    else
-    {
-        *didLength = 4;    //for write test
-    }
-    callcnt++;
-    if(callcnt == 2)
-    {
-       callcnt = 0;
-    }
-    return E_OK;
-}
-Std_ReturnType vDid_1_ConditionCheckRead_Cbk(Dcm_NegativeResponseCodeType *errorCode){
+
+Std_ReturnType Diag_ConditionCheckRead(Dcm_NegativeResponseCodeType *errorCode){
     *errorCode = DCM_E_POSITIVERESPONSE;
-    printf("in  vDid_1_ConditionCheckRead_Cbk().\r\n");
+    printf("in  Diag_ConditionCheckRead().\r\n");
     return E_OK;
 }
-Std_ReturnType vDid_1_ReadData_Cbk(uint8 *data){
+Std_ReturnType Diag_ConditionCheckWrite(Dcm_NegativeResponseCodeType *errorCode){
+    *errorCode = DCM_E_POSITIVERESPONSE;
+    printf("in  Diag_ConditionCheckWrite().\r\n");
+    return E_OK;
+}
+
+Std_ReturnType Diag_ReadDID_010A_Cbk(uint8 *data){
     int i;
-    printf("in  vDid_1_ReadData_Cbk().\r\n");
+    printf("in  Diag_ReadDID_010A_Cbk().\r\n");
     for(i=0;i<128;i++)
     {
         data[i] = i;
     }
     return E_OK;
 }
-Std_ReturnType vDid_1_ConditionCheckWrite_Cbk(Dcm_NegativeResponseCodeType *errorCode){
-    *errorCode = DCM_E_POSITIVERESPONSE;
-    printf("in  vDid_1_ConditionCheckWrite_Cbk().\r\n");
-    return E_OK;
-}
-Std_ReturnType vDid_1_WriteData_Cbk(uint8 *data, uint16 dataLength,
+Std_ReturnType Diag_WriteDID_010A_Cbk(uint8 *data, uint16 dataLength,
                 Dcm_NegativeResponseCodeType *errorCode){
     int i;
     *errorCode = DCM_E_POSITIVERESPONSE;
-    printf("in  vDid_1_WriteData_Cbk().\r\n[");
+    printf("in  Diag_WriteDID_010A_Cbk().\r\n[");
     for(i=0;i<dataLength;i++)
     {
         printf("0x%x,",data[i]);

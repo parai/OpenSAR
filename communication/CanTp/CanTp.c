@@ -53,7 +53,10 @@
 #include "PduR_CanTp.h"
 //#include "MemMap.h"
 #include <string.h>
-//#define USE_DEBUG_PRINTF
+
+#if defined(USE_DEBUG_PRINTF)
+#undef USE_DEBUG_PRINTF
+#endif
 #include "debug.h"
 
 #if  ( CANTP_DEV_ERROR_DETECT == STD_ON ) /** @req CANTP006 *//** @req CANTP134 */

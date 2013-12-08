@@ -12,20 +12,6 @@
 #define DCM_SESSION_EOL_INDEX  ((sizeof(DspSessionList)/sizeof(Dcm_DspSessionRowType))-1)
 #define DCM_DID_LIST_EOL_INDEX 1
 
-extern Std_ReturnType vDid_1_ReadDataLength_Cbk(uint16 *didLength);
-extern Std_ReturnType vDid_1_ConditionCheckRead_Cbk(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType vDid_1_ReadData_Cbk(uint8 *data);
-extern Std_ReturnType vDid_1_ConditionCheckWrite_Cbk(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType vDid_1_WriteData_Cbk(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType vDid_1_GetScalingInfo_Cbk(uint8 *scalingInfo, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType vDid_1_FreezeCurrentState_cbk(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType vDid_1_ResetToDefault_Cbk(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType vDid_1_ReturnControl_Cbk(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType vDid_1__ShortTermAdj_cbk(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-
-
-
-extern Std_ReturnType vSessionControl_1_GetSesChgPer(Dcm_SesCtrlType sesCtrlTypeActive, Dcm_SesCtrlType sesCtrlTypeNew);
 extern Std_ReturnType vRoutine_1_Start(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
 extern Std_ReturnType vRoutine_1_Stop(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
 extern Std_ReturnType vRoutine_1_RequestResult(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
@@ -38,8 +24,8 @@ const Dcm_DspSecurityRowType DspSecurityList[] = {
 		.DspSecurityDelayTime =  0, 	//Value is not configurable
 		.DspSecurityNumAttLock =  0, 	//Value is not configurable
 		.DspSecurityADRSize =  0,
-		.DspSecuritySeedSize =  1,
-		.DspSecurityKeySize =  1,
+		.DspSecuritySeedSize =  4,
+		.DspSecurityKeySize =  4,
 		.GetSeed =  NULL,	// as each session entered, it is already in this level, cause send NRC
 		.CompareKey =  NULL,
 		.Arc_EOL =  FALSE
@@ -51,8 +37,8 @@ const Dcm_DspSecurityRowType DspSecurityList[] = {
 		.DspSecurityDelayTime =  0, 	//Value is not configurable
 		.DspSecurityNumAttLock =  0, 	//Value is not configurable
 		.DspSecurityADRSize =  0,
-		.DspSecuritySeedSize =  1,
-		.DspSecurityKeySize =  1,
+		.DspSecuritySeedSize =  4,
+		.DspSecurityKeySize =  4,
 		.GetSeed =  Diag_GetSeed,
 		.CompareKey =  Diag_CompKey,
 		.Arc_EOL =  FALSE
@@ -64,8 +50,8 @@ const Dcm_DspSecurityRowType DspSecurityList[] = {
 		.DspSecurityDelayTime =  0, 	//Value is not configurable
 		.DspSecurityNumAttLock =  0, 	//Value is not configurable
 		.DspSecurityADRSize =  0,
-		.DspSecuritySeedSize =  1,
-		.DspSecurityKeySize =  1,
+		.DspSecuritySeedSize =  4,
+		.DspSecurityKeySize =  4,
 		.GetSeed =  Diag_GetSeed,
 		.CompareKey =  Diag_CompKey,
 		.Arc_EOL =  FALSE
@@ -77,8 +63,8 @@ const Dcm_DspSecurityRowType DspSecurityList[] = {
 		.DspSecurityDelayTime =  0, 	//Value is not configurable
 		.DspSecurityNumAttLock =  0, 	//Value is not configurable
 		.DspSecurityADRSize =  0,
-		.DspSecuritySeedSize =  1,
-		.DspSecurityKeySize =  1,
+		.DspSecuritySeedSize =  4,
+		.DspSecurityKeySize =  4,
 		.GetSeed =  Diag_GetSeed,
 		.CompareKey =  Diag_CompKey,
 		.Arc_EOL =  FALSE
@@ -90,8 +76,8 @@ const Dcm_DspSecurityRowType DspSecurityList[] = {
 		.DspSecurityDelayTime =  0, 	//Value is not configurable
 		.DspSecurityNumAttLock =  0, 	//Value is not configurable
 		.DspSecurityADRSize =  0,
-		.DspSecuritySeedSize =  1,
-		.DspSecurityKeySize =  1,
+		.DspSecuritySeedSize =  4,
+		.DspSecurityKeySize =  4,
 		.GetSeed =  Diag_GetSeed,
 		.CompareKey =  Diag_CompKey,
 		.Arc_EOL =  FALSE
@@ -140,19 +126,17 @@ const Dcm_DspSessionType DspSession = {
 
 const Dcm_DspSecurityRowType *UnProtected_SecurityList[] = {
 	// All Level Include the Default
-	&DspSecurityList[0],
-	&DspSecurityList[1],
-	&DspSecurityList[2],
-	&DspSecurityList[3],
-	&DspSecurityList[4],
+	&DspSecurityList[0],	// Level 0, no security access before needed
+	&DspSecurityList[1],    // Level 5
+	&DspSecurityList[2],    // Level 10
+	&DspSecurityList[3],	// Level 15
+	&DspSecurityList[4],	// Level 20
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
-const Dcm_DspSecurityRowType *vServiceTable_1_vService2_read_data_by_id_SecurityList[] = {
-	&DspSecurityList[0],//vSecurityLevel_1
-	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
-};
-const Dcm_DspSecurityRowType *vServiceTable_1_vService3_write_data_by_id_SecurityList[] = {
-	&DspSecurityList[0],//vSecurityLevel_1
+const Dcm_DspSecurityRowType *RWDID_SecurityList[] = {
+	&DspSecurityList[2],    // Level 10
+	&DspSecurityList[3],	// Level 15
+	&DspSecurityList[4],	// Level 20
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
 const Dcm_DspSecurityRowType *vServiceTable_1_vService4_routine_control_SecurityList[] = {
@@ -188,20 +172,19 @@ const Dcm_DspSecurityRowType *vServiceTable_1_vService12_write_memory_SecurityLi
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
 const Dcm_DspSessionRowType *ALL_SessionList[] = {
-	&DspSessionList[0],
-//	&DspSessionList[1],
-//	&DspSessionList[2],
-//	&DspSessionList[3],
+	&DspSessionList[0],	// Session Default
+	&DspSessionList[1],	// Session Program
+	&DspSessionList[2],	// Session Extended
+	&DspSessionList[3],	// Session Safety System
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
-const Dcm_DspSessionRowType *vServiceTable_1_vService2_read_data_by_id_SessionList[] = {
-	&DspSessionList[0],//vSession_default
+const Dcm_DspSessionRowType *RWDID_SessionList[] = {
+	&DspSessionList[1],	// Session Program
+	&DspSessionList[2],	// Session Extended
+	&DspSessionList[3],	// Session Safety System
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
-const Dcm_DspSessionRowType *vServiceTable_1_vService3_write_data_by_id_SessionList[] = {
-	&DspSessionList[0],//vSession_default
-	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
+
 const Dcm_DspSessionRowType *vServiceTable_1_vService4_routine_control_SessionList[] = {
 	&DspSessionList[0],//vSession_default
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
@@ -210,10 +193,7 @@ const Dcm_DspSessionRowType *vServiceTable_1_vService5_read_scaling_data_by_id_S
 	&DspSessionList[0],//vSession_default
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
-const Dcm_DspSessionRowType *vServiceTable_1_vService6_test_present_SessionList[] = {
-	&DspSessionList[0],//vSession_default
-	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
+
 const Dcm_DspSessionRowType *vServiceTable_1_vService7_ecu_reset_SessionList[] = {
 	&DspSessionList[0],//vSession_default
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
@@ -252,22 +232,14 @@ const Dcm_DspSecurityRowType *vDcmDidInfo_1_read_securityRefList[] = {
 	&DspSecurityList[0],//vSecurityLevel_1
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
-const Dcm_DspDidReadType vDcmDidInfo_1_didRead = {
-    .DspDidReadSessionRef =  vDcmDidInfo_1_read_sessionRefList,
-    .DspDidReadSecurityLevelRef =  vDcmDidInfo_1_read_securityRefList
+const Dcm_DspDidReadType RWDID_DIDRead = {
+    .DspDidReadSessionRef =  ALL_SessionList,
+    .DspDidReadSecurityLevelRef =  UnProtected_SecurityList
 };
 
-const Dcm_DspSessionRowType *vDcmDidInfo_1_write_sessionRefList[] = {
-	&DspSessionList[0],//vSession_default
-	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
-const Dcm_DspSecurityRowType *vDcmDidInfo_1_write_securityRefList[] = {
-	&DspSecurityList[0],//vSecurityLevel_1
-	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
-};
-const Dcm_DspDidWriteType vDcmDidInfo_1_didWrite = {
-    .DspDidWriteSessionRef =  vDcmDidInfo_1_write_sessionRefList,
-    .DspDidWriteSecurityLevelRef =  vDcmDidInfo_1_write_securityRefList
+const Dcm_DspDidWriteType RWDID_DIDWrite = {
+    .DspDidWriteSessionRef =  ALL_SessionList,
+    .DspDidWriteSecurityLevelRef =  UnProtected_SecurityList
 };
 
 const Dcm_DspSessionRowType *vDcmDidInfo_1_control_sessionRefList[] = {
@@ -288,41 +260,42 @@ const Dcm_DspDidControlType vDcmDidInfo_1_didControl = {
 };
 
 const Dcm_DspDidInfoType DspDidInfoList[] = {
-	{ // vDcmDidInfo_1
+	{
 		 .DspDidDynamicllyDefined =  FALSE,
-		 .DspDidFixedLength =  FALSE,
+		 .DspDidFixedLength =  TRUE,
 		 .DspDidScalingInfoSize =  1,
 		{ // DspDidAccess
-			 .DspDidRead  =&vDcmDidInfo_1_didRead,
-			 .DspDidWrite = &vDcmDidInfo_1_didWrite,
-			 .DspDidControl = &vDcmDidInfo_1_didControl,
+			 .DspDidRead  =&RWDID_DIDRead,
+			 .DspDidWrite = &RWDID_DIDWrite,
+			 .DspDidControl = NULL,
 		}
 	}, 
 };
 
 extern const Dcm_DspDidType DspDidList[];
-const Dcm_DspDidType* vDid_1_dididRefList[] =
+const Dcm_DspDidType* NONE_RWDID_RefList[] =
 {
     &DspDidList[DCM_DID_LIST_EOL_INDEX]  //add did ref by hand please,If you need it
 };
 
+
 const Dcm_DspDidType DspDidList[] = { 
-	{ // vDid_1,
+	{ // RWDID,
 		.DspDidUsePort =  FALSE,//.Value is not configurable
-		.DspDidIdentifier =  0x0999,
-		.DspDidInfoRef =  &DspDidInfoList[0], //vDcmDidInfo_1
-		.DspDidRef =  vDid_1_dididRefList,
-		.DspDidSize =  64,
-		.DspDidReadDataLengthFnc =  vDid_1_ReadDataLength_Cbk,
-		.DspDidConditionCheckReadFnc =  vDid_1_ConditionCheckRead_Cbk,
-		.DspDidReadDataFnc =  vDid_1_ReadData_Cbk,
-		.DspDidConditionCheckWriteFnc =  vDid_1_ConditionCheckWrite_Cbk,
-		.DspDidWriteDataFnc =  vDid_1_WriteData_Cbk,
-		.DspDidGetScalingInfoFnc =  vDid_1_GetScalingInfo_Cbk,
-		.DspDidFreezeCurrentStateFnc =  vDid_1_FreezeCurrentState_cbk,
-		.DspDidResetToDefaultFnc =  vDid_1_ResetToDefault_Cbk,
-		.DspDidReturnControlToEcuFnc =  vDid_1_ReturnControl_Cbk,
-		.DspDidShortTermAdjustmentFnc =  vDid_1__ShortTermAdj_cbk,
+		.DspDidIdentifier =  0x010A,	// see ISO 14229:2006(E)  p101
+		.DspDidInfoRef =  &DspDidInfoList[0], // Fixed Length
+		.DspDidRef =  NONE_RWDID_RefList,	// TODO:
+		.DspDidSize = 128,
+		.DspDidReadDataLengthFnc =  NULL,		// So no need to get length
+		.DspDidConditionCheckReadFnc =  Diag_ConditionCheckRead,
+		.DspDidReadDataFnc =  Diag_ReadDID_010A_Cbk,
+		.DspDidConditionCheckWriteFnc =  Diag_ConditionCheckWrite,
+		.DspDidWriteDataFnc =  Diag_WriteDID_010A_Cbk,
+		.DspDidGetScalingInfoFnc =  NULL,
+		.DspDidFreezeCurrentStateFnc =  NULL,
+		.DspDidResetToDefaultFnc =  NULL,
+		.DspDidReturnControlToEcuFnc =  NULL,
+		.DspDidShortTermAdjustmentFnc =  NULL,
 		.DspDidControlRecordSize =  NULL,
 		.Arc_EOL =  FALSE
 	},
@@ -412,32 +385,32 @@ const Dcm_DspType Dsp = {
 //***********************************************************************
 
 const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
-	{ // vService0_session_control
+	{
 		 .DsdSidTabServiceId = SID_DIAGNOSTIC_SESSION_CONTROL,
 		 .DsdSidTabSubfuncAvail = FALSE,
 		 .DsdSidTabSecurityLevelRef = UnProtected_SecurityList,
 		 .DsdSidTabSessionLevelRef = ALL_SessionList,
 		 .Arc_EOL =  FALSE
 	},
-	{ // vService1_security_access
+	{
 		 .DsdSidTabServiceId = SID_SECURITY_ACCESS,
 		 .DsdSidTabSubfuncAvail = FALSE,
 		 .DsdSidTabSecurityLevelRef = UnProtected_SecurityList,
 		 .DsdSidTabSessionLevelRef = ALL_SessionList,
 		 .Arc_EOL =  FALSE
 	},
-	{ // vService2_read_data_by_id
+	{
 		 .DsdSidTabServiceId = SID_READ_DATA_BY_IDENTIFIER,
 		 .DsdSidTabSubfuncAvail = FALSE,
-		 .DsdSidTabSecurityLevelRef = vServiceTable_1_vService2_read_data_by_id_SecurityList,
-		 .DsdSidTabSessionLevelRef = vServiceTable_1_vService2_read_data_by_id_SessionList,
+		 .DsdSidTabSecurityLevelRef = RWDID_SecurityList,
+		 .DsdSidTabSessionLevelRef  = RWDID_SessionList,
 		 .Arc_EOL =  FALSE
 	},
-	{ // vService3_write_data_by_id
+	{
 		 .DsdSidTabServiceId = SID_WRITE_DATA_BY_IDENTIFIER,
 		 .DsdSidTabSubfuncAvail = FALSE,
-		 .DsdSidTabSecurityLevelRef = vServiceTable_1_vService3_write_data_by_id_SecurityList,
-		 .DsdSidTabSessionLevelRef = vServiceTable_1_vService3_write_data_by_id_SessionList,
+		 .DsdSidTabSecurityLevelRef = RWDID_SecurityList,
+		 .DsdSidTabSessionLevelRef  = RWDID_SessionList,
 		 .Arc_EOL =  FALSE
 	},
 	{ // vService4_routine_control
@@ -458,7 +431,7 @@ const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
 		 .DsdSidTabServiceId = SID_TESTER_PRESENT,
 		 .DsdSidTabSubfuncAvail = FALSE,
 		 .DsdSidTabSecurityLevelRef = UnProtected_SecurityList,
-		 .DsdSidTabSessionLevelRef = vServiceTable_1_vService6_test_present_SessionList,
+		 .DsdSidTabSessionLevelRef = ALL_SessionList,
 		 .Arc_EOL =  FALSE
 	},
 	{ // vService7_ecu_reset
@@ -745,7 +718,7 @@ const Dcm_DslProtocolTimingType ProtocolTiming = {
 
 const Dcm_DslSessionControlType SessionControlList[] = {
 	{//vSessionControl_1
-		 .GetSesChgPermission =  vSessionControl_1_GetSesChgPer,
+		 .GetSesChgPermission =  Diag_GetSesChgPer,
 		 .ChangeIndication =  NULL,
 		 .ConfirmationRespPend =  NULL,
 		 .Arc_EOL =  FALSE
