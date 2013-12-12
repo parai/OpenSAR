@@ -387,28 +387,28 @@ const Dcm_DspType Dsp = {
 const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
 	{
 		 .DsdSidTabServiceId = SID_DIAGNOSTIC_SESSION_CONTROL,
-		 .DsdSidTabSubfuncAvail = FALSE,
+		 .DsdSidTabSubfuncAvail = True,
 		 .DsdSidTabSecurityLevelRef = UnProtected_SecurityList,
 		 .DsdSidTabSessionLevelRef = ALL_SessionList,
 		 .Arc_EOL =  FALSE
 	},
 	{
 		 .DsdSidTabServiceId = SID_SECURITY_ACCESS,
-		 .DsdSidTabSubfuncAvail = FALSE,
+		 .DsdSidTabSubfuncAvail = True,
 		 .DsdSidTabSecurityLevelRef = UnProtected_SecurityList,
 		 .DsdSidTabSessionLevelRef = ALL_SessionList,
 		 .Arc_EOL =  FALSE
 	},
 	{
 		 .DsdSidTabServiceId = SID_READ_DATA_BY_IDENTIFIER,
-		 .DsdSidTabSubfuncAvail = FALSE,
+		 .DsdSidTabSubfuncAvail = True,
 		 .DsdSidTabSecurityLevelRef = RWDID_SecurityList,
 		 .DsdSidTabSessionLevelRef  = RWDID_SessionList,
 		 .Arc_EOL =  FALSE
 	},
 	{
 		 .DsdSidTabServiceId = SID_WRITE_DATA_BY_IDENTIFIER,
-		 .DsdSidTabSubfuncAvail = FALSE,
+		 .DsdSidTabSubfuncAvail = True,
 		 .DsdSidTabSecurityLevelRef = RWDID_SecurityList,
 		 .DsdSidTabSessionLevelRef  = RWDID_SessionList,
 		 .Arc_EOL =  FALSE
@@ -717,7 +717,7 @@ const Dcm_DslProtocolTimingType ProtocolTiming = {
 };
 
 const Dcm_DslSessionControlType SessionControlList[] = {
-	{//vSessionControl_1
+	{
 		 .GetSesChgPermission =  Diag_GetSesChgPer,
 		 .ChangeIndication =  NULL,
 		 .ConfirmationRespPend =  NULL,
