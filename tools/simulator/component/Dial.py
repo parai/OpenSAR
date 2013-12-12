@@ -6,16 +6,19 @@ from PyQt4.pyqtconfig import QtGuiModuleMakefile
 
 # Configuration
 BackGround = '../res/Gauge.jpg'
-# [x,y,Length,Width,Color,StartAngle,Range]
+# [x,y,Offset,Length,HeadWidth,TailWidth,Color,StartAngle,Range]
 iX          = 0
 iY          = 1
-iLength     = 2
-iWidth      = 3
-iColor      = 4
-iStart = 5
-iRange      = 6
+iOffset     = 2
+iLength     = 3
+iHeadWidth  = 4
+iTailWidth  = 5
+iColor      = 6
+iStart      = 7
+iRange      = 8
 PointerList = [     \
-    [195,140,100,10,0x7453A2,310,285],
+    [195,140,0, 100,10,4,0x7453A2,310,285],
+    [473,157,0, 70 ,10,4,0xD63441,322,257],
 ]
 
 class Pointer(QtGui.QGraphicsItem):
@@ -31,7 +34,7 @@ class Pointer(QtGui.QGraphicsItem):
     def boundingRect(self):
         # x,y,width,height
         cfg = PointerList[self.cId]
-        return QtCore.QRectF(-cfg[iLength],-cfg[iLength],cfg[iLength]*2,cfg[iLength]*2)
+        return QtCore.QRectF(-cfg[iLength]-cfg[iOffset],-cfg[iLength]-cfg[iOffset],(cfg[iLength]+cfg[iOffset])*2,(cfg[iLength]+cfg[iOffset])*2)
     def getPos(self):
         return self.Degree
     def step(self,steps,clockwise = True):
@@ -53,9 +56,10 @@ class Pointer(QtGui.QGraphicsItem):
         painter.setPen(QtCore.Qt.NoPen)
         painter.setBrush(QtGui.QBrush(QtGui.QColor((cfg[iColor]>>16)&0xFF,(cfg[iColor]>>8)&0xFF,(cfg[iColor]>>0)&0xFF)))
         points = QtGui.QPolygon([
-            QtCore.QPoint(0,cfg[iWidth]/2),
-            QtCore.QPoint(-cfg[iLength],0),
-            QtCore.QPoint(0,-cfg[iWidth]/2),
+            QtCore.QPoint(-cfg[iOffset],                 cfg[iHeadWidth]/2),
+            QtCore.QPoint(-cfg[iOffset]-cfg[iLength],    cfg[iTailWidth]/2),
+            QtCore.QPoint(-cfg[iOffset]-cfg[iLength],   -cfg[iTailWidth]/2),
+            QtCore.QPoint(-cfg[iOffset],                -cfg[iHeadWidth]/2),
         ])  
         painter.drawConvexPolygon(points);
 
@@ -83,7 +87,7 @@ class GaugeWidget(QtGui.QGraphicsView):
             self.PIndList.append(pInd)
         self.startTimer(1)
         
-        self.setWindowTitle("Elastic Nodes")
+        self.setWindowTitle("Dial Enjoy by parai")
 
     def drawBackground(self,painter,rect ):
         Image = QtGui.QImage(BackGround)   
@@ -98,11 +102,11 @@ class GaugeWidget(QtGui.QGraphicsView):
         for pInd in self.PIndList:
             cfg = PointerList[cId]
             pInd.step(10,self.clockwise) 
-            if( pInd.getPos() == 100*cfg[iRange]):
-                self.clockwise = False
-                print "B"
-            elif(pInd.getPos() == 0):
-                self.clockwise = True
+            if(cId == 0):
+                if( pInd.getPos() == 100*cfg[iRange]):
+                    self.clockwise = False
+                elif(pInd.getPos() == 0):
+                    self.clockwise = True
             cId += 1
 
 
