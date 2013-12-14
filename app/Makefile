@@ -34,6 +34,7 @@ MACROS = 	-DWIN32 			\
 			-DUSE_CANTP	\
 			-DUSE_PDUR	\
 			-DUSE_DCM
+
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
 ARFLGS = rv
@@ -79,10 +80,10 @@ all:$(obj-y)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 run:
-	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)
+	#@(start python $(BD)/tools/can/CanBusServer.py --server 8000)
 	@(start $(OUT)/$(TARGET).exe)	
-	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
-	@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
+	#@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
+	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)
 	@echo ">>>>>>>>>>>>>>>>>>>> CLEAN $(TARGET) Objs Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"		

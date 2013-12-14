@@ -20,8 +20,8 @@ void StartupHook( void )
 	Dcm_Init();
 
 	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
-
 }
+
 void ShutdownHook( StatusType Error )
 {
 

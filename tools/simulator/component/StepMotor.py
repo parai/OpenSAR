@@ -2,13 +2,15 @@
 import math
 
 from PyQt4 import QtCore, QtGui, Qt
+from PyQt4.QtGui import *
+from PyQt4.QtCore import *
 from PyQt4.pyqtconfig import QtGuiModuleMakefile
 
 __all__ = ['GaugeWidget']
 
 # Configuration
 BackGround = './res/Gauge.jpg'
-# [x,y,Offset,Length,HeadWidth,TailWidth,Color,StartAngle,Range]
+# [x,y,Offset,Length,HeadWidth,TailWidth,Color,Start,Range]
 iX          = 0
 iY          = 1
 iOffset     = 2
@@ -16,12 +18,14 @@ iLength     = 3
 iHeadWidth  = 4
 iTailWidth  = 5
 iColor      = 6
-iStart      = 7
-iRange      = 8
+iStart      = 7     # Start Degree
+iRange      = 8     # Span Range Degree
 StepMotorList = [     \
     [195,140,0, 100,10,4,0x7453A2,310,285],
     [473,157,20,70 ,10,4,0xD63441,322,250],
 ]
+
+cMechanicalZero = -1000 # relative to iStart, unit in 0.01 degree
 
 class StepMotor(QtGui.QGraphicsItem):
     Degree = 0  # unit in 0.01 -- 
@@ -41,6 +45,15 @@ class StepMotor(QtGui.QGraphicsItem):
     def getPosDegree(self):
         return self.Degree
     
+    def setPosDegree(self,Degree):
+        cfg = StepMotorList[self.cId]
+        if(Degree <= cfg[iRange]*100 and Degree >= cMechanicalZero):
+            self.Degree = Degree
+        else:
+            print 'StepMotor:Wrong Degree Value from AUTOSAR Client.'
+        # Set Degree 
+        self.setRotation(self.Degree/100+cfg[iStart])
+    
     def step(self,steps,clockwise = True):
         """ 1 step == 0.01 degree """
         cfg = StepMotorList[self.cId]
@@ -48,8 +61,8 @@ class StepMotor(QtGui.QGraphicsItem):
             self.Degree += steps
         else:
             self.Degree -= steps
-        if(self.Degree < 0):
-            self.Degree = 0 
+        if(self.Degree < cMechanicalZero):
+            self.Degree = cMechanicalZero 
         # { Operation below should be removed
         degree = self.Degree/100
         if(degree > cfg[iRange]):
@@ -107,7 +120,8 @@ class GaugeWidget(QtGui.QGraphicsView):
             scene.addItem(pInd)
             pInd.setPos(cfg[iX],cfg[iY])
             self.PIndList.append(pInd)
-        self.startTimer(1)
+            pInd.setPosDegree(cMechanicalZero)
+        self.startTimer(10)
         
         self.resize(650, 310)
         self.setWindowIcon(QtGui.QIcon("./res/StepMotor.bmp"))
@@ -125,11 +139,11 @@ class GaugeWidget(QtGui.QGraphicsView):
         cId = 0
         for pInd in self.PIndList:
             cfg = StepMotorList[cId]
-            pInd.step(10,self.clockwise) 
+            pInd.step(300,self.clockwise) 
             if(cId == 0):
                 if( pInd.getPosDegree() == 100*cfg[iRange]):
                     self.clockwise = False
-                elif(pInd.getPosDegree() == 0):
+                elif(pInd.getPosDegree() == cMechanicalZero):
                     self.clockwise = True
             cId += 1
 

@@ -5,6 +5,7 @@
 #define SetEvent SetEvent2
 #endif
 #include "debug.h"
+#include "Dio.h"
 
 void Task10ms(void)
 {
@@ -39,10 +40,12 @@ void Task100ms(void)
 }
 void TaskEvent(void)
 {
+	Dio_LevelType ChannelLevel = STD_LOW;
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_Event1000ms);
-		printf("#");
+		Dio_WriteChannel(0,ChannelLevel);
+		ChannelLevel = (STD_LOW==ChannelLevel)?STD_HIGH:STD_LOW;
 		(void)ClearEvent(EVENT_MASK_Event1000ms);
 	}
 	TerminateTask();

@@ -99,6 +99,7 @@ class MainConsole(QMainWindow):
         Width = 150
         Heigth = QImage('./res/Autosar.bmp').size().height()*Width/QImage('./res/Autosar.bmp').size().width()
         Link.setIconSize(QSize(Width,Heigth))
+        Link.setFlat(True)
         self.toolbar.addWidget(Link)
         self.connect(Link,SIGNAL('clicked()'),self.on_Link_clicked) 
         #  
