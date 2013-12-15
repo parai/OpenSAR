@@ -99,7 +99,7 @@ const PduRRoutingPath_type * const PduRRoutingPaths[] = {
 
 const PduR_PBConfigType PduR_Config = {
 	.PduRConfigurationId =  0,
-	.NRoutingPaths =  sizeof(PduRRoutingPaths)/sizeof(PduRRoutingPath_type),
+	.NRoutingPaths =  4,
 	.RoutingPaths =  PduRRoutingPaths,
 	.TpBuffers =  NULL,
 	.TpRouteBuffers =  NULL

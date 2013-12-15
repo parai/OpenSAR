@@ -1,0 +1,204 @@
+
+#include "Port.h"
+#include "Port_Cfg.h"
+#include <stdlib.h>
+
+const uint8_t PortPadConfigData[] = {
+	PORT_PCR_OUTPUT, /* PortA_PIN0 */
+	PORT_PCR_INPUT,  /* PortA_PIN1 */
+	PORT_PCR_OUTPUT, /* PortA_PIN2 */
+	PORT_PCR_RESET, /* PortA_PIN3 */
+	PORT_PCR_RESET, /* PortA_PIN4 */
+	PORT_PCR_RESET, /* PortA_PIN5 */
+	PORT_PCR_RESET, /* PortA_PIN6 */
+	PORT_PCR_RESET, /* PortA_PIN7 */
+
+	PORT_PCR_RESET, /* PortB_PIN0 */
+	PORT_PCR_RESET, /* PortB_PIN1 */
+	PORT_PCR_RESET, /* PortB_PIN2 */
+	PORT_PCR_RESET, /* PortB_PIN3 */
+	PORT_PCR_RESET, /* PortB_PIN4 */
+	PORT_PCR_RESET, /* PortB_PIN5 */
+	PORT_PCR_RESET, /* PortB_PIN6 */
+	PORT_PCR_RESET, /* PortB_PIN7 */
+
+	PORT_PCR_RESET, /* PortC_PIN0 */
+	PORT_PCR_RESET, /* PortC_PIN1 */
+	PORT_PCR_RESET, /* PortC_PIN2 */
+	PORT_PCR_RESET, /* PortC_PIN3 */
+	PORT_PCR_RESET, /* PortC_PIN4 */
+	PORT_PCR_RESET, /* PortC_PIN5 */
+	PORT_PCR_RESET, /* PortC_PIN6 */
+	PORT_PCR_RESET, /* PortC_PIN7 */
+
+	PORT_PCR_RESET, /* PortD_PIN0 */
+	PORT_PCR_RESET, /* PortD_PIN1 */
+	PORT_PCR_RESET, /* PortD_PIN2 */
+	PORT_PCR_RESET, /* PortD_PIN3 */
+	PORT_PCR_RESET, /* PortD_PIN4 */
+	PORT_PCR_RESET, /* PortD_PIN5 */
+	PORT_PCR_RESET, /* PortD_PIN6 */
+	PORT_PCR_RESET, /* PortD_PIN7 */
+
+	PORT_PCR_RESET, /* PortE_PIN0 */
+	PORT_PCR_RESET, /* PortE_PIN1 */
+	PORT_PCR_RESET, /* PortE_PIN2 */
+	PORT_PCR_RESET, /* PortE_PIN3 */
+	PORT_PCR_RESET, /* PortE_PIN4 */
+	PORT_PCR_RESET, /* PortE_PIN5 */
+	PORT_PCR_RESET, /* PortE_PIN6 */
+	PORT_PCR_RESET, /* PortE_PIN7 */
+
+	PORT_PCR_RESET, /* PortF_PIN0 */
+	PORT_PCR_RESET, /* PortF_PIN1 */
+	PORT_PCR_RESET, /* PortF_PIN2 */
+	PORT_PCR_RESET, /* PortF_PIN3 */
+	PORT_PCR_RESET, /* PortF_PIN4 */
+	PORT_PCR_RESET, /* PortF_PIN5 */
+	PORT_PCR_RESET, /* PortF_PIN6 */
+	PORT_PCR_RESET, /* PortF_PIN7 */
+
+	PORT_PCR_RESET, /* PortG_PIN0 */
+	PORT_PCR_RESET, /* PortG_PIN1 */
+	PORT_PCR_RESET, /* PortG_PIN2 */
+	PORT_PCR_RESET, /* PortG_PIN3 */
+	PORT_PCR_RESET, /* PortG_PIN4 */
+	PORT_PCR_RESET, /* PortG_PIN5 */
+	PORT_PCR_RESET, /* PortG_PIN6 */
+	PORT_PCR_RESET, /* PortG_PIN7 */
+
+	PORT_PCR_RESET, /* PortH_PIN0 */
+	PORT_PCR_RESET, /* PortH_PIN1 */
+	PORT_PCR_RESET, /* PortH_PIN2 */
+	PORT_PCR_RESET, /* PortH_PIN3 */
+	PORT_PCR_RESET, /* PortH_PIN4 */
+	PORT_PCR_RESET, /* PortH_PIN5 */
+	PORT_PCR_RESET, /* PortH_PIN6 */
+	PORT_PCR_RESET, /* PortH_PIN7 */
+
+	PORT_PCR_RESET, /* PortI_PIN0 */
+	PORT_PCR_RESET, /* PortI_PIN1 */
+	PORT_PCR_RESET, /* PortI_PIN2 */
+	PORT_PCR_RESET, /* PortI_PIN3 */
+	PORT_PCR_RESET, /* PortI_PIN4 */
+	PORT_PCR_RESET, /* PortI_PIN5 */
+	PORT_PCR_RESET, /* PortI_PIN6 */
+	PORT_PCR_RESET, /* PortI_PIN7 */
+
+	PORT_PCR_RESET, /* PortJ_PIN0 */
+	PORT_PCR_RESET, /* PortJ_PIN1 */
+	PORT_PCR_RESET, /* PortJ_PIN2 */
+	PORT_PCR_RESET, /* PortJ_PIN3 */
+	PORT_PCR_RESET, /* PortJ_PIN4 */
+	PORT_PCR_RESET, /* PortJ_PIN5 */
+	PORT_PCR_RESET, /* PortJ_PIN6 */
+	PORT_PCR_RESET, /* PortJ_PIN7 */
+
+	PORT_PCR_RESET, /* PortK_PIN0 */
+	PORT_PCR_RESET, /* PortK_PIN1 */
+	PORT_PCR_RESET, /* PortK_PIN2 */
+	PORT_PCR_RESET, /* PortK_PIN3 */
+	PORT_PCR_RESET, /* PortK_PIN4 */
+	PORT_PCR_RESET, /* PortK_PIN5 */
+	PORT_PCR_RESET, /* PortK_PIN6 */
+	PORT_PCR_RESET, /* PortK_PIN7 */
+};
+
+const uint8_t PortOutConfigData[] = {
+	PORT_GPDO_RESET, /* PortA_PIN0 */
+	PORT_GPDO_RESET, /* PortA_PIN1 */
+	PORT_GPDO_RESET, /* PortA_PIN2 */
+	PORT_GPDO_RESET, /* PortA_PIN3 */
+	PORT_GPDO_RESET, /* PortA_PIN4 */
+	PORT_GPDO_RESET, /* PortA_PIN5 */
+	PORT_GPDO_RESET, /* PortA_PIN6 */
+	PORT_GPDO_RESET, /* PortA_PIN7 */
+	PORT_GPDO_RESET, /* PortB_PIN0 */
+	PORT_GPDO_RESET, /* PortB_PIN1 */
+	PORT_GPDO_RESET, /* PortB_PIN2 */
+	PORT_GPDO_RESET, /* PortB_PIN3 */
+	PORT_GPDO_RESET, /* PortB_PIN4 */
+	PORT_GPDO_RESET, /* PortB_PIN5 */
+	PORT_GPDO_RESET, /* PortB_PIN6 */
+	PORT_GPDO_RESET, /* PortB_PIN7 */
+	PORT_GPDO_RESET, /* PortC_PIN0 */
+	PORT_GPDO_RESET, /* PortC_PIN1 */
+	PORT_GPDO_RESET, /* PortC_PIN2 */
+	PORT_GPDO_RESET, /* PortC_PIN3 */
+	PORT_GPDO_RESET, /* PortC_PIN4 */
+	PORT_GPDO_RESET, /* PortC_PIN5 */
+	PORT_GPDO_RESET, /* PortC_PIN6 */
+	PORT_GPDO_RESET, /* PortC_PIN7 */
+	PORT_GPDO_RESET, /* PortD_PIN0 */
+	PORT_GPDO_RESET, /* PortD_PIN1 */
+	PORT_GPDO_RESET, /* PortD_PIN2 */
+	PORT_GPDO_RESET, /* PortD_PIN3 */
+	PORT_GPDO_RESET, /* PortD_PIN4 */
+	PORT_GPDO_RESET, /* PortD_PIN5 */
+	PORT_GPDO_RESET, /* PortD_PIN6 */
+	PORT_GPDO_RESET, /* PortD_PIN7 */
+	PORT_GPDO_RESET, /* PortE_PIN0 */
+	PORT_GPDO_RESET, /* PortE_PIN1 */
+	PORT_GPDO_RESET, /* PortE_PIN2 */
+	PORT_GPDO_RESET, /* PortE_PIN3 */
+	PORT_GPDO_RESET, /* PortE_PIN4 */
+	PORT_GPDO_RESET, /* PortE_PIN5 */
+	PORT_GPDO_RESET, /* PortE_PIN6 */
+	PORT_GPDO_RESET, /* PortE_PIN7 */
+	PORT_GPDO_RESET, /* PortF_PIN0 */
+	PORT_GPDO_RESET, /* PortF_PIN1 */
+	PORT_GPDO_RESET, /* PortF_PIN2 */
+	PORT_GPDO_RESET, /* PortF_PIN3 */
+	PORT_GPDO_RESET, /* PortF_PIN4 */
+	PORT_GPDO_RESET, /* PortF_PIN5 */
+	PORT_GPDO_RESET, /* PortF_PIN6 */
+	PORT_GPDO_RESET, /* PortF_PIN7 */
+	PORT_GPDO_RESET, /* PortG_PIN0 */
+	PORT_GPDO_RESET, /* PortG_PIN1 */
+	PORT_GPDO_RESET, /* PortG_PIN2 */
+	PORT_GPDO_RESET, /* PortG_PIN3 */
+	PORT_GPDO_RESET, /* PortG_PIN4 */
+	PORT_GPDO_RESET, /* PortG_PIN5 */
+	PORT_GPDO_RESET, /* PortG_PIN6 */
+	PORT_GPDO_RESET, /* PortG_PIN7 */
+	PORT_GPDO_RESET, /* PortH_PIN0 */
+	PORT_GPDO_RESET, /* PortH_PIN1 */
+	PORT_GPDO_RESET, /* PortH_PIN2 */
+	PORT_GPDO_RESET, /* PortH_PIN3 */
+	PORT_GPDO_RESET, /* PortH_PIN4 */
+	PORT_GPDO_RESET, /* PortH_PIN5 */
+	PORT_GPDO_RESET, /* PortH_PIN6 */
+	PORT_GPDO_RESET, /* PortH_PIN7 */
+	PORT_GPDO_RESET, /* PortI_PIN0 */
+	PORT_GPDO_RESET, /* PortI_PIN1 */
+	PORT_GPDO_RESET, /* PortI_PIN2 */
+	PORT_GPDO_RESET, /* PortI_PIN3 */
+	PORT_GPDO_RESET, /* PortI_PIN4 */
+	PORT_GPDO_RESET, /* PortI_PIN5 */
+	PORT_GPDO_RESET, /* PortI_PIN6 */
+	PORT_GPDO_RESET, /* PortI_PIN7 */
+	PORT_GPDO_RESET, /* PortJ_PIN0 */
+	PORT_GPDO_RESET, /* PortJ_PIN1 */
+	PORT_GPDO_RESET, /* PortJ_PIN2 */
+	PORT_GPDO_RESET, /* PortJ_PIN3 */
+	PORT_GPDO_RESET, /* PortJ_PIN4 */
+	PORT_GPDO_RESET, /* PortJ_PIN5 */
+	PORT_GPDO_RESET, /* PortJ_PIN6 */
+	PORT_GPDO_RESET, /* PortJ_PIN7 */
+	PORT_GPDO_RESET, /* PortK_PIN0 */
+	PORT_GPDO_RESET, /* PortK_PIN1 */
+	PORT_GPDO_RESET, /* PortK_PIN2 */
+	PORT_GPDO_RESET, /* PortK_PIN3 */
+	PORT_GPDO_RESET, /* PortK_PIN4 */
+	PORT_GPDO_RESET, /* PortK_PIN5 */
+	PORT_GPDO_RESET, /* PortK_PIN6 */
+	PORT_GPDO_RESET, /* PortK_PIN7 */
+};
+
+const Port_ConfigType PortConfigData =
+{
+  .padCnt = sizeof(PortPadConfigData),
+  .padConfig = PortPadConfigData,
+  .outCnt = sizeof(PortOutConfigData),
+  .outConfig = PortOutConfigData,
+};

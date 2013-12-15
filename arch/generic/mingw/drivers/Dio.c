@@ -20,6 +20,7 @@
 #include <stdio.h>
 #include "Std_Types.h"
 #include "Dio.h"
+#include "Port.h"
 #if defined(USE_DET)
 #include "Det.h"
 #endif
@@ -116,7 +117,10 @@ static int Channel_Group_Config_Contains(const Dio_ChannelGroupType* _channelGro
 #define VALIDATE_CHANNELGROUP(_channelGroupIdPtr, _api)
 #endif
 
-static DioReg_Type Dio_Reg;
+static DioReg_Type Dio_Reg = {
+	.Level = {0,0,0,0,0,0,0,0,0,0,0},
+	.Direction = {0,0,0,0,0,0,0,0,0,0,0}
+};
 static boolean     isDioClientStarted = False;
 static HANDLE   thread = NULL;
 static HANDLE   mutex = NULL;
@@ -184,8 +188,8 @@ static void DioClientThread(void)
 		for(;;)
 		{
 			WaitForSingleObject(mutex,INFINITE);
-			ercd = send(AcceptSocket, (void*)Dio_Reg.Level, sizeof(Dio_Reg.Level), 0);
-			recv(AcceptSocket, (void*)Dio_Reg.Level, sizeof(Dio_Reg.Level), 0);
+			ercd = send(AcceptSocket, (void*)&Dio_Reg, sizeof(Dio_Reg), 0);
+			recv(AcceptSocket, (void*)&Dio_Reg, sizeof(Dio_Reg), 0);
 			ReleaseMutex(mutex);
 			if(-1 == ercd)
 			{
@@ -236,7 +240,25 @@ Dio_LevelType Dio_ReadChannel(Dio_ChannelType channelId)
 #endif
 	return (level);
 }
-
+void exDio_SetPinDirection(uint32_t channelId,Port_PinDirectionType Direction)
+{
+	uint8_t portDir;
+	uint8_t bit;
+	if(channelId < Port_PIN_NUM)
+	{
+		portDir = Dio_Reg.Direction[DIO_GET_PORT_FROM_CHANNEL_ID(channelId)];
+		bit = DIO_GET_BIT_FROM_CHANNEL_ID(channelId);
+		if(PORT_PIN_IN == Direction)
+		{
+			portDir &= ~bit;
+		}
+		else
+		{
+			portDir |= bit;
+		}
+		Dio_Reg.Direction[DIO_GET_PORT_FROM_CHANNEL_ID(channelId)] = portDir;
+	}
+}
 void Dio_WriteChannel(Dio_ChannelType channelId, Dio_LevelType level)
 {
 	VALIDATE_CHANNEL(channelId, DIO_WRITECHANNEL_ID);

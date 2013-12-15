@@ -1,22 +1,12 @@
-/*
- * app_startup.c
- *
- *  Created on: 2013Äê11ÔÂ23ÈÕ
- *      Author: parai
- */
-#include "Os.h"
-#include "Can.h"
-#include "CanIf.h"
-#include "CanTp.h"
-#include "PduR.h"
-#include "Dcm.h"
-#include "Det.h"
+#include "app.h"
+
 void StartupHook( void )
 {
 #if defined(USE_DET)
 	Det_Init();
 	Det_Start();
 #endif
+	Port_Init(&PortConfigData);
 	Can_Init(&Can_ConfigData);
 
 	CanIf_Init(&CanIf_Config);

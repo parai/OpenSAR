@@ -1,11 +1,4 @@
-#include "Os.h"
-#include "CanTp.h"
-#include "Dcm.h"
-#if defined(WIN32)
-#define SetEvent SetEvent2
-#endif
-#include "debug.h"
-#include "Dio.h"
+#include "app.h"
 
 void Task10ms(void)
 {
@@ -24,8 +17,8 @@ void Task20ms(void)
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_EventTask20ms);
-		ChannelLevel=Dio_ReadChannel(1);
-		Dio_WriteChannel(2,ChannelLevel);
+		ChannelLevel=Dio_ReadChannel(PortA_PIN1);
+		Dio_WriteChannel(PortA_PIN2,ChannelLevel);
 		(void)ClearEvent(EVENT_MASK_EventTask20ms);
 	}
 	TerminateTask();
@@ -46,7 +39,7 @@ void TaskEvent(void)
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_Event1000ms);
-		Dio_WriteChannel(0,ChannelLevel);
+		Dio_WriteChannel(PortA_PIN0,ChannelLevel);
 		ChannelLevel = (STD_LOW==ChannelLevel)?STD_HIGH:STD_LOW;
 		(void)ClearEvent(EVENT_MASK_Event1000ms);
 	}

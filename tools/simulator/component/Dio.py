@@ -19,17 +19,17 @@ iDir  = 2  # if corresponding bit is 0 then it is Input, else it is output
         # IO direction can be changed by AUTOSAR Client
 iLevel = 3 # current Input/Output State
 DioList = [
-    ['A',cDioSize,0xA5,0x55],   # this Port Id is 0
-    ['B',cDioSize,0xA5,0x55],   # this Port Id is 1
-    ['C',cDioSize,0xA5,0x55],
-    ['D',cDioSize,0xA5,0x55],
-    ['E',cDioSize,0xA5,0x55],
-    ['F',cDioSize,0xA5,0x55],
-    ['G',cDioSize,0xA5,0x55],
-    ['H',cDioSize,0xA5,0x55],
-    ['I',cDioSize,0xA5,0x55],
-    ['J',cDioSize,0xA5,0x55],
-    ['K',cDioSize,0xA5,0x55]
+    ['A',cDioSize,0x00,0x00],   # this Port Id is 0
+    ['B',cDioSize,0x00,0x00],   # this Port Id is 1
+    ['C',cDioSize,0x00,0x00],
+    ['D',cDioSize,0x00,0x00],
+    ['E',cDioSize,0x00,0x00],
+    ['F',cDioSize,0x00,0x00],
+    ['G',cDioSize,0x00,0x00],
+    ['H',cDioSize,0x00,0x00],
+    ['I',cDioSize,0x00,0x00],
+    ['J',cDioSize,0x00,0x00],
+    ['K',cDioSize,0x00,0x00]
 ]
 
 cMaxDioSize = cDioSize  # the maximum size of port in the DioList
@@ -62,6 +62,10 @@ class DioButton(QPushButton):
             self.setFlat(True)
         else:
             print 'Dio: Error Set Direction from AUTOSAR Client.'
+        # force Direction Change
+        self.Level = 0xFF
+        self.setLevel(self.Level)
+        
     
     def on_Dio_clicked(self):
         if(self.Dir == cDioInput):
@@ -110,7 +114,7 @@ class PortMatrix(QTableWidget):
 
     def timerEvent(self, event):
         try: 
-            matrix = self.sock.recv(len(DioList))
+            matrix = self.sock.recv(len(DioList)*2)
             self.setMatrix(matrix)
             self.sock.send(self.getMatrix())
         except socket.error as e:
@@ -120,7 +124,7 @@ class PortMatrix(QTableWidget):
             pass
 
     def getMatrix(self):
-        matrix = UserString.MutableString('\0'*len(DioList))
+        matrix = UserString.MutableString('\0'*len(DioList)*2)
         for Index in range(0,len(DioList)):
             data = 0
             for i in range(0,cMaxDioSize):
@@ -129,14 +133,28 @@ class PortMatrix(QTableWidget):
                     if(Dio.getLevel() == STD_HIGH):
                         data |= (1<<i)&0xFF
             matrix[Index] = '%c'%(data)
+        for Index in range(0,len(DioList)):
+            data = 0
+            for i in range(0,cMaxDioSize):
+                Dio = self.cellWidget(Index, i)
+                if(Dio != None):
+                    if(Dio.getDirection() == cDioOutput):
+                        data |= (1<<i)&0xFF
+            matrix[len(DioList)+Index] = '%c'%(data)
         return matrix.data
                                   
     def setMatrix(self,matrix):
-        if(len(matrix) == len(DioList)):
+        if(len(matrix) == len(DioList)*2):
             for Index in range(0,len(DioList)):
                 for i in range(0,cMaxDioSize):
                     Dio = self.cellWidget(Index, i)
                     if(Dio != None):
+                        # update direction
+                        if( (ord(matrix[len(DioList)+Index])&(1<<i)) != 0 ):
+                            Dio.setDirection(cDioOutput)
+                        else:
+                            Dio.setDirection(cDioInput)
+                        # update level
                         if(Dio.getDirection() == cDioOutput):
                             if( (ord(matrix[Index])&(1<<i)) != 0 ):
                                 Dio.setLevel(STD_HIGH)

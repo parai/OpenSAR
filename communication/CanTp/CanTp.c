@@ -108,7 +108,7 @@ void PduR_CanTpTxConfirmation(PduIdType CanTpTxPduId, NotifResultType Result) {
 #endif
 
 //#define INLINE
-#define INLINE inline
+//#define INLINE inline
 
 #define TIMER_DECREMENT(timer) \
 		if (timer > 0) { \
