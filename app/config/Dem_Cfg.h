@@ -5,7 +5,13 @@
  * DEM General
  */
 #define DEM_VERSION_INFO_API    			STD_ON		// Activate/Deactivate ver info API.
-#define DEM_DEV_ERROR_DETECT				STD_OFF		// Activate/Deactivate Dev Error Detection and Notification.
+
+#if defined(USE_DET)
+#define DEM_DEV_ERROR_DETECT STD_ON
+#else
+#define DEM_DEV_ERROR_DETECT STD_OFF
+#endif
+
 #define DEM_OBD_SUPPORT						STD_OFF
 #define DEM_PTO_SUPPORT						STD_OFF
 #define DEM_TYPE_OF_DTC_SUPPORTED			0x01		// ISO14229-1

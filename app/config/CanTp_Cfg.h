@@ -13,7 +13,11 @@
 
 #define FRTP_CANCEL_TRANSMIT_REQUEST 	STD_OFF
 #define CANTP_VERSION_INFO_API STD_OFF   /**< Build version info API */
+#if defined(USE_DET)
+#define CANTP_DEV_ERROR_DETECT STD_ON
+#else
 #define CANTP_DEV_ERROR_DETECT STD_OFF
+#endif
 
 /* CanTp NSdu Id */
 #define CANTP_DIAG_P2P_REQ		0

@@ -34,8 +34,12 @@
 #include "Cpu.h"
 #include "MemMap.h" /** @req DET006 */
 
-#define DEBUG_LVL 1
-#include "debug.h"
+#if defined(AUTOSAR_SIMULATOR)
+#include <stdio.h>
+#endif
+
+//#define DEBUG_LVL 1
+//#include "debug.h"
 
 typedef enum
 {
@@ -134,6 +138,11 @@ void Det_ReportError(uint16 ModuleId, uint8 InstanceId, uint8 ApiId, uint8 Error
 {
     if (detState == DET_STARTED) // No action is taken if the module is not started
     {
+#if defined(AUTOSAR_SIMULATOR)
+    	printf("ModuleId=%-4d, InstanceId=%-3d, ApiId=%-3d, ErrorId=%-3d\n",
+    			(uint32_t)ModuleId,(uint32_t)InstanceId,(uint32_t)ApiId,(uint32_t)ErrorId);
+#endif
+
 #if ( DET_ENABLE_CALLBACKS == STD_ON )
         uint32 old1; // 586 PC-Lint OK: fattar inte att den används i macrot.
         Irq_Save(old1);

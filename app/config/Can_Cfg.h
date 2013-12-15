@@ -4,7 +4,11 @@
 #define CAN_CFG_H_
 
 /* ################ Can General ################ */
+#if defined(USE_DET)
+#define CAN_DEV_ERROR_DETECT STD_ON
+#else
 #define CAN_DEV_ERROR_DETECT STD_OFF
+#endif
 #define CAN_VERSION_INFO_API STD_OFF
 #define CAN_TIMEOUT_DURATION 10 /* ms */
 

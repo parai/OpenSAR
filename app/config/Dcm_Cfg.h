@@ -3,7 +3,12 @@
 #define DCM_CFG_H_
 
 #define DCM_VERSION_INFO_API              STD_ON
-#define DCM_DEV_ERROR_DETECT              STD_OFF
+#if defined(USE_DET)
+#define DCM_DEV_ERROR_DETECT STD_ON
+#else
+#define DCM_DEV_ERROR_DETECT STD_OFF
+#endif
+
 #define DCM_RESPOND_ALL_REQUEST           STD_ON  // Activate/Deactivate response on SID 0x40-0x7f and 0xc0-0xff.
 #define DCM_REQUEST_INDICATION_ENABLED    STD_ON  // Activate/Deactivate indication request mechanism.
 #define DCM_PAGEDBUFFER_ENABLED           STD_OFF	// Enable/disable page buffer mechanism (currently only disabled supported)

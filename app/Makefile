@@ -29,11 +29,13 @@ INCDIR = 	-I$(BD)/include 		\
 			-I$(BD)/diagnostic/Dcm
 
 MACROS = 	-DWIN32 			\
+			-DAUTOSAR_SIMULATOR	\
 			-DUSE_DEBUG_PRINTF	\
 			-DUSE_CANIF	\
 			-DUSE_CANTP	\
 			-DUSE_PDUR	\
-			-DUSE_DCM
+			-DUSE_DCM	\
+			-DUSE_DET
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
@@ -49,7 +51,8 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/communication/CanIf	\
 		$(BD)/communication/CanTp	\
 		$(BD)/communication/PduR	\
-		$(BD)/diagnostic/Dcm
+		$(BD)/diagnostic/Dcm		\
+		$(BD)/diagnostic/Det
 		
 src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
 obj-y = $(subst .c,.o,$(src-y))	
@@ -80,9 +83,9 @@ all:$(obj-y)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 run:
-	#@(start python $(BD)/tools/can/CanBusServer.py --server 8000)
+	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)
 	@(start $(OUT)/$(TARGET).exe)	
-	#@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
+	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
 	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)

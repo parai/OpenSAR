@@ -22,8 +22,13 @@
 #define MCU_CFG_H_
 
 
-#define MCU_DEV_ERROR_DETECT 	STD_ON 
 #define MCU_PERFORM_RESET_API 	STD_ON
+
+#if defined(USE_DET)
+#define MCU_DEV_ERROR_DETECT STD_ON
+#else
+#define MCU_DEV_ERROR_DETECT STD_OFF
+#endif
 #define MCU_VERSION_INFO_API 	STD_ON
 
 

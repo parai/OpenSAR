@@ -10,8 +10,13 @@
 #include "CanTp.h"
 #include "PduR.h"
 #include "Dcm.h"
+#include "Det.h"
 void StartupHook( void )
 {
+#if defined(USE_DET)
+	Det_Init();
+	Det_Start();
+#endif
 	Can_Init(&Can_ConfigData);
 
 	CanIf_Init(&CanIf_Config);

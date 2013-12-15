@@ -8,8 +8,12 @@
 #ifndef DIO_CFG_H_
 #define DIO_CFG_H_
 
-#define DIO_VERSION_INFO_API    STD_ON
+#define DIO_VERSION_INFO_API    STD_OFF
+#if defined(USE_DET)
 #define DIO_DEV_ERROR_DETECT    STD_OFF
+#else
+#define DIO_DEV_ERROR_DETECT    STD_OFF
+#endif
 
 #define DIO_END_OF_LIST  (-1u)
 
