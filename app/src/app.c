@@ -1,5 +1,9 @@
 #include "app.h"
 
+void onSignal0Receive(void){}
+void onSignal1Receive(void){}
+void onSingnalGroup0Receive(void){}
+
 void Task10ms(void)
 {
 	for(;;)

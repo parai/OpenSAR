@@ -31,7 +31,7 @@ typedef struct {
 extern Com_BufferPduStateType Com_BufferPduState[];
 
 extern const Com_ConfigType *ComConfig;
-extern Com_Arc_Config_type Com_Arc_Config;
+extern const Com_Arc_Config_type Com_Arc_Config;
 
 
 

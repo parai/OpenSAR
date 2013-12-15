@@ -26,7 +26,8 @@ INCDIR = 	-I$(BD)/include 		\
 			-I$(BD)/arch/generic/mingw/kernel	\
 			-I$(BD)/system/EcuM			\
 			-I$(BD)/system/SchM			\
-			-I$(BD)/diagnostic/Dcm
+			-I$(BD)/diagnostic/Dcm		\
+			-I$(BD)/communication/Com
 
 MACROS = 	-DWIN32 			\
 			-DAUTOSAR_SIMULATOR	\
@@ -35,7 +36,8 @@ MACROS = 	-DWIN32 			\
 			-DUSE_CANTP	\
 			-DUSE_PDUR	\
 			-DUSE_DCM	\
-			-DUSE_DET
+			-DUSE_CANNM	\
+			-DUSE_DET	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
@@ -51,6 +53,11 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/communication/CanIf	\
 		$(BD)/communication/CanTp	\
 		$(BD)/communication/PduR	\
+		$(BD)/communication/CanNm	\
+		$(BD)/communication/Nm		\
+		$(BD)/communication/CanSM	\
+		$(BD)/communication/Com	\
+		$(BD)/communication/ComM	\
 		$(BD)/diagnostic/Dcm		\
 		$(BD)/diagnostic/Det
 		

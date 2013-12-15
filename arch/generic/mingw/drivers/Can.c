@@ -404,7 +404,7 @@ static void Can_RxIsr(int unit) {
  * @param unit CAN controller number( from 0 )
  */
 static void Can_TxIsr(int unit) {
-  CAN_HW_t *canHw= GetController(unit);
+  //CAN_HW_t *canHw= GetController(unit);
   const Can_ControllerConfigType *canHwConfig= GET_CONTROLLER_CONFIG(Can_Global.channelMap[unit]);
   Can_UnitType *canUnit = GET_PRIVATE_DATA(unit);
   const Can_HardwareObjectType *hohObj;

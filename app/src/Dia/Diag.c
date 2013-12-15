@@ -1,11 +1,4 @@
-#include "Os.h"
-#include "Dcm.h"
-#include "Can.h"
-#include "CanIf.h"
-#include "CanTp.h"
-#include "PduR.h"
-#include <stdio.h>
-#include "Diag.h"
+#include "app.h"
 
 static uint32  diagRandomSeed = 0xDEADBEEF;
 Std_ReturnType Diag_GetSeed (uint8 *securityAccessDataRecord, uint8 *seed,

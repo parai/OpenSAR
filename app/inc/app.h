@@ -8,6 +8,9 @@
 #define SetEvent SetEvent2
 #endif
 #include "debug.h"
+
+#include <stdio.h>
+
 #include "Can.h"
 #include "CanIf.h"
 #include "CanTp.h"
@@ -16,6 +19,8 @@
 #include "Dcm.h"
 #include "Dio.h"
 #include "Port.h"
+
+#include "Diag.h"
 
 #endif /* APP_H_ */
 

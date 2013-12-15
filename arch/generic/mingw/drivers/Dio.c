@@ -132,7 +132,6 @@ static void DioClientThread(void)
 	// The socket address to be passed to bind
 	struct sockaddr_in service;
 	int ercd;
-	int I;
 
 	{
 		WSADATA wsaData;
