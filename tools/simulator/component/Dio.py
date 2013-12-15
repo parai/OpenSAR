@@ -4,6 +4,8 @@ from PyQt4.QtCore import *
 import sys,os
 import UserString
 import socket
+import traceback
+import errno
 
 __all__ = ['DioWidget']
 
@@ -39,8 +41,8 @@ STD_HIGH = 1
 STD_LOW  = 0  # low active, that is when Output, Light On
 
 class DioButton(QPushButton):
-    Dir   = cDioInput
-    Level = STD_LOW
+    Dir   = 0xFF
+    Level = 0xFF
     def __init__(self,Dir,PortId,BitId):
         self.PortId = PortId
         self.BitId  = BitId
@@ -50,6 +52,8 @@ class DioButton(QPushButton):
     def getDirection(self):
         return self.Dir 
     def setDirection(self,Dir):
+        if(Dir == self.Dir):
+            return
         if(Dir==cDioInput):
             self.Dir = Dir
             self.setFlat(False)
@@ -69,6 +73,8 @@ class DioButton(QPushButton):
         return self.Level
     
     def setLevel(self,Level):
+        if(Level == self.Level):
+            return
         if(Level == STD_HIGH):
             self.Level = Level
             if(self.Dir == cDioInput):
@@ -89,19 +95,29 @@ class PortMatrix(QTableWidget):
     def __init__(self): 
         super(QTableWidget,self).__init__(None)
         self.initPort()
-        self.startTimer(10)
-    
-    def timerEvent(self, event):
+        
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         try:
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.settimeout(0.005)
-            sock.connect(('127.0.0.1', 60000)) 
-            matrix = sock.recv(1024)
-            self.setMatrix(matrix)
-            sock.send(self.getMatrix())
-            sock.close()
+            self.sock.settimeout(10)
+            self.sock.connect(('127.0.0.1', 60000)) 
         except:
-            sock.close()  
+            print 'Dio: AUTOSAR Client isnot started.'
+        self.sock.settimeout(0)
+        self.startTimer(10)  # Time Period Must be the same with the AUTOSAR client
+    
+    def closeEvent(self,event):
+        self.sock.close()
+
+    def timerEvent(self, event):
+        try: 
+            matrix = self.sock.recv(len(DioList))
+            self.setMatrix(matrix)
+            self.sock.send(self.getMatrix())
+        except socket.error as e:
+#             if e.errno == errno.WSAENOBUFS:
+#                 pass
+            #print traceback.format_exc()
+            pass
 
     def getMatrix(self):
         matrix = UserString.MutableString('\0'*len(DioList))

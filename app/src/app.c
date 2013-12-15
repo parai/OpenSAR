@@ -20,10 +20,12 @@ void Task10ms(void)
 }
 void Task20ms(void)
 {
+	Dio_LevelType ChannelLevel = STD_LOW;
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_EventTask20ms);
-		//printf("Task20ms is running.\n");
+		ChannelLevel=Dio_ReadChannel(1);
+		Dio_WriteChannel(2,ChannelLevel);
 		(void)ClearEvent(EVENT_MASK_EventTask20ms);
 	}
 	TerminateTask();

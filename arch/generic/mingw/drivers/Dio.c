@@ -175,22 +175,30 @@ static void DioClientThread(void)
 	}
 	for(;;)
 	{
-		WaitForSingleObject(mutex,INFINITE);
 		AcceptSocket = accept(ListenSocket, NULL, NULL);
 		if (AcceptSocket == INVALID_SOCKET) {
 			printf("accept failed with error: %d\n", WSAGetLastError());
 			continue;
 		}
 
-		send(AcceptSocket, (void*)Dio_Reg.Level, sizeof(Dio_Reg.Level), 0);
-
-		recv(AcceptSocket, (void*)Dio_Reg.Level, sizeof(Dio_Reg.Level), 0);
+		for(;;)
+		{
+			WaitForSingleObject(mutex,INFINITE);
+			ercd = send(AcceptSocket, (void*)Dio_Reg.Level, sizeof(Dio_Reg.Level), 0);
+			recv(AcceptSocket, (void*)Dio_Reg.Level, sizeof(Dio_Reg.Level), 0);
+			ReleaseMutex(mutex);
+			if(-1 == ercd)
+			{
+				printf("Dio: Simulator Off.\n");
+				break;
+			}
+			Sleep(10);
+		}
 
 		ercd = closesocket(AcceptSocket);
 		if (ercd == SOCKET_ERROR){
-			printf("RX:closesocket function failed with error: %d\n", WSAGetLastError());
+			printf("closesocket function failed with error: %d\n", WSAGetLastError());
 		}
-		ReleaseMutex(mutex);
 	}
 }
 static void DioStartClient(void)
