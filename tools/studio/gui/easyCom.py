@@ -14,7 +14,7 @@ class easyComTree(QTreeWidget):
         list = ['Signal Name','Start Bit','Bit Size','Msg CAN Id','Bus','Format','Init Value','Comment']
         self.setHeaderLabels(QStringList(list))
         self.setColumnWidth(0,150)
-        self.setColumnWidth(4,120)
+        self.setColumnWidth(4,140)
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
     def itemSelectionChanged(self):
         try:
@@ -54,12 +54,44 @@ class easyComTree(QTreeWidget):
             Node.attrib['comment'] = str(self.itemWidget(tree,7).text())
             List.append(Node)
         return List
-    
+    def moveSignalUp(self,isUp):
+        tree = self.currentItem()
+        Node = ET.Element('Signal')
+        Node.attrib['name'] = str(self.itemWidget(tree,0).text())
+        Node.attrib['start'] = str(self.itemWidget(tree,1).value())
+        Node.attrib['size'] = str(self.itemWidget(tree,2).value())
+        Node.attrib['canid'] = str(self.itemWidget(tree,3).text())
+        Node.attrib['bus'] = str(self.itemWidget(tree,4).currentText())
+        Node.attrib['format'] = str(self.itemWidget(tree,5).currentText())
+        Node.attrib['init'] = str(self.itemWidget(tree,6).text())
+        Node.attrib['comment'] = str(self.itemWidget(tree,7).text())
+        pIndex = self.indexOfTopLevelItem(tree)
+        if((pIndex+1) != self.topLevelItemCount() and pIndex != 0):
+            if(isUp):
+                Index = pIndex - 1
+            else:
+                Index = pIndex + 1
+        elif((pIndex+1) == self.topLevelItemCount()):
+            if(isUp):
+                Index = pIndex - 1
+            else:
+                return
+        elif(pIndex == 0):
+            if(not isUp):
+                Index = pIndex + 1
+            else:
+                return
+        self.takeTopLevelItem(pIndex)
+        self.addSignal(Node,Index)
+            
     def deleteSignal(self):
         self.takeTopLevelItem(self.indexOfTopLevelItem(self.currentItem()))
-    def addSignal(self,Node=None):
+    def addSignal(self,Node=None,Index=None):
         treeItem = QTreeWidgetItem()
-        self.addTopLevelItem(treeItem) 
+        if(Index == None):
+            self.addTopLevelItem(treeItem) 
+        else:
+            self.insertTopLevelItem(Index,treeItem)
         if(Node != None):
             sname = Node.attrib['name']
             sstart = int(Node.attrib['start'])
@@ -73,8 +105,8 @@ class easyComTree(QTreeWidget):
             sname =  'Signal%s'%(self.signalid)
             sstart = 0
             ssize  = 8  
-            scanid = '0x???' 
-            sbus = 'CAN_CTRL_0'
+            scanid = 'RX=0x???' 
+            sbus = 'CANIF_CHL_HS'
             sformat = 'Motorola'
             sinit = '0x00'
             scomment = ''
@@ -96,8 +128,9 @@ class easyComTree(QTreeWidget):
         size.setRange(0,32)  
         size.setValue(ssize)
         canid = QLineEdit(scanid)
+        canid.setToolTip('Format:\n  RX=0x???\n  TX=0x???')
         bus = QComboBox()
-        bus.addItems(QStringList(['CAN_CTRL_0','CAN_CTRL_1','CAN_CTRL_2','CAN_CTRL_3','CAN_CTRL_4']))
+        bus.addItems(QStringList(['CANIF_CHL_HS','CANIF_CHL_LS']))
         bus.setCurrentIndex(bus.findText(sbus))
         format = QComboBox()
         format.addItems(QStringList(['Motorola']))
@@ -157,8 +190,27 @@ class easyComGui(QMainWindow):
         self.qSplitter = QSplitter(Qt.Horizontal,self)
         self.creMenu()
         self.creGui()
-        
+    
+    def on_move_up(self):
+        if(self.easyComTree.isVisible()):
+            self.easyComTree.moveSignalUp(True)
+    def on_move_down(self):
+        if(self.easyComTree.isVisible()):
+            self.easyComTree.moveSignalUp(False)
     def creMenu(self):
+        qAction =QAction(self)
+        qAction.setIcon(QIcon('./res/move_up.bmp'))
+        qAction.setStatusTip('move the Selected signal up')
+        self.connect(qAction,SIGNAL('triggered()'),self.on_move_up) 
+        self.menuBar().addAction(qAction)
+        
+        qAction =QAction(self)
+        qAction.setIcon(QIcon('./res/move_down.bmp'))
+        qAction.setStatusTip('move the Selected signal up')
+        self.connect(qAction,SIGNAL('triggered()'),self.on_move_down)
+        self.menuBar().addAction(qAction)
+        
+        self.menuBar().addSeparator()
         #  create Three three Action
         self.qAction1=QAction(self.tr('Action1'),self) 
         self.connect(self.qAction1,SIGNAL('triggered()'),self.mqAction1) 
@@ -220,7 +272,6 @@ class easyComGui(QMainWindow):
         tree = ET.ElementTree(ROOT)
         tree.write(wfxml, encoding="utf-8", xml_declaration=True);
     def mGen(self,pdir):
-        return
         from gen.GenCom import GenCom
         wfxml = '%s/com.wfxml'%(pdir)
         GenCom(str(wfxml))
