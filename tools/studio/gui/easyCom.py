@@ -128,7 +128,7 @@ class easyComTree(QTreeWidget):
         size.setRange(0,32)  
         size.setValue(ssize)
         canid = QLineEdit(scanid)
-        canid.setToolTip('Format:\n  RX=0x???\n  TX=0x???')
+        canid.setToolTip('Format:\n  RX=0x???\n  TX=0x???\n')
         bus = QComboBox()
         bus.addItems(QStringList(['CANIF_CHL_HS','CANIF_CHL_LS']))
         bus.setCurrentIndex(bus.findText(sbus))
