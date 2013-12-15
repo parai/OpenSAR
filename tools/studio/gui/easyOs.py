@@ -13,6 +13,7 @@ class easyCounterCfgTree(QTreeWidget):
         self.root = parent
         list = ['Counter Name','Max Allowed Value','Ticks Per Base','Min Cycle']
         self.setHeaderLabels(QStringList(list))
+        self.setColumnWidth(0,150)
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
     def getCounterNameList(self):
         list = []
@@ -95,6 +96,7 @@ class easyAlarmCfgTree(QTreeWidget):
         list = ['Alarm Name','Owner Counter','Autostart','App Mode',
                 'Start Time','Cycle','Action','Task/Counter/Cbk','Event']
         self.setHeaderLabels(QStringList(list))
+        self.setColumnWidth(0,150)
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
     def toXML(self):
         List = ET.Element('AlarmList')
@@ -299,6 +301,7 @@ class easyTaskCfgTree(QTreeWidget):
         self.root =  parent
         list = ['Task Name','Stack Size','Priority','Activation','Autostart','Schedule']
         self.setHeaderLabels(QStringList(list))
+        self.setColumnWidth(0,150)
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
     def itemSelectionChanged(self):
         try:

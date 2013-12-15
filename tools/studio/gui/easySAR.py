@@ -3,7 +3,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import sys,os
 from easyOs     import easyOsGui
-from easyCanIf  import easyCanIfGui
+from easyCom  import easyComGui
 
 __all__ = ['easySAR']
 
@@ -17,17 +17,17 @@ class easyDockWidget(QDockWidget):
         self.isClosed = True
 class easySARGui(QMainWindow):
     easyCan = None
-    easyCanIf = None
+    easyCom = None
     easyOs  = None
     pdir = ''
     def __init__(self):
         QMainWindow.__init__(self, None)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^)');
-        self.resize(800,600)
+        self.showMaximized()
         self.creMenu()
         self.creStatusBar()
         self.easyOsCfg = easyOsGui()
-        self.easyCanIfCfg = easyCanIfGui()
+        self.easyComCfg = easyComGui()
     def creMenu(self):
         # File
         tMenu=self.menuBar().addMenu(self.tr('File'))
@@ -56,19 +56,20 @@ class easySARGui(QMainWindow):
         self.connect(sItem,SIGNAL('triggered()'),self.measyOs) 
         sItem.setStatusTip('Open easyOs console.') 
         tMenu.addAction(sItem) 
-        ## easyCanIf
-        sItem=QAction(self.tr('easyCanIf'),self) 
-        self.connect(sItem,SIGNAL('triggered()'),self.measyCanIf) 
-        sItem.setStatusTip('Open easyCanIf console.') 
+        ## easyCom
+        sItem=QAction(self.tr('easyCom'),self) 
+        self.connect(sItem,SIGNAL('triggered()'),self.measyCom) 
+        sItem.setStatusTip('Open easyCom console.') 
         tMenu.addAction(sItem)   
     def mOpen(self):
-        if(self.pdir == ''):
-            self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config','config',QFileDialog.DontResolveSymlinks)
+        self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config','config',QFileDialog.DontResolveSymlinks)
         if(self.pdir == ''):
             return
         self.easyOsCfg.mOpen(self.pdir)
-        self.easyCanIfCfg.mOpen(self.pdir)
+        self.easyComCfg.mOpen(self.pdir)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^) Workspace=%s'%(self.pdir));
+        self.measyOs()
+        self.measyCom()
         QMessageBox(QMessageBox.Information, 'Info', 
                         'Open OpenSAR Configuration xml Successfully !').exec_();
     def mSave(self):
@@ -77,7 +78,7 @@ class easySARGui(QMainWindow):
         if(self.pdir == ''):
             return
         self.easyOsCfg.mSave(self.pdir)
-        self.easyCanIfCfg.mSave(self.pdir)
+        self.easyComCfg.mSave(self.pdir)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^) Workspace=%s'%(self.pdir));
         QMessageBox(QMessageBox.Information, 'Info', 
                         'Save OpenSAR Configuration xml Successfully !').exec_();
@@ -86,7 +87,7 @@ class easySARGui(QMainWindow):
             QMessageBox(QMessageBox.Information, 'Info', 
                         'Open or Configure a Workspace first !').exec_();
         self.easyOsCfg.mGen(self.pdir)
-        self.easyCanIfCfg.mGen(self.pdir)
+        self.easyComCfg.mGen(self.pdir)
         QMessageBox(QMessageBox.Information, 'Info', 
                         'Generate OpenSAR Configuration C Code Successfully !').exec_();
     def measyOs(self):
@@ -101,15 +102,15 @@ class easySARGui(QMainWindow):
         else:
             print('easyOs already started.')
     
-    def measyCanIf(self):
-        if(self.easyCanIf==None):
-            self.easyCanIf = easyDockWidget('easyCanIf', self)  
-            self.easyCanIf.setWidget(self.easyCanIfCfg)  
-            self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyCanIf)
-        elif(self.easyCanIf.isClosed==True):
-            self.easyCanIf = easyDockWidget('easyCanIf', self)  
-            self.easyCanIf.setWidget(self.easyCanIfCfg)  
-            self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyCanIf)
+    def measyCom(self):
+        if(self.easyCom==None):
+            self.easyCom = easyDockWidget('easyCom', self)  
+            self.easyCom.setWidget(self.easyComCfg)  
+            self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyCom)
+        elif(self.easyCom.isClosed==True):
+            self.easyCom = easyDockWidget('easyCom', self)  
+            self.easyCom.setWidget(self.easyComCfg)  
+            self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyCom)
         else:
             print('easyOs already started.')
 
