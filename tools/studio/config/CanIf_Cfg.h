@@ -44,8 +44,8 @@
 #define CANIF_DIAG_P2P_REQ        0
 #define CANIF_DIAG_P2A_REQ        1
     
-#define CANIF_MSG1AB_RX 2
-#define CANIF_MSG1EF_TX 2
+#define CANIF_MSG0_RX GenCanIfRxId(0)
+#define CANIF_MSG1_TX GenCanIfTxId(0)
 
 // Identifiers for the elements in CanIfControllerConfig[]
 // This is the ConfigurationIndex in CanIf_InitController()

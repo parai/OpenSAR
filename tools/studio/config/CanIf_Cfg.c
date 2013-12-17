@@ -165,7 +165,7 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
     },
     
     {
-        .CanIfTxPduId = PDUR_MSG1EF_TX,
+        .CanIfTxPduId = PDUR_MSG1_TX,
         .CanIfCanTxPduIdCanId = 0x1ef, 
         .CanIfCanTxPduIdDlc = 8,
         .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
@@ -221,7 +221,7 @@ const CanIf_RxPduConfigType CanIfRxPduConfigData[] =
     },
     
     {
-        .CanIfCanRxPduId = PDUR_MSG1AB_RX,
+        .CanIfCanRxPduId = PDUR_MSG0_RX,
         .CanIfCanRxPduCanId = 0x1ab,
         .CanIfCanRxPduDlc = 8,
 #if ( CANIF_CANPDUID_READDATA_API == STD_ON )

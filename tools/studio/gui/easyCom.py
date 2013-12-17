@@ -11,9 +11,10 @@ class easyComTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Signal Name','Start Bit','Bit Size','Msg CAN Id','Bus','Format','Init Value','Comment']
+        list = ['Signal Name','Start Bit','Bit Size','Msg','Bus','Format','Init Value','Comment']
         self.setHeaderLabels(QStringList(list))
         self.setColumnWidth(0,150)
+        self.setColumnWidth(3,200)
         self.setColumnWidth(4,140)
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
     def itemSelectionChanged(self):
@@ -47,7 +48,7 @@ class easyComTree(QTreeWidget):
             Node.attrib['name'] = str(self.itemWidget(tree,0).text())
             Node.attrib['start'] = str(self.itemWidget(tree,1).value())
             Node.attrib['size'] = str(self.itemWidget(tree,2).value())
-            Node.attrib['canid'] = str(self.itemWidget(tree,3).text())
+            Node.attrib['msg'] = str(self.itemWidget(tree,3).text())
             Node.attrib['bus'] = str(self.itemWidget(tree,4).currentText())
             Node.attrib['format'] = str(self.itemWidget(tree,5).currentText())
             Node.attrib['init'] = str(self.itemWidget(tree,6).text())
@@ -60,7 +61,7 @@ class easyComTree(QTreeWidget):
         Node.attrib['name'] = str(self.itemWidget(tree,0).text())
         Node.attrib['start'] = str(self.itemWidget(tree,1).value())
         Node.attrib['size'] = str(self.itemWidget(tree,2).value())
-        Node.attrib['canid'] = str(self.itemWidget(tree,3).text())
+        Node.attrib['msg'] = str(self.itemWidget(tree,3).text())
         Node.attrib['bus'] = str(self.itemWidget(tree,4).currentText())
         Node.attrib['format'] = str(self.itemWidget(tree,5).currentText())
         Node.attrib['init'] = str(self.itemWidget(tree,6).text())
@@ -96,7 +97,7 @@ class easyComTree(QTreeWidget):
             sname = Node.attrib['name']
             sstart = int(Node.attrib['start'])
             ssize = int(Node.attrib['size'])
-            scanid = Node.attrib['canid']
+            smsg = Node.attrib['msg']
             sbus = Node.attrib['bus']
             sformat = Node.attrib['format']
             sinit = Node.attrib['init']
@@ -105,7 +106,7 @@ class easyComTree(QTreeWidget):
             sname =  'Signal%s'%(self.signalid)
             sstart = 0
             ssize  = 8  
-            scanid = 'RX=0x???' 
+            smsg = 'RX=MsgName(CAN ID)' 
             sbus = 'CANIF_CHL_HS'
             sformat = 'Motorola'
             sinit = '0x00'
@@ -127,8 +128,10 @@ class easyComTree(QTreeWidget):
         size = QSpinBox()
         size.setRange(0,32)  
         size.setValue(ssize)
-        canid = QLineEdit(scanid)
-        canid.setToolTip('Format:\n  RX=0x???\n  TX=0x???\n')
+        msg = QLineEdit(smsg)
+        msg.setToolTip("""Format:
+    RX=MsgName(CAN ID)
+    TX=MsgName(CAN ID)""")
         bus = QComboBox()
         bus.addItems(QStringList(['CANIF_CHL_HS','CANIF_CHL_LS']))
         bus.setCurrentIndex(bus.findText(sbus))
@@ -140,7 +143,7 @@ class easyComTree(QTreeWidget):
         self.setItemWidget(treeItem,0,name)    
         self.setItemWidget(treeItem,1,start) 
         self.setItemWidget(treeItem,2,size) 
-        self.setItemWidget(treeItem,3,canid) 
+        self.setItemWidget(treeItem,3,msg) 
         self.setItemWidget(treeItem,4,bus)
         self.setItemWidget(treeItem,5,format) 
         self.setItemWidget(treeItem,6,init) 

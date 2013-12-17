@@ -1,5 +1,6 @@
 import sys,os
 import xml.etree.ElementTree as ET
+import traceback
 
 __all__ = ['GenCanIf']
 
@@ -36,68 +37,66 @@ def GenCanIf(wfxml):
     GenC()
     
 def GAGet(what,which):
-    # what must be a pdu = [id,bus]
-    if(which == 'id'):
-        return hex(what[0])
+    # what must be a pdu = [ Name, Id, Bus]
+    if(which == 'name'):
+        return what[0]
+    elif(which == 'id'):
+        return hex(tInt(what[1]))
     elif(which == 'bus'):
-        return what[1]
+        return what[2]
 
 def GLGet(what):
     """ Gen Get List
         Get A Special List []
     """
     global __root
+    import re
+    # (Type=RX/TX ) (Name) (Id)
+    reMsg = re.compile(r'(\w+)\s*=\s*(\w+)\s*\(\s*(\w+)\s*\)')
     rlist =[]
-    if(what == 'RxMsg'):
+    if(what == 'TxPdu'):
         for Signal in __root.find('SignalList'):
-            scanid = Signal.attrib['canid']
-            if(scanid.find('RX') != -1):
-               canid = tInt(scanid.replace('RX','').replace('=',''))
-               flag = False
-               for id in rlist:
-                   if(id == canid):
-                       flag = True
-               if(False == flag):
-                    rlist.append(canid)
-    elif(what == 'TxMsg'):
-        for Signal in __root.find('SignalList'):
-            scanid = Signal.attrib['canid']
-            if(scanid.find('TX') != -1):
-               canid = tInt(scanid.replace('TX','').replace('=',''))
-               flag = False
-               for id in rlist:
-                   if(id == canid):
-                       flag = True
-               if(False == flag):
-                    rlist.append(canid)
-    elif(what == 'TxPdu'):
-        for Signal in __root.find('SignalList'):
-            scanid = Signal.attrib['canid']
-            if(scanid.find('TX') != -1):
-               canid = tInt(scanid.replace('TX','').replace('=',''))
-               flag = False
-               for pdu in rlist:
-                   if(canid == pdu[0] and Signal.attrib['bus'] == pdu[1]):
-                       flag = True
-               if(False == flag):
-                   pdu = []
-                   pdu.append(canid)
-                   pdu.append(Signal.attrib['bus'])
-                   rlist.append(pdu)
+            msg = Signal.attrib['msg']
+            try:
+                msg = reMsg.search(msg).groups()
+                if(msg[0] == 'TX'):
+                   flag = False
+                   for pdu in rlist:
+                       # If has same Id and Bus
+                       if(msg[2] == pdu[1] and Signal.attrib['bus'] == pdu[2]):
+                           if(msg[1]) != pdu[0]:
+                               raise Exception('Name must be the same if the message has the same Id on the same Bus.')
+                           flag = True
+                   if(False == flag):
+                       pdu = []
+                       pdu.append(msg[1])
+                       pdu.append(msg[2])
+                       pdu.append(Signal.attrib['bus'])
+                       rlist.append(pdu)
+            except:
+                print traceback.format_exc()
+                print 'CanIf: Error Message Configured for %s'%(Signal.attrib['name'])
     elif(what == 'RxPdu'):
         for Signal in __root.find('SignalList'):
-            scanid = Signal.attrib['canid']
-            if(scanid.find('RX') != -1):
-               canid = tInt(scanid.replace('RX','').replace('=',''))
-               flag = False
-               for pdu in rlist:
-                   if(canid == pdu[0] and Signal.attrib['bus'] == pdu[1]):
-                       flag = True
-               if(False == flag):
-                   pdu = []
-                   pdu.append(canid)
-                   pdu.append(Signal.attrib['bus'])
-                   rlist.append(pdu)
+            msg = Signal.attrib['msg']
+            try:
+                msg = reMsg.search(msg).groups()
+                if(msg[0] == 'RX'):
+                   flag = False
+                   for pdu in rlist:
+                       if(msg[2] == pdu[1] and Signal.attrib['bus'] == pdu[2]):
+                           if(msg[1]) != pdu[0]:
+                               raise Exception('Name must be the same if the message has the same Id on the same Bus.')
+                           flag = True
+                   if(False == flag):
+                       pdu = []
+                       pdu.append(msg[1])
+                       pdu.append(msg[2])
+                       pdu.append(Signal.attrib['bus'])
+                       rlist.append(pdu)
+            except:
+                print traceback.format_exc()
+                print 'CanIf: Error Message Configured for %s'%(Signal.attrib['name'])
     return rlist
 def GenH():
     global __dir
@@ -138,13 +137,13 @@ def GenH():
 #define CANIF_DIAG_P2P_REQ        0
 #define CANIF_DIAG_P2A_REQ        1
     \n""")
-    startId = 2     
-    for RxMsg in GLGet('RxMsg'):
-        fp.write('#define CANIF_MSG%s_RX %s\n'%(hex(RxMsg).upper()[2:],startId))
+    startId = 0     
+    for pdu in GLGet('RxPdu'):
+        fp.write('#define CANIF_%s_RX GenCanIfRxId(%s)\n'%(GAGet(pdu,'name'),startId))
         startId += 1
-    startId = 2     
-    for TxMsg in GLGet('TxMsg'):
-        fp.write('#define CANIF_MSG%s_TX %s\n'%(hex(TxMsg).upper()[2:],startId))
+    startId = 0     
+    for pdu in GLGet('TxPdu'):
+        fp.write('#define CANIF_%s_TX GenCanIfTxId(%s)\n'%(GAGet(pdu,'name'),startId))
         startId += 1
     fp.write("""
 // Identifiers for the elements in CanIfControllerConfig[]
@@ -298,10 +297,10 @@ const CanIf_InitHohConfigType CanIfHohConfigData[] =
     \n""")
     ## Tx PDU ID
     cstr =''
-    for TxPdu in GLGet('TxPdu'):
+    for pdu in GLGet('TxPdu'):
         cstr += """
     {
-        .CanIfTxPduId = PDUR_MSG%s_TX,
+        .CanIfTxPduId = PDUR_%s_TX,
         .CanIfCanTxPduIdCanId = %s, 
         .CanIfCanTxPduIdDlc = 8,
         .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
@@ -312,7 +311,7 @@ const CanIf_InitHohConfigType CanIfHohConfigData[] =
         .CanIfUserTxConfirmation = PduR_CanIfTxConfirmation,
         .CanIfCanTxPduHthRef = &CanIfHthConfigData_%s[0],
         .PduIdRef = NULL
-    },\n"""%(GAGet(TxPdu,'id').upper()[2:],GAGet(TxPdu,'id'),GAGet(TxPdu,'bus'),)
+    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'id'),GAGet(pdu,'bus'),)
     fp.write("""
 const CanIf_TxPduConfigType CanIfTxPduConfigData[] = 
 {
@@ -348,10 +347,10 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
     ## Rx Pdu
     ## Tx PDU ID
     cstr =''
-    for RxPdu in GLGet('RxPdu'):
+    for pdu in GLGet('RxPdu'):
         cstr += """
     {
-        .CanIfCanRxPduId = PDUR_MSG%s_RX,
+        .CanIfCanRxPduId = PDUR_%s_RX,
         .CanIfCanRxPduCanId = %s,
         .CanIfCanRxPduDlc = 8,
 #if ( CANIF_CANPDUID_READDATA_API == STD_ON )
@@ -367,7 +366,7 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
         .PduIdRef = NULL,
         .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
         .CanIfCanRxPduCanIdMask = 0x7FF
-    },\n"""%(GAGet(RxPdu,'id').upper()[2:],GAGet(RxPdu,'id'),GAGet(RxPdu,'bus'),)
+    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'id'),GAGet(pdu,'bus'),)
     fp.write("""
 const CanIf_RxPduConfigType CanIfRxPduConfigData[] = 
 {

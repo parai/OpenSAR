@@ -4,7 +4,6 @@ import math
 from PyQt4 import QtCore, QtGui, Qt
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from PyQt4.pyqtconfig import QtGuiModuleMakefile
 
 __all__ = ['GaugeWidget']
 
