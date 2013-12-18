@@ -137,6 +137,9 @@ def GenH():
 #define CANIF_DIAG_P2P_REQ        0
 #define CANIF_DIAG_P2A_REQ        1
     \n""")
+    fp.write('// ---- Gen Helper ----\n')
+    fp.write('#define GenCanIfRxId(id) (id+2)\n')
+    fp.write('#define GenCanIfTxId(id) (id+2)\n\n')
     startId = 0     
     for pdu in GLGet('RxPdu'):
         fp.write('#define CANIF_%s_RX GenCanIfRxId(%s)\n'%(GAGet(pdu,'name'),startId))

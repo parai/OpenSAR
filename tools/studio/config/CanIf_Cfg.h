@@ -44,6 +44,10 @@
 #define CANIF_DIAG_P2P_REQ        0
 #define CANIF_DIAG_P2A_REQ        1
     
+// ---- Gen Helper ----
+#define GenCanIfRxId(id) (id+2)
+#define GenCanIfTxId(id) (id+2)
+
 #define CANIF_MSG0_RX GenCanIfRxId(0)
 #define CANIF_MSG1_TX GenCanIfTxId(0)
 
