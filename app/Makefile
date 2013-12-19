@@ -22,6 +22,7 @@ INCDIR = 	-I$(BD)/include 		\
 			-I$(BD)/include/sys		\
 			-I$(BD)/system/kernel/include \
 			-I$(BD)/app/config	\
+			-I$(BD)/app/config/GEN	\
 			-I$(BD)/app/inc			\
 			-I$(BD)/arch/generic/mingw/kernel	\
 			-I$(BD)/system/EcuM			\
@@ -46,6 +47,7 @@ RMFLGS = -f
 
 #common objectives		
 dir-y =	$(BD)/app/config	\
+		$(BD)/app/config/GEN			\
 		$(BD)/arch/generic/mingw/kernel	\
 		$(BD)/arch/generic/mingw/drivers	\
 		$(BD)/app/src		\

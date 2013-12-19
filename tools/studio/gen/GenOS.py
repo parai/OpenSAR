@@ -19,7 +19,7 @@ __Header = \
 */
 """
 def tInt(strnum):
-    if(strnum.find('0x') or strnum.find('0X')):
+    if(strnum.find('0x')!=-1 or strnum.find('0X')!=-1):
         return int(strnum,16)
     else:
         return int(strnum,10)

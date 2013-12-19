@@ -24,7 +24,7 @@ __dir = '.'
 __root = None
 
 def tInt(strnum):
-    if(strnum.find('0x') or strnum.find('0X')):
+    if(strnum.find('0x')!=-1 or strnum.find('0X')!=-1):
         return int(strnum,16)
     else:
         return int(strnum,10)
@@ -262,7 +262,7 @@ extern const PduR_PBConfigType PduR_Config;
     
 def GenC():   
     global __dir
-    fp = open('%s/PduR_Cfg.c'%(__dir),'w')
+    fp = open('%s/PduR_PbCfg.c'%(__dir),'w')
     fp.write(__Header)
     cstr = ''
     for pdu in GLGet('RxPdu'):

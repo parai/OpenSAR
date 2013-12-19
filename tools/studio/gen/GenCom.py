@@ -38,21 +38,47 @@ def GenCom(wfxml):
 
 
 def tInt(strnum):
-    if(strnum.find('0x') or strnum.find('0X')):
+    if(strnum.find('0x')!=-1 or strnum.find('0X')!=-1):
         return int(strnum,16)
     else:
         return int(strnum,10)
     
 def GAGet(what,which):
     # what must be a pdu = [ Name, Id, Bus]
-    if(which == 'name'):
-        return what[0]
-    elif(which == 'id'):
-        return hex(tInt(what[1]))
-    elif(which == 'bus'):
-        return what[2]
+    # or a Signal Node
+    try:
+        if(which == 'name'):
+            return what[0]
+        elif(which == 'id'):
+            return hex(tInt(what[1]))
+        elif(which == 'bus'):
+            return what[2]
+        else:
+            raise Exception('No Found')
+    except:
+        import re
+        # (Type=RX/TX ) (Name) (Id)
+        reMsg = re.compile(r'(\w+)\s*=\s*(\w+)\s*\(\s*(\w+)\s*\)')
+        msg = what.attrib['msg']
+        msg = reMsg.search(msg).groups()
+        if(which == 'msgname'):
+            return msg[1]
+        elif(which == 'msgtype'):
+            return msg[0]
+        elif(which == 'type'):
+            size = tInt(what.attrib['size'])
+            if(size <= 8):
+                return 'UINT8'
+            elif(size <= 16):
+                return 'UINT16'
+            elif(size <= 32):
+                 return 'UINT32'
+            else:
+                return 'UINT8_N'
+        else:
+            return what.attrib[which]
 
-def GLGet(what):
+def GLGet(what,which = None):
     """ Gen Get List
         Get A Special List []
     """
@@ -60,6 +86,18 @@ def GLGet(what):
     import re
     # (Type=RX/TX ) (Name) (Id)
     reMsg = re.compile(r'(\w+)\s*=\s*(\w+)\s*\(\s*(\w+)\s*\)')
+    if(which!=None and which=='SignalRefs'):
+        # what is a pdu = [ Name, Id, Bus]
+        rList = []
+        for sig in __root.find('SignalList'):
+            import re
+            # (Type=RX/TX ) (Name) (Id)
+            reMsg = re.compile(r'(\w+)\s*=\s*(\w+)\s*\(\s*(\w+)\s*\)')
+            msg = sig.attrib['msg']
+            msg = reMsg.search(msg).groups()
+            if(what[0]==msg[1] and what[1]==msg[2] and what[2]==sig.attrib['bus']):
+                rList.append(sig)
+        return rList
     if(what == 'Signal'):
         return __root.find('SignalList')
     rlist =[]
@@ -147,7 +185,297 @@ def GenH():
 #endif /*COM_CFG_H*/
     """%(len(GLGet('RxPdu')+GLGet('TxPdu')),len(GLGet('Signal')) ))
     fp.close()
+    # ====================
+    fp = open('%s/Com_PbCfg.h'%(__dir),'w')
+    fp.write(__Header)
+    fp.write("""
+#if !(((COM_SW_MAJOR_VERSION == 1) && (COM_SW_MINOR_VERSION == 2)) )
+#error Com: Configuration file expected BSW module version to be 1.2.*
+#endif
 
+#ifndef COM_PBCFG_H
+#define COM_PBCFG_H
+
+#include "Com_Types.h"
+
+extern const Com_ConfigType ComConfiguration;
+
+// PDU group id definitions    
+#define COM_DEFAULT_IPDU_GROUP  0
+    """)
+    cstr = ''
+    id = 0
+    for pdu in GLGet('RxPdu'):
+        cstr += '#define COM_%s_RX %s\n'%(GAGet(pdu,'name'),id)
+        id += 1
+    for pdu in GLGet('TxPdu'):
+        cstr += '#define COM_%s_TX %s\n'%(GAGet(pdu,'name'),id)
+        id += 1
+    fp.write("""
+//  COM IPDU Id Defines.
+%s    
+    """%(cstr))
+    id = 0
+    cstr = ''
+    for sig in GLGet('Signal'):
+        cstr += '#define COM_SID_%s %s\n'%(GAGet(sig,'name'),id)
+        id += 1
+    fp.write("""
+//General Signal (Group) Id defines
+%s
+
+//Group Signal Id defines
+// TODO: not supported by easyCom
+
+// Notifications
+// TODO: not supported by easyCom
+
+// Callouts
+// TODO: not supported by easyCom
+#endif /* COM_PBCFG_H */    
+    """%(cstr))
+    fp.close()
+
+def GenSigInitValue(Signal,fp):
+    Size = tInt(GAGet(Signal,'size'))
+    Init = tInt(GAGet(Signal,'init'))
+    Length  = (Size+7)/8
+    cstr = 'const uint8 %s_InitValue[%s] ={'%(GAGet(Signal,'name'),Length)
+    for B in range(0,Length):
+        cstr += '%s,'%( hex( (Init>>(8*( Length - B -1 )))&0xFF ))
+    cstr += '}; // %s = %s\n'%(Init,hex(Init))
+    fp.write(cstr)
 def GenC():
-    pass
+    fp = open('%s/Com_PbCfg.c'%(__dir),'w')
+    fp.write(__Header)
+    fp.write("""
+#include "Com.h"
+#include "Com_Internal.h"
+//#include <stdlib.h>
+#if defined(USE_PDUR)
+#include "PduR.h"
+#endif 
+
+//Signal init values.\n""")
+    for sig in GLGet('Signal'):
+        GenSigInitValue(sig,fp)
+    fp.write("""
+#if 0    
+#if(COM_N_GROUP_SIGNALS > 0)
+// This is an example as Not supported by easyCom
+const ComGroupSignal_type ComGroupSignal[] = {
+    {
+        .ComBitPosition= 24,
+        .ComBitSize= 8,
+        .ComHandleId= COM PDUID,
+        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalInitValue= &name_InitValue,
+        .ComSignalType= UINT8_N,
+        .Com_Arc_EOL= FALSE
+    },
+    {
+       .ComBitPosition= 32,
+       .ComBitSize= 8,
+       .ComHandleId= COM PDUID,
+       .ComSignalEndianess= COM_BIG_ENDIAN,
+       .ComSignalInitValue= &name_InitValue,
+       .ComSignalType= UINT8_N,
+       .Com_Arc_EOL= FALSE
+    },
+};
+//SignalGroup GroupSignals lists.
+const ComGroupSignal_type * const COM PDUID_SignalRefs[] = {
+    &ComGroupSignal[ 0 ],
+    &ComGroupSignal[ 1 ],
+    NULL
+};
+#endif
+#endif //0
+
+//IPdu buffers and signal group buffers
+""") 
+    for pdu in GLGet('RxPdu'): 
+        fp.write('uint8 %s_RX_IPduBuffer[8];\n'%(GAGet(pdu,'name'))) 
+    for pdu in GLGet('TxPdu'): 
+        fp.write('uint8 %s_TX_IPduBuffer[8];\n'%(GAGet(pdu,'name')))   
+    cstr = ''
+    id = 0
+    for sig in GLGet('Signal'):
+        cstr += """
+    {
+        .ComBitPosition =  %s,
+        .ComBitSize =  %s,
+        .ComErrorNotification =  NULL,
+        .ComFirstTimeoutFactor =  100, // TODO
+        .ComHandleId =  COM_SID_%s,
+        .ComNotification =  NULL,
+        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
+        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalInitValue =  &%s_InitValue,
+        .ComSignalType =  %s,
+        .ComTimeoutFactor =  10,
+        .ComTimeoutNotification =  NULL,
+        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComUpdateBitPosition =  0,         // TODO
+        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .Com_Arc_IsSignalGroup =  FALSE,
+        .ComGroupSignal =  NULL,
+        .Com_Arc_ShadowBuffer =  NULL,
+        .Com_Arc_ShadowBuffer_Mask =  NULL,
+        .ComIPduHandleId = COM_%s_%s,
+        .Com_Arc_EOL =  FALSE
+    },\n"""%(GAGet(sig,'start'),
+             GAGet(sig,'size'),
+             GAGet(sig,'name'),
+             GAGet(sig,'name'),
+             GAGet(sig, 'type'),
+             GAGet(sig,'msgname'),
+             GAGet(sig,'msgtype')
+             )
+    fp.write("""
+//Signal definitions
+const ComSignal_type ComSignal[] = {
+%s
+    {
+         .Com_Arc_EOL =  True,
+    }
+};\n\n    """%(cstr))
+    fp.write("""
+//I-PDU group definitions
+const ComIPduGroup_type ComIPduGroup[] = {
+    {
+        .ComIPduGroupHandleId =  COM_DEFAULT_IPDU_GROUP, // -> default
+        .Com_Arc_EOL =  TRUE
+    },
+};    
+    """)
+    cstr = ''
+    for pdu in GLGet('RxPdu'):
+        cstr += 'const ComSignal_type * const %s_RX_SignalRefs[] = {\n'%(GAGet(pdu,'name'))
+        for sig in GLGet(pdu,'SignalRefs'):
+            cstr += '\t&ComSignal[ COM_SID_%s ],\n'%(GAGet(sig,'name'))
+        cstr += '\tNULL\n};\n'
+    for pdu in GLGet('TxPdu'):
+        cstr += 'const ComSignal_type * const %s_TX_SignalRefs[] = {\n'%(GAGet(pdu,'name'))
+        for sig in GLGet(pdu,'SignalRefs'):
+            cstr += '\t&ComSignal[ COM_SID_%s ],\n'%(GAGet(sig,'name'))
+        cstr += '\tNULL\n};\n'        
+    fp.write("""
+//IPdu signal lists.
+%s    
+    """%(cstr))
+    cstr = ''
+    for pdu in GLGet('RxPdu'):
+        cstr += """
+    {
+        .ComIPduCallout =  NULL,
+        .ArcIPduOutgoingId =  PDUR_%s_RX,
+        .ComIPduSignalProcessing =  IMMEDIATE,
+        .ComIPduSize =  8,
+        .ComIPduDirection =  RECEIVE,
+        .ComIPduGroupRef =  COM_DEFAULT_IPDU_GROUP, // -> default
+        .ComTxIPdu ={
+            .ComTxIPduMinimumDelayFactor =  1,
+            .ComTxIPduUnusedAreasDefault =  0,
+            .ComTxModeTrue ={
+                .ComTxModeMode =   DIRECT,
+                .ComTxModeNumberOfRepetitions =   0,
+                .ComTxModeRepetitionPeriodFactor =   10,
+                .ComTxModeTimeOffsetFactor =   20,
+                .ComTxModeTimePeriodFactor =   10,
+            },
+        },
+        .ComIPduDataPtr =  %s_RX_IPduBuffer,
+        .ComIPduDeferredDataPtr =  NULL, // TODO: if Processing is DEFERRED, config this buffer, please
+        .ComIPduSignalRef =  %s_RX_SignalRefs,
+        .ComIPduDynSignalRef =  NULL,
+        .Com_Arc_EOL =  FALSE,
+    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'))
+    id = 0
+    for pdu in GLGet('TxPdu'):
+        cstr += """
+    {
+        .ComIPduCallout =  NULL,
+        .ArcIPduOutgoingId =  PDUR_%s_TX,
+        .ComIPduSignalProcessing =  IMMEDIATE,
+        .ComIPduSize =  8,
+        .ComIPduDirection =  SEND,
+        .ComIPduGroupRef =  COM_DEFAULT_IPDU_GROUP, // -> default
+        .ComTxIPdu ={
+            .ComTxIPduMinimumDelayFactor =  1,
+            .ComTxIPduUnusedAreasDefault =  0,
+            .ComTxModeTrue ={
+                .ComTxModeMode =   DIRECT,
+                .ComTxModeNumberOfRepetitions =   0,
+                .ComTxModeRepetitionPeriodFactor =   10,
+                .ComTxModeTimeOffsetFactor =   20,
+                .ComTxModeTimePeriodFactor =   10,
+            },
+        },
+        .ComIPduDataPtr =  %s_TX_IPduBuffer,
+        .ComIPduDeferredDataPtr =  NULL,    // TODO: if Processing is DEFERRED, config this buffer, please
+        .ComIPduSignalRef =  %s_TX_SignalRefs,
+        .ComIPduDynSignalRef =  NULL,
+        .Com_Arc_EOL =  FALSE,
+    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'))    
+    fp.write("""
+//I-PDU definitions
+const ComIPdu_type ComIPdu[] = {
+%s
+    {
+        .Com_Arc_EOL =  TRUE
+    }
+};
+
+const Com_ConfigType ComConfiguration = {
+    .ComConfigurationId =  1,
+    .ComIPdu =  ComIPdu,
+    .ComIPduGroup =  ComIPduGroup,
+    .ComSignal =  ComSignal,
+#if(COM_N_GROUP_SIGNALS > 0)
+    .ComGroupSignal =  ComGroupSignal
+#else
+    .ComGroupSignal =  NULL
+#endif
+};\n\n"""%(cstr))
+    cstr = 'Com_Arc_IPdu_type Com_Arc_IPdu[] = {\n'
+    for pdu in GLGet('RxPdu')+GLGet('TxPdu'):
+        cstr += """
+    { // %s
+        .Com_Arc_TxIPduTimers ={
+            .ComTxIPduNumberOfRepetitionsLeft =  0,
+            .ComTxModeRepetitionPeriodTimer =  0,
+            .ComTxIPduMinimumDelayTimer =  0,
+            .ComTxModeTimePeriodTimer =  0
+        },
+        .Com_Arc_IpduStarted =  0
+    },\n"""%(GAGet(pdu,'name'))
+    cstr += '};\n\n'
+    cstr += 'Com_Arc_Signal_type Com_Arc_Signal[] = {\n'
+    for sig in GLGet('Signal'):
+        cstr += """
+    { // %s
+        .Com_Arc_DeadlineCounter =  0,
+        .ComSignalUpdated =  0,
+    },\n"""%(GAGet(sig,'name'))
+    cstr += '};\n\n'   
+    fp.write(cstr)
+    fp.write("""
+#if 0    
+#if(COM_N_GROUP_SIGNALS > 0)
+Com_Arc_GroupSignal_type Com_Arc_GroupSignal[COM_N_GROUP_SIGNALS];
+#endif
+#endif // 0
+
+const Com_Arc_Config_type Com_Arc_Config = {
+    .ComIPdu =  Com_Arc_IPdu,
+    .ComSignal =  Com_Arc_Signal,
+#if(COM_N_GROUP_SIGNALS > 0)
+    .ComGroupSignal =  Com_Arc_GroupSignal
+#else
+    .ComGroupSignal =  NULL
+#endif
+};    
+    """)
+    fp.close()
 

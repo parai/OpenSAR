@@ -13,6 +13,8 @@ void StartupHook( void )
 	CanTp_Init();
 	PduR_Init(&PduR_Config);
 	Dcm_Init();
+	Com_Init(&ComConfiguration);
+	Com_IpduGroupStart(COM_DEFAULT_IPDU_GROUP,True);
 
 	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
 }

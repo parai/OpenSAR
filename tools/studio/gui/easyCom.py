@@ -113,16 +113,16 @@ class easyComTree(QTreeWidget):
             scomment = ''
         name = QLineEdit(sname)
         start = QSpinBox()
-        start.setToolTip("""It is the same with the Vector CANoe Motorola Format
+        start.setToolTip("""
 | Map    | BIT7 | BIT6 | BIT5 | BIT4 | BIT3 | BIT2 | BIT1 | BIT0 |
-| Byte 0 |   63 |   62 |   61 |   60 |   59 |   58 |   57 |   56 |
-| Byte 1 |   55 |   54 |   53 |   52 |   51 |   50 |   49 |   48 |
-| Byte 2 |   47 |   46 |   45 |   44 |   43 |   42 |   41 |   40 |
-| Byte 3 |   39 |   38 |   37 |   36 |   35 |   34 |   33 |   32 |
-| Byte 4 |   31 |   30 |   29 |   28 |   27 |   26 |   25 |   24 |
-| Byte 5 |   23 |   22 |   21 |   20 |   19 |   18 |   17 |   16 |
-| Byte 6 |   15 |   14 |   13 |   12 |   11 |   10 |    9 |    8 |
-| Byte 7 |    7 |    6 |    5 |    4 |    3 |    2 |    1 |    0 |""")
+| Byte 0 |    7 |    6 |    5 |    4 |    3 |    2 |    1 |    0 |
+| Byte 1 |   15 |   14 |   13 |   12 |   11 |   10 |    9 |    8 |
+| Byte 2 |   23 |   22 |   21 |   20 |   19 |   18 |   17 |   16 |
+| Byte 3 |   31 |   30 |   29 |   28 |   27 |   26 |   25 |   24 |
+| Byte 4 |   39 |   38 |   37 |   36 |   35 |   34 |   33 |   32 |
+| Byte 5 |   47 |   46 |   45 |   44 |   43 |   42 |   41 |   40 |
+| Byte 6 |   55 |   54 |   53 |   52 |   51 |   50 |   49 |   48 |
+| Byte 7 |   63 |   62 |   61 |   60 |   59 |   58 |   57 |   56 |""")
         start.setRange(0,63)
         start.setValue(sstart)
         size = QSpinBox()
