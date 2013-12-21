@@ -6,16 +6,18 @@ import traceback
 
 from component.StepMotor import GaugeWidget
 from component.Dio       import DioWidget
+from component.Can       import CanWidget
 class MainConsole(QMainWindow):
     Gauge = None
     Dio   = None
+    Can   = None
     def __init__(self):
         QMainWindow.__init__(self, None)
         self.setWindowIcon(QtGui.QIcon("./res/WinIcon.bmp"))
         self.setWindowTitle('AUTOSAR SIMULATOR ( ^_^ parai@foxmail.com ^_^ )');
         self.resize(500,20)
-        self.preOpen()
         self.creToolBar()
+        self.preOpen()
     
     def OpenModule(self,cfg):
         if(cfg[0] == 'Gauge'):
@@ -26,6 +28,10 @@ class MainConsole(QMainWindow):
             self.Dio = DioWidget()
             self.Dio.setGeometry(50+int(cfg[1]),50+int(cfg[2]),int(cfg[3]),int(cfg[4]))
             self.Dio.show()
+#         elif(cfg[0] == 'Can'):
+#             self.Can = CanWidget()
+#             self.Can.setGeometry(50+int(cfg[1]),50+int(cfg[2]),int(cfg[3]),int(cfg[4]))
+#             self.Can.show()            
         elif(cfg[0] == 'Main'):
             self.setGeometry(50+int(cfg[1]),50+int(cfg[2]),int(cfg[3]),int(cfg[4]))
 
@@ -42,7 +48,9 @@ class MainConsole(QMainWindow):
         if(self.Gauge != None and self.Gauge.isVisible()):
             self.Gauge.close()
         if(self.Dio != None and self.Dio.isVisible()):
-            pos = self.Dio.close()
+            self.Dio.close()
+#         if(self.Can != None and self.Can.isVisible()):
+#             self.Can.close()
         self.close()
         
     def on_SimList_activated(self,text):
@@ -57,6 +65,10 @@ class MainConsole(QMainWindow):
             if(self.Dio == None):
                 self.Dio = DioWidget()
             self.Dio.show()
+#         elif(text == 'Can'):
+#             if(self.Can == None):
+#                 self.Can = CanWidget()
+            self.Can.show()
             
     def on_Save_triggered(self):
         fp = open('Simulator.cfg','w')
@@ -75,6 +87,11 @@ class MainConsole(QMainWindow):
             size = self.Dio.size()
             cstr = 'Dio x=%s y=%s width=%s height=%s\n'%(pos.x(),pos.y(),size.width(),size.height())
             fp.write(cstr)
+#         if(self.Can != None and self.Can.isVisible()):
+#             pos = self.Can.pos()
+#             size = self.Can.size()
+#             cstr = 'Can x=%s y=%s width=%s height=%s\n'%(pos.x(),pos.y(),size.width(),size.height())
+#             fp.write(cstr)
         fp.close()
 
     def on_Link_clicked(self):
@@ -106,6 +123,7 @@ class MainConsole(QMainWindow):
         SimList = QComboBox()
         SimList.addItem(QIcon('./res/Dio.bmp'),'Dio')
         SimList.addItem(QIcon('./res/StepMotor.bmp'),'Step Motor') 
+#         SimList.addItem(QIcon('./res/Can.bmp'),'Can') 
         self.toolbar.addWidget(SimList)
         self.toolbar.setFloatable(False)
         self.toolbar.setMovable(False)

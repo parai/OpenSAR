@@ -20,11 +20,11 @@
 #endif 
 
 //Signal init values.
-const uint8 VehicleSpeed_InitValue[2] ={0x0,0x0,}; // 0 = 0x0
-const uint8 TachoSpeed_InitValue[2] ={0x0,0x0,}; // 0 = 0x0
-const uint8 Led1Sts_InitValue[1] ={0x0,}; // 0 = 0x0
-const uint8 Led2Sts_InitValue[1] ={0x0,}; // 0 = 0x0
-const uint8 Led3Sts_InitValue[1] ={0x0,}; // 0 = 0x0
+const uint8 VehicleSpeed_InitValue[2] ={0x0,0xb,}; // 11 = 0xb
+const uint8 TachoSpeed_InitValue[2] ={0x0,0x16,}; // 22 = 0x16
+const uint8 Led1Sts_InitValue[1] ={0x1,}; // 1 = 0x1
+const uint8 Led2Sts_InitValue[1] ={0x2,}; // 2 = 0x2
+const uint8 Led3Sts_InitValue[1] ={0x3,}; // 3 = 0x3
 const uint8 Year_InitValue[2] ={0x7,0xdd,}; // 2013 = 0x7dd
 const uint8 Month_InitValue[1] ={0xc,}; // 12 = 0xc
 const uint8 Day_InitValue[1] ={0xf,}; // 15 = 0xf
@@ -74,7 +74,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  0,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_VehicleSpeed,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -83,7 +83,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT16,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -98,7 +98,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  16,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_TachoSpeed,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -107,7 +107,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT16,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -122,7 +122,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  32,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_Led1Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -131,31 +131,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
-        .Com_Arc_IsSignalGroup =  FALSE,
-        .ComGroupSignal =  NULL,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG0_RX,
-        .Com_Arc_EOL =  FALSE
-    },
-
-    {
-        .ComBitPosition =  33,
-        .ComBitSize =  2,
-        .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
-        .ComHandleId =  COM_SID_Led2Sts,
-        .ComNotification =  NULL,
-        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
-        .ComSignalInitValue =  &Led2Sts_InitValue,
-        .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
-        .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -170,7 +146,31 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  34,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
+        .ComHandleId =  COM_SID_Led2Sts,
+        .ComNotification =  NULL,
+        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
+        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalInitValue =  &Led2Sts_InitValue,
+        .ComSignalType =  UINT8,
+        .ComTimeoutFactor =  10,
+        .ComTimeoutNotification =  NULL,
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
+        .ComUpdateBitPosition =  0,         // TODO
+        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .Com_Arc_IsSignalGroup =  FALSE,
+        .ComGroupSignal =  NULL,
+        .Com_Arc_ShadowBuffer =  NULL,
+        .Com_Arc_ShadowBuffer_Mask =  NULL,
+        .ComIPduHandleId = COM_MSG0_RX,
+        .Com_Arc_EOL =  FALSE
+    },
+
+    {
+        .ComBitPosition =  36,
+        .ComBitSize =  2,
+        .ComErrorNotification =  NULL,
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_Led3Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -179,7 +179,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -194,7 +194,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  0,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_Year,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -203,7 +203,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT16,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -218,7 +218,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  16,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_Month,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -227,7 +227,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -242,7 +242,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  24,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_Day,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -251,7 +251,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -266,7 +266,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  32,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_Hour,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -275,7 +275,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -290,7 +290,7 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  40,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_Minute,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -299,7 +299,7 @@ const ComSignal_type ComSignal[] = {
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -360,8 +360,8 @@ const ComIPdu_type ComIPdu[] = {
                 .ComTxModeMode =   DIRECT,
                 .ComTxModeNumberOfRepetitions =   0,
                 .ComTxModeRepetitionPeriodFactor =   10,
-                .ComTxModeTimeOffsetFactor =   20,
-                .ComTxModeTimePeriodFactor =   10,
+                .ComTxModeTimeOffsetFactor =   0,
+                .ComTxModeTimePeriodFactor =   10, // Period: in Tick of MainFunction
             },
         },
         .ComIPduDataPtr =  MSG0_RX_IPduBuffer,
@@ -382,11 +382,11 @@ const ComIPdu_type ComIPdu[] = {
             .ComTxIPduMinimumDelayFactor =  1,
             .ComTxIPduUnusedAreasDefault =  0,
             .ComTxModeTrue ={
-                .ComTxModeMode =   DIRECT,
+                .ComTxModeMode =   PERIODIC,    // TODO:
                 .ComTxModeNumberOfRepetitions =   0,
                 .ComTxModeRepetitionPeriodFactor =   10,
-                .ComTxModeTimeOffsetFactor =   20,
-                .ComTxModeTimePeriodFactor =   10,
+                .ComTxModeTimeOffsetFactor =   0,
+                .ComTxModeTimePeriodFactor =   10, // Period: in Tick of MainFunction
             },
         },
         .ComIPduDataPtr =  MSG1_TX_IPduBuffer,

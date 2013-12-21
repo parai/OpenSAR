@@ -44,7 +44,7 @@ def CanBusServerTrace(msg):
     cstr = 'ID=%s, DLC=%s: ['%(hex(canid),dlc)
     for i in range(0,8):
         cstr += '0x%-2x, '%(ord(msg[5+i]))
-    cstr += '] From %s'%(port)
+    cstr += '] From %-6s'%(port)
     cstr += ' AT %-6s ms .. ['%(round(time.time() - server_startTime,4)*1000)
     for i in range(0,8):
         if re.match(r'[^\s]','%c'%(msg[5+i])):

@@ -172,7 +172,7 @@ GEN_TASK_HEAD = {
 	GEN_ETASK(
         /*                     */TaskEvent,
         /* name                */"TaskEvent",
-        /* priority            */8,
+        /* priority            */10,
         /* schedule            */FULL,
         /* autostart           */True,
         /* resource_int_p   */NULL, // TODO
@@ -201,5 +201,4 @@ GEN_ISR_MAP = {
 };
 
 // ############################    SCHEDULE TABLES     #############################
-    
     

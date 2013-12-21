@@ -35,6 +35,7 @@ def GenCom(wfxml):
     GenPduR (wfxml)
     GenH()
     GenC()
+    GenPy()
 
 
 def tInt(strnum):
@@ -306,7 +307,7 @@ const ComGroupSignal_type * const COM PDUID_SignalRefs[] = {
         .ComBitPosition =  %s,
         .ComBitSize =  %s,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  100, // TODO
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
         .ComHandleId =  COM_SID_%s,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
@@ -315,7 +316,7 @@ const ComGroupSignal_type * const COM PDUID_SignalRefs[] = {
         .ComSignalType =  %s,
         .ComTimeoutFactor =  10,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  TRIGGERED,  // TODO: only useful when TX
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
         .ComUpdateBitPosition =  0,         // TODO
         .ComSignalArcUseUpdateBit =  FALSE, // TODO
         .Com_Arc_IsSignalGroup =  FALSE,
@@ -381,8 +382,8 @@ const ComIPduGroup_type ComIPduGroup[] = {
                 .ComTxModeMode =   DIRECT,
                 .ComTxModeNumberOfRepetitions =   0,
                 .ComTxModeRepetitionPeriodFactor =   10,
-                .ComTxModeTimeOffsetFactor =   20,
-                .ComTxModeTimePeriodFactor =   10,
+                .ComTxModeTimeOffsetFactor =   0,
+                .ComTxModeTimePeriodFactor =   10, // Period: in Tick of MainFunction
             },
         },
         .ComIPduDataPtr =  %s_RX_IPduBuffer,
@@ -405,11 +406,11 @@ const ComIPduGroup_type ComIPduGroup[] = {
             .ComTxIPduMinimumDelayFactor =  1,
             .ComTxIPduUnusedAreasDefault =  0,
             .ComTxModeTrue ={
-                .ComTxModeMode =   DIRECT,
+                .ComTxModeMode =   PERIODIC,    // TODO:
                 .ComTxModeNumberOfRepetitions =   0,
                 .ComTxModeRepetitionPeriodFactor =   10,
-                .ComTxModeTimeOffsetFactor =   20,
-                .ComTxModeTimePeriodFactor =   10,
+                .ComTxModeTimeOffsetFactor =   0,
+                .ComTxModeTimePeriodFactor =   10, // Period: in Tick of MainFunction
             },
         },
         .ComIPduDataPtr =  %s_TX_IPduBuffer,
@@ -477,5 +478,179 @@ const Com_Arc_Config_type Com_Arc_Config = {
 #endif
 };    
     """)
+    fp.close()
+    
+def GenPy():
+    global __dir
+    # =========================  PduR_Cfg.h ==================
+    fp = open('%s/ComApi.py'%(__dir),'w')
+    fp.write('\n# Gen by easyCom\n')
+    fp.write("""
+import threading,time
+import sys
+import socket
+import UserString 
+    \n""")
+    fp.write('cPduTx=0\ncPduRx=1\n')
+    cstr = '# Id Ref of Pdu\n'
+    id = 0
+    for pdu in GLGet('RxPdu'):
+        cstr += 'COM_%s_RX=%s\n'%(GAGet(pdu,'name'),id)
+        id += 1
+    for pdu in GLGet('TxPdu'):
+        cstr += 'COM_%s_TX=%s\n'%(GAGet(pdu,'name'),id)
+        id += 1
+    fp.write(cstr)
+    cstr = '# Id Ref of Signal\n'
+    id = 0
+    for sig in GLGet('Signal'):
+        cstr += 'COM_SID_%s=%s\n'%(GAGet(sig,'name'),id)
+        id += 1
+    cstr = '# Pdu Obj = [id,[data],type]\n'
+    cstr += 'cPduCanId=0\ncPduData=1\ncPduType=2\n'
+    cstr += 'PduObjList = [ \\\n'
+    for pdu in GLGet('RxPdu'):
+        cstr += '\t[%s,[0,0,0,0,0,0,0,0],cPduRx], #%s\n'%(GAGet(pdu,'id'),GAGet(pdu,'name'))
+    for pdu in GLGet('TxPdu'):
+        cstr += '\t[%s,[0,0,0,0,0,0,0,0],cPduTx], #%s\n'%(GAGet(pdu,'id'),GAGet(pdu,'name'))
+    cstr += ']\n'
+    fp.write(cstr)
+    fp.write("""
+def __UpdateValue(pduId,SigStart,SigSize,SigValue):
+    global PduObjList
+    BA = 0
+    bitsize = SigSize
+    start   = SigStart
+    value   = SigValue
+    data    = PduObjList[pduId][cPduData]
+    for i in range(0,(SigSize+7)/8):
+        start   += BA     # bit accessed in this cycle
+        bitsize -= BA
+        pos = start/8
+        offset = start%8 
+        if((8-offset) > bitsize):
+            BA =  bitsize
+        else:
+            BA = (8-offset)
+        BM = ((1<<BA)-1)<<offset
+        data[pos] &=  ~BM
+        data[pos] |=  BM&((value>>(bitsize-BA))<<offset)
+        value = value>>offset
+def __ReadValue(pduId,SigStart,SigSize):
+    global PduObjList
+    BA = 0
+    bitsize = SigSize
+    start   = SigStart
+    value   = 0
+    data    = PduObjList[pduId][cPduData]
+    for i in range(0,(SigSize+7)/8):
+        start   += BA     # bit accessed in this cycle
+        bitsize -= BA
+        pos = start/8
+        offset = start%8 
+        if((8-offset) > bitsize):
+            BA =  bitsize
+        else:
+            BA = (8-offset)
+        BM = ((1<<BA)-1)<<offset
+        value |=  BM&((data[pos]>>(bitsize-BA))<<offset)
+        return value\n\n""")    
+    cstr = 'def Com_SendSignal(sigId,value):\n'
+    for sig in GLGet('Signal'):
+        if(GAGet(sig,'msgtype') == 'RX'):
+            cstr += """
+    if(sigId == COM_SID_%s):
+        __UpdateValue(COM_%s_RX,%s,%s,value)
+        return 0
+            \n"""%(GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
+    cstr += '\treturn -1 # error id\n\n'
+    fp.write(cstr)
+    cstr = 'def Com_ReadSignal(sigId):\n'
+    for sig in GLGet('Signal'):
+        if(GAGet(sig,'msgtype') == 'TX'):
+            cstr += """
+    if(sigId == COM_SID_%s):
+        return __ReadValue(COM_%s_TX,%s,%s)
+            \n"""%(GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
+    cstr += '\treturn -1 # error id\n\n'
+    fp.write(cstr)  
+    fp.write("""
+
+class ComServerTx(threading.Thread): 
+    __txPort = 8000
+    __rxPort = 60001
+    def __init__(self,txPort=8000,rxPort = 60001):
+        self.__txPort = txPort
+        self.__rxPort = rxPort
+        threading.Thread.__init__(self)
+        self.start()
+    def run(self):
+        global PduObjList
+        while(True):
+            for pdu in PduObjList:
+                if(pdu[cPduType] == COM_MSG0_RX):
+                    self.transmit(pdu[cPduCanId],pdu[cPduData])
+            time.sleep(0.100)  # 100ms
+            
+    def transmit(self,canId,data,length=None):
+        msg = UserString.MutableString("c" * 17)
+        msg[0] = '%c'%((canId>>24)&0xFF)
+        msg[1] = '%c'%((canId>>16)&0xFF)
+        msg[2] = '%c'%((canId>>8)&0xFF)
+        msg[3] = '%c'%(canId&0xFF)
+        if(None == length):
+            length = len(data)
+        assert length <= 8
+        msg[4] = '%c'%(length) #DLC
+        for i in range(0,length):
+            msg[5+i] = '%c'%((data[i])&0xFF)
+        for i in range(length,8):
+            msg[5+i] = '%c'%(0x55)
+        msg[13] = '%c'%((self.__rxPort>>24)&0xFF)
+        msg[14] = '%c'%((self.__rxPort>>16)&0xFF)
+        msg[15] = '%c'%((self.__rxPort>>8)&0xFF)
+        msg[16] = '%c'%((self.__rxPort)&0xFF)
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect(('127.0.0.1', self.__txPort ))  
+            sock.send(msg.data)
+            sock.close()
+        except:
+            print 'ERROR: CanBusServer isn\\'t started.'     
+class ComServerRx(threading.Thread): 
+    __rxPort = 60001
+    def __init__(self,rxPort=60001):
+        self.__rxPort = rxPort
+        threading.Thread.__init__(self)
+        self.start()
+    def receive(self,msg):
+        global PduObjList
+        canId = (ord(msg[0])<<24)+(ord(msg[1])<<16)+(ord(msg[2])<<8)+(ord(msg[3]))
+        for pdu in PduObjList:
+            if(pdu[cPduCanId] == canId and pdu[cPduType] == cPduTx):
+                data = pdu[cPduData]
+                for i in range(0,8):
+                    data[i] = ord(msg[5+i])
+                break
+                print pdu
+    def run(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  
+        sock.bind(('127.0.0.1', self.__rxPort))  
+        sock.listen(32) 
+        while True:  
+            try:
+                connection,address = sock.accept() 
+                connection.settimeout(1)
+                msg = connection.recv(17)  
+                connection.close()
+                if(len(msg) == 17):
+                    self.receive(msg)
+            except socket.timeout:  
+                continue  
+            connection.close() 
+
+ComServerTx(8000,60001)
+ComServerRx(60001)        
+    """)  
     fp.close()
 
