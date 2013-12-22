@@ -19,8 +19,13 @@
 #include "Dcm.h"
 #include "Dio.h"
 #include "Port.h"
+#include "Stmo.h"
 
 #include "Diag.h"
+
+// ========= APP Module
+#include "app_led.h"
+#include "app_gauge.h"
 
 #endif /* APP_H_ */
 

@@ -30,6 +30,7 @@ const uint8 Month_InitValue = 12;
 const uint8 Day_InitValue = 15;
 const uint8 Hour_InitValue = 19;
 const uint8 Minute_InitValue = 49;
+const uint8 Second_InitValue = 0;
 
 #if 0    
 #if(COM_N_GROUP_SIGNALS > 0)
@@ -311,6 +312,30 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        .ComBitPosition =  48,
+        .ComBitSize =  8,
+        .ComErrorNotification =  NULL,
+        .ComFirstTimeoutFactor =  10, // TODO: In Tick
+        .ComHandleId =  COM_SID_Second,
+        .ComNotification =  NULL,
+        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
+        .ComSignalInitValue =  &Second_InitValue,
+        .ComSignalType =  UINT8,
+        .ComTimeoutFactor =  10,
+        .ComTimeoutNotification =  NULL,
+        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
+        .ComUpdateBitPosition =  0,         // TODO
+        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .Com_Arc_IsSignalGroup =  FALSE,
+        .ComGroupSignal =  NULL,
+        .Com_Arc_ShadowBuffer =  NULL,
+        .Com_Arc_ShadowBuffer_Mask =  NULL,
+        .ComIPduHandleId = COM_MSG1_TX,
+        .Com_Arc_EOL =  FALSE
+    },
+
+    {
          .Com_Arc_EOL =  True,
     }
 };
@@ -339,6 +364,7 @@ const ComSignal_type * const MSG1_TX_SignalRefs[] = {
 	&ComSignal[ COM_SID_Day ],
 	&ComSignal[ COM_SID_Hour ],
 	&ComSignal[ COM_SID_Minute ],
+	&ComSignal[ COM_SID_Second ],
 	NULL
 };
     
@@ -484,6 +510,11 @@ Com_Arc_Signal_type Com_Arc_Signal[] = {
     },
 
     { // Minute
+        .Com_Arc_DeadlineCounter =  0,
+        .ComSignalUpdated =  0,
+    },
+
+    { // Second
         .Com_Arc_DeadlineCounter =  0,
         .ComSignalUpdated =  0,
     },

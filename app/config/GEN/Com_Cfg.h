@@ -36,7 +36,7 @@
 #define COM_DEV_ERROR_DETECT STD_OFF
 
 #define COM_N_IPDUS 2
-#define COM_N_SIGNALS 10
+#define COM_N_SIGNALS 11
 #define COM_N_GROUP_SIGNALS 0 // TODO: not support by easyCom studio
 
 #define ComConfigurationTimeBase 0

@@ -107,7 +107,7 @@ class easyComTree(QTreeWidget):
             sstart = 0
             ssize  = 8  
             smsg = 'RX=MsgName(CAN ID)' 
-            sbus = 'CANIF_CHL_HS'
+            sbus = 'CANIF_CHL_LS'
             sformat = 'Motorola'
             sinit = '0x00'
             scomment = ''

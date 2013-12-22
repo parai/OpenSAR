@@ -42,6 +42,7 @@ extern const Com_ConfigType ComConfiguration;
 #define COM_SID_Day 7
 #define COM_SID_Hour 8
 #define COM_SID_Minute 9
+#define COM_SID_Second 10
 
 
 //Group Signal Id defines

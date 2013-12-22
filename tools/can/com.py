@@ -40,7 +40,10 @@ if __name__ == '__main__':
                 reG = reCmdR.search(input).groups()
                 print Com_ReadSignal(tInt(reG[1]))
             else:
-                print 'Error Command!'
+                if(input == ''):
+                    ShowSignalList()
+                else:
+                    print 'Error Command!'
         except:
             print 'Error Command!'
         

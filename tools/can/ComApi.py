@@ -25,6 +25,7 @@ COM_SID_Month=6
 COM_SID_Day=7
 COM_SID_Hour=8
 COM_SID_Minute=9
+COM_SID_Second=10
 # Pdu Obj = [id,[data],type]
 cPduCanId=0
 cPduData=1
@@ -75,6 +76,7 @@ def __ReadValue(pduId,SigStart,SigSize):
         value = value+(data[pos+i]<<(8*i))
     offset = SigStart%8 
     return (value>>offset)&((1<<SigSize)-1)
+    
 
 def Com_SendSignal(sigId,value):
 
@@ -161,9 +163,22 @@ def Com_ReadSignal(sigId):
         lDebug('Read(Minute)')
         return __ReadValue(COM_MSG1_TX,40,8)
             
+
+    if(sigId == COM_SID_Second):
+        lDebug('Read(Second)')
+        return __ReadValue(COM_MSG1_TX,48,8)
+            
 	print 'Error Signal Id'
 	return -1 # error id
 
+
+def ShowSignalList():
+    print """SignalIdList:
+VehicleSpeed    =0    ;  TachoSpeed      =1    ;  Led1Sts         =2    ;  
+Led2Sts         =3    ;  Led3Sts         =4    ;  Year            =5    ;  
+Month           =6    ;  Day             =7    ;  Hour            =8    ;  
+Minute          =9    ;  Second          =10   ;  \n"""
+    
 
 
 class ComServerTx(threading.Thread): 

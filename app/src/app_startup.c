@@ -6,6 +6,7 @@ void StartupHook( void )
 	Det_Init();
 	Det_Start();
 #endif
+	Stmo_Init();
 	Port_Init(&PortConfigData);
 	Can_Init(&Can_ConfigData);
 

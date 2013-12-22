@@ -598,6 +598,19 @@ def __ReadValue(pduId,SigStart,SigSize):
             \n"""%(GAGet(sig,'name'),GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
     cstr += '\tprint \'Error Signal Id\'\n\treturn -1 # error id\n\n'
     fp.write(cstr)  
+    
+    cstr = ''
+    id = 0
+    for sig in GLGet('Signal'):  
+        cstr += '%-16s=%-3s  ;  '%(GAGet(sig,'name'),id)
+        id += 1
+        if(id%3 ==0):
+            cstr += '\n'
+    fp.write("""
+def ShowSignalList():
+    print \"\"\"SignalIdList:
+%s\\n\"\"\"
+    \n"""%(cstr))
     fp.write("""
 
 class ComServerTx(threading.Thread): 

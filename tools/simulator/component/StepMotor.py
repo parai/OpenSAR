@@ -4,6 +4,7 @@ import math
 from PyQt4 import QtCore, QtGui, Qt
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
+import socket
 
 __all__ = ['GaugeWidget']
 
@@ -20,8 +21,8 @@ iColor      = 6
 iStart      = 7     # Start Degree
 iRange      = 8     # Span Range Degree
 StepMotorList = [     \
-    [195,140,0, 100,10,4,0x7453A2,310,285],
-    [473,157,20,70 ,10,4,0xD63441,322,250],
+    [195,140,0, 100,10,4,0x7453A2,310,285], # Speed
+    [473,157,20,70 ,10,4,0xD63441,322,250], # Tacho
 ]
 
 cMechanicalZero = -1000 # relative to iStart, unit in 0.01 degree
@@ -46,6 +47,8 @@ class StepMotor(QtGui.QGraphicsItem):
     
     def setPosDegree(self,Degree):
         cfg = StepMotorList[self.cId]
+        if(Degree != self.Degree):
+            print 'StepMotor:',self.cId,Degree
         if(Degree <= cfg[iRange]*100 and Degree >= cMechanicalZero):
             self.Degree = Degree
         else:
@@ -125,6 +128,14 @@ class GaugeWidget(QtGui.QGraphicsView):
         self.resize(650, 310)
         self.setWindowIcon(QtGui.QIcon("./res/StepMotor.bmp"))
         self.setWindowTitle("Step Motor Simulator")
+        
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.sock.settimeout(10)
+            self.sock.connect(('127.0.0.1', 60002)) 
+        except:
+            print 'StepMotor: AUTOSAR Client isnot started.'
+        self.sock.settimeout(0)
 
     def drawBackground(self,painter,rect ):
         Image = QtGui.QImage(BackGround)   
@@ -133,18 +144,24 @@ class GaugeWidget(QtGui.QGraphicsView):
         
     def keyPressEvent(self, event):
         pass
-
-    def timerEvent(self, event):
+    
+    def setMatrix(self,matrix):
         cId = 0
-        for pInd in self.PIndList:
-            cfg = StepMotorList[cId]
-            pInd.step(300,self.clockwise) 
-            if(cId == 0):
-                if( pInd.getPosDegree() == 100*cfg[iRange]):
-                    self.clockwise = False
-                elif(pInd.getPosDegree() == cMechanicalZero):
-                    self.clockwise = True
-            cId += 1
+        if(len(matrix) == len(StepMotorList)*2):
+            for pInd in self.PIndList:
+                degree = (ord(matrix[cId*2])<<8) + (ord(matrix[cId*2+1]))
+                pInd.setPosDegree(degree)
+                cId += 1
+    def timerEvent(self, event):
+        try: 
+            matrix = self.sock.recv(len(StepMotorList)*2)
+            self.setMatrix(matrix)
+            #self.sock.send(self.getMatrix())
+        except socket.error as e:
+#             if e.errno == errno.WSAENOBUFS:
+#                 pass
+            #print traceback.format_exc()
+            pass
 
 
 if __name__ == '__main__':

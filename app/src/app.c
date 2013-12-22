@@ -13,30 +13,14 @@ void Task10ms(void)
 	}
 	TerminateTask();
 }
-#define LED1 PortA_PIN3
-#define LED2 PortA_PIN4
-#define LED3 PortA_PIN5
 
-#define LDE_ON   STD_LOW
-#define LDE_OFF  STD_HIGH
 void Task20ms(void)
 {
-	Dio_LevelType ChannelLevel = STD_LOW;
-	uint8_t Led1Sts;
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_EventTask20ms);
-		Com_ReceiveSignal(COM_SID_Led1Sts,&Led1Sts);
-		if(0u == Led1Sts)
-		{
-			Dio_WriteChannel(LED1,LDE_ON); // On
-		}
-		else
-		{
-			Dio_WriteChannel(LED1,LDE_OFF); // Off
-		}
-		ChannelLevel=Dio_ReadChannel(PortA_PIN1);
-		Dio_WriteChannel(PortA_PIN2,ChannelLevel);
+		app_led_20ms_runnable();
+		app_gauge_20ms_runnable();
 		(void)ClearEvent(EVENT_MASK_EventTask20ms);
 	}
 	TerminateTask();
@@ -51,14 +35,54 @@ void Task100ms(void)
 	}
 	TerminateTask();
 }
+static void OpenSAR_Time(void)
+{
+	static uint16 year = 2013;
+	static uint8  month= 12;
+	static uint8  day  = 15;
+	static uint8  hour = 19;
+	static uint8  minute= 49;
+	static uint8  second= 00;
+	second ++;
+	if(second > 59)
+	{
+		second = 0;
+		minute ++;
+		if(minute > 59)
+		{
+			minute = 0;
+			hour ++;
+			if(hour > 23)
+			{
+				hour = 0;
+				day++;
+				if(day > 30)	//be easy, I just give a example
+				{
+					day = 0;
+					month ++;
+					if(month > 12)
+					{
+						month = 0;
+						year ++;
+					}
+				}
+			}
+		}
+	}
+	Com_SendSignal(COM_SID_Year,&year);
+	Com_SendSignal(COM_SID_Month,&month);
+	Com_SendSignal(COM_SID_Day,&day);
+	Com_SendSignal(COM_SID_Hour,&hour);
+	Com_SendSignal(COM_SID_Minute,&minute);
+	Com_SendSignal(COM_SID_Second,&second);
+}
 void TaskEvent(void)
 {
-	Dio_LevelType ChannelLevel = STD_LOW;
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_Event1000ms);
-		Dio_WriteChannel(PortA_PIN0,ChannelLevel);
-		ChannelLevel = (STD_LOW==ChannelLevel)?STD_HIGH:STD_LOW;
+		app_led_1000ms_runnable();
+		OpenSAR_Time();
 		(void)ClearEvent(EVENT_MASK_Event1000ms);
 	}
 	TerminateTask();
