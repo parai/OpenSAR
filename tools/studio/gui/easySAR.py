@@ -7,6 +7,8 @@ from easyCom  import easyComGui
 
 __all__ = ['easySAR']
 
+gDefault_GEN = '../../app/config/GEN'
+
 class easyDockWidget(QDockWidget):
     isClosed = False
     def __init__(self,title,parent=None):
@@ -62,7 +64,7 @@ class easySARGui(QMainWindow):
         sItem.setStatusTip('Open easyCom console.') 
         tMenu.addAction(sItem)   
     def mOpen(self):
-        self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config','../../app/config/GEN',QFileDialog.DontResolveSymlinks)
+        self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
         if(self.pdir == ''):
             return
         self.easyOsCfg.mOpen(self.pdir)
@@ -74,7 +76,7 @@ class easySARGui(QMainWindow):
                         'Open OpenSAR Configuration xml Successfully !').exec_();
     def mSave(self):
         if(self.pdir == ''):
-            self.pdir = QFileDialog.getExistingDirectory(None,'Save OpenSAR Config','../../app/config/GEN',QFileDialog.DontResolveSymlinks)
+            self.pdir = QFileDialog.getExistingDirectory(None,'Save OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
         if(self.pdir == ''):
             return
         self.easyOsCfg.mSave(self.pdir)

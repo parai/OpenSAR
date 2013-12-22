@@ -20,16 +20,16 @@
 #endif 
 
 //Signal init values.
-const uint8 VehicleSpeed_InitValue[2] ={0x0,0xb,}; // 11 = 0xb
-const uint8 TachoSpeed_InitValue[2] ={0x0,0x16,}; // 22 = 0x16
-const uint8 Led1Sts_InitValue[1] ={0x1,}; // 1 = 0x1
-const uint8 Led2Sts_InitValue[1] ={0x2,}; // 2 = 0x2
-const uint8 Led3Sts_InitValue[1] ={0x3,}; // 3 = 0x3
-const uint8 Year_InitValue[2] ={0x7,0xdd,}; // 2013 = 0x7dd
-const uint8 Month_InitValue[1] ={0xc,}; // 12 = 0xc
-const uint8 Day_InitValue[1] ={0xf,}; // 15 = 0xf
-const uint8 Hour_InitValue[1] ={0x13,}; // 19 = 0x13
-const uint8 Minute_InitValue[1] ={0x31,}; // 49 = 0x31
+const uint16 VehicleSpeed_InitValue = 11;
+const uint16 TachoSpeed_InitValue = 22;
+const uint8 Led1Sts_InitValue = 1;
+const uint8 Led2Sts_InitValue = 2;
+const uint8 Led3Sts_InitValue = 3;
+const uint16 Year_InitValue = 2013;
+const uint8 Month_InitValue = 12;
+const uint8 Day_InitValue = 15;
+const uint8 Hour_InitValue = 19;
+const uint8 Minute_InitValue = 49;
 
 #if 0    
 #if(COM_N_GROUP_SIGNALS > 0)
@@ -39,7 +39,7 @@ const ComGroupSignal_type ComGroupSignal[] = {
         .ComBitPosition= 24,
         .ComBitSize= 8,
         .ComHandleId= COM PDUID,
-        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalEndianess= cfgCPU_ENDIAN,
         .ComSignalInitValue= &name_InitValue,
         .ComSignalType= UINT8_N,
         .Com_Arc_EOL= FALSE
@@ -48,7 +48,7 @@ const ComGroupSignal_type ComGroupSignal[] = {
        .ComBitPosition= 32,
        .ComBitSize= 8,
        .ComHandleId= COM PDUID,
-       .ComSignalEndianess= COM_BIG_ENDIAN,
+       .ComSignalEndianess= cfgCPU_ENDIAN,
        .ComSignalInitValue= &name_InitValue,
        .ComSignalType= UINT8_N,
        .Com_Arc_EOL= FALSE
@@ -78,7 +78,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_VehicleSpeed,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &VehicleSpeed_InitValue,
         .ComSignalType =  UINT16,
         .ComTimeoutFactor =  10,
@@ -102,7 +102,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_TachoSpeed,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &TachoSpeed_InitValue,
         .ComSignalType =  UINT16,
         .ComTimeoutFactor =  10,
@@ -126,7 +126,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Led1Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Led1Sts_InitValue,
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
@@ -150,7 +150,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Led2Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Led2Sts_InitValue,
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
@@ -174,7 +174,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Led3Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Led3Sts_InitValue,
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
@@ -198,7 +198,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Year,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Year_InitValue,
         .ComSignalType =  UINT16,
         .ComTimeoutFactor =  10,
@@ -222,7 +222,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Month,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Month_InitValue,
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
@@ -246,7 +246,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Day,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Day_InitValue,
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
@@ -270,7 +270,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Hour,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Hour_InitValue,
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,
@@ -294,7 +294,7 @@ const ComSignal_type ComSignal[] = {
         .ComHandleId =  COM_SID_Minute,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &Minute_InitValue,
         .ComSignalType =  UINT8,
         .ComTimeoutFactor =  10,

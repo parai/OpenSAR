@@ -172,7 +172,7 @@ def GenH():
 #define COM_E_TOO_MANY_IPDU 106
 #define COM_E_TOO_MANY_SIGNAL 107
 #define COM_E_TOO_MANY_GROUPSIGNAL 108
-#define CPU_ENDIANESS COM_BIG_ENDIAN
+#define CPU_ENDIANESS cfgCPU_ENDIAN
 
 #define COM_DEV_ERROR_DETECT STD_OFF
 
@@ -241,10 +241,18 @@ def GenSigInitValue(Signal,fp):
     Size = tInt(GAGet(Signal,'size'))
     Init = tInt(GAGet(Signal,'init'))
     Length  = (Size+7)/8
-    cstr = 'const uint8 %s_InitValue[%s] ={'%(GAGet(Signal,'name'),Length)
-    for B in range(0,Length):
-        cstr += '%s,'%( hex( (Init>>(8*( Length - B -1 )))&0xFF ))
-    cstr += '}; // %s = %s\n'%(Init,hex(Init))
+    if(Size > 32):
+        cstr = 'const uint8 %s_InitValue[%s] ={'%(GAGet(Signal,'name'),Length)
+        for B in range(0,Length):
+            cstr += '%s,'%( hex( (Init>>(8*( Length - B -1 )))&0xFF ))
+        cstr += '}; // %s = %s\n'%(Init,hex(Init))
+    else:
+        if(Size <= 8):
+            cstr = 'const uint8 %s_InitValue = %s;\n'%(GAGet(Signal,'name'),Init)
+        elif(Size <= 16):
+            cstr = 'const uint16 %s_InitValue = %s;\n'%(GAGet(Signal,'name'),Init)
+        elif(Size <= 32):
+            cstr = 'const uint32 %s_InitValue = %s;\n'%(GAGet(Signal,'name'),Init)
     fp.write(cstr)
 def GenC():
     fp = open('%s/Com_PbCfg.c'%(__dir),'w')
@@ -269,7 +277,7 @@ const ComGroupSignal_type ComGroupSignal[] = {
         .ComBitPosition= 24,
         .ComBitSize= 8,
         .ComHandleId= COM PDUID,
-        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalEndianess= cfgCPU_ENDIAN,
         .ComSignalInitValue= &name_InitValue,
         .ComSignalType= UINT8_N,
         .Com_Arc_EOL= FALSE
@@ -278,7 +286,7 @@ const ComGroupSignal_type ComGroupSignal[] = {
        .ComBitPosition= 32,
        .ComBitSize= 8,
        .ComHandleId= COM PDUID,
-       .ComSignalEndianess= COM_BIG_ENDIAN,
+       .ComSignalEndianess= cfgCPU_ENDIAN,
        .ComSignalInitValue= &name_InitValue,
        .ComSignalType= UINT8_N,
        .Com_Arc_EOL= FALSE
@@ -311,7 +319,7 @@ const ComGroupSignal_type * const COM PDUID_SignalRefs[] = {
         .ComHandleId =  COM_SID_%s,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  COM_BIG_ENDIAN, //Default
+        .ComSignalEndianess =  cfgCPU_ENDIAN, 
         .ComSignalInitValue =  &%s_InitValue,
         .ComSignalType =  %s,
         .ComTimeoutFactor =  10,
@@ -481,15 +489,18 @@ const Com_Arc_Config_type Com_Arc_Config = {
     fp.close()
     
 def GenPy():
-    global __dir
+
     # =========================  PduR_Cfg.h ==================
-    fp = open('%s/ComApi.py'%(__dir),'w')
+    fp = open('../../tools/can/ComApi.py','w')
     fp.write('\n# Gen by easyCom\n')
     fp.write("""
 import threading,time
 import sys
 import socket
 import UserString 
+
+def lDebug(stri):
+    print stri 
     \n""")
     fp.write('cPduTx=0\ncPduRx=1\n')
     cstr = '# Id Ref of Pdu\n'
@@ -506,6 +517,7 @@ import UserString
     for sig in GLGet('Signal'):
         cstr += 'COM_SID_%s=%s\n'%(GAGet(sig,'name'),id)
         id += 1
+    fp.write(cstr)
     cstr = '# Pdu Obj = [id,[data],type]\n'
     cstr += 'cPduCanId=0\ncPduData=1\ncPduType=2\n'
     cstr += 'PduObjList = [ \\\n'
@@ -523,7 +535,13 @@ def __UpdateValue(pduId,SigStart,SigSize,SigValue):
     start   = SigStart
     value   = SigValue
     data    = PduObjList[pduId][cPduData]
-    for i in range(0,(SigSize+7)/8):
+    pos = start/8
+    CrossB = (SigSize+7)/8
+    if(SigStart>=(pos*8) and (SigStart+SigSize)<=(pos+CrossB)*8):
+        pass
+    else:
+        CrossB += 1
+    for i in range(0,CrossB):
         start   += BA     # bit accessed in this cycle
         bitsize -= BA
         pos = start/8
@@ -534,45 +552,51 @@ def __UpdateValue(pduId,SigStart,SigSize,SigValue):
             BA = (8-offset)
         BM = ((1<<BA)-1)<<offset
         data[pos] &=  ~BM
-        data[pos] |=  BM&((value>>(bitsize-BA))<<offset)
-        value = value>>offset
+        data[pos] |=  BM&(value<<offset)
+        value = value>>(bitsize-BA)
+    
 def __ReadValue(pduId,SigStart,SigSize):
     global PduObjList
-    BA = 0
-    bitsize = SigSize
-    start   = SigStart
     value   = 0
     data    = PduObjList[pduId][cPduData]
-    for i in range(0,(SigSize+7)/8):
-        start   += BA     # bit accessed in this cycle
-        bitsize -= BA
-        pos = start/8
-        offset = start%8 
-        if((8-offset) > bitsize):
-            BA =  bitsize
-        else:
-            BA = (8-offset)
-        BM = ((1<<BA)-1)<<offset
-        value |=  BM&((data[pos]>>(bitsize-BA))<<offset)
-        return value\n\n""")    
+    pos = SigStart/8
+    CrossB = (SigSize+7)/8
+    if(SigStart>=(pos*8) and (SigStart+SigSize)<=(pos+CrossB)*8):
+        pass
+    else:
+        CrossB += 1
+    for i in range(0,CrossB):
+        value = value+(data[pos+i]<<(8*i))
+    offset = SigStart%8 
+    return (value>>offset)&((1<<SigSize)-1)
+    \n\n""")    
     cstr = 'def Com_SendSignal(sigId,value):\n'
     for sig in GLGet('Signal'):
         if(GAGet(sig,'msgtype') == 'RX'):
             cstr += """
     if(sigId == COM_SID_%s):
+        lDebug(\'Send(%s)\')
         __UpdateValue(COM_%s_RX,%s,%s,value)
         return 0
-            \n"""%(GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
-    cstr += '\treturn -1 # error id\n\n'
+            \n"""%(GAGet(sig,'name'),GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
+    cstr += '\tprint \'Error Signal Id\'\n\treturn -1 # error id\n\n'
     fp.write(cstr)
     cstr = 'def Com_ReadSignal(sigId):\n'
+    for sig in GLGet('Signal'):
+        if(GAGet(sig,'msgtype') == 'RX'):
+            cstr += """
+    if(sigId == COM_SID_%s):
+        lDebug(\'Read(%s)\')
+        return __ReadValue(COM_%s_RX,%s,%s)
+            \n"""%(GAGet(sig,'name'),GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
     for sig in GLGet('Signal'):
         if(GAGet(sig,'msgtype') == 'TX'):
             cstr += """
     if(sigId == COM_SID_%s):
+        lDebug(\'Read(%s)\')
         return __ReadValue(COM_%s_TX,%s,%s)
-            \n"""%(GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
-    cstr += '\treturn -1 # error id\n\n'
+            \n"""%(GAGet(sig,'name'),GAGet(sig,'name'),GAGet(sig,'msgname'),GAGet(sig,'start'),GAGet(sig,'size'))
+    cstr += '\tprint \'Error Signal Id\'\n\treturn -1 # error id\n\n'
     fp.write(cstr)  
     fp.write("""
 
@@ -588,7 +612,7 @@ class ComServerTx(threading.Thread):
         global PduObjList
         while(True):
             for pdu in PduObjList:
-                if(pdu[cPduType] == COM_MSG0_RX):
+                if(pdu[cPduType] == cPduRx):
                     self.transmit(pdu[cPduCanId],pdu[cPduData])
             time.sleep(0.100)  # 100ms
             

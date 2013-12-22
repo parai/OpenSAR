@@ -38,7 +38,8 @@ MACROS = 	-DWIN32 			\
 			-DUSE_PDUR	\
 			-DUSE_DCM	\
 			-DUSE_CANNM	\
-			-DUSE_DET	
+			-DUSE_DET	\
+			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
@@ -94,6 +95,8 @@ all:$(obj-y)
 run:
 	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)
 	@(start $(OUT)/$(TARGET).exe)	
+	@(cd $(BD)/tools/simulator; start python main.py)	
+	@(start python $(BD)/tools/can/com.py)	
 	#@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
 	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
 clean:

@@ -5,12 +5,26 @@ import threading,time
 import sys
 import socket
 import UserString 
+
+def lDebug(stri):
+    print stri 
     
 cPduTx=0
 cPduRx=1
 # Id Ref of Pdu
 COM_MSG0_RX=0
 COM_MSG1_TX=1
+# Id Ref of Signal
+COM_SID_VehicleSpeed=0
+COM_SID_TachoSpeed=1
+COM_SID_Led1Sts=2
+COM_SID_Led2Sts=3
+COM_SID_Led3Sts=4
+COM_SID_Year=5
+COM_SID_Month=6
+COM_SID_Day=7
+COM_SID_Hour=8
+COM_SID_Minute=9
 # Pdu Obj = [id,[data],type]
 cPduCanId=0
 cPduData=1
@@ -27,7 +41,13 @@ def __UpdateValue(pduId,SigStart,SigSize,SigValue):
     start   = SigStart
     value   = SigValue
     data    = PduObjList[pduId][cPduData]
-    for i in range(0,(SigSize+7)/8):
+    pos = start/8
+    CrossB = (SigSize+7)/8
+    if(SigStart>=(pos*8) and (SigStart+SigSize)<=(pos+CrossB)*8):
+        pass
+    else:
+        CrossB += 1
+    for i in range(0,CrossB):
         start   += BA     # bit accessed in this cycle
         bitsize -= BA
         pos = start/8
@@ -38,77 +58,110 @@ def __UpdateValue(pduId,SigStart,SigSize,SigValue):
             BA = (8-offset)
         BM = ((1<<BA)-1)<<offset
         data[pos] &=  ~BM
-        data[pos] |=  BM&((value>>(bitsize-BA))<<offset)
-        value = value>>offset
+        data[pos] |=  BM&(value<<offset)
+        value = value>>(bitsize-BA)
+    
 def __ReadValue(pduId,SigStart,SigSize):
     global PduObjList
-    BA = 0
-    bitsize = SigSize
-    start   = SigStart
     value   = 0
     data    = PduObjList[pduId][cPduData]
-    for i in range(0,(SigSize+7)/8):
-        start   += BA     # bit accessed in this cycle
-        bitsize -= BA
-        pos = start/8
-        offset = start%8 
-        if((8-offset) > bitsize):
-            BA =  bitsize
-        else:
-            BA = (8-offset)
-        BM = ((1<<BA)-1)<<offset
-        value |=  BM&((data[pos]>>(bitsize-BA))<<offset)
-        return value
+    pos = SigStart/8
+    CrossB = (SigSize+7)/8
+    if(SigStart>=(pos*8) and (SigStart+SigSize)<=(pos+CrossB)*8):
+        pass
+    else:
+        CrossB += 1
+    for i in range(0,CrossB):
+        value = value+(data[pos+i]<<(8*i))
+    offset = SigStart%8 
+    return (value>>offset)&((1<<SigSize)-1)
 
 def Com_SendSignal(sigId,value):
 
     if(sigId == COM_SID_VehicleSpeed):
+        lDebug('Send(VehicleSpeed)')
         __UpdateValue(COM_MSG0_RX,0,16,value)
         return 0
             
 
     if(sigId == COM_SID_TachoSpeed):
+        lDebug('Send(TachoSpeed)')
         __UpdateValue(COM_MSG0_RX,16,16,value)
         return 0
             
 
     if(sigId == COM_SID_Led1Sts):
+        lDebug('Send(Led1Sts)')
         __UpdateValue(COM_MSG0_RX,32,2,value)
         return 0
             
 
     if(sigId == COM_SID_Led2Sts):
+        lDebug('Send(Led2Sts)')
         __UpdateValue(COM_MSG0_RX,34,2,value)
         return 0
             
 
     if(sigId == COM_SID_Led3Sts):
+        lDebug('Send(Led3Sts)')
         __UpdateValue(COM_MSG0_RX,36,2,value)
         return 0
             
+	print 'Error Signal Id'
 	return -1 # error id
 
 def Com_ReadSignal(sigId):
 
+    if(sigId == COM_SID_VehicleSpeed):
+        lDebug('Read(VehicleSpeed)')
+        return __ReadValue(COM_MSG0_RX,0,16)
+            
+
+    if(sigId == COM_SID_TachoSpeed):
+        lDebug('Read(TachoSpeed)')
+        return __ReadValue(COM_MSG0_RX,16,16)
+            
+
+    if(sigId == COM_SID_Led1Sts):
+        lDebug('Read(Led1Sts)')
+        return __ReadValue(COM_MSG0_RX,32,2)
+            
+
+    if(sigId == COM_SID_Led2Sts):
+        lDebug('Read(Led2Sts)')
+        return __ReadValue(COM_MSG0_RX,34,2)
+            
+
+    if(sigId == COM_SID_Led3Sts):
+        lDebug('Read(Led3Sts)')
+        return __ReadValue(COM_MSG0_RX,36,2)
+            
+
     if(sigId == COM_SID_Year):
+        lDebug('Read(Year)')
         return __ReadValue(COM_MSG1_TX,0,16)
             
 
     if(sigId == COM_SID_Month):
+        lDebug('Read(Month)')
         return __ReadValue(COM_MSG1_TX,16,8)
             
 
     if(sigId == COM_SID_Day):
+        lDebug('Read(Day)')
         return __ReadValue(COM_MSG1_TX,24,8)
             
 
     if(sigId == COM_SID_Hour):
+        lDebug('Read(Hour)')
         return __ReadValue(COM_MSG1_TX,32,8)
             
 
     if(sigId == COM_SID_Minute):
+        lDebug('Read(Minute)')
         return __ReadValue(COM_MSG1_TX,40,8)
             
+	print 'Error Signal Id'
 	return -1 # error id
 
 
@@ -125,7 +178,7 @@ class ComServerTx(threading.Thread):
         global PduObjList
         while(True):
             for pdu in PduObjList:
-                if(pdu[cPduType] == COM_MSG0_RX):
+                if(pdu[cPduType] == cPduRx):
                     self.transmit(pdu[cPduCanId],pdu[cPduData])
             time.sleep(0.100)  # 100ms
             

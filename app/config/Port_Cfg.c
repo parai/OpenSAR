@@ -7,9 +7,9 @@ const uint8_t PortPadConfigData[] = {
 	PORT_PCR_OUTPUT, /* PortA_PIN0 */
 	PORT_PCR_INPUT,  /* PortA_PIN1 */
 	PORT_PCR_OUTPUT, /* PortA_PIN2 */
-	PORT_PCR_RESET, /* PortA_PIN3 */
-	PORT_PCR_RESET, /* PortA_PIN4 */
-	PORT_PCR_RESET, /* PortA_PIN5 */
+	PORT_PCR_OUTPUT, /* PortA_PIN3 */
+	PORT_PCR_OUTPUT, /* PortA_PIN4 */
+	PORT_PCR_OUTPUT, /* PortA_PIN5 */
 	PORT_PCR_RESET, /* PortA_PIN6 */
 	PORT_PCR_RESET, /* PortA_PIN7 */
 
