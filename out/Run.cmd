@@ -6,7 +6,6 @@ REM start python ../tools/can/uds.py --port 8999 0x741 0x742
 cd ../tools/simulator
 python main.py
 REM start OpenSAR.exe
-
 pause
 
 

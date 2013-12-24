@@ -6,10 +6,41 @@
 #include <assert.h>
 #include <stdio.h>
 #include "Stmo.h"
+// ====================== LOCAL TYPE  =========================
+typedef struct
+{
+	Stmo_DegreeType Current;
+	Stmo_DegreeType Command;
+}Stmo_ControllerType;
+// ====================== LOCAL MACRO =========================
 
+#define VALIDATE_ID(Id,_api)		\
+	if((Id) > STMO_CFG_NUM)			\
+	{								\
+		goto cleanup;				\
+	}
+
+#define GET_STMO_SOFTWARE_ZERO(Id)	\
+		(pConfig->Channels[Id].SoftwareZero)
+
+// ====================== LOCAL DATA ==========================
 static HANDLE   thread = NULL;
+static HANDLE   threadTimer = NULL;
 static HANDLE   mutex = NULL;
-static uint16_t  StmoDegree[2] = {0,0};
+
+static Stmo_ControllerType  StmoCtrl[STMO_CFG_NUM];
+
+static const Stmo_ConfigType* pConfig = NULL;
+
+// ====================== LOCAL FUNCTION ======================
+static void Stmo1msTimer(void)
+{
+	for(;;)
+	{
+		Sleep(1);
+		Stmo_MainFunction();
+	}
+}
 static void ClientThread(void)
 {
 	SOCKET ListenSocket = INVALID_SOCKET;
@@ -72,11 +103,11 @@ static void ClientThread(void)
 
 		for(;;)
 		{
-			uint8 ldegree[eStmoCount*2];
-			for(int i=0;i<eStmoCount;i++)
+			uint8 ldegree[STMO_CFG_NUM*2];
+			for(int i=0;i<STMO_CFG_NUM;i++)
 			{
-				ldegree[i*2+0] = 0xFFu&(StmoDegree[i]>>8);
-				ldegree[i*2+1] = 0xFFu&(StmoDegree[i]>>0);
+				ldegree[i*2+0] = 0xFFu&(StmoCtrl[i].Current>>8);
+				ldegree[i*2+1] = 0xFFu&(StmoCtrl[i].Current>>0);
 			}
 			WaitForSingleObject(mutex,INFINITE);
 			ercd = send(AcceptSocket, (void*)&ldegree, sizeof(ldegree), 0);
@@ -108,26 +139,80 @@ static void StartClient(void)
 	{
 		assert(0);
 	}
+	threadTimer = CreateThread( NULL, 0, (LPTHREAD_START_ROUTINE)Stmo1msTimer, (LPVOID)NULL, 0, NULL );
+	if( threadTimer != NULL )
+	{
+		SetThreadPriority( threadTimer, THREAD_PRIORITY_BELOW_NORMAL );
+		SetThreadPriorityBoost( threadTimer, TRUE );
+		SetThreadAffinityMask( threadTimer, 0x01 );
+	}
+	else
+	{
+		assert(0);
+	}
 	mutex = CreateMutex( NULL, FALSE, NULL );
 }
 
-void Stmo_Init(void)
+// ====================== GLOBAL FUNCTION ======================
+void Stmo_Init(const Stmo_ConfigType *Config)
 {
+	pConfig = Config;
+	memset(StmoCtrl,0,sizeof(StmoCtrl));
 	StartClient();
 }
+
 Std_ReturnType Stmo_SetPosDegree(Stmo_IdType Id,Stmo_DegreeType Degree)
 {
 	Std_ReturnType ercd = E_NOT_OK;
-	if(Id < eStmoCount)
+	VALIDATE_ID(Id,Stmo_SetPosDegree);
+
+	if(Degree <= STMO_MAX_DEGREE)
 	{
-		if(StmoDegree[Id] != Degree)
-		{
-			printf("StmoDegree[%d] = %d\n",Id,Degree);
-		}
 		WaitForSingleObject(mutex,INFINITE);
-		StmoDegree[Id] = Degree;
+		StmoCtrl[Id].Command = Degree+GET_STMO_SOFTWARE_ZERO(Id);
 		ReleaseMutex(mutex);
 		ercd = E_OK;
 	}
+
+cleanup:
 	return ercd;
+}
+
+// Period In 1ms
+void Stmo_MainFunction(void)
+{
+	WaitForSingleObject(mutex,INFINITE);
+	for(int i=0;i<STMO_CFG_NUM;i++)
+	{
+		if(StmoCtrl[i].Command != StmoCtrl[i].Current)
+		{
+			if(StmoCtrl[i].Command > StmoCtrl[i].Current)
+			{
+				if(StmoCtrl[i].Command > (StmoCtrl[i].Current+STMO_ONE_STEP))
+				{
+					StmoCtrl[i].Current= StmoCtrl[i].Current+STMO_ONE_STEP;
+				}
+				else
+				{
+					StmoCtrl[i].Current = StmoCtrl[i].Command;
+				}
+			}
+			else if(StmoCtrl[i].Command < StmoCtrl[i].Current)
+			{
+				if(StmoCtrl[i].Command < (StmoCtrl[i].Current-STMO_ONE_STEP))
+				{
+					StmoCtrl[i].Current= StmoCtrl[i].Current-STMO_ONE_STEP;
+				}
+				else
+				{
+					StmoCtrl[i].Current = StmoCtrl[i].Command;
+				}
+			}
+			else
+			{
+				StmoCtrl[i].Current = StmoCtrl[i].Command;
+			}
+		}
+	}
+	ReleaseMutex(mutex);
 }
