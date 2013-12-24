@@ -27,6 +27,7 @@
 #define ALARM_ID_Alarm20ms 1
 #define ALARM_ID_Alarm100ms 2
 #define ALARM_ID_Alarm1000ms 3
+#define ALARM_ID_Alarm_BswService 4
 
 // Counter Id's
 #define COUNTER_ID_Counter0 0
@@ -57,6 +58,7 @@
 #define EVENT_MASK_Event4 0x8 // of TaskEvent
 #define EVENT_MASK_Event5 0x10 // of TaskEvent
 #define EVENT_MASK_Event1000ms 0x20 // of TaskEvent
+#define EVENT_MASK_SchM_BswService_RUN 0x01 // of SchM_BswService
 
 // Isr Id's
 
@@ -72,6 +74,8 @@
 #define TASK_ID_Task20ms 2
 #define TASK_ID_Task100ms 3
 #define TASK_ID_TaskEvent 4
+#define TASK_ID_SchM_Startup 5
+#define TASK_ID_SchM_BswService 6
 
 // Task entry points
 extern void OsIdle( void );
@@ -79,6 +83,8 @@ extern void Task10ms( void );
 extern void Task20ms( void );
 extern void Task100ms( void );
 extern void TaskEvent( void );
+extern void SchM_Startup( void );
+extern void SchM_BswService( void );
 
 // Schedule table id's
 
@@ -86,11 +92,11 @@ extern void TaskEvent( void );
 #define OS_INTERRUPT_STACK_SIZE    2048    // TODO
 #define OS_OSIDLE_STACK_SIZE 512            // TODO
 
-#define OS_ALARM_CNT            4
-#define OS_TASK_CNT             5
+#define OS_ALARM_CNT            5
+#define OS_TASK_CNT             7
 #define OS_SCHTBL_CNT           0
 #define OS_COUNTER_CNT          1
-#define OS_EVENTS_CNT           9
+#define OS_EVENTS_CNT           10
 
 // TODO: 
 //#define OS_ISRS_CNT                 0

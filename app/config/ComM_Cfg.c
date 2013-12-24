@@ -28,7 +28,7 @@ const ComM_UserType ComM_Users[] =
 	},
 };
 
-const ComM_ConfigType ComM_Cfg = 
+const ComM_ConfigType ComM_Cfg =
 {
     .Channels =  ComM_Channels,
     .Users =  ComM_Users

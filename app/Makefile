@@ -33,12 +33,22 @@ INCDIR = 	-I$(BD)/include 		\
 MACROS = 	-DWIN32 			\
 			-DAUTOSAR_SIMULATOR	\
 			-DUSE_DEBUG_PRINTF	\
+			-DUSE_ECUM		\
+			-DUSE_CAN		\
 			-DUSE_CANIF	\
 			-DUSE_CANTP	\
 			-DUSE_PDUR	\
+			-DUSE_COM	\
 			-DUSE_DCM	\
+			-DUSE_COMM	\
 			-DUSE_CANNM	\
 			-DUSE_DET	\
+			-DUSE_CANNM	\
+			-DUSE_NM	\
+			-DUSE_CANSM	\
+			-DUSE_MCU	\
+			-DUSE_PORT	\
+			-DUSE_DIO	\
 			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
@@ -62,7 +72,9 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/communication/Com	\
 		$(BD)/communication/ComM	\
 		$(BD)/diagnostic/Dcm		\
-		$(BD)/diagnostic/Det
+		$(BD)/diagnostic/Det		\
+		$(BD)/system/EcuM			\
+		$(BD)/system/SchM
 		
 src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
 obj-y = $(subst .c,.o,$(src-y))	

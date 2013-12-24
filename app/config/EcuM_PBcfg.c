@@ -81,16 +81,16 @@ EcuM_ConfigType EcuMConfig =
 	.PortConfig = &PortConfigData,
 #endif
 #if defined(USE_CAN)
-	.CanConfig = &CanConfigData,
+	.CanConfig = &Can_ConfigData,
 #endif
 #if defined(USE_CANIF)
 	.CanIfConfig = &CanIf_Config,
 #endif
 #if defined(USE_CANSM)
-	.CanSMConfig = &CanSM_Config,
+	.CanSMConfig = &CanSM_Cfg,
 #endif
 #if defined(USE_CANNM)
-	.CanNmConfig = &CanNm_Config,
+	.CanNmConfig = &CanNm_Cfg,
 #endif
 #if defined(USE_UDPNM)
 	.UdpNmConfig = &UdpNm_Config,
@@ -99,7 +99,7 @@ EcuM_ConfigType EcuMConfig =
 	.ComConfig = &ComConfiguration,
 #endif
 #if defined(USE_COMM)
-	.ComMConfig = &ComM_Config,
+	.ComMConfig = &ComM_Cfg,
 #endif
 #if defined(USE_J1939TP)
 	.J1939TpConfig = &J1939Tp_Config,

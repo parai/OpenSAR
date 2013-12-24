@@ -1,14 +1,35 @@
 #include "app.h"
 
+void StartupHook( void )
+{
+	Stmo_Init(&Stmo_ConfigData);
+}
+
+void ShutdownHook( StatusType Error )
+{
+
+}
+void ErrorHook( StatusType Error )
+{
+
+}
+void PreTaskHook( void )
+{
+}
+void PostTaskHook( void )
+{
+
+}
+
 void Task10ms(void)
 {
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_EventTask10ms);
-		CanTp_MainFunction();
-		Dcm_MainFunction();
-		Com_MainFunctionRx();
-		Com_MainFunctionTx();
+//		CanTp_MainFunction();
+//		Dcm_MainFunction();
+//		Com_MainFunctionRx();
+//		Com_MainFunctionTx();
 		(void)ClearEvent(EVENT_MASK_EventTask10ms);
 	}
 	TerminateTask();

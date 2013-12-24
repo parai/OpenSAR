@@ -21,15 +21,15 @@
 #include "EcuM_Internals.h"
 #endif
 
-Std_ReturnType EcuM_ShutdownTarget_GetLastShutdownTarget(EcuM_StateType* target, UInt8* mode) {
+Std_ReturnType EcuM_ShutdownTarget_GetLastShutdownTarget(EcuM_StateType* target, uint8* mode) {
 	return E_NOT_OK;
 }
 
-Std_ReturnType EcuM_ShutdownTarget_GetShutdownTarget(EcuM_StateType* target, UInt8* mode) {
+Std_ReturnType EcuM_ShutdownTarget_GetShutdownTarget(EcuM_StateType* target, uint8* mode) {
 	return EcuM_GetShutdownTarget(target, (uint8*)mode);
 }
 
-Std_ReturnType EcuM_ShutdownTarget_SelectShutdownTarget(EcuM_StateType target, UInt8 mode) {
+Std_ReturnType EcuM_ShutdownTarget_SelectShutdownTarget(EcuM_StateType target, uint8 mode) {
 	return EcuM_SelectShutdownTarget(target, (uint8)mode);
 }
 

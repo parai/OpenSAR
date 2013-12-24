@@ -110,6 +110,17 @@ GEN_ALARM_HEAD = {
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
             ),
+ 	GEN_ALARM(  ALARM_ID_Alarm_BswService,
+                "Alarm_BswService",
+                COUNTER_ID_Counter0,
+                NULL,
+                ALARM_ACTION_SETEVENT,
+                TASK_ID_SchM_BswService,
+                EVENT_MASK_SchM_BswService_RUN,
+                0,
+                APPLICATION_ID_OsDefaultApplication,    /* Application owner */
+                1    /* Accessing application mask */
+            ),
  };
 
 // ################################    RESOURCES     ###############################
@@ -120,6 +131,8 @@ DECLARE_STACK(Task10ms,512);
 DECLARE_STACK(Task20ms,512);
 DECLARE_STACK(Task100ms,512);
 DECLARE_STACK(TaskEvent,512);
+DECLARE_STACK(SchM_Startup,512);
+DECLARE_STACK(SchM_BswService,512);
 // ##################################    TASKS     #################################
 GEN_TASK_HEAD = {
     GEN_BTASK(  /*                     */OsIdle,
@@ -178,6 +191,30 @@ GEN_TASK_HEAD = {
         /* resource_int_p   */NULL, // TODO
         /* resource mask    */0,
         /* event mask        */0x3f,
+        /* App owner        */APPLICATION_ID_OsDefaultApplication,
+        /* Accessing apps   */1
+    ),
+	GEN_BTASK(
+        /*                     */SchM_Startup,
+        /* name                */"SchM_Startup",
+        /* priority            */16,
+        /* schedule            */NON,
+        /* autostart           */True,
+        /* resource_int_p   */NULL,    // TODO
+        /* resource mask    */0,
+        /* activation lim.     */1,
+        /* App owner        */APPLICATION_ID_OsDefaultApplication,
+        /* Accessing apps   */1
+    ),
+	GEN_ETASK(
+        /*                     */SchM_BswService,
+        /* name                */"SchM_BswService",
+        /* priority            */5,
+        /* schedule            */FULL,
+        /* autostart           */True,
+        /* resource_int_p   */NULL, // TODO
+        /* resource mask    */0,
+        /* event mask        */0x1,
         /* App owner        */APPLICATION_ID_OsDefaultApplication,
         /* Accessing apps   */1
     ),

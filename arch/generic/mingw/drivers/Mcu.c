@@ -61,3 +61,14 @@ void Mcu_PerformReset( void ) {
 Mcu_PllStatusType Mcu_GetPllStatus( void ) {
 	return MCU_PLL_LOCKED;
 }
+
+
+Mcu_ResetType Mcu_GetResetReason( void )
+{
+	return MCU_POWER_ON_RESET;
+}
+
+void Mcu_DistributePllClock( void )
+{
+
+}

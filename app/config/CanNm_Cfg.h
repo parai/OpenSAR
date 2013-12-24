@@ -8,7 +8,11 @@
 #ifndef CANNM_CFG_H_H
 #define CANNM_CFG_H_H
 
+#if defined(USE_DET)
 #define CANNM_DEV_ERROR_DETECT				STD_ON
+#else
+#define CANNM_DEV_ERROR_DETECT				STD_OFF
+#endif
 #define CANNM_VERSION_INFO_API				STD_ON
 #define CANNM_PASSIVE_MODE_ENABLED			STD_ON
 #define CANNM_USER_DATA_ENABLED				STD_ON
@@ -24,12 +28,18 @@
 #define CANNM_IMMEDIATE_TXCONF_ENABLED		STD_OFF	// Not supported
 #define CANNM_REPEAT_MSG_IND_ENABLED		STD_OFF	// Not supported
 
-#define CANNM_CHANNEL_COUNT 1
-#define vCanNm_Channel_0 0
-#define CANNM_TX_vEcuC_Pdu_1 0
-#define CANNM_RX_vEcuC_Pdu_1 0
+#define CANNM_CHANNEL_COUNT 2
 
-extern const CanNm_ConfigType CanNm_Config;
+#define CANNM_CHANNEL_LS 0
+#define CANNM_CHANNEL_HS 1
+
+#define CANNM_CHL_LS_TX 0
+#define CANNM_CHL_LS_RX 0
+
+#define CANNM_CHL_HS_TX 1
+#define CANNM_CHL_HS_RX 1
+
+extern const CanNm_ConfigType CanNm_Cfg;
 
 #endif /* CANNM_CFG_H_H */ 
 

@@ -6,7 +6,7 @@
 const Nm_ChannelType Nm_Channels[] = {
 	{//vNm_Channel_0
 		.BusType =  NM_BUSNM_CANNM,
-		.BusNmNetworkHandle =  vCanNm_Channel_0,
+		.BusNmNetworkHandle =  CANNM_CHANNEL_LS,
 		.ComMNetworkHandle =  vComM_Channel_0,
 	},
 };

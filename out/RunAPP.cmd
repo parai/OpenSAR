@@ -1,2 +1,2 @@
-OpenSAR.exe >> APP.log
+OpenSAR.exe > APP.log
 pause

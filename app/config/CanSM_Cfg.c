@@ -26,7 +26,7 @@ const const CanSM_NetworkType CanSM_Networks[] =
         #endif         
     }
 };
-const CanSM_ConfigType CanSM_Cfg = 
+const CanSM_ConfigType CanSM_Cfg =
 {
     .Networks =  CanSM_Networks
 };
