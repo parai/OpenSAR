@@ -371,9 +371,13 @@ TASK(SchM_Startup){
 	EcuM_RequestRUN(ECUM_USER_User_1);
 #endif
 
-	// Start it
+	// Start CAN it
 	Com_IpduGroupStart(COM_DEFAULT_IPDU_GROUP,True);
-	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
+
+	// Start NM
+	Nm_PassiveStartUp(CANNM_CHANNEL_LS);
+	ComM_RequestComMode(COMM_LS_USER,COMM_FULL_COMMUNICATION);
+	CanNm_NetworkRequest(CANNM_CHANNEL_LS);
 
 	TerminateTask();
 

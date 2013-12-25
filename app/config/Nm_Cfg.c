@@ -4,11 +4,16 @@
 #include "ComM.h"
 
 const Nm_ChannelType Nm_Channels[] = {
-	{//vNm_Channel_0
+	{
 		.BusType =  NM_BUSNM_CANNM,
 		.BusNmNetworkHandle =  CANNM_CHANNEL_LS,
-		.ComMNetworkHandle =  vComM_Channel_0,
+		.ComMNetworkHandle =  COMM_CHL_LS,
 	},
+	{
+		.BusType =  NM_BUSNM_CANNM,
+		.BusNmNetworkHandle =  CANNM_CHANNEL_HS,
+		.ComMNetworkHandle =  COMM_CHL_HS,
+	}
 };
 
 const Nm_ConfigType Nm_Config = 

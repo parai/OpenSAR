@@ -163,6 +163,32 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
         .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
         .PduIdRef = NULL
     },
+    {
+        .CanIfTxPduId = CANNM_CHL_LS_TX,
+        .CanIfCanTxPduIdCanId = 0x450, // Network
+        .CanIfCanTxPduIdDlc = 8,
+        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadTxPduNotifyStatus = FALSE,
+#endif
+        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfUserTxConfirmation = CanNm_TxConfirmation,
+        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
+        .PduIdRef = NULL
+    },  
+    {
+        .CanIfTxPduId = CANNM_CHL_HS_TX,
+        .CanIfCanTxPduIdCanId = 0x450, // Network, the same as LS
+        .CanIfCanTxPduIdDlc = 8,
+        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadTxPduNotifyStatus = FALSE,
+#endif
+        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfUserTxConfirmation = CanNm_TxConfirmation,
+        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_HS[0],
+        .PduIdRef = NULL
+    },       
     
     {
         .CanIfTxPduId = PDUR_MSG1_TX,
@@ -219,6 +245,42 @@ const CanIf_RxPduConfigType CanIfRxPduConfigData[] =
         .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
         .CanIfCanRxPduCanIdMask = 0x7FF
     },
+    {
+        .CanIfCanRxPduId = CANNM_CHL_LS_RX,
+        .CanIfCanRxPduCanId = 0x4FF, // DiagP2A
+        .CanIfCanRxPduDlc = 8,
+#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
+        .CanIfReadRxPduData = TRUE,
+#endif
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadRxPduNotifyStatus = TRUE,
+#endif
+        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfRxUserType = CANIF_USER_TYPE_CAN_NM,
+        .CanIfUserRxIndication = NULL,
+        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_LS[0],
+        .PduIdRef = NULL,
+        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
+        .CanIfCanRxPduCanIdMask = 0x700  // Mask the range 0x400 ~ 0x4ff as Network Range
+    },
+    {
+        .CanIfCanRxPduId = CANNM_CHL_HS_RX,
+        .CanIfCanRxPduCanId = 0x4FF, // DiagP2A
+        .CanIfCanRxPduDlc = 8,
+#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
+        .CanIfReadRxPduData = TRUE,
+#endif
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadRxPduNotifyStatus = TRUE,
+#endif
+        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfRxUserType = CANIF_USER_TYPE_CAN_NM,
+        .CanIfUserRxIndication = NULL,
+        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_HS[0],
+        .PduIdRef = NULL,
+        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
+        .CanIfCanRxPduCanIdMask = 0x700  // Mask the range 0x400 ~ 0x4ff as Network Range
+    },         
     
     {
         .CanIfCanRxPduId = PDUR_MSG0_RX,

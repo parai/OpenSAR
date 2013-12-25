@@ -8,12 +8,14 @@
 #define COMM_MODE_LIMITATION_ENABLED STD_ON
 #define COMM_T_MIN_FULL_COM_MODE_DURATION 1000
 
-#define COMM_CHANNEL_COUNT 1
-#define vComM_Channel_0 0
+#define COMM_CHANNEL_COUNT 2
+#define COMM_CHL_LS 0
+#define COMM_CHL_HS 1
 
 typedef enum
 {
-	vComM_User_0,
+	COMM_LS_USER,
+	COMM_HS_USER,
 	COMM_USER_COUNT
 }ComM_UserHandleType;
 

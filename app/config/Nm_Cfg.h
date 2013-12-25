@@ -14,7 +14,8 @@
 #define NM_NODE_ID_ENABLED STD_ON
 #define NM_NODE_DETECTION_ENABLED STD_ON
 
-#define vNm_Channel_0 0
+#define NM_CHL_LS 0
+#define NM_CHL_HS 1
 
 extern const Nm_ConfigType Nm_Config;
 

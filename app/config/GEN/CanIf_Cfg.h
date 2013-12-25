@@ -40,13 +40,17 @@
 /* Tx PduId For CanIF */
 #define CANIF_DIAG_P2P_ACK        0
 #define CANIF_DIAG_P2A_ACK        1
+#define CANIF_LS_NM_TX            2
+#define CANIF_HS_NM_TX            3
 /* Rx PduId For CanIF */
 #define CANIF_DIAG_P2P_REQ        0
 #define CANIF_DIAG_P2A_REQ        1
+#define CANIF_LS_NM_RX            2
+#define CANIF_HS_NM_RX            3
     
 // ---- Gen Helper ----
-#define GenCanIfRxId(id) (id+2)
-#define GenCanIfTxId(id) (id+2)
+#define GenCanIfRxId(id) (id+4)
+#define GenCanIfTxId(id) (id+4)
 
 #define CANIF_MSG0_RX GenCanIfRxId(0)
 #define CANIF_MSG1_TX GenCanIfTxId(0)

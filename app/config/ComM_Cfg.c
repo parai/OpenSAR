@@ -7,23 +7,40 @@ const ComM_ChannelType ComM_Channels[] =
 {
 	{
 		.BusType =   COMM_BUS_TYPE_CAN,
-		.BusSMNetworkHandle =   0,
-		.NmChannelHandle =   0x000000,
+		.BusSMNetworkHandle =   CANSM_CHL_LS,
+		.NmChannelHandle =   NM_CHL_LS,
 		.NmVariant =   COMM_NM_VARIANT_FULL,
-		.MainFunctionPeriod =   4,
+		.MainFunctionPeriod =   10,
 		.LightTimeout =   1000,
 		.Number =   0
 	},
+	{
+		.BusType =   COMM_BUS_TYPE_CAN,
+		.BusSMNetworkHandle =   CANSM_CHL_HS,
+		.NmChannelHandle =   NM_CHL_HS,
+		.NmVariant =   COMM_NM_VARIANT_FULL,
+		.MainFunctionPeriod =   10,
+		.LightTimeout =   1000,
+		.Number =   1
+	},
 };
 
-const ComM_ChannelType* vComM_User_0_ChannleList[] = 
+const ComM_ChannelType* ComMLsUser_ChannleList[] =
 {
 	&ComM_Channels[0],
 };
+const ComM_ChannelType* ComMHsUser_ChannleList[] =
+{
+	&ComM_Channels[1],
+};
 const ComM_UserType ComM_Users[] =
 {
-	{//vComM_User_0
-		.ChannelList =  vComM_User_0_ChannleList,
+	{//COMM_LS_USER
+		.ChannelList =  ComMLsUser_ChannleList,
+		.ChannelCount =  1
+	},
+	{//COMM_HS_USER
+		.ChannelList =  ComMHsUser_ChannleList,
 		.ChannelCount =  1
 	},
 };

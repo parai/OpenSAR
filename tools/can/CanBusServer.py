@@ -45,14 +45,14 @@ def CanBusServerTrace(msg):
     for i in range(0,8):
         cstr += '0x%-2x, '%(ord(msg[5+i]))
     cstr += '] From %-6s'%(port)
-    cstr += ' AT %-6s ms .. ['%(round(time.time() - server_startTime,4)*1000)
+    cstr += ' AT %-9s ms .. ['%(round(time.time() - server_startTime,4)*1000)
     for i in range(0,8):
         if re.match(r'[^\s]','%c'%(msg[5+i])):
             cstr += '%c'%(msg[5+i])
         else:
             cstr += '.'
     cstr += ']'
-    server_startTime = time.time()
+    # server_startTime = time.time() absolute time
     print cstr
     server_logout.write(cstr+'\n')
 
