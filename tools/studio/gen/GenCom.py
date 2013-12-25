@@ -499,8 +499,13 @@ import sys
 import socket
 import UserString 
 
+lDebugOn = True
+def lSetDebug(on):
+    global lDebugOn
+    lDebugOn = on
 def lDebug(stri):
-    print stri 
+    if(lDebugOn == True):
+        print stri 
     \n""")
     fp.write('cPduTx=0\ncPduRx=1\n')
     cstr = '# Id Ref of Pdu\n'
@@ -627,7 +632,7 @@ class ComServerTx(threading.Thread):
             for pdu in PduObjList:
                 if(pdu[cPduType] == cPduRx):
                     self.transmit(pdu[cPduCanId],pdu[cPduData])
-            time.sleep(0.100)  # 100ms
+            time.sleep(0.010)  # 10ms
             
     def transmit(self,canId,data,length=None):
         msg = UserString.MutableString("c" * 17)

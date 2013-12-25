@@ -50,7 +50,8 @@ class StepMotor(QtGui.QGraphicsItem):
         if(Degree <= (cfg[iRange]*100+cMechanicalZero) and Degree >= 0):
             self.Degree = Degree
         else:
-            print 'StepMotor:Wrong Degree Value from AUTOSAR Client.'
+            print 'StepMotor:Wrong Degree Value from AUTOSAR Client.',self.cId,Degree
+            return
         # Set Degree 
         self.setRotation((self.Degree-cMechanicalZero)/100+cfg[iStart])
 

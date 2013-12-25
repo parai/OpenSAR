@@ -25,7 +25,8 @@ import re
 
 server_startTime = time.time() # in second
 server_port =[]
-server_logout = open('CanTrace.log','w')
+server_logout = None
+
 def CanBusServerUsage():
     print "Usage:"
     print "\t python CanBusServer.py --server port"
@@ -33,6 +34,7 @@ def CanBusServerUsage():
 
 def CanBusServerTrace(msg):
     global server_startTime
+    global server_logout
     if(len(msg) != 17):
         print 'Error: length of msg is invalid!'
         return
@@ -106,10 +108,12 @@ def CanBusServerHost(port = 8000):
         connection.close()
 
 def CanBusServer(argc,argv):
+    global server_logout
     if(argc != 3):
         CanBusServerUsage()
         return
     if(argv[1] == '--server'):
+        server_logout = open('CanTrace%s.log'%(argv[2]),'w')
         CanBusServerHost(int(argv[2]))
     
 if __name__ == '__main__': 

@@ -366,7 +366,7 @@ class ooCanTpController(threading.Thread):
                 else:
                     self.sendFF()
             elif(CanTp_stWaitFC == self.__state):
-                if(True == WaitEvent(self.__Event,1000)):
+                if(True == WaitEvent(self.__Event,2000)):
                     ClearEvent(self.__Event)
                     self.__state = CanTp_stSendCF
                     continue
@@ -374,7 +374,7 @@ class ooCanTpController(threading.Thread):
                     self.__state = CanTp_stIdle  
                     print '    Timeout for  Waiting the Flow Control.'
             elif(CanTp_stReceiving == self.__state):
-                if(True == WaitEvent(self.__Event,1000)):
+                if(True == WaitEvent(self.__Event,2000)):
                     ClearEvent(self.__Event)
                     continue
                 else: # Time-out abort

@@ -178,7 +178,7 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
     },  
     {
         .CanIfTxPduId = CANNM_CHL_HS_TX,
-        .CanIfCanTxPduIdCanId = 0x450, // Network, the same as LS
+        .CanIfCanTxPduIdCanId = 0x451, // Network
         .CanIfCanTxPduIdDlc = 8,
         .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
 #if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )

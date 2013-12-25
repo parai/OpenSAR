@@ -6,8 +6,15 @@ import sys
 import socket
 import UserString 
 
+lDebugOn = True
+def lSetDebug(on):
+    global lDebugOn
+    lDebugOn = on
+
 def lDebug(stri):
-    print stri 
+    global lDebugOn
+    if(lDebugOn == True):
+        print stri 
     
 cPduTx=0
 cPduRx=1
@@ -254,6 +261,6 @@ class ComServerRx(threading.Thread):
                 continue  
             connection.close() 
 
-ComServerTx(8000,60001)
-ComServerRx(60001)        
+#ComServerTx(8000,60001)
+#ComServerRx(60001)        
     

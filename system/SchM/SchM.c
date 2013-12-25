@@ -371,13 +371,21 @@ TASK(SchM_Startup){
 	EcuM_RequestRUN(ECUM_USER_User_1);
 #endif
 
+#if defined(USE_COM)
 	// Start CAN it
 	Com_IpduGroupStart(COM_DEFAULT_IPDU_GROUP,True);
+#endif
 
+#if defined(USE_NM)
 	// Start NM
-	Nm_PassiveStartUp(CANNM_CHANNEL_LS);
+	Nm_NetworkRequest(NM_CHL_LS);
+	Nm_NetworkRequest(NM_CHL_HS);
+#endif
+
+#if defined(USE_COMM)
 	ComM_RequestComMode(COMM_LS_USER,COMM_FULL_COMMUNICATION);
-	CanNm_NetworkRequest(CANNM_CHANNEL_LS);
+	ComM_RequestComMode(COMM_HS_USER,COMM_FULL_COMMUNICATION);
+#endif
 
 	TerminateTask();
 
