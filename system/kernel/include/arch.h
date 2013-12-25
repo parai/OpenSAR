@@ -37,7 +37,7 @@
  * @param f     Pointer to the function to call.
  *
  */
-__simple void Os_ArchSetSpAndCall(void *sp, void (*f)(void) );
+ void Os_ArchSetSpAndCall(void *sp, void (*f)(void) );
 
 /**
  * Swap context.
@@ -46,7 +46,7 @@ __simple void Os_ArchSetSpAndCall(void *sp, void (*f)(void) );
  * @param old - old ptr to pcb
  * @return
  */
-__simple void Os_ArchSwapContext(void *old,void *new);
+ void Os_ArchSwapContext(void *old,void *new);
 
 
 /**
@@ -55,7 +55,7 @@ __simple void Os_ArchSwapContext(void *old,void *new);
  * The only way to call this function right now is to:
  *   Os_TaskSwapContextTo(NULL,<pcb>);
  */
-__simple void Os_ArchSwapContextTo(void *old,void *new);
+ void Os_ArchSwapContextTo(void *old,void *new);
 
 /**
  * Setup a pcb before use.
@@ -75,7 +75,7 @@ void Os_ArchSetupContext( OsTaskVarType *pcb );
  *
  * @return current stack pointer
  */
-__simple void *Os_ArchGetStackPtr( void );
+ void *Os_ArchGetStackPtr( void );
 
 /**
  * Initialize the hardware.

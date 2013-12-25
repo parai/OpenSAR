@@ -19,7 +19,9 @@
 #include "Dcm.h"
 #include "Dio.h"
 #include "Port.h"
+#if defined(WIN32)
 #include "Stmo.h"
+#endif
 
 #include "Diag.h"
 

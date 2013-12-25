@@ -171,7 +171,7 @@ typedef struct
 	//uint16          CanControllerSyncJumpWidth;
 	/** List of Hoh id's that belong to this controller */
 	const Can_HardwareObjectType  *Can_Arc_Hoh;
-	boolean Can_Loopback;
+	boolean Can_Arc_Loopback;
 }Can_ControllerConfigType;
 
 typedef struct {
@@ -195,6 +195,6 @@ typedef struct
 
 
 
-const Can_ConfigType Can_ConfigData;
+extern const Can_ConfigType Can_ConfigData;
 #endif /* CAN_CFG_H_ */
 

@@ -261,6 +261,6 @@ class ComServerRx(threading.Thread):
                 continue  
             connection.close() 
 
-#ComServerTx(8000,60001)
-#ComServerRx(60001)        
+ComServerTx(8000,60001)
+ComServerRx(60001)        
     

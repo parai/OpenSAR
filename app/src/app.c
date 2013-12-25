@@ -2,7 +2,9 @@
 
 void StartupHook( void )
 {
+#if defined(WIN32)
 	Stmo_Init(&Stmo_ConfigData);
+#endif    
 }
 
 void ShutdownHook( StatusType Error )
