@@ -69,6 +69,10 @@
 #define SID_WRITE_DATA_BY_IDENTIFIER			0x2E
 #define SID_INPUT_OUTPUT_CONTROL_BY_IDENTIFIER	0x2F
 #define SID_ROUTINE_CONTROL						0x31
+#define SID_REQUEST_DOWNLOAD          			0x34
+#define SID_REQUEST_UPLOAD            			0x35
+#define SID_TRANSFER_DATA            			0x36
+#define SID_REQUEST_TRANSFER_EXIT     			0x37
 #define SID_WRITE_MEMORY_BY_ADDRESS				0x3D
 #define SID_TESTER_PRESENT						0x3E
 #define SID_NEGATIVE_RESPONSE					0x7F
@@ -115,7 +119,11 @@ void DspReadDataByPeriodicIdentifier(const PduInfoType *pduRxData,PduInfoType *p
 void DspDynamicallyDefineDataIdentifier(const PduInfoType *pduRxData,PduInfoType *pduTxData);
 void DspIOControlByDataIdentifier(const PduInfoType *pduRxData,PduInfoType *pduTxData);
 void DspCommunicationControl(const PduInfoType *pduRxData,PduInfoType *pduTxData);
-
+// DATA Transfer Service
+void DspRequestDownload(const PduInfoType *pduRxData,PduInfoType *pduTxData);
+void DspRequestUpload(const PduInfoType *pduRxData,PduInfoType *pduTxData);
+void DspTransferData(const PduInfoType *pduRxData,PduInfoType *pduTxData);
+void DspRequestTransferExit(const PduInfoType *pduRxData,PduInfoType *pduTxData);
 // OBD stack interface
 void DspObdRequestCurrentPowertrainDiagnosticData(const PduInfoType *pduRxData,PduInfoType *pduTxData);
 void DspObdRequsetPowertrainFreezeFrameData(const PduInfoType *pduRxData,PduInfoType *pduTxData);

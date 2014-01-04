@@ -226,7 +226,20 @@ static void selectServiceFunction(uint8 sid)
 		break;
 #endif
 	/* OBD */
-
+#ifdef DCM_USE_SERVICE_UPLOAD_DOWNLOAD
+	case SID_REQUEST_DOWNLOAD:
+		DspRequestDownload(msgData.pduRxData, msgData.pduTxData);
+		break;
+	case SID_REQUEST_UPLOAD:
+		DspRequestUpload(msgData.pduRxData, msgData.pduTxData);
+		break;
+	case SID_TRANSFER_DATA:
+		DspTransferData(msgData.pduRxData, msgData.pduTxData);
+		break;
+	case SID_REQUEST_TRANSFER_EXIT:
+		DspRequestTransferExit(msgData.pduRxData, msgData.pduTxData);
+		break;
+#endif
 	default:
 		/* Non implemented service */
 		createAndSendNcr(DCM_E_SERVICENOTSUPPORTED);

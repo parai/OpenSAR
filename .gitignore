@@ -21,6 +21,7 @@ scripts
 tools/pls
 tools/t32
 rte
+Flash.img
 *.exe
 *.EXE
 # std arccore directorys  >>>

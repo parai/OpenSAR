@@ -30,6 +30,13 @@ uds_rx_id = 0x742
 UdsAckEvent = DeclareEvent()
 
 uds_ack = []
+uds_ack_len = 0
+
+def tInt(strnum):
+    if(strnum.find('0x')!=-1 or strnum.find('0X')!=-1):
+        return int(strnum,16)
+    else:
+        return int(strnum,10)
 
 def UdsOnCanUsage():
     print "Usage:"
@@ -48,8 +55,9 @@ def UdsConfig():
     print 'Tx = %s, Rx = %s.'%(hex(uds_tx_id),hex(uds_rx_id))
 
 def Uds_RxIndication(data):
-    global uds_ack
+    global uds_ack,uds_ack_len
     uds_ack = []
+    uds_ack_len = len(data)
     cstr = '    Response: ['
     for i in range(0,len(data)):
         cstr += '0x%-2x,'%(data[i])
@@ -64,6 +72,7 @@ def Uds_RxIndication(data):
     print cstr
     Sleep(10)
     SetEvent(UdsAckEvent)
+
 def UdsOnCanClient(port = 8999):
     global uds_tx_id, uds_rx_id
     UdsConfig()
@@ -193,30 +202,15 @@ def biTest(argv):
     CanTp_Transmit(data)
     WaitEvent(UdsAckEvent,5000)
     ClearEvent(UdsAckEvent)
-    return 
-    """ WDID : 0xFE09"""
-    data = [0x2E,0xFE,0x09] 
-    for i in range(0,64):
-        data.append(i*2)
-    print '    Send: [0x2E,0xFE,0x09,.....] '
+    """ RC Start : 0x020A"""
+    data = [0x31,0x01,0x02,0x0A,0x00] 
+    print '    Send: [0x31,0x01,0x02,0x0A,0x00]  '
     CanTp_Transmit(data)
     WaitEvent(UdsAckEvent,5000)
     ClearEvent(UdsAckEvent)
-    """ RC Start : 0xAB11"""
-    data = [0x31,0x01,0xAB,0x11] 
-    print '    Send: [0x31,0x01,0xAB,0x11] '
-    CanTp_Transmit(data)
-    WaitEvent(UdsAckEvent,5000)
-    ClearEvent(UdsAckEvent)
-    """ RC Stop : 0xAB11"""
-    data = [0x31,0x02,0xAB,0x11] 
-    print '    Send: [0x31,0x02,0xAB,0x11] '
-    CanTp_Transmit(data)
-    WaitEvent(UdsAckEvent,5000)
-    ClearEvent(UdsAckEvent)
-    """ RC RequestResult : 0xAB11"""
-    data = [0x31,0x03,0xAB,0x11] 
-    print '    Send: [0x31,0x03,0xAB,0x11] '
+    """ RC RequestResult : 0x020A"""
+    data = [0x31,0x03,0x02,0x0A] 
+    print '    Send: [0x31,0x03,0x02,0x0A] '
     CanTp_Transmit(data)
     WaitEvent(UdsAckEvent,5000)
     ClearEvent(UdsAckEvent)
@@ -227,13 +221,207 @@ def biCT(argv):
     while argv > 0:
         biTest(None)    
         argv -= 1
-    
+## ==========================  Flash Loader Start ===================
+E_OK = 0
+E_NOT_OK = -1
+def FL_Session():
+    """ Session Control, Program"""
+    global uds_ack,uds_ack_len
+    data = [0x10,0x02] 
+    CanTp_Transmit(data)
+    if( False==WaitEvent(UdsAckEvent,5000) ):
+        return E_NOT_OK
+    ClearEvent(UdsAckEvent)
+    if(uds_ack[0]==0x50 and uds_ack[1]==0x02):
+        return E_OK
+    else:
+        return E_NOT_OK
+def FL_Security():
+    """ Security Access, Request Seed"""
+    global uds_ack,uds_ack_len
+    data = [0x27]
+    level = 10
+    data.append(level*2-1)      
+    CanTp_Transmit(data)
+    if( False==WaitEvent(UdsAckEvent,5000) ):
+        return E_NOT_OK
+    ClearEvent(UdsAckEvent)
+    if(uds_ack[2]==0 and uds_ack[3]==0 and uds_ack[4]==0 and uds_ack[5]==0):
+        # Already UnSecured!
+        return E_OK
+    elif(uds_ack[0]==0x67 and uds_ack[1]==(level*2-1)):
+        """ Security Access, Send Key"""
+        seed = (uds_ack[2]<<24) + (uds_ack[3]<<16) + (uds_ack[4]<<8) + (uds_ack[5])
+        key = ((seed/7)<<3) - 111;
+        data = [0x27] 
+        data.append(level*2)  
+        data.append((key>>24)&0xFF)
+        data.append((key>>16)&0xFF)
+        data.append((key>>8)&0xFF)
+        data.append((key)&0xFF)
+        CanTp_Transmit(data)
+        if( False==WaitEvent(UdsAckEvent,5000) ):
+            return E_NOT_OK
+        ClearEvent(UdsAckEvent)
+        if(uds_ack[0]==0x67 and uds_ack[1]==level*2):
+            return E_OK
+        else:
+            return E_NOT_OK
+    else:
+        return E_NOT_OK
+
+def FL_EraseFlash():
+    """ RC Start : 0x020A"""
+    global uds_ack,uds_ack_len
+    BlockIdMask = 0x01 # just Erase Block 0
+    data = [0x31,0x01,0x02,0x0A,BlockIdMask] 
+    CanTp_Transmit(data)
+    if( False==WaitEvent(UdsAckEvent,5000) ):
+        return E_NOT_OK
+    ClearEvent(UdsAckEvent)
+    if(uds_ack[0]==0x71 and uds_ack[1]==0x01):
+        pass
+    elif(uds_ack[0]==0x7f and uds_ack[2]==0x78):
+        """ response pending"""
+        times = 0
+        while(uds_ack[0]==0x7f and uds_ack[2]==0x78):
+            if( False==WaitEvent(UdsAckEvent,5000) ):
+                return E_NOT_OK
+            ClearEvent(UdsAckEvent)
+            times += 1
+            if(times > 10):
+                return E_NOT_OK
+        if(uds_ack[0]==0x71 and uds_ack[1]==0x01):
+            pass
+        else:
+            return E_NOT_OK
+    else:
+        return E_NOT_OK
+    """ RC RequestResult : 0x020A"""
+    data = [0x31,0x03,0x02,0x0A] 
+    CanTp_Transmit(data)
+    if( False==WaitEvent(UdsAckEvent,5000) ):
+        return E_NOT_OK
+    ClearEvent(UdsAckEvent)
+    if(uds_ack_len==5 and uds_ack[0]==0x71 and uds_ack[1]==0x03 and uds_ack[2]==0x02 \
+        and uds_ack[3]==0x0A and uds_ack[4]==0x00):
+        return E_OK
+    else:
+        return E_NOT_OK
+
+""" For test purpose """
+FL_MemoryAddress = 0x00000
+FL_MemorySize    = 0x10000 # 64 K
+
+def FL_RequestDownload():
+    global uds_ack,uds_ack_len
+    data = [0x34,0x00,0x44] 
+    memoryAddress = FL_MemoryAddress
+    memorySize    = FL_MemorySize
+
+    data.append((memoryAddress>>24)&0xFF)
+    data.append((memoryAddress>>16)&0xFF)
+    data.append((memoryAddress>>8 )&0xFF)
+    data.append((memoryAddress>>0 )&0xFF)
+
+    data.append((memorySize>>24)&0xFF)
+    data.append((memorySize>>16)&0xFF)
+    data.append((memorySize>>8 )&0xFF)
+    data.append((memorySize>>0 )&0xFF)
+
+    CanTp_Transmit(data)
+    if( False==WaitEvent(UdsAckEvent,5000) ):
+        return E_NOT_OK
+    ClearEvent(UdsAckEvent)
+    if(uds_ack[0]==0x74):
+        return E_OK
+    else:
+        return E_NOT_OK
+
+def FL_TransferData():
+    global uds_ack,uds_ack_len
+    blockSequenceCounter = 1
+    memoryAddress = FL_MemoryAddress
+    memorySize    = FL_MemorySize
+    while memorySize > 0:
+        data = [0x36]
+        data.append(blockSequenceCounter)
+        blockSequenceCounter += 1
+        if(blockSequenceCounter>0xFF):
+            blockSequenceCounter = 0x00
+        length = 128
+        if(memorySize<length):
+            length = memorySize
+        for i in range(0,length):
+            data.append(memorySize-i)
+        memorySize -= length
+        CanTp_Transmit(data)
+        if( False==WaitEvent(UdsAckEvent,5000) ):
+            return E_NOT_OK
+        ClearEvent(UdsAckEvent)
+        if(uds_ack[0]==0x76):
+            continue
+        else:
+            return E_NOT_OK
+    return E_OK
+
+def FL_RequestTransferExit():
+    global uds_ack,uds_ack_len
+    data = [0x37] 
+    CanTp_Transmit(data)
+    if( False==WaitEvent(UdsAckEvent,5000) ):
+        return E_NOT_OK
+    ClearEvent(UdsAckEvent)
+    if(uds_ack[0]==0x77):
+        return E_OK
+    else:
+        return E_NOT_OK
+
+def biFlashLoader(argv):
+    if(E_OK == FL_Session()):
+        print 'Enter Program Session OK!'
+    else:
+        print 'Enter Program Session Failed!'
+        return
+
+    if(E_OK == FL_Security()):
+        print 'Security Access OK!'
+    else:
+        print 'Security Access Failed!'
+        return
+
+    if(E_OK == FL_EraseFlash()):
+        print 'Erase Flash OK!'
+    else:
+        print 'Erase Flash Failed!'
+        return
+
+    if(E_OK == FL_RequestDownload()):
+        print 'Request Download OK!'
+    else:
+        print 'Request Download Failed!'
+        return
+
+    if(E_OK == FL_TransferData()):
+        print 'Transfer Data OK!'
+    else:
+        print 'Transfer Data Failed!'
+        return
+
+    if(E_OK == FL_RequestTransferExit()):
+        print 'Request Transfer Exit OK!'
+    else:
+        print 'Request Transfer Exit Failed!'
+        return
+
+## ==========================  Flash Loader End   ===================
 UdsBuildIn = {
     'Session':biSession,
     'Security':biSecurity,
     'SendFF':biSendFF,
     'Test':biTest,
-    'CT':biCT
+    'CT':biCT,
+    'FL':biFlashLoader
 }
 def main(argc,argv):
     global uds_tx_id,uds_rx_id

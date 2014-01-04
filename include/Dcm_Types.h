@@ -107,6 +107,7 @@ typedef uint8 Dcm_NegativeResponseCodeType;
 #define DCM_E_SECUTITYACCESSDENIED						((Dcm_NegativeResponseCodeType)0x33)
 #define DCM_E_INVALIDKEY								((Dcm_NegativeResponseCodeType)0x35)
 #define DCM_E_GENERALPROGRAMMINGFAILURE					((Dcm_NegativeResponseCodeType)0x72)
+#define DCM_E_WrongBlockSequenceCounter                 ((Dcm_NegativeResponseCodeType)0x73)
 #define DCM_E_SUBFUNCTIONNOTSUPPORTEDINACTIVESESSION	((Dcm_NegativeResponseCodeType)0x7E)
 #define DCM_E_RPMTOOHIGH								((Dcm_NegativeResponseCodeType)0x81)
 #define DCM_E_RPMTOLOW									((Dcm_NegativeResponseCodeType)0x82)
