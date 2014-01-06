@@ -311,7 +311,7 @@ def FL_EraseFlash():
 
 """ For test purpose """
 FL_MemoryAddress = 0x00000
-FL_MemorySize    = 0x10000 # 64 K
+FL_MemorySize    = 0x04000 # 16 K
 
 def FL_RequestDownload():
     global uds_ack,uds_ack_len

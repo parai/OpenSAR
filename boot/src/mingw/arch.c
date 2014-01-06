@@ -18,9 +18,9 @@ typedef struct
 	HANDLE 				cirticalM;    // critical section protect
 	HANDLE 				mgrEvent;
 	uint32_t              pendIsrB;  	  // each bit correspond a ISR;
-}Aach_Type;
+}Arch_Type;
 
-static Aach_Type sArch;
+static Arch_Type sArch;
 
 imask_t arch_save_int(void)
 {

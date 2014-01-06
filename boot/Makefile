@@ -85,11 +85,13 @@ lib-y =
 
 gen:
 			
-all:$(obj-y)
+all:$(obj-y) Flash.img
 	@$(LD) $(BD)/boot/main.c -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
-run:
+Flash.img:
+	dd if=/dev/zero of=Flash.img bs=256K count=1
+run:Flash.img
 	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)  #LS
 	@(start $(OUT)/$(TARGET).exe)
 	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)

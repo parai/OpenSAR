@@ -22,6 +22,7 @@
 import socket
 import time
 import re
+import traceback
 
 server_startTime = time.time() # in second
 server_port =[]
@@ -70,16 +71,17 @@ def CanBusServerForward(msg,port = 8000):
         server_port.append(portR)
     for p in server_port:
         if(p != portR):
-			try:
-				sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-				sock.connect(('127.0.0.1', p))  
-				sock.send(msg)
-				sock.close()
-			except:
-				print "Error when forward to ",p,'!'
-				server_port.remove(p);
-				sock.close()
-				continue  
+            try:
+                sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                sock.connect(('127.0.0.1', p))  
+                sock.send(msg)
+                sock.close()
+            except:
+                print "Error when forward to ",p,'!'
+                print traceback.format_exc() 
+                # shit for 10055 as No buffer space is available, as the windows system error
+                sock.close()
+                continue
 
 def CanBusServerHost(port = 8000):  
     global server_port
