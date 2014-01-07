@@ -12,8 +12,6 @@
  * for more details.
  * -------------------------------- HIS Flash Loader ------------------------------*/
 
-#ifndef SECM_C_
-#define SECM_C_
 #include "SecM.h"
 
 SecM_StatusType SecM_GenerateSeed(SecM_SeedType *seed)
@@ -21,7 +19,7 @@ SecM_StatusType SecM_GenerateSeed(SecM_SeedType *seed)
 	return SECM_OK;
 }
 
-SecM_StatusType SecM_ComputeKey(SecM_SeedType seed,SecM_WordTypek,SecM_KeyType*key)
+SecM_StatusType SecM_ComputeKey(SecM_SeedType seed,SecM_KeyType*key)
 {
 	return SECM_OK;
 }
@@ -40,6 +38,3 @@ SecM_StatusType SecM_VerifySignature(SecM_SignatureParamType *signatureParam)
 {
 	return SECM_OK;
 }
-
-
-#endif /* SECM_C_ */

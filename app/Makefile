@@ -49,6 +49,7 @@ MACROS = 	-DWIN32 			\
 			-DUSE_MCU	\
 			-DUSE_PORT	\
 			-DUSE_DIO	\
+			-DUSE_FLS	\
 			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
@@ -104,7 +105,9 @@ all:$(obj-y)
 	@$(LD) $(BD)/system/kernel/init.c -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
-run:
+Flash.img:
+	dd if=/dev/zero of=Flash.img bs=1M count=1
+run:Flash.img
 	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)  #LS
 	#@(start python $(BD)/tools/can/CanBusServer.py --server 9000)  #HS
 	@(start $(OUT)/$(TARGET).exe)	

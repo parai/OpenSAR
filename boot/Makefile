@@ -36,6 +36,7 @@ INCDIR = 	-I$(BD)/include 		\
 
 MACROS = 	-DWIN32 			\
 			-DAUTOSAR_SIMULATOR	\
+			-DHIS_FL			\
 			-DOS_USE_APPLICATIONS	\
 			-DUSE_CAN				\
 			-DUSE_CANTP				\
@@ -90,7 +91,7 @@ all:$(obj-y) Flash.img
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 Flash.img:
-	dd if=/dev/zero of=Flash.img bs=256K count=1
+	dd if=/dev/zero of=Flash.img bs=1M count=1
 run:Flash.img
 	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)  #LS
 	@(start $(OUT)/$(TARGET).exe)
