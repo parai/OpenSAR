@@ -50,6 +50,7 @@ MACROS = 	-DWIN32 			\
 			-DUSE_PORT	\
 			-DUSE_DIO	\
 			-DUSE_FLS	\
+			-DUSE_FEE	\
 			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
@@ -75,7 +76,8 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/diagnostic/Dcm		\
 		$(BD)/diagnostic/Det		\
 		$(BD)/system/EcuM			\
-		$(BD)/system/SchM
+		$(BD)/system/SchM			\
+		$(BD)/memory/Fee
 		
 src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
 obj-y = $(subst .c,.o,$(src-y))	
@@ -111,8 +113,8 @@ run:Flash.img
 	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)  #LS
 	#@(start python $(BD)/tools/can/CanBusServer.py --server 9000)  #HS
 	@(start $(OUT)/$(TARGET).exe)	
-	@(cd $(BD)/tools/simulator; start python main.py)	
-	@(start python $(BD)/tools/can/com.py)	
+#	@(cd $(BD)/tools/simulator; start python main.py)	
+#	@(start python $(BD)/tools/can/com.py)	
 	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
 	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
 clean:

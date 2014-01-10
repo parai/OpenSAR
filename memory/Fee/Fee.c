@@ -1193,6 +1193,7 @@ static void GarbageCollectWriteData(void) {
 			AbortGCJob();
 		}
 	}
+	Irq_Restore(state);
 }
 
 static void GarbageCollectReadWait(void)

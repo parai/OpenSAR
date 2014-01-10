@@ -687,11 +687,6 @@ void Fls_MainFunction(void) {
 				ercd = E_NOT_OK;
 			}
 
-
-			Fls_Global.ramAddr += chunkSize;
-			Fls_Global.flashAddr += chunkSize;
-			Fls_Global.length -= chunkSize;
-
 			if( E_NOT_OK == ercd ){
 				fls_ReadFail();
 			} else {

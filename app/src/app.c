@@ -25,14 +25,6 @@ void PostTaskHook( void )
 
 void Task10ms(void)
 {
-	uint8 Buffer[128];
-	for(int i=0;i<128;i++)
-	{
-		Buffer[i] = i;
-	}
-
-	Fls_Write(0,Buffer,128);
-
 	for(;;)
 	{
 		(void)WaitEvent(EVENT_MASK_EventTask10ms);
