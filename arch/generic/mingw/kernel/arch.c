@@ -341,7 +341,7 @@ void arch_generate_irqn(IrqType IRQn)
 	boolean bSet = False;
 	assert( (IRQn<NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS) && (IRQn > 0));
 	// From the test result, better do a printf
-	printf(">> IRQn = %d <<\n",IRQn);
+	//printf(">> IRQn = %d <<\n",IRQn);
 	while(cMgrIdle != sArch.mgrState) Sleep(0);
 	assert(cMgrIdle == sArch.mgrState);
 	do

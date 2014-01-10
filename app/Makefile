@@ -51,7 +51,8 @@ MACROS = 	-DWIN32 			\
 			-DUSE_DIO	\
 			-DUSE_FLS	\
 			-DUSE_FEE	\
-			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	
+			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	\
+			-DDEBUG_FEE
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
@@ -119,4 +120,5 @@ run:Flash.img
 	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)
+	@rm Flash.img
 	@echo ">>>>>>>>>>>>>>>>>>>> CLEAN $(TARGET) Objs Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"		

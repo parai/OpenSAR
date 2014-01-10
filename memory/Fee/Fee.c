@@ -1575,7 +1575,7 @@ Std_ReturnType Fee_EraseImmediateBlock(uint16 blockNumber)
  */
 void Fee_MainFunction(void)
 {
-	DEBUG_PRINTF("State: %s (Fee_MainFunction())\n",stateToStr[AdminFls.State]);
+	//DEBUG_PRINTF("State: %s (Fee_MainFunction())\n",stateToStr[AdminFls.State]);
 
 	switch (AdminFls.State) {
 	case FEE_UNINITIALIZED:
