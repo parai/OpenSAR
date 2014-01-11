@@ -44,33 +44,33 @@ static void Fee_Test(void)
 	static App_TimeType SystemTime_Read;
 	if(0 == stage)
 	{
-		printf("Time = %d-%-2d-%-2d:%-2d-%-2d-%-2d\n",SystemTime_Read.year,SystemTime_Read.month,SystemTime_Read.day,
-			SystemTime_Read.hour,SystemTime_Read.minute,SystemTime_Read.second);
+		//printf("Time = %d-%-2d-%-2d:%-2d-%-2d-%-2d\n",SystemTime_Read.year,SystemTime_Read.month,SystemTime_Read.day,
+		//	SystemTime_Read.hour,SystemTime_Read.minute,SystemTime_Read.second);
 		Flag = 0xABCD55FF;
 		Fee_Write(FEE_BLOCK_NUM_TEST1,&Flag);
 	}
 	else if(1 == stage)
 	{
-		Fee_Read(FEE_BLOCK_NUM_TEST1,0,&Flag_Read,4);
+		//Fee_Read(FEE_BLOCK_NUM_TEST1,0,&Flag_Read,4);
 	}
 	else if(2 == stage)
 	{
-		printf("1>>>> 0x%x\n",Flag_Read);
+		//printf("1>>>> 0x%x\n",Flag_Read);
 		Flag = 0xDEADBEEF;
 		Fee_Write(FEE_BLOCK_NUM_TEST2,&Flag);
 	}
 	else if(3 == stage)
 	{
-		Fee_Read(FEE_BLOCK_NUM_TEST2,0,&Flag_Read,4);
+		//Fee_Read(FEE_BLOCK_NUM_TEST2,0,&Flag_Read,4);
 	}
 	else if(4 == stage)
 	{
-		printf("2>>>> 0x%x\n",Flag_Read);
+		//printf("2>>>> 0x%x\n",Flag_Read);
 		Fee_Write(FEE_BLOCK_NUM_SYSTEM_TIME,&SystemTime);
 	}
 	else if(5 == stage)
 	{
-		Fee_Read(FEE_BLOCK_NUM_SYSTEM_TIME,0,&SystemTime_Read,7);
+		//Fee_Read(FEE_BLOCK_NUM_SYSTEM_TIME,0,&SystemTime_Read,7);
 	}
 	stage ++;
 	if(stage > 5)
@@ -79,7 +79,15 @@ static void Fee_Test(void)
 	}
 }
 
+static void NvM_Test(void)
+{
+	static uint32 Flag_Read[8];
+	NvM_ReadBlock(0,Flag_Read);
+	printf("NvM: Read = 0x%x\n",Flag_Read[0]);
+}
+
 void app_nvm_100ms_runnable(void)
 {
 	Fee_Test();
+	NvM_Test();
 }

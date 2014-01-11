@@ -52,7 +52,9 @@ MACROS = 	-DWIN32 			\
 			-DUSE_FLS	\
 			-DUSE_FEE	\
 			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	\
-			-DDEBUG_FEE
+			-DDEBUG_FEE	\
+			-DUSE_NVM	\
+			-DUSE_MEMIF	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
@@ -78,7 +80,10 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/diagnostic/Det		\
 		$(BD)/system/EcuM			\
 		$(BD)/system/SchM			\
-		$(BD)/memory/Fee
+		$(BD)/memory/Fee			\
+		$(BD)/memory/NvM			\
+		$(BD)/memory/MemIf			\
+		$(BD)/system/Crc
 		
 src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
 obj-y = $(subst .c,.o,$(src-y))	
@@ -90,7 +95,8 @@ obj-y += 	$(BD)/system/kernel/alarm.o	\
 			$(BD)/system/kernel/isr.o	\
 			$(BD)/system/kernel/resource.o	\
 			$(BD)/system/kernel/sched_table.o	\
-			$(BD)/system/kernel/task.o
+			$(BD)/system/kernel/task.o			\
+			$(BD)/common/cirq_buffer.o
 
 # common library needed for OpenSAR
 lib-y = 
