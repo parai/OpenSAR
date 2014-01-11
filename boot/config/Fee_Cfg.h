@@ -12,9 +12,9 @@
 #define FEE_INDEX						0
 #define FEE_VIRTUAL_PAGE_SIZE		    8
 
-#define FEE_BLOCK_NUM_SYSTEM_TIME       0x23    // size is 8, occupy 1 and 2
-#define FEE_BLOCK_NUM_TEST1             0x34    // size is 4
-#define FEE_BLOCK_NUM_TEST2             0x77	 // size is 4
+#define FEE_BLOCK_NUM_SYSTEM_TIME       1    // size is 8, occupy 1 and 2
+#define FEE_BLOCK_NUM_TEST1             3    // size is 4
+#define FEE_BLOCK_NUM_TEST2             4	 // size is 4
 
 #define FEE_NUM_OF_BLOCKS				3
 #define FEE_MAX_NUM_SETS				1

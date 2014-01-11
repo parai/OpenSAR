@@ -29,6 +29,8 @@
 // ========= APP Module
 #include "app_led.h"
 #include "app_gauge.h"
+#include "app_time.h"
+#include "app_nvm.h"
 
 #endif /* APP_H_ */
 

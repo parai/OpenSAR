@@ -116,7 +116,7 @@ run:Flash.img
 	@(start $(OUT)/$(TARGET).exe)	
 #	@(cd $(BD)/tools/simulator; start python main.py)	
 #	@(start python $(BD)/tools/can/com.py)	
-	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
+#	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
 	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)

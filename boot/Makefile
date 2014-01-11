@@ -41,7 +41,10 @@ MACROS = 	-DWIN32 			\
 			-DUSE_CAN				\
 			-DUSE_CANTP				\
 			-DUSE_CANIF				\
-			-DUSE_DCM	
+			-DUSE_DCM				\
+			-DUSE_FLS				\
+			-DUSE_FEE				\
+			-DDEBUG_FEE
 
 ifeq ($(DEBUG),TRUE)
 MACROS += -DUSE_DEBUG_PRINTF
@@ -59,7 +62,8 @@ dir-y =	$(BD)/boot/src	\
 		$(BD)/communication/CanIf	\
 		$(BD)/communication/CanTp 	\
 		$(BD)/communication/PduR 	\
-		$(BD)/diagnostic/Dcm
+		$(BD)/diagnostic/Dcm		\
+		$(BD)/memory/Fee
 
 ifeq ($(USE_DET),TRUE)
 INCDIR += -I$(BD)/diagnostic/Det
@@ -72,7 +76,8 @@ obj-y = $(subst .c,.o,$(src-y))
 # others
 obj-y += 	$(BD)/arch/generic/mingw/drivers/Can.o 	\
 		$(BD)/arch/generic/mingw/drivers/CanSocket.o \
-		$(BD)/arch/generic/mingw/drivers/Mcu.o
+		$(BD)/arch/generic/mingw/drivers/Mcu.o		\
+		$(BD)/arch/generic/mingw/drivers/Fls.o
 
 # common library needed for OpenSAR
 lib-y = 

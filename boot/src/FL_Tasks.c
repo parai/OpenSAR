@@ -5,6 +5,8 @@
 #include "CanIf.h"
 #include "CanTp.h"
 #include "Dcm.h"
+#include "Fls.h"
+#include "Fee.h"
 #include <stdio.h>
 
 
@@ -15,6 +17,8 @@ void StartupHook(void)
 	CanIf_Init(&CanIf_Config);
 	CanTp_Init();
 	Dcm_Init();
+	Fls_Init(&FlsConfigSet);
+	Fee_Init();
 
 	CanIf_SetControllerMode(CANIF_CHL_LS,CANIF_CS_STARTED);
 	(void)SetRelAlarm(ALARM_ID_task1ms,Ms2AlarmTick(10),Ms2AlarmTick(1));
@@ -37,6 +41,8 @@ TASK(task1ms)
 
 TASK(task5ms)
 {
+	Fls_MainFunction();
+	Fee_MainFunction();
 }
 
 TASK(task10ms)
