@@ -81,9 +81,9 @@ static void Fee_Test(void)
 
 static void NvM_Test(void)
 {
-	static uint32 Flag_Read[8];
-	NvM_ReadBlock(0,Flag_Read);
-	printf("NvM: Read = 0x%x\n",Flag_Read[0]);
+//	static uint32 Flag_Read[8];
+//	NvM_ReadBlock(NVM_BLOCK_ID_TEST1,Flag_Read);
+//	printf("NvM: Read = 0x%x\n",Flag_Read[0]);
 }
 
 void app_nvm_100ms_runnable(void)

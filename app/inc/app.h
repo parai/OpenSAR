@@ -20,6 +20,7 @@
 #include "Dio.h"
 #include "Port.h"
 #include "Fee.h"
+#include "NvM.h"
 #if defined(WIN32)
 #include "Stmo.h"
 #endif

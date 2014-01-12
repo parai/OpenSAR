@@ -1,23 +1,39 @@
-# Makefile for the OpenRTOS part of OpenOSEK
+
+# Makefile for AutoSAR simulator running on Qt
+# Hope better quality of true-time 
 
 #output EXE
 TARGET = OpenSAR
 
 #Base Directory
-BD = ..
+BD = ../../..
 
 OUT = $(BD)/out
 
 #common compilers
-AS = gcc
-CC = gcc
-LD = gcc
-AR = ar
-RM = rm
+AS  = g++
+CC  = g++
+LD  = g++
+AR  = ar
+RM  = rm
+
+# Flags For Qt
+Qt-InstallDir    = d:/usr/opt/Qt4.8.1
+Qt-INC    = -I$(Qt-InstallDir)/include/QtCore 	\
+			-I$(Qt-InstallDir)/include/QtGui 	\
+			-I$(Qt-InstallDir)/include 			\
+			-I$(Qt-InstallDir)/include/ActiveQt \
+			-I$(Qt-InstallDir)/mkspecs/default
+Qt-Macros = -DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_DLL -DQT_GUI_LIB -DQT_CORE_LIB -DQT_HAVE_MMX -DQT_HAVE_3DNOW -DQT_HAVE_SSE -DQT_HAVE_MMXEXT -DQT_HAVE_SSE2 -DQT_THREAD_SUPPORT -DQT_NEEDS_QMAIN
+Qt-CCFLGS = -frtti -fexceptions -mthreads
+Qt-LDFLGS = -mthreads -Wl,-subsystem,windows \
+			-L$(Qt-InstallDir)/lib -lqtmaind -lQtGuid4 -lQtCored4 
+
 
 #common flags
 ASFLGS = 
-INCDIR = 	-I$(BD)/include 		\
+INCDIR = 	$(Qt-INC)				\
+			-I$(BD)/include 		\
 			-I$(BD)/include/generic \
 			-I$(BD)/include/sys		\
 			-I$(BD)/system/kernel/include \
@@ -30,7 +46,8 @@ INCDIR = 	-I$(BD)/include 		\
 			-I$(BD)/diagnostic/Dcm		\
 			-I$(BD)/communication/Com
 
-MACROS = 	-DWIN32 			\
+MACROS = 	$(Qt-Macros)		\
+			-DWIN32 			\
 			-DAUTOSAR_SIMULATOR	\
 			-DUSE_DEBUG_PRINTF	\
 			-DUSE_ECUM		\
@@ -57,17 +74,17 @@ MACROS = 	-DWIN32 			\
 			-DUSE_MEMIF	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR)
-LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32
+LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lmingw32 $(Qt-LDFLGS) 
 ARFLGS = rv
 RMFLGS = -f	
 
 #common objectives		
 dir-y =	$(BD)/app/config	\
 		$(BD)/app/config/GEN			\
-		$(BD)/arch/generic/mingw/kernel	\
-		$(BD)/arch/generic/mingw/drivers	\
-		$(BD)/app/src		\
-		$(BD)/app/src/Dia		\
+		$(BD)/arch/generic/Qt/kernel	\
+		$(BD)/arch/generic/Qt/drivers	\
+		$(BD)/app/src					\
+		$(BD)/app/src/Dia				\
 		$(BD)/communication/CanIf	\
 		$(BD)/communication/CanTp	\
 		$(BD)/communication/PduR	\
@@ -84,25 +101,28 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/memory/NvM			\
 		$(BD)/memory/MemIf			\
 		$(BD)/system/Crc
-		
-src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
-obj-y = $(subst .c,.o,$(src-y))	
+
+# step 1: get C		
+src-C = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
+obj-C = $(subst .c,.o,$(src-C))	
+# step 2: get CPP
+src-CPP = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.cpp)))
+obj-CPP = $(subst .cpp,.o,$(src-CPP))
+
+obj-y = $(obj-C) $(obj-CPP) 
 # kernel files
-obj-y += 	$(BD)/system/kernel/alarm.o	\
-			$(BD)/system/kernel/application.o	\
-			$(BD)/system/kernel/counter.o	\
-			$(BD)/system/kernel/event.o	\
-			$(BD)/system/kernel/isr.o	\
-			$(BD)/system/kernel/resource.o	\
-			$(BD)/system/kernel/sched_table.o	\
-			$(BD)/system/kernel/task.o			\
-			$(BD)/common/cirq_buffer.o
+obj-y +=
 
 # common library needed for OpenSAR
 lib-y = 
 
 #common rules
+.SUFFIXES: .cpp .c
 %.o:%.c
+	@echo compile $<  to $@
+	@$(CC) $(CCFLGS) -o $@ $<
+
+%.o:%.cpp
 	@echo compile $<  to $@
 	@$(CC) $(CCFLGS) -o $@ $<
 
@@ -111,20 +131,16 @@ lib-y =
 gen:
 			
 all:$(obj-y)
-	@$(LD) $(BD)/system/kernel/init.c -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
+	@$(LD) -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 Flash.img:
 	dd if=/dev/zero of=Flash.img bs=1M count=1
 run:Flash.img
-	@(start python $(BD)/tools/can/CanBusServer.py --server 8000)  #LS
-	#@(start python $(BD)/tools/can/CanBusServer.py --server 9000)  #HS
 	@(start $(OUT)/$(TARGET).exe)	
-#	@(cd $(BD)/tools/simulator; start python main.py)	
-#	@(start python $(BD)/tools/can/com.py)	
-#	@(start python $(BD)/tools/can/uds.py --port 8998 0x731 0x732)
-	#@(start python $(BD)/tools/can/uds.py --port 8999 0x741 0x742)
+
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)
 	@rm Flash.img
 	@echo ">>>>>>>>>>>>>>>>>>>> CLEAN $(TARGET) Objs Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"		
+

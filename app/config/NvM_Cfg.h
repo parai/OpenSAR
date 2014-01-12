@@ -25,5 +25,9 @@
 
 #define NVM_NUM_OF_NVRAM_BLOCKS			1
 
+// Id Zero is reserved by NvM
+#define NVM_BLOCK_ID_TEST1              1
+#define NVM_BLOCK_ID_TEST2              2
+
 
 #endif /*NVM_CFG_H_*/
