@@ -286,8 +286,11 @@ extern char __SBSS2_END[];
 #if defined(__DCC__)
 extern void __init( void );
 #endif
-
+#if defined(__GTK__)
+int start_main( void )
+#else
 int main( void )
+#endif
 {
 	/* TODO: Move to arch specific part */
 #if defined(CFG_PPC) && defined(__CWCC__)

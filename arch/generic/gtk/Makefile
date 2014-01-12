@@ -19,8 +19,8 @@ RM  = rm
 
 # Flags For Gtk
 Gtk-InstallDir    = D:/usr/opt/gtk
-Gtk-INC    =
-Gtk-Macros = 
+Gtk-INC    = 
+Gtk-Macros = -D__GTK__
 Gtk-CCFLGS = `$(Gtk-InstallDir)/bin/pkg-config --cflags gtk+-3.0`
 Gtk-LDFLGS = `$(Gtk-InstallDir)/bin/pkg-config --cflags gtk+-3.0` \
 			 `$(Gtk-InstallDir)/bin/pkg-config --libs gtk+-3.0` 
@@ -36,7 +36,7 @@ INCDIR = 	$(Gtk-INC)				\
 			-I$(BD)/app/config	\
 			-I$(BD)/app/config/GEN	\
 			-I$(BD)/app/inc			\
-			-I$(BD)/arch/generic/mingw/kernel	\
+			-I$(BD)/arch/generic/gtk/kernel	\
 			-I$(BD)/system/EcuM			\
 			-I$(BD)/system/SchM			\
 			-I$(BD)/diagnostic/Dcm		\
@@ -77,7 +77,7 @@ RMFLGS = -f
 #common objectives		
 dir-y =	$(BD)/app/config	\
 		$(BD)/app/config/GEN			\
-		$(BD)/arch/generic/mingw/kernel	\
+		$(BD)/arch/generic/gtk/kernel	\
 		$(BD)/arch/generic/gtk/drivers	\
 		$(BD)/app/src		\
 		$(BD)/app/src/Dia		\
@@ -110,18 +110,16 @@ obj-y +=	$(BD)/system/kernel/alarm.o	\
 			$(BD)/system/kernel/resource.o	\
 			$(BD)/system/kernel/sched_table.o	\
 			$(BD)/system/kernel/task.o			\
+			$(BD)/system/kernel/init.o			\
 			$(BD)/common/cirq_buffer.o
+			
 
 # common library needed for OpenSAR
 lib-y = 
 
 #common rules
-.SUFFIXES: .cpp .c
+.SUFFIXES: .c
 %.o:%.c
-	@echo compile $<  to $@
-	@$(CC) $(CCFLGS) -o $@ $<
-
-%.o:%.cpp
 	@echo compile $<  to $@
 	@$(CC) $(CCFLGS) -o $@ $<
 
