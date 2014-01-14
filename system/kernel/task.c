@@ -554,7 +554,10 @@ void Os_TaskSwapContextTo(OsTaskVarType *old_pcb, OsTaskVarType *new_pcb ) {
 	Os_TaskMakeRunning(new_pcb);
 	PRETASKHOOK();
 	Os_ArchSwapContextTo(old_pcb,new_pcb);
+#if defined(__GTK__)
+#else
 	assert(0);
+#endif
 }
 
 
@@ -818,7 +821,10 @@ StatusType TerminateTask( void ) {
 	/* Force the dispatcher to find something, even if its us */
 	Os_Dispatch(OP_TERMINATE_TASK);
 
+#if defined(__GTK__)
+#else
 	assert(0);
+#endif
 
 	OS_STD_END(OSServiceId_TerminateTask);
 }
@@ -888,7 +894,10 @@ StatusType ChainTask( TaskType TaskId ) {
 
 	Os_Dispatch(OP_CHAIN_TASK);
 
-	assert( 0 );
+#if defined(__GTK__)
+#else
+	assert(0);
+#endif
 
 	OS_STD_END_1(OSServiceId_ChainTask,TaskId);
 }

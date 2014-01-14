@@ -237,7 +237,10 @@ static void os_start( void ) {
 		// first arg(NULL) is dummy only
 		Os_TaskSwapContextTo(NULL,tmpPcbPtr);
 		// We should not return here
-		assert(0);
+#if defined(__GTK__)
+#else
+	assert(0);
+#endif
 	}
 }
 #if 0
@@ -362,7 +365,10 @@ void StartOS(AppModeType Mode) {
 	os_start();
 
 	/** @req OS424 */
+#if defined(__GTK__)
+#else
 	assert(0);
+#endif
 }
 
 /**

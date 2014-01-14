@@ -70,9 +70,9 @@ GEN_ALARM_HEAD = {
                 "Alarm10ms",
                 COUNTER_ID_Counter0,
                 GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm10ms),
-                ALARM_ACTION_SETEVENT,
+                ALARM_ACTION_ACTIVATETASK,
                 TASK_ID_Task10ms,
-                EVENT_MASK_EventTask10ms,
+                0,
                 0,
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
@@ -81,9 +81,9 @@ GEN_ALARM_HEAD = {
                 "Alarm20ms",
                 COUNTER_ID_Counter0,
                 GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm20ms),
-                ALARM_ACTION_SETEVENT,
+                ALARM_ACTION_ACTIVATETASK,
                 TASK_ID_Task20ms,
-                EVENT_MASK_EventTask20ms,
+                0,
                 0,
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
@@ -92,9 +92,9 @@ GEN_ALARM_HEAD = {
                 "Alarm100ms",
                 COUNTER_ID_Counter0,
                 GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm100ms),
-                ALARM_ACTION_SETEVENT,
+                ALARM_ACTION_ACTIVATETASK,
                 TASK_ID_Task100ms,
-                EVENT_MASK_EventTask100ms,
+                0,
                 0,
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
@@ -114,9 +114,9 @@ GEN_ALARM_HEAD = {
                 "Alarm_BswService",
                 COUNTER_ID_Counter0,
                 NULL,
-                ALARM_ACTION_SETEVENT,
+                ALARM_ACTION_ACTIVATETASK,
                 TASK_ID_SchM_BswService,
-                EVENT_MASK_SchM_BswService_RUN,
+                0,
                 0,
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
@@ -146,39 +146,39 @@ GEN_TASK_HEAD = {
                 /* App owner        */0,
                 /* Accessing apps   */1 
     ),
-	GEN_ETASK(
+	GEN_BTASK(
         /*                     */Task10ms,
         /* name                */"Task10ms",
         /* priority            */5,
         /* schedule            */FULL,
         /* autostart           */True,
-        /* resource_int_p   */NULL, // TODO
+        /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
-        /* event mask        */0x1,
+        /* activation lim.     */1,
         /* App owner        */APPLICATION_ID_OsDefaultApplication,
         /* Accessing apps   */1
     ),
-	GEN_ETASK(
+	GEN_BTASK(
         /*                     */Task20ms,
         /* name                */"Task20ms",
         /* priority            */5,
         /* schedule            */FULL,
         /* autostart           */True,
-        /* resource_int_p   */NULL, // TODO
+        /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
-        /* event mask        */0x1,
+        /* activation lim.     */1,
         /* App owner        */APPLICATION_ID_OsDefaultApplication,
         /* Accessing apps   */1
     ),
-	GEN_ETASK(
+	GEN_BTASK(
         /*                     */Task100ms,
         /* name                */"Task100ms",
         /* priority            */5,
         /* schedule            */FULL,
         /* autostart           */True,
-        /* resource_int_p   */NULL, // TODO
+        /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
-        /* event mask        */0x1,
+        /* activation lim.     */1,
         /* App owner        */APPLICATION_ID_OsDefaultApplication,
         /* Accessing apps   */1
     ),
@@ -206,15 +206,15 @@ GEN_TASK_HEAD = {
         /* App owner        */APPLICATION_ID_OsDefaultApplication,
         /* Accessing apps   */1
     ),
-	GEN_ETASK(
+	GEN_BTASK(
         /*                     */SchM_BswService,
         /* name                */"SchM_BswService",
         /* priority            */5,
         /* schedule            */FULL,
         /* autostart           */True,
-        /* resource_int_p   */NULL, // TODO
+        /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
-        /* event mask        */0x1,
+        /* activation lim.     */1,
         /* App owner        */APPLICATION_ID_OsDefaultApplication,
         /* Accessing apps   */1
     ),
@@ -238,4 +238,5 @@ GEN_ISR_MAP = {
 };
 
 // ############################    SCHEDULE TABLES     #############################
+    
     

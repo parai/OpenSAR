@@ -23,7 +23,8 @@ Gtk-INC    =
 Gtk-Macros = -D__GTK__
 Gtk-CCFLGS = `$(Gtk-InstallDir)/bin/pkg-config --cflags gtk+-3.0`
 Gtk-LDFLGS = `$(Gtk-InstallDir)/bin/pkg-config --cflags gtk+-3.0` \
-			 `$(Gtk-InstallDir)/bin/pkg-config --libs gtk+-3.0` 
+			 `$(Gtk-InstallDir)/bin/pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` \
+			 -lpthread
 
 
 #common flags
@@ -70,7 +71,7 @@ MACROS = 	$(Gtk-Macros)		\
 			-DUSE_MEMIF	
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) $(Gtk-CCFLGS)
-LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) -lwsock32 $(Gtk-LDFLGS) 
+LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) $(Gtk-LDFLGS) 
 ARFLGS = rv
 RMFLGS = -f	
 

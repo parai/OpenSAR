@@ -49,16 +49,12 @@
 #define OS_TICKS2NS_Counter0(_ticks)        (OSTICKDURATION * _ticks)
             
 // Event masks
-#define EVENT_MASK_EventTask10ms 0x01 // of Task10ms
-#define EVENT_MASK_EventTask20ms 0x01 // of Task20ms
-#define EVENT_MASK_EventTask100ms 0x01 // of Task100ms
 #define EVENT_MASK_Event1 0x1 // of TaskEvent
 #define EVENT_MASK_Event2 0x2 // of TaskEvent
 #define EVENT_MASK_Event3 0x4 // of TaskEvent
 #define EVENT_MASK_Event4 0x8 // of TaskEvent
 #define EVENT_MASK_Event5 0x10 // of TaskEvent
 #define EVENT_MASK_Event1000ms 0x20 // of TaskEvent
-#define EVENT_MASK_SchM_BswService_RUN 0x01 // of SchM_BswService
 
 // Isr Id's
 
@@ -96,7 +92,7 @@ extern void SchM_BswService( void );
 #define OS_TASK_CNT             7
 #define OS_SCHTBL_CNT           0
 #define OS_COUNTER_CNT          1
-#define OS_EVENTS_CNT           10
+#define OS_EVENTS_CNT           6
 
 // TODO: 
 //#define OS_ISRS_CNT                 0

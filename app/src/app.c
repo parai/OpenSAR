@@ -27,51 +27,35 @@ void PostTaskHook( void )
 
 void Task10ms(void)
 {
-	for(;;)
-	{
-		printf("in %s().\n",__FUNCTION__);
-		(void)WaitEvent(EVENT_MASK_EventTask10ms);
 
-		(void)ClearEvent(EVENT_MASK_EventTask10ms);
-	}
 	TerminateTask();
 }
 
 void Task20ms(void)
 {
-	for(;;)
-	{
-		printf("in %s().\n",__FUNCTION__);
-		(void)WaitEvent(EVENT_MASK_EventTask20ms);
-		app_led_20ms_runnable();
-		app_gauge_20ms_runnable();
-		(void)ClearEvent(EVENT_MASK_EventTask20ms);
-	}
+	app_led_20ms_runnable();
+	app_gauge_20ms_runnable();
 	TerminateTask();
 }
 void Task100ms(void)
 {
-	for(;;)
-	{
-		printf("in %s().\n",__FUNCTION__);
-		(void)WaitEvent(EVENT_MASK_EventTask100ms);
-		//printf("Task100ms is running.\n");
-		app_nvm_100ms_runnable();
-		(void)ClearEvent(EVENT_MASK_EventTask100ms);
-	}
+	app_nvm_100ms_runnable();
 	TerminateTask();
 }
 
 void TaskEvent(void)
 {
-	for(;;)
+	EventMaskType EventMask;
+
+	GetEvent(TASK_ID_TaskEvent,&EventMask);
+
+	if(EventMask == EVENT_MASK_Event1000ms)
 	{
-		printf("in %s().\n",__FUNCTION__);
-		(void)WaitEvent(EVENT_MASK_Event1000ms);
 		app_led_1000ms_runnable();
 		app_time_1000ms_runnable();
 		(void)ClearEvent(EVENT_MASK_Event1000ms);
 	}
+
 	TerminateTask();
 }
 
