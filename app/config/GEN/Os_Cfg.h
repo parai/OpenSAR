@@ -49,12 +49,12 @@
 #define OS_TICKS2NS_Counter0(_ticks)        (OSTICKDURATION * _ticks)
             
 // Event masks
-#define EVENT_MASK_Event1 0x1 // of TaskEvent
-#define EVENT_MASK_Event2 0x2 // of TaskEvent
-#define EVENT_MASK_Event3 0x4 // of TaskEvent
-#define EVENT_MASK_Event4 0x8 // of TaskEvent
-#define EVENT_MASK_Event5 0x10 // of TaskEvent
-#define EVENT_MASK_Event1000ms 0x20 // of TaskEvent
+#define EVENT_MASK_Event1 0x1 // of Task1000ms
+#define EVENT_MASK_Event2 0x2 // of Task1000ms
+#define EVENT_MASK_Event3 0x4 // of Task1000ms
+#define EVENT_MASK_Event4 0x8 // of Task1000ms
+#define EVENT_MASK_Event5 0x10 // of Task1000ms
+#define EVENT_MASK_Event1000ms 0x20 // of Task1000ms
 
 // Isr Id's
 
@@ -69,7 +69,7 @@
 #define TASK_ID_Task10ms 1
 #define TASK_ID_Task20ms 2
 #define TASK_ID_Task100ms 3
-#define TASK_ID_TaskEvent 4
+#define TASK_ID_Task1000ms 4
 #define TASK_ID_SchM_Startup 5
 #define TASK_ID_SchM_BswService 6
 
@@ -78,7 +78,7 @@ extern void OsIdle( void );
 extern void Task10ms( void );
 extern void Task20ms( void );
 extern void Task100ms( void );
-extern void TaskEvent( void );
+extern void Task1000ms( void );
 extern void SchM_Startup( void );
 extern void SchM_BswService( void );
 

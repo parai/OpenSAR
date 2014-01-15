@@ -228,7 +228,7 @@ void EcuM_StartupTwo(void)
 	Rte_Start();
 #endif
 
-#if defined(USE_NVM)
+#if defined(USE_NVM) && !defined(__GTK__)
 	/* Wait for the NVM job (NvM_ReadAll) to terminate. This assumes that:
 	 * - A task runs the memory MainFunctions, e.g. Ea_MainFunction(), Eep_MainFunction()
 	 *   are run in a higher priority task that the task that executes this code.

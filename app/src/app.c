@@ -14,15 +14,15 @@ void ShutdownHook( StatusType Error )
 }
 void ErrorHook( StatusType Error )
 {
-	printf("in %s().\n",__FUNCTION__);
+	//printf("in %s().\n",__FUNCTION__);
 }
 void PreTaskHook( void )
 {
-	printf("in %s().\n",__FUNCTION__);
+	//printf("in %s().\n",__FUNCTION__);
 }
 void PostTaskHook( void )
 {
-	printf("in %s().\n",__FUNCTION__);
+	//printf("in %s().\n",__FUNCTION__);
 }
 
 void Task10ms(void)
@@ -39,23 +39,14 @@ void Task20ms(void)
 }
 void Task100ms(void)
 {
-	app_nvm_100ms_runnable();
 	TerminateTask();
 }
 
-void TaskEvent(void)
+void Task1000ms(void)
 {
-	EventMaskType EventMask;
-
-	GetEvent(TASK_ID_TaskEvent,&EventMask);
-
-	if(EventMask == EVENT_MASK_Event1000ms)
-	{
-		app_led_1000ms_runnable();
-		app_time_1000ms_runnable();
-		(void)ClearEvent(EVENT_MASK_Event1000ms);
-	}
-
+	app_led_1000ms_runnable();
+	app_time_1000ms_runnable();
+	app_nvm_1000ms_runnable();
 	TerminateTask();
 }
 

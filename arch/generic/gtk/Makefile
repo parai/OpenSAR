@@ -66,7 +66,6 @@ MACROS = 	$(Gtk-Macros)		\
 			-DUSE_FLS	\
 			-DUSE_FEE	\
 			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	\
-			-DDEBUG_FEE		\
 			-DUSE_NVM	\
 			-DUSE_MEMIF	
 

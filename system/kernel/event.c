@@ -82,7 +82,10 @@ StatusType WaitEvent( EventMaskType Mask ) {
 		if ( Os_SchedulerResourceIsFree() ) {
 			// Os_TaskMakeWaiting(currTaskPtr);
 			Os_Dispatch(OP_WAIT_EVENT);
+#if defined(__GTK__)
+#else
 			assert( curr_pcb->state & ST_RUNNING );
+#endif
 		} else {
 			Os_TaskMakeWaiting(curr_pcb);
 		}

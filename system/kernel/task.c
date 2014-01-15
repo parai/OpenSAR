@@ -506,7 +506,10 @@ void Os_Dispatch( uint32_t op ) {
 		Os_TaskMakeRunning(pcbPtr);
 		PRETASKHOOK();
 		Os_ArchSetSpAndCall(pcbPtr->stack.curr,Os_TaskStartBasic);
+#if defined(__GTK__)
+#else
 		assert(0);
+#endif
 	}
 }
 
@@ -822,6 +825,10 @@ StatusType TerminateTask( void ) {
 	Os_Dispatch(OP_TERMINATE_TASK);
 
 #if defined(__GTK__)
+	if(E_OK == rv)
+	{
+		return rv;
+	}
 #else
 	assert(0);
 #endif
@@ -895,6 +902,10 @@ StatusType ChainTask( TaskType TaskId ) {
 	Os_Dispatch(OP_CHAIN_TASK);
 
 #if defined(__GTK__)
+	if(E_OK == rv)
+	{
+		return rv;
+	}
 #else
 	assert(0);
 #endif

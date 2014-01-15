@@ -103,9 +103,9 @@ GEN_ALARM_HEAD = {
                 "Alarm1000ms",
                 COUNTER_ID_Counter0,
                 GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm1000ms),
-                ALARM_ACTION_SETEVENT,
-                TASK_ID_TaskEvent,
-                EVENT_MASK_Event1000ms,
+                ALARM_ACTION_ACTIVATETASK,
+                TASK_ID_Task1000ms,
+                0,
                 0,
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
@@ -130,7 +130,7 @@ DECLARE_STACK(OsIdle,OS_OSIDLE_STACK_SIZE);
 DECLARE_STACK(Task10ms,512);
 DECLARE_STACK(Task20ms,512);
 DECLARE_STACK(Task100ms,512);
-DECLARE_STACK(TaskEvent,512);
+DECLARE_STACK(Task1000ms,512);
 DECLARE_STACK(SchM_Startup,512);
 DECLARE_STACK(SchM_BswService,512);
 // ##################################    TASKS     #################################
@@ -183,8 +183,8 @@ GEN_TASK_HEAD = {
         /* Accessing apps   */1
     ),
 	GEN_ETASK(
-        /*                     */TaskEvent,
-        /* name                */"TaskEvent",
+        /*                     */Task1000ms,
+        /* name                */"Task1000ms",
         /* priority            */10,
         /* schedule            */FULL,
         /* autostart           */True,

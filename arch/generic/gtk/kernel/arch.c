@@ -13,57 +13,55 @@
 
 // ==================================== EXTENDs ===================================
 extern void start_main(void);
+extern OsTaskVarType Os_TaskVarList[OS_TASK_CNT];
 // ====================================== TYPEs ====================================
-
+static GTimer* pSysTimer;
 // ====================================== DATAs ====================================
 
 
 // ====================================== LOCAL FUNCTIONs ====================================
-static void arch_task_runnable(OsTaskVarType* pcb)
+static void arch_task_runnable(void)
 {
-	int taskid = pcb->constPtr->pid;
-	if(ST_READY == pcb->state)
+	// In this arch, no support of ECC
+	if((NULL!=Os_Sys.currTaskPtr) && (ST_RUNNING == Os_Sys.currTaskPtr->state))
 	{	// TODO: support of WAITING is not supported
-		if( pcb->constPtr->proc_type == PROC_EXTENDED ) {
-			Os_TaskStartExtended();
-		} else if( pcb->constPtr->proc_type == PROC_BASIC ) {
-			Os_TaskStartBasic();
-		}
-		else
-		{
-			g_assert(0);
-		}
+		Os_Sys.currTaskPtr->constPtr->entry();
 	}
 }
-static GTimeVal g_time_old;
 static void arch_system_timer(void)
 {
+	gdouble elapsed;
+	gulong  elapsed_microseconds;
 
-	GTimeVal time_new;
-	g_get_current_time(&time_new);
-	if(time_new.tv_usec>(g_time_old.tv_usec+1000))
+	elapsed = g_timer_elapsed(pSysTimer,NULL); // unit in
+	elapsed_microseconds = (elapsed*1000);
+	while(elapsed_microseconds>0)
 	{
+		elapsed_microseconds--;
 		OsTick();
-		memcpy(&g_time_old,&time_new,sizeof(GTimeVal));
-	}
-	else if((0xFFFFFFFFL-g_time_old.tv_usec+time_new.tv_usec) > 1000)//maybe overflow
-	{
-		OsTick();
-		memcpy(&g_time_old,&time_new,sizeof(GTimeVal));
+		if(0==elapsed_microseconds)
+		{
+			g_timer_start(pSysTimer);
+		}
 	}
 }
-
+static gboolean arch_daemon(gpointer data)
+{
+	gdk_threads_enter();
+	arch_system_timer();
+	arch_task_runnable();
+	gdk_threads_leave();
+	return TRUE;
+}
 static void arch_init_daemon(void)
 {
 	start_main();
-	// --------------- create runnable
-	g_idle_add(arch_system_timer,NULL);
 
-	for(int i=0;i<OS_TASK_CNT;i++)
-	{
-		g_idle_add(arch_task_runnable,&Os_TaskVarList[i]);
-	}
-	g_get_current_time(&g_time_old);
+	g_thread_init(NULL);
+	//
+	pSysTimer = g_timer_new();
+	g_idle_add(arch_daemon,NULL);
+
 }
 
 // ====================================== FUNCTIONs ====================================
@@ -123,9 +121,7 @@ int main( int argc, char *argv[] )
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_widget_show (window);
 
-	// threads start
 	arch_init_daemon();
-	// threads end
 	gtk_main ();
 	return ( 0 ) ;
 }
