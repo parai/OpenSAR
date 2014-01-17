@@ -51,7 +51,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="boards|drivers_|arch/arm|arch/generic/linux|examples|arch/hc1x|arch/ppc|Fls_Cfg.h" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="boards|arch/arm|drivers_|arch/generic/linux|examples|arch/ppc|arch/hc1x|Fls_Cfg.h" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

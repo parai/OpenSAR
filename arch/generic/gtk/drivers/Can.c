@@ -496,7 +496,7 @@ void Can_Init( const Can_ConfigType *config ) {
       INSTALL_HANDLERS(Can_4, IRQ_TYPE_CAN4_ERR, IRQ_TYPE_CAN4_WAKE, IRQ_TYPE_CAN4_RX, IRQ_TYPE_CAN4_TX);
     }
 
-    Can_InitController(ctlrId, canHwConfig);
+    //Can_InitController(ctlrId, canHwConfig);
 
     // Loop through all Hoh:s and map them into the HTHMap
     const Can_HardwareObjectType* hoh;

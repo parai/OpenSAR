@@ -126,14 +126,21 @@ lib-y =
 .PHONY:all clean gen
 
 gen:
-			
-all:$(obj-y)
+
+GtkCan:
+	@$(LD) $(BD)/arch/generic/gtk/drivers/tool/GtkCan.c -o $(OUT)/GtkCan $(LDFLGS)	
+	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCan.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
+		
+all:$(obj-y) GtkCan
 	@$(LD) -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 Flash.img:
 	dd if=/dev/zero of=Flash.img bs=1M count=1
-run:Flash.img
+$(OUT)/GtkCan.exe:GtkCan
+$(OUT)/$(TARGET).exe:all
+run:Flash.img $(OUT)/GtkCan.exe
+	@(start $(OUT)/GtkCan.exe)
 	@(start $(OUT)/$(TARGET).exe)	
 
 clean:

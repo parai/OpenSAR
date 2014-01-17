@@ -16,6 +16,7 @@ extern void start_main(void);
 extern OsTaskVarType Os_TaskVarList[OS_TASK_CNT];
 // ====================================== TYPEs ====================================
 static GTimer* pSysTimer;
+static unsigned long sIsrMask=0;
 // ====================================== DATAs ====================================
 
 
@@ -45,19 +46,40 @@ static void arch_system_timer(void)
 		}
 	}
 }
+static void arch_isr_manager(void)
+{
+	for(int i=0;i<NUMBER_OF_INTERRUPTS_AND_EXCEPTIONS;i++)
+	{
+		if(0UL != (sIsrMask&(1UL<<i)))
+		{
+			if(SysTick_IRQn == i)
+			{
+				OsTick();
+			}
+			else
+			{
+				Os_Isr(NULL,i);
+			}
+			sIsrMask &= ~(1UL<<i);
+		}
+	}
+}
 static gboolean arch_daemon(gpointer data)
 {
 	gdk_threads_enter();
 	arch_system_timer();
+	arch_isr_manager();
 	arch_task_runnable();
 	gdk_threads_leave();
 	return TRUE;
 }
 static void arch_init_daemon(void)
 {
+	g_thread_init(NULL);
+	g_type_init ();	// for glib socket
 	start_main();
 
-	g_thread_init(NULL);
+
 	//
 	pSysTimer = g_timer_new();
 	g_idle_add(arch_daemon,NULL);
@@ -82,6 +104,11 @@ void arch_disable_int(void)
 void arch_enable_int(void)
 {
 
+}
+
+void arch_generate_irqn(IrqType IRQn)
+{
+	sIsrMask |= (1UL << IRQn);
 }
 
 void Os_ArchInit(void) {

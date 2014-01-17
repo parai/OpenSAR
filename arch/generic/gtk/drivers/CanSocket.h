@@ -2,7 +2,7 @@
 
 #ifndef CANSOCKET_H_
 #define CANSOCKET_H_
-
+#include <gio/gio.h>
 // Bit maps in isrFlags
 #define cCanIsrTx   (1u<<0)
 #define cCanIsrRx   (1u<<1)
@@ -47,14 +47,11 @@ typedef struct
 }CanHwMsgBox_t;
 
 typedef struct{
-	uint32_t   		port; // on socket 127.0.0.1
 	CanHwMsgBox_t 	rxMsg[cCanMsgBoxSz];
 	CanHwMsgBox_t 	txMsg[cCanMsgBoxSz];
-	// MinGW simulate param
-	void*        rxThread;
-	void*        txThread;
-	void*		 mutex;
-	void*        txEvent;
+	// GTK simulate param
+	GSocketService * pGSocketService;
+
 	// Simulate MSCAN registers
 	vuint8_t      RIER;
 	vuint8_t      TIER;
