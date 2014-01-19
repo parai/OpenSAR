@@ -17,9 +17,6 @@ typedef struct
 	guint16     reserved;
 }GtkCanMsg_Type;
 
-#define GTK_CAN_MSG_BOX_TX_SIZE (sizeof(GtkCanMsg_Type))
-#define GTK_CAN_MSG_BOX_RX_SIZE (sizeof(GtkCanMsg_Type))
-
 #define GTK_CAN_CMD_TX   ((guchar)0x00)
 #define GTK_CAN_CMD_RX   ((guchar)0x01)
 

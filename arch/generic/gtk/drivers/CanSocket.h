@@ -55,9 +55,6 @@ typedef struct
 	PduIdType   swPduHandle;
 }GtkCanMsgBox_Type;
 
-#define GTK_CAN_MSG_BOX_TX_SIZE (sizeof(GtkCanMsgBox_Type))
-#define GTK_CAN_MSG_BOX_RX_SIZE (sizeof(GtkCanMsgBox_Type))
-
 typedef struct
 {
 	uint8              head;

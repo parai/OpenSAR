@@ -25,7 +25,7 @@ static gboolean CanSocket_incoming_callback  (GSocketService *service,
 	GtkCanMsgBox_Type gtkCanMsg;
 	gssize size = g_input_stream_read  (istream,
 						&gtkCanMsg,
-						GTK_CAN_MSG_BOX_RX_SIZE,
+						sizeof(GtkCanMsgBox_Type),
 						NULL,
 						NULL);
 
@@ -107,7 +107,7 @@ static void CanSocket_Tx(uint8 ctrl,GSocketConnection *connection)
 		gtkCanMsg.bus = ctrl;
 		g_output_stream_write  (ostream,
 								&gtkCanMsg, /* your message goes here */
-								GTK_CAN_MSG_BOX_TX_SIZE, /* length of your message */
+								sizeof(GtkCanMsgBox_Type), /* length of your message */
 								NULL,
 								&error);
 		// Clear TIER

@@ -172,10 +172,14 @@ $(OUT)/Flash.img:
 	dd if=/dev/zero of=$(OUT)/Flash.img bs=1M count=1
 Flash.img:
 	dd if=/dev/zero of=Flash.img bs=1M count=1
+	
 $(OUT)/GtkCan:GtkCan
 $(OUT)/GtkUds:GtkUds
-$(OUT)/$(TARGET):all
-run:Flash.img $(OUT)/GtkCan $(OUT)/GtkUds
+
+tool:$(OUT)/GtkCan $(OUT)/GtkUds
+	@echo ">>>>>>>>>>>>>>>>>  BUILD TOOL DONE   <<<<<<<<<<<<<<<<<<<<<<"
+	
+run:Flash.img
 ifeq ($(SYSTEM),Linux)
 	@$(OUT)/$(TARGET) &&
 	@$(OUT)/GtkCan &&
@@ -183,6 +187,8 @@ else
 	@(start $(OUT)/$(TARGET))	
 	@(start $(OUT)/GtkCan 8000 8999)
 	@(start $(OUT)/GtkUds 8999)
+#	@(start $(OUT)/GtkCan 8999)
+#	@(start $(OUT)/GtkUds 8999)
 endif	
 
 clean:

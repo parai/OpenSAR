@@ -386,6 +386,8 @@ static void Can_RxIsr(int unit) {
 			// Increment statistics
 			canUnit->stats.rxSuccessCnt++;
 #endif
+			// Get the next one.
+			pMsgBox = GtkCanGetBusyMsgBox(&(canHw->rxQ));
 
        }
 

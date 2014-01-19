@@ -38,7 +38,7 @@ gboolean gtk_can_poll_tx(guint port,GtkCanMsg_Type* pRxMsg)
 	GInputStream * istream = g_io_stream_get_input_stream (G_IO_STREAM (connection));
 	GtkCanMsg_Type gtkCanMsg;
 	gssize size = g_input_stream_read(istream,&gtkCanMsg,sizeof(GtkCanMsg_Type),NULL,&error);
-	if(size == GTK_CAN_MSG_BOX_RX_SIZE)
+	if(size == sizeof(GtkCanMsg_Type))
 	{
 		g_print("CANID=0x%-3x,DLC=%x, [",gtkCanMsg.id,(guint)gtkCanMsg.dlc);
 		for(int i=0;i<8;i++)
@@ -101,7 +101,7 @@ void gtk_can_poll_rx(guint port,GtkCanMsg_Type* pTxMsg)
 	GOutputStream * ostream = g_io_stream_get_output_stream (G_IO_STREAM (connection));
 	g_output_stream_write  (ostream,
 						  pTxMsg, /* your message goes here */
-						  GTK_CAN_MSG_BOX_TX_SIZE, /* length of your message */
+						  sizeof(GtkCanMsg_Type), /* length of your message */
 						  NULL,
 						  &error);
 	/* don't forget to check for errors */
