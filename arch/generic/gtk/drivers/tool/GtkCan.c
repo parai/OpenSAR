@@ -4,7 +4,6 @@
 int main (int argc, char *argv[])
 {
 	/* initialize glib */
-	g_thread_init(NULL);
 	g_type_init ();
 	GTimer* pSysTimer = g_timer_new();
 	while (TRUE)

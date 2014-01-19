@@ -13,8 +13,8 @@ arch/hc1x
 arch/ppc
 arch/generic/linux
 arch/generic/mingw/vc2010
-common
 clib
+out
 drivers_
 examples
 scripts

@@ -1,9 +1,17 @@
 
 # Makefile for AutoSAR simulator running on Gtk
 # Hope better quality of true-time 
+# >>>>>>>> Config <<<<<<<<<<<<<<<<<
+# System: Linux Windows
+SYSTEM=Linux
+GTK_VERSION=2.0
 
 #output EXE
+ifeq ($(SYSTEM),Linux)
 TARGET = OpenSAR
+else 
+TARGET = OpenSAR.exe
+endif
 
 #Base Directory
 BD = ../../..
@@ -17,6 +25,24 @@ LD  = gcc
 AR  = ar
 RM  = rm
 
+ifeq ($(SYSTEM),Linux)
+Gtk-INC    = 
+ifeq ($(GTK_VERSION),3.0)
+Gtk-Macros = -D__GTK__
+Gtk-CCFLGS = `pkg-config --cflags gtk+-3.0`
+Gtk-LDFLGS = `pkg-config --cflags gtk+-3.0` \
+			 `pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` \
+			 -lpthread
+else
+Gtk-Macros = -D__GTK__
+Gtk-CCFLGS = `pkg-config --cflags gtk+-2.0`
+Gtk-LDFLGS = `pkg-config --cflags gtk+-2.0` \
+			 `pkg-config --libs gtk+-2.0 glib-2.0 gthread-2.0` \
+			 -lpthread
+endif	
+	 
+else
+ifeq ($(SYSTEM),Windows)
 # Flags For Gtk
 Gtk-InstallDir    = D:/usr/opt/gtk
 Gtk-INC    = 
@@ -25,6 +51,10 @@ Gtk-CCFLGS = `$(Gtk-InstallDir)/bin/pkg-config --cflags gtk+-3.0`
 Gtk-LDFLGS = `$(Gtk-InstallDir)/bin/pkg-config --cflags gtk+-3.0` \
 			 `$(Gtk-InstallDir)/bin/pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` \
 			 -lpthread
+else
+error "Error Config"
+endif
+endif		 
 
 
 #common flags
@@ -131,17 +161,22 @@ GtkCan:
 	@$(LD) $(BD)/arch/generic/gtk/drivers/tool/GtkCan.c -o $(OUT)/GtkCan $(LDFLGS)	
 	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCan.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 		
-all:$(obj-y) GtkCan
+all:$(obj-y) $(OUT)/GtkCan
 	@$(LD) -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
 Flash.img:
 	dd if=/dev/zero of=Flash.img bs=1M count=1
-$(OUT)/GtkCan.exe:GtkCan
-$(OUT)/$(TARGET).exe:all
-run:Flash.img $(OUT)/GtkCan.exe
-	@(start $(OUT)/GtkCan.exe)
-	@(start $(OUT)/$(TARGET).exe)	
+$(OUT)/GtkCan:GtkCan
+$(OUT)/$(TARGET):all
+run:Flash.img $(OUT)/GtkCan
+ifeq ($(SYSTEM),Linux)
+	@$(OUT)/$(TARGET) &&
+	@$(OUT)/GtkCan &&
+else
+	@(start $(OUT)/$(TARGET))	
+	@(start $(OUT)/GtkCan)
+endif	
 
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)

@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.mingw.base.1012264272">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.mingw.base.1012264272" moduleId="org.eclipse.cdt.core.settings" name="Default">
@@ -29,6 +27,9 @@
 								<option id="gnu.both.asm.option.include.paths.405749831" name="Include paths (-I)" superClass="gnu.both.asm.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;D:\usr\opt\gtk\include\gtk-3.0&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\usr\opt\gtk\include\glib-2.0&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/gtk-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1899998887" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -38,6 +39,9 @@
 								<option id="gnu.c.compiler.option.include.paths.2111940754" name="Include paths (-I)" superClass="gnu.c.compiler.option.include.paths" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;D:\usr\opt\gtk\include\gtk-3.0&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\usr\opt\gtk\include\glib-2.0&quot;"/>
+									<listOptionValue builtIn="false" value="/usr/include/gtk-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="/usr/include"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1318009084" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
