@@ -5,18 +5,16 @@
 #include "Can.h"
 #include "CanSocket.h"
 
-typedef struct
-{
-	guint id;
-	guchar dlc;
-	guchar data[8];
-	guchar bus;
-}GtkCanMsg_Type;
+#define GTK_CAN_CMD_TX   ((guchar)0x00)
+#define GTK_CAN_CMD_RX   ((guchar)0x01)
+
+#define GTK_CAN_CMD_TX_ACK ((guchar)0x80)
+#define GTK_CAN_CMD_RX_ACK ((guchar)0x81)
 
 CAN_HW_t Can_HwUnit[CAN_ARC_CTRL_CONFIG_CNT];
 extern void arch_generate_irqn(IrqType IRQn);
 static void CanSocket_Tx(uint8 ctrl,GSocketConnection *connection);
-static void CanSocket_Rx(uint8 ctrl,GtkCanMsg_Type* gtkCanMsg,uint8 size);
+static void CanSocket_Rx(uint8 ctrl,GtkCanMsgBox_Type* gtkCanMsg,uint8 size);
 
 static gboolean CanSocket_incoming_callback  (GSocketService *service,
 											GSocketConnection *connection,
@@ -24,14 +22,25 @@ static gboolean CanSocket_incoming_callback  (GSocketService *service,
 											gpointer user_data)
 {
 	GInputStream * istream = g_io_stream_get_input_stream (G_IO_STREAM (connection));
-	GtkCanMsg_Type gtkCanMsg;
+	GtkCanMsgBox_Type gtkCanMsg;
 	gssize size = g_input_stream_read  (istream,
 						&gtkCanMsg,
-						sizeof(gtkCanMsg),
+						GTK_CAN_MSG_BOX_RX_SIZE,
 						NULL,
 						NULL);
-	CanSocket_Rx((uint8)(user_data),&gtkCanMsg,size);
-	CanSocket_Tx((uint8)(user_data),connection);
+
+	switch(gtkCanMsg.cmd)
+	{
+		case GTK_CAN_CMD_TX:
+			CanSocket_Tx((uint8)(user_data),connection);
+			break;
+		case GTK_CAN_CMD_RX:
+			CanSocket_Rx((uint8)(user_data),&gtkCanMsg,size);
+			break;
+		default:
+			g_print("CAN:Error Command!\n");
+			break;
+	}
 
 	return FALSE;
 }
@@ -62,48 +71,68 @@ void Can_0_IsrEntry(void)
 
 static void CanSocket_Tx(uint8 ctrl,GSocketConnection *connection)
 {
-	GtkCanMsg_Type gtkCanMsg;
+	GError* error;
+	GtkCanMsgBox_Type gtkCanMsg;
 	CAN_HW_t *canHw;
 	canHw = &Can_HwUnit[ctrl];
-	if(BM_TX0==(canHw->TIER & BM_TX0))
+	GtkCanMsgBox_Type* pMsgBox = GtkCanGetBusyMsgBox(&(canHw->txQ));
+	static const gchar dumy_ack = GTK_CAN_CMD_TX_ACK;
+	GOutputStream * ostream = g_io_stream_get_output_stream (G_IO_STREAM (connection));
+	if(NULL != pMsgBox)
 	{
 		int i;
-		GError* error;
-		GOutputStream * ostream = g_io_stream_get_output_stream (G_IO_STREAM (connection));
-		gtkCanMsg.id = canHw->txMsg[0].id;
-		gtkCanMsg.dlc = canHw->txMsg[0].dlc;
+		gtkCanMsg.cmd = GTK_CAN_CMD_TX_ACK;
+		gtkCanMsg.id = pMsgBox->id;
+		gtkCanMsg.dlc = pMsgBox->dlc;
 		if(gtkCanMsg.dlc > 8)
 		{
 			gtkCanMsg.dlc = 8;
 		}
 		for(i=0;i<gtkCanMsg.dlc;i++)
 		{
-			gtkCanMsg.data[i] = canHw->txMsg[0].data[i];
+			gtkCanMsg.data[i] = pMsgBox->data[i];
 		}
 		for(;i<8;i++)
 		{
 			gtkCanMsg.data[i]  = 0x55;  // PADDING
 		}
+//		{
+//			g_print("CANID=0x%-3x,DLC=%x, [",gtkCanMsg.id,(guint)gtkCanMsg.dlc);
+//			for(int i=0;i<8;i++)
+//			{
+//				g_print("%-2x,",(guint)gtkCanMsg.data[i]);
+//			}
+//			g_print("]\n");
+//		}
 		gtkCanMsg.bus = ctrl;
 		g_output_stream_write  (ostream,
 								&gtkCanMsg, /* your message goes here */
-								sizeof(GtkCanMsg_Type), /* length of your message */
+								GTK_CAN_MSG_BOX_TX_SIZE, /* length of your message */
 								NULL,
 								&error);
 		// Clear TIER
 		canHw->TIER &= ~(BM_TX0);
 		canHw->IRQF |= cCanIsrTx;
-		// Request System Isr
 
+		Can_SetPduHandle(ctrl,pMsgBox->swPduHandle);
+		// Request System Isr
 		arch_generate_irqn(SysCan_0_IRQn+ctrl);
+	}
+	else
+	{
+		g_output_stream_write  (ostream,
+								&dumy_ack, /* your message goes here */
+								1, /* length of your message */
+								NULL,
+								&error);
 	}
 }
 
-static void CanSocket_Rx(uint8 ctrl,GtkCanMsg_Type* gtkCanMsg,uint8 size)
+static void CanSocket_Rx(uint8 ctrl,GtkCanMsgBox_Type* gtkCanMsg,uint8 size)
 {
 	CAN_HW_t *canHw;
 	canHw = &Can_HwUnit[ctrl];
-	if ( size == sizeof(GtkCanMsg_Type) )
+	if ( size == sizeof(GtkCanMsgBox_Type) )
 	{ // Rx ISR
 		if( BM_WUPI == (canHw->RIER & BM_WUPI))
 		{
@@ -112,30 +141,22 @@ static void CanSocket_Rx(uint8 ctrl,GtkCanMsg_Type* gtkCanMsg,uint8 size)
 		}
 		else
 		{
-			int I;
-			for(I=0;I<cCanMsgBoxSz;I++)
-			{
-				if(eCanMsgBoxIdle == canHw->rxMsg[I].state)
+		    GtkCanMsgBox_Type* pMsgBox = GtkCanGetEmptyMsgBox(&(canHw->rxQ));
+		    Can_SocketEnterCritical(ctrl);
+		    // check for any free box
+		    if(NULL != pMsgBox) {
+				memcpy(pMsgBox,gtkCanMsg,sizeof(GtkCanMsgBox_Type));
+				if(pMsgBox->dlc>8)
 				{
-					break;
+					pMsgBox->dlc = 8;
 				}
-			}
-			if(I < cCanMsgBoxSz)
-			{
-				canHw->rxMsg[I].id = gtkCanMsg->id;
-				canHw->rxMsg[I].dlc = gtkCanMsg->dlc;
-				if(gtkCanMsg->dlc>8)
-				{
-					canHw->rxMsg[I].dlc = 8;
-				}
-				memcpy(canHw->rxMsg[I].data,gtkCanMsg->data,canHw->rxMsg[I].dlc);
-				canHw->rxMsg[I].state = eCanMsgBoxRxed;
 			}
 			else
 			{
 				printf("Can Message Box Full, Message Lost!\n");
 			}
 			canHw->IRQF |= cCanIsrRx;
+			Can_SocketExitCritical(ctrl);
 		}
 		arch_generate_irqn(SysCan_0_IRQn+ctrl);
 	}

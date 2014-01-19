@@ -3,7 +3,7 @@
 # Hope better quality of true-time 
 # >>>>>>>> Config <<<<<<<<<<<<<<<<<
 # System: Linux Windows
-SYSTEM=Linux
+SYSTEM=Windows
 GTK_VERSION=3.0
 
 #output EXE
@@ -157,11 +157,14 @@ lib-y =
 
 gen:
 
+GtkUds:
+	@$(LD) $(BD)/arch/generic/gtk/drivers/tool/GtkUds.c -o $(OUT)/GtkUds $(LDFLGS)	
+	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkUds.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 GtkCan:
 	@$(LD) $(BD)/arch/generic/gtk/drivers/tool/GtkCan.c -o $(OUT)/GtkCan $(LDFLGS)	
 	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCan.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 		
-all:$(obj-y) $(OUT)/GtkCan $(OUT)/Flash.img
+all:$(obj-y) $(OUT)/Flash.img
 	@$(LD) -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
@@ -170,14 +173,16 @@ $(OUT)/Flash.img:
 Flash.img:
 	dd if=/dev/zero of=Flash.img bs=1M count=1
 $(OUT)/GtkCan:GtkCan
+$(OUT)/GtkUds:GtkUds
 $(OUT)/$(TARGET):all
-run:Flash.img $(OUT)/GtkCan
+run:Flash.img $(OUT)/GtkCan $(OUT)/GtkUds
 ifeq ($(SYSTEM),Linux)
 	@$(OUT)/$(TARGET) &&
 	@$(OUT)/GtkCan &&
 else
 	@(start $(OUT)/$(TARGET))	
-	@(start $(OUT)/GtkCan)
+	@(start $(OUT)/GtkCan 8000 8999)
+	@(start $(OUT)/GtkUds 8999)
 endif	
 
 clean:

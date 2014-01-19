@@ -45,8 +45,29 @@ typedef struct
 	uint8      		data[8];
 	CanHwMsgBoxState_t state;
 }CanHwMsgBox_t;
+typedef struct
+{
+	guchar      cmd;
+	guchar      dlc;
+	guint 		id;
+	guchar      data[8];
+	guchar      bus;  // Identifier of this CAN NODE on the bus
+	PduIdType   swPduHandle;
+}GtkCanMsgBox_Type;
+
+#define GTK_CAN_MSG_BOX_TX_SIZE (sizeof(GtkCanMsgBox_Type))
+#define GTK_CAN_MSG_BOX_RX_SIZE (sizeof(GtkCanMsgBox_Type))
+
+typedef struct
+{
+	uint8              head;
+	uint8              tail;
+	GtkCanMsgBox_Type  msgBox[cCanMsgBoxSz];
+}GtkCanQueue_Type;
 
 typedef struct{
+	GtkCanQueue_Type rxQ;
+	GtkCanQueue_Type txQ;
 	CanHwMsgBox_t 	rxMsg[cCanMsgBoxSz];
 	CanHwMsgBox_t 	txMsg[cCanMsgBoxSz];
 	// GTK simulate param
@@ -60,6 +81,57 @@ typedef struct{
 
 extern CAN_HW_t Can_HwUnit[CAN_ARC_CTRL_CONFIG_CNT];
 
+inline GtkCanMsgBox_Type* GtkCanGetBusyMsgBox(GtkCanQueue_Type* Q)
+{
+	GtkCanMsgBox_Type* pMsgBox = NULL;
+	uint8 head = Q->head;
+	if(head < (cCanMsgBoxSz-1))
+	{
+		head ++;
+	}
+	else
+	{
+		head = 0;
+	}
+
+	if(Q->head == Q->tail)
+	{ // Empty
+		pMsgBox = NULL;
+	}
+	else
+	{
+		pMsgBox = &(Q->msgBox[Q->head]);
+		Q->head = head;
+	}
+	return pMsgBox;
+}
+
+inline GtkCanMsgBox_Type* GtkCanGetEmptyMsgBox(GtkCanQueue_Type* Q)
+{
+	GtkCanMsgBox_Type* pMsgBox = NULL;
+	uint8 tail = Q->tail;
+	if(tail < (cCanMsgBoxSz-1))
+	{
+		tail ++;
+	}
+	else
+	{
+		tail = 0;
+	}
+
+	if(tail == Q->head)
+	{ // FULL
+		pMsgBox = NULL;
+	}
+	else
+	{
+		pMsgBox = &(Q->msgBox[Q->tail]);
+		Q->tail = tail;
+	}
+	return pMsgBox;
+}
+
+extern void Can_SetPduHandle(uint8 ctrl,PduIdType swPduHandle);
 void Can_0_IsrEntry(void);
 void Can_1_IsrEntry(void);
 void Can_2_IsrEntry(void);

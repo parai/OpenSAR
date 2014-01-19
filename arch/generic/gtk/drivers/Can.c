@@ -372,26 +372,21 @@ static void Can_RxIsr(int unit) {
 
     if (hohObj->CanObjectType == CAN_OBJECT_TYPE_RECEIVE)
     {
-        for(int I=0;I<cCanMsgBoxSz;I++)
+    	GtkCanMsgBox_Type* pMsgBox = GtkCanGetBusyMsgBox(&(canHw->rxQ));
+        while(NULL != pMsgBox)
 		{
-        	if(eCanMsgBoxRxed == canHw->rxMsg[I].state)
-        	{
-				Can_IdType id= canHw->rxMsg[I].id;
-				if (GET_CALLBACKS()->RxIndication != NULL)
-				{
-				  GET_CALLBACKS()->RxIndication(hohObj->CanObjectId,
-												id,
-												canHw->rxMsg[I].dlc,
-												(uint8 *)canHw->rxMsg[I].data ); // Next layer will copy
-				}
+			if (GET_CALLBACKS()->RxIndication != NULL)
+			{
+			  GET_CALLBACKS()->RxIndication(hohObj->CanObjectId,
+					  	  	  	  	  	  	pMsgBox->id,
+					  	  	  	  	        pMsgBox->dlc,
+					  	  	  	  	        pMsgBox->data ); // Next layer will copy
+			}
 #if (USE_CAN_STATISTICS == STD_ON)
-				// Increment statistics
-				canUnit->stats.rxSuccessCnt++;
+			// Increment statistics
+			canUnit->stats.rxSuccessCnt++;
 #endif
 
-				// Clear interrupt
-				canHw->rxMsg[I].state = eCanMsgBoxIdle;
-        	}
        }
 
     }
@@ -759,17 +754,18 @@ Can_ReturnType Can_Write( Can_Arc_HTHType hth, Can_PduType *pduInfo ) {
   canHw = GetController(controller);
   Irq_Save(state);
 
+  GtkCanMsgBox_Type* pMsgBox = GtkCanGetEmptyMsgBox(&(canHw->txQ));
   // check for any free box
-  if((canHw->TIER & BM_TX0) == 0u) {
+  if(NULL != pMsgBox) {
 
     canHwConfig = GET_CONTROLLER_CONFIG(Can_Global.channelMap[controller]);
 
     Can_SocketEnterCritical(controller);
     // ============= Copy data to Msg Box Start
-    canHw->txMsg[0].id = pduInfo->id;
-    canHw->txMsg[0].dlc = pduInfo->length;
+    pMsgBox->id = pduInfo->id;
+    pMsgBox->dlc = pduInfo->length;
     assert(pduInfo->length<=8);
-    memcpy(canHw->txMsg[0].data,pduInfo->sdu,pduInfo->length);
+    memcpy(pMsgBox->data,pduInfo->sdu,pduInfo->length);
     // ============= Copy data to Msg Box End
     if( (canHwConfig->CanTxProcessing == CAN_ARC_PROCESS_TYPE_INTERRUPT) &&
         (canUnit->lock_cnt == 0) ) {
@@ -783,7 +779,7 @@ Can_ReturnType Can_Write( Can_Arc_HTHType hth, Can_PduType *pduInfo ) {
 #endif
 
     // Store pdu handle in unit to be used by TxConfirmation
-    canUnit->swPduHandle = pduInfo->swPduHandle;
+    pMsgBox->swPduHandle = pduInfo->swPduHandle;
 
     Can_SocketExitCritical(controller);
   } else {
@@ -901,4 +897,11 @@ void Can_Arc_GetStatistics( uint8 controller, Can_Arc_StatisticsType * stat){}
 
 #endif
 
+
+void Can_SetPduHandle(uint8 ctrl,PduIdType swPduHandle)
+{
+	Can_UnitType *canUnit = GET_PRIVATE_DATA(ctrl);
+	assert(ctrl<CAN_CONTROLLER_CNT);
+	canUnit->swPduHandle = swPduHandle;
+}
 
