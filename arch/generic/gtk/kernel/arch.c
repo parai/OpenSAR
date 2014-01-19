@@ -75,7 +75,6 @@ static gboolean arch_daemon(gpointer data)
 }
 static void arch_init_daemon(void)
 {
-	g_thread_init(NULL);
 	g_type_init ();	// for glib socket
 	start_main();
 
@@ -146,6 +145,8 @@ int main( int argc, char *argv[] )
 	GtkWidget *window;
 	gtk_init (&argc, &argv);
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(window,"https://github.com/parai/OpenSAR.git\n");
+	gtk_window_resize(window,800,20);
 	gtk_widget_show (window);
 
 	arch_init_daemon();

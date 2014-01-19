@@ -1,6 +1,12 @@
 #include <glib.h>
 #include <gio/gio.h>
-
+typedef struct
+{
+	guint id;
+	guchar dlc;
+	guchar data[8];
+	guchar bus;
+}GtkCanMsg_Type;
 int main (int argc, char *argv[])
 {
 	/* initialize glib */
@@ -38,19 +44,22 @@ int main (int argc, char *argv[])
 							  NULL,
 							  &error);
 		GInputStream * istream = g_io_stream_get_input_stream (G_IO_STREAM (connection));
-		guchar data[32];
-		gssize size = g_input_stream_read(istream,data,32,NULL,&error);
-		if(size == 14)
+		GtkCanMsg_Type gtkCanMsg;
+		gssize size = g_input_stream_read(istream,&gtkCanMsg,sizeof(GtkCanMsg_Type),NULL,&error);
+		if(size == sizeof(GtkCanMsg_Type))
 		{
-			guint Id = (((guint)data[0])<<24) + (((guint)data[1])<<16) + (((guint)data[2])<<8) + data[3];
-			g_print("CANID=0x%-3x,DLC=%x, [",Id,(guint)data[4]);
+			g_print("CANID=0x%-3x,DLC=%x, [",gtkCanMsg.id,(guint)gtkCanMsg.dlc);
 			for(int i=0;i<8;i++)
 			{
-				g_print("%-2x,",(guint)data[5+i]);
+				g_print("%-2x,",(guint)gtkCanMsg.data[i]);
 			}
 			gdouble elapsed = g_timer_elapsed(pSysTimer,NULL); // unit in
 			g_timer_start(pSysTimer);
 			g_print("] %8.4fus\n",elapsed);
+		}
+		else
+		{
+			//
 		}
 		/* don't forget to check for errors */
 		if (error != NULL)

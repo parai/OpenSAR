@@ -4,7 +4,7 @@
 # >>>>>>>> Config <<<<<<<<<<<<<<<<<
 # System: Linux Windows
 SYSTEM=Linux
-GTK_VERSION=2.0
+GTK_VERSION=3.0
 
 #output EXE
 ifeq ($(SYSTEM),Linux)
@@ -161,10 +161,12 @@ GtkCan:
 	@$(LD) $(BD)/arch/generic/gtk/drivers/tool/GtkCan.c -o $(OUT)/GtkCan $(LDFLGS)	
 	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCan.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 		
-all:$(obj-y) $(OUT)/GtkCan
+all:$(obj-y) $(OUT)/GtkCan $(OUT)/Flash.img
 	@$(LD) -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
+$(OUT)/Flash.img:
+	dd if=/dev/zero of=$(OUT)/Flash.img bs=1M count=1
 Flash.img:
 	dd if=/dev/zero of=Flash.img bs=1M count=1
 $(OUT)/GtkCan:GtkCan
@@ -180,6 +182,6 @@ endif
 
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)
-	@rm Flash.img
+	@rm Flash.img $(OUT)/Flash.img
 	@echo ">>>>>>>>>>>>>>>>>>>> CLEAN $(TARGET) Objs Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"		
 
