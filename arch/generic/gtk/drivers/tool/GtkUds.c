@@ -10,7 +10,8 @@ typedef enum
 	CANTP_ST_SENDING,
 	CANTP_ST_SEND_FINISHED,
 	CANTP_ST_WAIT_FC,
-	CANTP_ST_SEND_CF
+	CANTP_ST_SEND_CF,
+	CANTP_ST_SEND_FC
 }GtkTpState_Type;
 
 typedef struct
@@ -25,6 +26,9 @@ typedef struct
 	guint  txIndex;
 	guint  txId;
 
+	uint8  BS;
+	uint8  SN;	// sequence number
+
 	GtkTpState_Type state;
 
 }GtkTp_Type;
@@ -37,6 +41,9 @@ typedef struct
 #define ISO15765_TPCI_DL        0x7   /* Single frame data length mask */
 #define ISO15765_TPCI_FS_MASK   0x0F  /* Flowcontrol status mask */
 
+#define cfgSTmin  10
+#define cfgBS     8
+
 // ======================== DATA     =============================
 static GtkTp_Type sGtkTp;
 static GTimer* pSysTimer;
@@ -44,6 +51,8 @@ static gboolean isSysTimerStarted;
 
 static guint    sFL_Step = 0;
 static gboolean isFL_Busy = FALSE;
+static uint32   FL_Seed = 0;
+static uint8    FL_Level = 10;
 
 // ======================== FUNCTION =============================
 static void     gtk_uds_tx(GSocketConnection *connection);
@@ -59,6 +68,9 @@ static gboolean CanTp_MainFunction(gpointer data);
 
 static void     FL_Response(uint8* data,uint16 size);
 static void     FL_Session(void);
+static void     FL_SecurityRequestSeed(void);
+static void     FL_SecuritySendKey(void);
+static void     FL_ReadFingerPrint(void);
 static gboolean FlashLoader(gpointer data);
 
 
@@ -68,9 +80,11 @@ static gboolean IsTimerElapsed(gulong microseconds);
 
 static void SendSF(GOutputStream * ostream);
 static void SendFF(GOutputStream * ostream);
+static void SendFC(GOutputStream * ostream);
 static void SendStart(GOutputStream * ostream);
 static void HandleSF(uint8* data,uint16 size);
 static void HandleFF(uint8* data,uint16 size);
+static void HandleCF(uint8* data,uint16 size);
 static void HandleBusy(GtkCanMsg_Type* pMsg);
 static Std_ReturnType CanTp_Transmit(uint8* data,uint16 size);
 static void CanTp_RxIndication(uint8* data,uint16 length);
@@ -80,13 +94,15 @@ static void CanTp_RxIndication(uint8* data,uint16 length);
 static void gtk_uds_tx(GSocketConnection *connection)
 {
 	GError* error;
-	GtkCanMsg_Type gtkCanMsg;
 	static const gchar dumy_ack = GTK_CAN_CMD_TX_ACK;
 	GOutputStream * ostream = g_io_stream_get_output_stream (G_IO_STREAM (connection));
 	switch(sGtkTp.state)
 	{
 		case CANTP_ST_START_TO_SEND:
 			SendStart(ostream);
+			break;
+		case CANTP_ST_SEND_FC:
+			SendFC(ostream);
 			break;
 		default:
 			g_output_stream_write  (ostream,
@@ -106,6 +122,9 @@ static void gtk_uds_rx(GtkCanMsg_Type* pMsg,gssize size)
 		{
 			case CANTP_ST_BUSY:
 				HandleBusy(pMsg);
+				break;
+			case CANTP_ST_RECEIVING:
+				HandleCF(pMsg->data,pMsg->dlc);
 				break;
 			default:
 				break;
@@ -215,6 +234,47 @@ static void FL_Session(void)
 		isFL_Busy = TRUE;
 	}
 }
+static void     FL_SecurityRequestSeed(void)
+{
+	Std_ReturnType ercd;
+	uint8 data[2] = {0x27,0xFF};
+
+	data[1] = 2*FL_Level-1;
+	ercd = CanTp_Transmit(data,sizeof(data));
+	if(E_OK==ercd)
+	{
+		g_print("FL: Request Seed");
+		isFL_Busy = TRUE;
+	}
+}
+static void     FL_SecuritySendKey(void)
+{
+	Std_ReturnType ercd;
+	uint8 data[6] = {0x27,0xFF};
+	uint32 key = ((FL_Seed/7)<<3) - 111;
+	data[1] = 2*FL_Level;
+	data[2] = ((key>>24)&0xFF);
+	data[3] = ((key>>16)&0xFF);
+	data[4] = ((key>>8)&0xFF);
+	data[5] = ((key)&0xFF);
+	ercd = CanTp_Transmit(data,sizeof(data));
+	if(E_OK==ercd)
+	{
+		g_print("FL: Send Key");
+		isFL_Busy = TRUE;
+	}
+}
+static void     FL_ReadFingerPrint(void)
+{
+	Std_ReturnType ercd;
+	uint8 data[3] = {0x22,0x01,0x0A};
+	ercd = CanTp_Transmit(data,sizeof(data));
+	if(E_OK==ercd)
+	{
+		g_print("FL: Read Finger Print");
+		isFL_Busy = TRUE;
+	}
+}
 // CALLBACK of CanTP
 static void CanTp_RxIndication(uint8* data,uint16 length)
 {
@@ -222,27 +282,61 @@ static void CanTp_RxIndication(uint8* data,uint16 length)
 }
 static void FL_Response(uint8* data,uint16 size)
 {
-	if(0==sFL_Step)
+	Std_ReturnType ercd;
+	switch(sFL_Step)
 	{
-		if(data[0]==0x50)
-		{
-			g_print(" OK!\n");
-		}
-		else
-		{
-			g_print(" FAILED!\n");
-		}
+		case 0:
+			ercd = (data[0]==0x50)?E_OK:E_NOT_OK;
+			break;
+		case 1:
+			ercd = (data[0]==0x67)?E_OK:E_NOT_OK;
+			if(E_OK==ercd){FL_Seed=((uint32)data[2]<<24) + ((uint32)data[3]<<16) + ((uint32)data[4]<<8) + (uint32)(data[5]);};
+			break;
+		case 2:
+			ercd = (data[0]==0x67)?E_OK:E_NOT_OK;
+			break;
+		default:
+			ercd = E_NOT_OK;
+			break;
 	}
-	isFL_Busy = FALSE;
-	sFL_Step ++;
+
+	g_print("%s! with response [",(E_OK==ercd)?"OK":"FAILED");
+	for(int i=0;i<size;i++)
+	{
+		g_print("%-2x,",data[i]);
+	}
+	g_print("]\n");
+
+	if(E_OK==ercd)
+	{
+		isFL_Busy = FALSE;
+		sFL_Step ++;
+	}
+	else
+	{
+		isFL_Busy = FALSE;
+		sFL_Step = 0xFFFF;
+	}
 }
 static gboolean FlashLoader(gpointer data)
 {
 	if(!isFL_Busy)
 	{
-		if(0 == sFL_Step)
-		{
-			FL_Session();
+		switch(sFL_Step)
+		{	case 0:
+				FL_Session();
+				break;
+			case 1:
+				FL_SecurityRequestSeed();
+				break;
+			case 2:
+				FL_SecuritySendKey();
+				break;
+			case 3:
+				FL_ReadFingerPrint();
+				break;
+			default:
+				break;
 		}
 	}
 	return TRUE;
@@ -291,12 +385,13 @@ static void SendSF(GOutputStream * ostream)
 	int i;
 	gtkCanMsg.cmd = GTK_CAN_CMD_TX_ACK;
 	gtkCanMsg.id  = sGtkTp.txId;
+	gtkCanMsg.dlc = 8;
 	gtkCanMsg.data[0] = sGtkTp.txLength|ISO15765_TPCI_SF;  // SF
 	for(i=0;i<sGtkTp.txLength;i++)
 	{
 		gtkCanMsg.data[1+i] = sGtkTp.txBuffer[i];
 	}
-	for(;i<8;i++)
+	for(;i<7;i++)
 	{
 		gtkCanMsg.data[1+i] = 0x55;
 	}
@@ -306,11 +401,41 @@ static void SendSF(GOutputStream * ostream)
 							NULL,
 							&error);
 	sGtkTp.state = CANTP_ST_BUSY;
-	g_print("%s()\n",__FUNCTION__);
 }
 static void SendFF(GOutputStream * ostream)
 {
 
+}
+static void SendFC(GOutputStream * ostream)
+{
+	GError *error;
+	GtkCanMsg_Type gtkCanMsg;
+	gtkCanMsg.cmd = GTK_CAN_CMD_TX_ACK;
+	gtkCanMsg.id  = sGtkTp.txId;
+	gtkCanMsg.dlc = 8;
+	gtkCanMsg.data[0] = ISO15765_TPCI_FC;
+	gtkCanMsg.data[1] =cfgBS;
+	gtkCanMsg.data[2] =cfgSTmin;
+
+	for(int i=3;i<8;i++)
+	{
+		gtkCanMsg.data[i] = 0x55;
+	}
+
+	g_output_stream_write  (ostream,
+							&gtkCanMsg,
+							sizeof(GtkCanMsg_Type),
+							NULL,
+							&error);
+	if(0==cfgBS)
+	{
+		sGtkTp.BS=0;
+	}
+	else
+	{
+		sGtkTp.BS=cfgBS+1;
+	}
+	sGtkTp.state = CANTP_ST_RECEIVING;
 }
 
 static void SendStart(GOutputStream * ostream)
@@ -331,10 +456,54 @@ static void HandleSF(uint8* data,uint16 size)
 	sGtkTp.rxLength = lenSF;
 	sGtkTp.state = CANTP_ST_IDLE;
 
+	sGtkTp.SN    = 0;
+
 	CanTp_RxIndication(sGtkTp.rxBuffer,sGtkTp.rxLength);
 }
 static void HandleFF(uint8* data,uint16 size)
 {
+	g_assert(8==size);
+	sGtkTp.rxLength = ((uint16)(data[0]&ISO15765_TPCI_FS_MASK)<<8) + (uint16)data[1];
+	memcpy(sGtkTp.rxBuffer,&data[2],6);
+	sGtkTp.rxIndex=6;
+	sGtkTp.state = CANTP_ST_SEND_FC;
+}
+static void HandleCF(uint8* data,uint16 size)
+{
+	uint16 lsize = sGtkTp.rxLength-sGtkTp.rxIndex;
+	if(lsize>7)
+	{
+		lsize=7;
+	}
+	sGtkTp.SN++;
+	if(sGtkTp.SN>15)
+	{
+		sGtkTp.SN=0;
+	}
+	if((data[0]&0x0F) == sGtkTp.SN)
+	{
+		memcpy(&(sGtkTp.rxBuffer[sGtkTp.rxIndex]),data,lsize);
+		sGtkTp.rxIndex+=lsize;
+
+		if(sGtkTp.BS>1)
+		{
+			sGtkTp.BS--;
+			if(1==sGtkTp.BS)
+			{
+				sGtkTp.state = CANTP_ST_SEND_FC;
+			}
+		}
+
+		if(sGtkTp.rxIndex>=sGtkTp.rxLength)
+		{
+			CanTp_RxIndication(sGtkTp.rxBuffer,sGtkTp.rxLength);
+			sGtkTp.state = CANTP_ST_IDLE;
+		}
+	}
+	else
+	{
+		sGtkTp.state = CANTP_ST_IDLE;
+	}
 
 }
 static void HandleBusy(GtkCanMsg_Type* pMsg)
@@ -342,6 +511,10 @@ static void HandleBusy(GtkCanMsg_Type* pMsg)
 	if(ISO15765_TPCI_SF==(pMsg->data[0]&ISO15765_TPCI_MASK))
 	{
 		HandleSF(pMsg->data,pMsg->dlc);
+	}
+	else if(ISO15765_TPCI_FF==(pMsg->data[0]&ISO15765_TPCI_MASK))
+	{
+		HandleFF(pMsg->data,pMsg->dlc);
 	}
 }
 static Std_ReturnType CanTp_Transmit(uint8* data,uint16 size)
