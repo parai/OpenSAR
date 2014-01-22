@@ -4,12 +4,11 @@
 typedef enum
 {
 	CANTP_ST_IDLE = 0,
-	CANTP_ST_RECEIVING,
-	CANTP_ST_BUSY,
 	CANTP_ST_START_TO_SEND,
 	CANTP_ST_SENDING,
 	CANTP_ST_SEND_FINISHED,
 	CANTP_ST_WAIT_FC,
+	CANTP_ST_WAIT_CF,
 	CANTP_ST_SEND_CF,
 	CANTP_ST_SEND_FC
 }GtkTpState_Type;
@@ -28,6 +27,7 @@ typedef struct
 
 	uint8  BS;
 	uint8  SN;	// sequence number
+	uint8  STMin;
 
 	GtkTpState_Type state;
 
@@ -40,6 +40,11 @@ typedef struct
 #define ISO15765_TPCI_FC        0x30  /* Flow Control */
 #define ISO15765_TPCI_DL        0x7   /* Single frame data length mask */
 #define ISO15765_TPCI_FS_MASK   0x0F  /* Flowcontrol status mask */
+
+
+#define ISO15765_FLOW_CONTROL_STATUS_CTS        0
+#define ISO15765_FLOW_CONTROL_STATUS_WAIT       1
+#define ISO15765_FLOW_CONTROL_STATUS_OVFLW      2
 
 #define cfgSTmin  10
 #define cfgBS     8
@@ -71,6 +76,7 @@ static void     FL_Session(void);
 static void     FL_SecurityRequestSeed(void);
 static void     FL_SecuritySendKey(void);
 static void     FL_ReadFingerPrint(void);
+static void     FL_WriteFingerPrint(void);
 static gboolean FlashLoader(gpointer data);
 
 
@@ -81,11 +87,12 @@ static gboolean IsTimerElapsed(gulong microseconds);
 static void SendSF(GOutputStream * ostream);
 static void SendFF(GOutputStream * ostream);
 static void SendFC(GOutputStream * ostream);
+static void SendCF(GOutputStream * ostream);
 static void SendStart(GOutputStream * ostream);
 static void HandleSF(uint8* data,uint16 size);
 static void HandleFF(uint8* data,uint16 size);
 static void HandleCF(uint8* data,uint16 size);
-static void HandleBusy(GtkCanMsg_Type* pMsg);
+static void HandleFC(uint8* data,uint16 size);
 static Std_ReturnType CanTp_Transmit(uint8* data,uint16 size);
 static void CanTp_RxIndication(uint8* data,uint16 length);
 
@@ -104,6 +111,9 @@ static void gtk_uds_tx(GSocketConnection *connection)
 		case CANTP_ST_SEND_FC:
 			SendFC(ostream);
 			break;
+		case CANTP_ST_SEND_CF:
+			SendCF(ostream);
+			break;
 		default:
 			g_output_stream_write  (ostream,
 									&dumy_ack, /* your message goes here */
@@ -118,13 +128,19 @@ static void gtk_uds_rx(GtkCanMsg_Type* pMsg,gssize size)
 {
 	if((sGtkTp.rxId == pMsg->id) && (sizeof(GtkCanMsg_Type)==size))
 	{
-		switch(sGtkTp.state)
+		switch((pMsg->data[0]&ISO15765_TPCI_MASK))
 		{
-			case CANTP_ST_BUSY:
-				HandleBusy(pMsg);
+			case (ISO15765_TPCI_SF):
+				HandleSF(pMsg->data,pMsg->dlc);
 				break;
-			case CANTP_ST_RECEIVING:
+			case (ISO15765_TPCI_FF):
+				HandleFF(pMsg->data,pMsg->dlc);
+				break;
+			case (ISO15765_TPCI_CF):
 				HandleCF(pMsg->data,pMsg->dlc);
+				break;
+			case (ISO15765_TPCI_FC):
+				HandleFC(pMsg->data,pMsg->dlc);
 				break;
 			default:
 				break;
@@ -203,9 +219,7 @@ static gboolean CanTp_MainFunction(gpointer data)
 	{
 		case CANTP_ST_IDLE:
 			break;
-		case CANTP_ST_RECEIVING:
-			break;
-		case CANTP_ST_BUSY:
+		case CANTP_ST_WAIT_CF:
 			break;
 		case CANTP_ST_START_TO_SEND:
 			break;
@@ -275,6 +289,21 @@ static void     FL_ReadFingerPrint(void)
 		isFL_Busy = TRUE;
 	}
 }
+static void     FL_WriteFingerPrint(void)
+{
+	Std_ReturnType ercd;
+	uint8 data[3+128] = {0x2E,0x01,0x0A};
+	for(int i=0;i<128;i++)
+	{
+		data[3+i] = i*2;
+	}
+	ercd = CanTp_Transmit(data,sizeof(data));
+	if(E_OK==ercd)
+	{
+		g_print("FL: Write Finger Print");
+		isFL_Busy = TRUE;
+	}
+}
 // CALLBACK of CanTP
 static void CanTp_RxIndication(uint8* data,uint16 length)
 {
@@ -295,12 +324,18 @@ static void FL_Response(uint8* data,uint16 size)
 		case 2:
 			ercd = (data[0]==0x67)?E_OK:E_NOT_OK;
 			break;
+		case 3:
+			ercd = (data[0]==0x62)?E_OK:E_NOT_OK;
+			break;
+		case 4:
+			ercd = (data[0]==0x6E)?E_OK:E_NOT_OK;
+			break;
 		default:
 			ercd = E_NOT_OK;
 			break;
 	}
 
-	g_print("%s! with response [",(E_OK==ercd)?"OK":"FAILED");
+	g_print(" %s! with response [",(E_OK==ercd)?"OK":"FAILED");
 	for(int i=0;i<size;i++)
 	{
 		g_print("%-2x,",data[i]);
@@ -335,6 +370,9 @@ static gboolean FlashLoader(gpointer data)
 			case 3:
 				FL_ReadFingerPrint();
 				break;
+			case 4:
+				FL_WriteFingerPrint();
+				break;
 			default:
 				break;
 		}
@@ -360,7 +398,7 @@ static gboolean IsTimerElapsed(gulong microseconds)
 		gdouble elapsed;
 		gulong  elapsed_microseconds;
 
-		elapsed = g_timer_elapsed(pSysTimer,NULL); // unit in
+		elapsed = g_timer_elapsed(pSysTimer,NULL);
 		elapsed_microseconds = (elapsed*1000);
 
 		if(elapsed_microseconds>microseconds)
@@ -386,25 +424,79 @@ static void SendSF(GOutputStream * ostream)
 	gtkCanMsg.cmd = GTK_CAN_CMD_TX_ACK;
 	gtkCanMsg.id  = sGtkTp.txId;
 	gtkCanMsg.dlc = 8;
-	gtkCanMsg.data[0] = sGtkTp.txLength|ISO15765_TPCI_SF;  // SF
-	for(i=0;i<sGtkTp.txLength;i++)
-	{
-		gtkCanMsg.data[1+i] = sGtkTp.txBuffer[i];
-	}
-	for(;i<7;i++)
-	{
-		gtkCanMsg.data[1+i] = 0x55;
-	}
+	gtkCanMsg.data[0] = sGtkTp.txLength|ISO15765_TPCI_SF;
+
+	memcpy(&(gtkCanMsg.data[1]),sGtkTp.txBuffer,sGtkTp.txLength);
+
 	g_output_stream_write  (ostream,
 							&gtkCanMsg,
 							sizeof(GtkCanMsg_Type),
 							NULL,
 							&error);
-	sGtkTp.state = CANTP_ST_BUSY;
+	sGtkTp.state = CANTP_ST_IDLE;
 }
 static void SendFF(GOutputStream * ostream)
 {
+	GError *error;
+	GtkCanMsg_Type gtkCanMsg;
+	gtkCanMsg.cmd = GTK_CAN_CMD_TX_ACK;
+	gtkCanMsg.id  = sGtkTp.txId;
+	gtkCanMsg.dlc = 8;
+	gtkCanMsg.data[0] = ((sGtkTp.txLength>>8)&0x0F)|ISO15765_TPCI_FF;
+	gtkCanMsg.data[1] = (sGtkTp.txLength&0xFF);
+	memcpy(&(gtkCanMsg.data[2]),sGtkTp.txBuffer,6);
+	sGtkTp.txIndex = 6;
+	g_output_stream_write  (ostream,
+							&gtkCanMsg,
+							sizeof(GtkCanMsg_Type),
+							NULL,
+							&error);
+	sGtkTp.state = CANTP_ST_WAIT_FC;
+	sGtkTp.SN = 0;
+}
+static void SendCF(GOutputStream * ostream)
+{
+	GError *error;
+	GtkCanMsg_Type gtkCanMsg;
+	uint16 lsize = sGtkTp.txLength-sGtkTp.txIndex;
+	if(lsize>7)
+	{
+		lsize=7;
+	}
+	gtkCanMsg.cmd = GTK_CAN_CMD_TX_ACK;
+	gtkCanMsg.id  = sGtkTp.txId;
+	gtkCanMsg.dlc = 8;
+	sGtkTp.SN++;
+	if(sGtkTp.SN>15)
+	{
+		sGtkTp.SN=0;
+	}
+	gtkCanMsg.data[0] = ISO15765_TPCI_CF|sGtkTp.SN;
 
+	memcpy(&(gtkCanMsg.data[1]),&(sGtkTp.txBuffer[sGtkTp.txIndex]),lsize);
+	sGtkTp.txIndex+=lsize;
+
+	g_output_stream_write  (ostream,
+							&gtkCanMsg,
+							sizeof(GtkCanMsg_Type),
+							NULL,
+							&error);
+
+	if(sGtkTp.txIndex>=sGtkTp.txLength)
+	{
+		sGtkTp.state = CANTP_ST_IDLE;
+	}
+	else
+	{
+		if(sGtkTp.BS > 1)
+		{
+			sGtkTp.BS--;
+			if (1 == sGtkTp.BS)
+			{
+				sGtkTp.state = CANTP_ST_WAIT_FC;
+			}
+		}
+	}
 }
 static void SendFC(GOutputStream * ostream)
 {
@@ -435,7 +527,7 @@ static void SendFC(GOutputStream * ostream)
 	{
 		sGtkTp.BS=cfgBS+1;
 	}
-	sGtkTp.state = CANTP_ST_RECEIVING;
+	sGtkTp.state = CANTP_ST_WAIT_CF;
 }
 
 static void SendStart(GOutputStream * ostream)
@@ -463,7 +555,7 @@ static void HandleSF(uint8* data,uint16 size)
 static void HandleFF(uint8* data,uint16 size)
 {
 	g_assert(8==size);
-	sGtkTp.rxLength = ((uint16)(data[0]&ISO15765_TPCI_FS_MASK)<<8) + (uint16)data[1];
+	sGtkTp.rxLength = ((uint16)(data[0]&0x0F)<<8) + (uint16)data[1];
 	memcpy(sGtkTp.rxBuffer,&data[2],6);
 	sGtkTp.rxIndex=6;
 	sGtkTp.state = CANTP_ST_SEND_FC;
@@ -482,39 +574,56 @@ static void HandleCF(uint8* data,uint16 size)
 	}
 	if((data[0]&0x0F) == sGtkTp.SN)
 	{
-		memcpy(&(sGtkTp.rxBuffer[sGtkTp.rxIndex]),data,lsize);
+		memcpy(&(sGtkTp.rxBuffer[sGtkTp.rxIndex]),&data[1],lsize);
 		sGtkTp.rxIndex+=lsize;
-
-		if(sGtkTp.BS>1)
-		{
-			sGtkTp.BS--;
-			if(1==sGtkTp.BS)
-			{
-				sGtkTp.state = CANTP_ST_SEND_FC;
-			}
-		}
 
 		if(sGtkTp.rxIndex>=sGtkTp.rxLength)
 		{
 			CanTp_RxIndication(sGtkTp.rxBuffer,sGtkTp.rxLength);
 			sGtkTp.state = CANTP_ST_IDLE;
 		}
+		else
+		{
+			if(sGtkTp.BS > 1)
+			{
+				sGtkTp.BS--;
+			    if (1 == sGtkTp.BS)
+			    {
+			    	sGtkTp.state = CANTP_ST_SEND_FC;
+			    }
+			}
+		}
 	}
 	else
-	{
+	{	// Error
 		sGtkTp.state = CANTP_ST_IDLE;
 	}
 
 }
-static void HandleBusy(GtkCanMsg_Type* pMsg)
+static void HandleFC(uint8* data,uint16 size)
 {
-	if(ISO15765_TPCI_SF==(pMsg->data[0]&ISO15765_TPCI_MASK))
+	switch (data[0]&ISO15765_TPCI_FS_MASK) //CTS
 	{
-		HandleSF(pMsg->data,pMsg->dlc);
-	}
-	else if(ISO15765_TPCI_FF==(pMsg->data[0]&ISO15765_TPCI_MASK))
-	{
-		HandleFF(pMsg->data,pMsg->dlc);
+		case ISO15765_FLOW_CONTROL_STATUS_CTS:
+			if(data[1] != 0)
+			{
+				sGtkTp.BS = data[1] + 1;
+			}
+			else
+			{
+				sGtkTp.BS = 0; // receive all without FC
+			}
+			sGtkTp.STMin = data[2];
+			sGtkTp.state = CANTP_ST_SEND_CF;
+			break;
+		case ISO15765_FLOW_CONTROL_STATUS_WAIT:
+			sGtkTp.state = CANTP_ST_WAIT_FC;
+			break;
+		case ISO15765_FLOW_CONTROL_STATUS_OVFLW:
+			sGtkTp.state = CANTP_ST_IDLE;
+			break;
+		default:
+			break;
 	}
 }
 static Std_ReturnType CanTp_Transmit(uint8* data,uint16 size)
