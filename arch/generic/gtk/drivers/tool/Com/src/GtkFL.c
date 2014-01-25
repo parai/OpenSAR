@@ -1,6 +1,16 @@
 #include "GtkFL.h"
 #include "GtkTp.h"
+// ======================== TYPES    =============================
 
+enum
+{
+	FL_STEP_SESSION,
+	FL_STEP_SECURITY_REQUEST_SEED,
+	FL_STEP_SECURITY_SEND_KEY,
+	FL_STEP_READ_FINGER_PRINT,
+	FL_STEP_WRITE_FINGER_PRINT,
+	FL_STEP_STOP
+};
 // ======================== DATA     =============================
 static guint    sFL_Step = 0;
 static gboolean isFL_Busy = FALSE;
@@ -92,20 +102,20 @@ static void FL_Response(uint8* data,uint16 size)
 	Std_ReturnType ercd;
 	switch(sFL_Step)
 	{
-		case 0:
+		case FL_STEP_SESSION:
 			ercd = (data[0]==0x50)?E_OK:E_NOT_OK;
 			break;
-		case 1:
+		case FL_STEP_SECURITY_REQUEST_SEED:
 			ercd = (data[0]==0x67)?E_OK:E_NOT_OK;
 			if(E_OK==ercd){FL_Seed=((uint32)data[2]<<24) + ((uint32)data[3]<<16) + ((uint32)data[4]<<8) + (uint32)(data[5]);};
 			break;
-		case 2:
+		case FL_STEP_SECURITY_SEND_KEY:
 			ercd = (data[0]==0x67)?E_OK:E_NOT_OK;
 			break;
-		case 3:
+		case FL_STEP_READ_FINGER_PRINT:
 			ercd = (data[0]==0x62)?E_OK:E_NOT_OK;
 			break;
-		case 4:
+		case FL_STEP_WRITE_FINGER_PRINT:
 			ercd = (data[0]==0x6E)?E_OK:E_NOT_OK;
 			break;
 		default:
@@ -123,12 +133,31 @@ static void FL_Response(uint8* data,uint16 size)
 	if(E_OK==ercd)
 	{
 		isFL_Busy = FALSE;
-		sFL_Step ++;
+		switch(sFL_Step)
+		{
+			case FL_STEP_SESSION:
+				sFL_Step = FL_STEP_SECURITY_REQUEST_SEED;
+				break;
+			case FL_STEP_SECURITY_REQUEST_SEED:
+				if(0u==FL_Seed){sFL_Step = FL_STEP_READ_FINGER_PRINT;}else{sFL_Step = FL_STEP_SECURITY_SEND_KEY;};
+				break;
+			case FL_STEP_SECURITY_SEND_KEY:
+				sFL_Step = FL_STEP_READ_FINGER_PRINT;
+				break;
+			case FL_STEP_READ_FINGER_PRINT:
+				sFL_Step = FL_STEP_WRITE_FINGER_PRINT;
+				break;
+			case FL_STEP_WRITE_FINGER_PRINT:
+				sFL_Step = FL_STEP_STOP;
+				break;
+			default:
+				break;
+		}
 	}
 	else
 	{
 		isFL_Busy = FALSE;
-		sFL_Step = 0xFFFF;
+		sFL_Step = FL_STEP_STOP;
 	}
 }
 gboolean FlashLoader(gpointer data)
@@ -136,19 +165,20 @@ gboolean FlashLoader(gpointer data)
 	if(!isFL_Busy)
 	{
 		switch(sFL_Step)
-		{	case 0:
+		{
+			case FL_STEP_SESSION:
 				FL_Session();
 				break;
-			case 1:
+			case FL_STEP_SECURITY_REQUEST_SEED:
 				FL_SecurityRequestSeed();
 				break;
-			case 2:
+			case FL_STEP_SECURITY_SEND_KEY:
 				FL_SecuritySendKey();
 				break;
-			case 3:
+			case FL_STEP_READ_FINGER_PRINT:
 				FL_ReadFingerPrint();
 				break;
-			case 4:
+			case FL_STEP_WRITE_FINGER_PRINT:
 				FL_WriteFingerPrint();
 				break;
 			default:
@@ -160,13 +190,13 @@ gboolean FlashLoader(gpointer data)
 
 void FL_Stop(void)
 {
-	sFL_Step = 0xFFFF; //
+	sFL_Step = FL_STEP_STOP;
 }
 
 void FL_Start(void)
 {
 	isFL_Busy = FALSE;
-	sFL_Step = 0; //
+	sFL_Step = FL_STEP_SESSION;
 }
 void FL_Init(void)
 {

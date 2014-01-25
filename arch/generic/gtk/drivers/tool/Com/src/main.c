@@ -11,9 +11,9 @@ int main (int argc, char *argv[])
 
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
-	gtk_com_gui_init(window);
+	gtk_com_gui_init(GTK_WINDOW(window));
 
-	gtk_widget_show (window);
+	gtk_widget_show_all (window);
 
 	gtk_main ();
 	return 0;
