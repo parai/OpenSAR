@@ -1,10 +1,45 @@
 #include "GtkCan.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-static GTimer* pSysTimer;
+#define CAN_LOG_FILE "GtkCan.log"
+
+static GTimer*    pSysTimer;
+static gboolean   is1stReceived = FALSE;
 
 static const gchar gtkCmdTx = GTK_CAN_CMD_TX;
+static void gtk_can_log_init(void)
+{
+	FILE* fp = NULL;
+	fp = fopen(CAN_LOG_FILE,"w");
+	fclose(fp);
+}
+static void gtk_can_log(guint port,GtkCanMsg_Type* pRxMsg)
+{
+	static gchar log_buffer[512];
+	int len = sprintf(log_buffer,"CANID=0x%-3x,DLC=%x, [",pRxMsg->id,(guint)pRxMsg->dlc);
+	for(int i=0;i<8;i++)
+	{
+		len += sprintf(&log_buffer[len],"%0+2x,",(guint)pRxMsg->data[i]);
+	}
+	gdouble elapsed = g_timer_elapsed(pSysTimer,NULL);
+	if(FALSE == is1stReceived)
+	{
+		is1stReceived = TRUE;
+		g_timer_start(pSysTimer);
+		elapsed = 0;
+	}
+	len += sprintf(&log_buffer[len],"] %8.4fs from %-5d\n",elapsed,port);
+	g_print(log_buffer);
+
+	FILE* fp = NULL;
+	fp = fopen(CAN_LOG_FILE,"a");
+	fwrite(log_buffer,len,1,fp);
+	fclose(fp);
+
+}
 // poll if there is a can message on port needed to be transimited.
-gboolean gtk_can_poll_tx(guint port,GtkCanMsg_Type* pRxMsg)
+static gboolean gtk_can_poll_tx(guint port,GtkCanMsg_Type* pRxMsg)
 {
 	gboolean rv= FALSE;
 	GError * error = NULL;
@@ -40,14 +75,7 @@ gboolean gtk_can_poll_tx(guint port,GtkCanMsg_Type* pRxMsg)
 	gssize size = g_input_stream_read(istream,&gtkCanMsg,sizeof(GtkCanMsg_Type),NULL,&error);
 	if(size == sizeof(GtkCanMsg_Type))
 	{
-		g_print("CANID=0x%-3x,DLC=%x, [",gtkCanMsg.id,(guint)gtkCanMsg.dlc);
-		for(int i=0;i<8;i++)
-		{
-			g_print("%-2x,",(guint)gtkCanMsg.data[i]);
-		}
-		gdouble elapsed = g_timer_elapsed(pSysTimer,NULL); // unit in
-		g_timer_start(pSysTimer);
-		g_print("] %8.4fus\n",elapsed);
+		gtk_can_log(port,&gtkCanMsg);
 		if(NULL != pRxMsg)
 		{
 			memcpy(pRxMsg,&gtkCanMsg,sizeof(GtkCanMsg_Type));
@@ -73,7 +101,7 @@ gboolean gtk_can_poll_tx(guint port,GtkCanMsg_Type* pRxMsg)
 }
 
 // forward the message to the port
-void gtk_can_poll_rx(guint port,GtkCanMsg_Type* pTxMsg)
+static void gtk_can_poll_rx(guint port,GtkCanMsg_Type* pTxMsg)
 {
 	GError * error = NULL;
 
@@ -135,6 +163,7 @@ int main (int argc, char *argv[])
 		PortList[0] = 8000;
 		PortLen = 1;
 	}
+	gtk_can_log_init();
 	/* initialize glib */
 	g_type_init ();
 	pSysTimer = g_timer_new();

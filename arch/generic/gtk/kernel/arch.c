@@ -49,10 +49,8 @@ static void arch_system_timer(void)
 
 static gboolean arch_daemon(gpointer data)
 {
-	gdk_threads_enter();
 	arch_system_timer();
 	arch_task_runnable();
-	gdk_threads_leave();
 	return TRUE;
 }
 static void arch_init_daemon(void)
@@ -124,14 +122,17 @@ void *Os_ArchGetStackPtr( void ) {
 }
 int main( int argc, char *argv[] )
 {
-	GtkWidget *window;
-	gtk_init (&argc, &argv);
-	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(window,"https://github.com/parai/OpenSAR.git\n");
-	gtk_window_resize(window,800,20);
-	gtk_widget_show (window);
+//	GtkWidget *window;
+//	gtk_init (&argc, &argv);
+//	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+//	gtk_window_set_title(window,"https://github.com/parai/OpenSAR.git\n");
+//	gtk_window_resize(window,800,20);
+//	gtk_widget_show (window);
 
 	arch_init_daemon();
-	gtk_main ();
+//	gtk_main ();
+
+	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+	g_main_loop_run(loop);
 	return ( 0 ) ;
 }

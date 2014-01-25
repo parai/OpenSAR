@@ -7,6 +7,7 @@
 #include <gio/gio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <Std_Types.h>
 typedef struct
 {
 	guchar      cmd;

@@ -58,8 +58,13 @@ endif
 
 
 #common flags
+
+Gtk-Inc = 	-I$(BD)/arch/generic/gtk/drivers/tool/inc	\
+		 	-I$(BD)/arch/generic/gtk/drivers/tool/Com/inc
+		 	
 ASFLGS = 
 INCDIR = 	$(Gtk-INC)				\
+			$(Gtk-Inc)				\
 			-I$(BD)/include 		\
 			-I$(BD)/include/generic \
 			-I$(BD)/include/sys		\
@@ -157,11 +162,17 @@ lib-y =
 
 gen:
 
-GtkUds:
-	@$(LD) $(BD)/arch/generic/gtk/drivers/tool/GtkUds.c -o $(OUT)/GtkUds $(LDFLGS)	
-	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkUds.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
-GtkCan:
-	@$(LD) $(BD)/arch/generic/gtk/drivers/tool/GtkCan.c -o $(OUT)/GtkCan $(LDFLGS)	
+GtkCom-dir-y = $(BD)/arch/generic/gtk/drivers/tool/Com/src
+GtkCom-obj = $(subst .c,.o,$(foreach x,$(GtkCom-dir-y),$(wildcard $(addprefix $(x)/*,.c))))	
+GtkCom:$(GtkCom-obj)
+	@$(LD) $(GtkCom-obj) -o $(OUT)/GtkCom $(LDFLGS)	
+	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCom.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
+
+
+GtkCan-dir-y = $(BD)/arch/generic/gtk/drivers/tool/Can/src
+GtkCan-obj = $(subst .c,.o,$(foreach x,$(GtkCan-dir-y),$(wildcard $(addprefix $(x)/*,.c))))	
+GtkCan:$(GtkCan-obj)
+	@$(LD) $(GtkCan-obj) -o $(OUT)/GtkCan $(LDFLGS)	
 	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCan.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 		
 all:$(obj-y) $(OUT)/Flash.img
@@ -174,9 +185,9 @@ Flash.img:
 	dd if=/dev/zero of=Flash.img bs=1M count=1
 	
 $(OUT)/GtkCan:GtkCan
-$(OUT)/GtkUds:GtkUds
+$(OUT)/GtkCom:GtkCom
 
-tool:$(OUT)/GtkCan $(OUT)/GtkUds
+tool:$(OUT)/GtkCan $(OUT)/GtkCom
 	@echo ">>>>>>>>>>>>>>>>>  BUILD TOOL DONE   <<<<<<<<<<<<<<<<<<<<<<"
 	
 run:Flash.img
@@ -186,9 +197,9 @@ ifeq ($(SYSTEM),Linux)
 else
 	@(start $(OUT)/$(TARGET))	
 	@(start $(OUT)/GtkCan 8000 8999)
-	@(start $(OUT)/GtkUds 8999)
+	@(start $(OUT)/GtkCom 8999)
 #	@(start $(OUT)/GtkCan 8999)
-#	@(start $(OUT)/GtkUds 8999)
+#	@(start $(OUT)/GtkCom 8999)
 endif	
 
 clean:
