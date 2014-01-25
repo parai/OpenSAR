@@ -1,19 +1,21 @@
-#include "GtkCan.h"
-#include "GtkFL.h"
-#include "GtkTp.h"
+#include "GtkCom.h"
 
 int main (int argc, char *argv[])
 {
 	g_type_init ();
+	gtk_init (&argc, &argv);
 
+	gtk_com_init();
 
-	CanTp_Init();
-	FL_Init();
+	GtkWidget *window;
 
+	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 
+	gtk_com_gui_init(window);
 
-	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
-	g_main_loop_run(loop);
+	gtk_widget_show (window);
+
+	gtk_main ();
 	return 0;
 
 }

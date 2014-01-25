@@ -158,9 +158,20 @@ gboolean FlashLoader(gpointer data)
 	return TRUE;
 }
 
+void FL_Stop(void)
+{
+	sFL_Step = 0xFFFF; //
+}
+
+void FL_Start(void)
+{
+	isFL_Busy = FALSE;
+	sFL_Step = 0; //
+}
 void FL_Init(void)
 {
 	g_idle_add(FlashLoader,NULL);
+	FL_Stop();
 }
 
 

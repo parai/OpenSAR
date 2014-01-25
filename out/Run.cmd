@@ -9,6 +9,6 @@ REM start OpenSAR.exe
 
 REM GTK platform
 start OpenSAR.exe
-start GtkUds.exe 8999
+start GtkCom.exe 8999
 start GtkCan.exe 8000 8999
 

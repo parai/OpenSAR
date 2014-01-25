@@ -237,6 +237,7 @@ static gboolean CanTp_MainFunction(gpointer data)
 			if(IsTimerElapsed(5000))
 			{
 				sGtkTp.state = CANTP_ST_IDLE;
+				StopTimer();
 			}
 			break;
 		default:

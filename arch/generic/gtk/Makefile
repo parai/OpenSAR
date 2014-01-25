@@ -204,6 +204,6 @@ endif
 
 clean:
 	@$(RM) -f $(OUT)/$(TARGET).exe $(obj-y)
-	@rm Flash.img $(OUT)/Flash.img
+	@rm Flash.img $(OUT)/Flash.img $(GtkCom-obj) $(GtkCan-obj)
 	@echo ">>>>>>>>>>>>>>>>>>>> CLEAN $(TARGET) Objs Done <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<"		
 
