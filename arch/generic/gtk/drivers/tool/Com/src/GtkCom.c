@@ -9,9 +9,9 @@
 static void on_menu_activate  (GtkMenuItem* item,gpointer data);
 static void on_toolbar_clicked(GtkButton *button,gpointer data);
 // ============================= LOCAL  DATAs     ======================
-
+GtkTextBuffer *pFL_TextBuffer = NULL;
 // ============================= LOCAL  FUNCTIONs ======================
-void on_menu_activate  (GtkMenuItem* item,gpointer data)
+static void on_menu_activate  (GtkMenuItem* item,gpointer data)
 {
 	g_print("You clicked on:  %s !\n",(gchar*)data);
 }
@@ -100,10 +100,24 @@ static void on_fl_button_clicked(GtkButton *button,gpointer data)
 
 	}
 }
+void FL_PrintLog(gchar* Log,...)
+{
+	va_list args;
+	unsigned long length;
+	static char log_buf[1024];
+	va_start(args, Log);
+	length = vsprintf(log_buf,Log,args);
+	va_end(args);
+
+	GtkTextIter Iter;
+	gtk_text_buffer_get_end_iter(pFL_TextBuffer,&Iter);
+	gtk_text_buffer_insert(pFL_TextBuffer,&Iter,log_buf,length);
+}
 static GtkWidget* CreateNotebook_FL(void)
 {
 	GtkWidget* pBox;
 	GtkWidget* pButton;
+
 	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
 
 	pButton = gtk_button_new_with_label("Start");
@@ -114,6 +128,24 @@ static GtkWidget* CreateNotebook_FL(void)
 	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
 	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_fl_button_clicked) , "Stop");
 
+	{
+		GtkWidget *swindow;
+		GtkWidget *textview;
+		GtkTextIter Iter;
+		swindow = gtk_scrolled_window_new (NULL, NULL);
+		gtk_widget_set_size_request(swindow,800,600);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swindow),
+									  GTK_POLICY_AUTOMATIC,
+									  GTK_POLICY_AUTOMATIC);
+		gtk_box_pack_start (GTK_BOX (pBox), swindow, TRUE, TRUE, 0);
+		textview = gtk_text_view_new ();
+		//gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (textview), GTK_WRAP_WORD);
+		gtk_text_view_set_editable(GTK_TEXT_VIEW (textview),FALSE);
+		gtk_container_add (GTK_CONTAINER (swindow), textview);
+		pFL_TextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+		gtk_text_buffer_get_end_iter(pFL_TextBuffer,&Iter);
+		gtk_text_buffer_insert(pFL_TextBuffer,&Iter,"FL Log:\n",8);
+	}
 	return pBox;
 }
 static GtkWidget* CreateNotebook(void)
@@ -134,13 +166,13 @@ void gtk_com_gui_init(GtkWindow *pWindow)
 {
 	GtkWidget* pBox;
 	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+	gtk_box_set_homogeneous(GTK_BOX(pBox),FALSE);
 
 	gtk_container_add(GTK_CONTAINER (pWindow), pBox);
 
 	// Initialize
 	gtk_window_set_title(pWindow,(const gchar*)"GtkCom (Diagnostic and Communication)\n");
 	gtk_container_set_border_width (GTK_CONTAINER (pWindow), 0);
-	gtk_window_resize(pWindow,800,600);
 
 	gtk_box_pack_start(GTK_BOX(pBox),CreateMenubar(),FALSE,FALSE,0);
 //	gtk_box_pack_start(GTK_BOX(pBox),CreateToolbar(),FALSE,FALSE,0);

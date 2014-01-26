@@ -36,7 +36,7 @@ static void FL_Session(void)
 	ercd = CanTp_Transmit(data,sizeof(data));
 	if(E_OK==ercd)
 	{
-		g_print("FL: Change to Program Session");
+		FL_PrintLog(">>>START<<<\nFL: Change to Program Session");
 		isFL_Busy = TRUE;
 	}
 }
@@ -49,7 +49,7 @@ static void     FL_SecurityRequestSeed(void)
 	ercd = CanTp_Transmit(data,sizeof(data));
 	if(E_OK==ercd)
 	{
-		g_print("FL: Request Seed");
+		FL_PrintLog("FL: Request Seed");
 		isFL_Busy = TRUE;
 	}
 }
@@ -66,7 +66,7 @@ static void     FL_SecuritySendKey(void)
 	ercd = CanTp_Transmit(data,sizeof(data));
 	if(E_OK==ercd)
 	{
-		g_print("FL: Send Key");
+		FL_PrintLog("FL: Send Key");
 		isFL_Busy = TRUE;
 	}
 }
@@ -77,7 +77,7 @@ static void     FL_ReadFingerPrint(void)
 	ercd = CanTp_Transmit(data,sizeof(data));
 	if(E_OK==ercd)
 	{
-		g_print("FL: Read Finger Print");
+		FL_PrintLog("FL: Read Finger Print");
 		isFL_Busy = TRUE;
 	}
 }
@@ -92,7 +92,7 @@ static void     FL_WriteFingerPrint(void)
 	ercd = CanTp_Transmit(data,sizeof(data));
 	if(E_OK==ercd)
 	{
-		g_print("FL: Write Finger Print");
+		FL_PrintLog("FL: Write Finger Print");
 		isFL_Busy = TRUE;
 	}
 }
@@ -123,12 +123,12 @@ static void FL_Response(uint8* data,uint16 size)
 			break;
 	}
 
-	g_print(" %s! with response [",(E_OK==ercd)?"OK":"FAILED");
+	FL_PrintLog(" %s! with response [",(E_OK==ercd)?"OK":"FAILED");
 	for(int i=0;i<size;i++)
 	{
-		g_print("%-2x,",data[i]);
+		FL_PrintLog("%0+2x,",data[i]);
 	}
-	g_print("]\n");
+	FL_PrintLog("]\n");
 
 	if(E_OK==ercd)
 	{
