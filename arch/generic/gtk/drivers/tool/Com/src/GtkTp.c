@@ -1,4 +1,5 @@
 #include "GtkCan.h"
+#include "GtkTp.h"
 
 // ======================== TYPE     =============================
 typedef enum

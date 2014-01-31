@@ -15,6 +15,7 @@
 #include <string.h>
 #include <assert.h>
 #include <stdio.h>
+#include <gtk/gtk.h>
 #include "Std_Types.h"
 #include "Dio.h"
 #include "Port.h"
@@ -118,6 +119,21 @@ static DioReg_Type Dio_Reg = {
 	.Level = {0,0,0,0,0,0,0,0,0,0,0},
 	.Direction = {0,0,0,0,0,0,0,0,0,0,0}
 };
+static GtkWidget* pDio[DIO_PORT_NUM][8];
+
+static void on_dio_clicked(GtkButton *button,gpointer data)
+{
+	Dio_ChannelType channelId = (Dio_ChannelType)(data);
+	Dio_LevelType level = Dio_ReadChannel(channelId);
+
+	if (level != STD_LOW){
+		level = STD_LOW;
+	} else {
+		level = STD_HIGH;
+	}
+
+	Dio_WriteChannel(channelId,level);
+}
 
 Dio_LevelType Dio_ReadChannel(Dio_ChannelType channelId)
 {
@@ -144,15 +160,18 @@ void exDio_SetPinDirection(uint32_t channelId,Port_PinDirectionType Direction)
 	uint8_t bit;
 	if(channelId < Port_PIN_NUM)
 	{
+		GtkWidget* pBtn = pDio[DIO_GET_PORT_FROM_CHANNEL_ID(channelId)][channelId%8];
 		portDir = Dio_Reg.Direction[DIO_GET_PORT_FROM_CHANNEL_ID(channelId)];
 		bit = DIO_GET_BIT_FROM_CHANNEL_ID(channelId);
 		if(PORT_PIN_IN == Direction)
 		{
 			portDir &= ~bit;
+			gtk_widget_set_sensitive(GTK_WIDGET(pBtn),TRUE);
 		}
 		else
 		{
 			portDir |= bit;
+			gtk_widget_set_sensitive(GTK_WIDGET(pBtn),FALSE);
 		}
 		Dio_Reg.Direction[DIO_GET_PORT_FROM_CHANNEL_ID(channelId)] = portDir;
 	}
@@ -171,6 +190,14 @@ void Dio_WriteChannel(Dio_ChannelType channelId, Dio_LevelType level)
 	}
 
 	Dio_WritePort(DIO_GET_PORT_FROM_CHANNEL_ID(channelId), portVal);
+
+	{
+		GtkWidget* pBtn = pDio[DIO_GET_PORT_FROM_CHANNEL_ID(channelId)][channelId%8];
+		gchar label[32];
+		sprintf(label,"%c%d=%d",'A'+DIO_GET_PORT_FROM_CHANNEL_ID(channelId),channelId%8,level==STD_HIGH?1:0);
+		gtk_button_set_label(GTK_BUTTON(pBtn),label);
+	}
+
 
 #if ( DIO_DEV_ERROR_DETECT == STD_ON )
 	cleanup:
@@ -242,4 +269,25 @@ void Dio_WriteChannelGroup(const Dio_ChannelGroupType *channelGroupIdPtr,
 	cleanup:
 #endif
 	return;
+}
+
+GtkWidget* Dio(void)
+{
+	GtkWidget* pGrid;
+
+	pGrid = gtk_grid_new();
+
+	for(int i=0;i<DIO_PORT_NUM;i++)
+	{
+		for(int j=0;j<8;j++)
+		{
+			gchar label[32];
+			sprintf(label,"%c%d=0",'A'+i,j);
+			pDio[i][j] = gtk_button_new_with_label(label);
+			gtk_grid_attach(GTK_GRID(pGrid),pDio[i][j],j,i,1,1);
+			g_signal_connect(G_OBJECT (pDio[i][j]), "clicked", G_CALLBACK(on_dio_clicked) , (gpointer)(8*i+j));
+		}
+	}
+
+	return pGrid;
 }

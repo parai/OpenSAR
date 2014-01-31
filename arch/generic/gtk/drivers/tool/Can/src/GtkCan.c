@@ -1,11 +1,19 @@
 #include "GtkCan.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <gtk/gtk.h>
 
 #define CAN_LOG_FILE "GtkCan.log"
 
+#define cfgWithGui  0
+
 static GTimer*    pSysTimer;
+static guint               PortList[512];
+static guint               PortLen;
 static gboolean   is1stReceived = FALSE;
+#if cfgWithGui == 1
+GtkTextBuffer *pTextBuffer = NULL;
+#endif
 
 static const gchar gtkCmdTx = GTK_CAN_CMD_TX;
 static void gtk_can_log_init(void)
@@ -31,6 +39,12 @@ static void gtk_can_log(guint port,GtkCanMsg_Type* pRxMsg)
 	}
 	len += sprintf(&log_buffer[len],"] %8.4fs from %-5d\n",elapsed,port);
 	g_print(log_buffer);
+
+#if cfgWithGui == 1
+	GtkTextIter Iter;
+	gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+	gtk_text_buffer_insert(pTextBuffer,&Iter,log_buffer,len);
+#endif
 
 	FILE* fp = NULL;
 	fp = fopen(CAN_LOG_FILE,"a");
@@ -141,12 +155,26 @@ static void gtk_can_poll_rx(guint port,GtkCanMsg_Type* pTxMsg)
 	g_object_unref(client);
 }
 
-int main (int argc, char *argv[])
+static gboolean Idle(gpointer data)
 {
-	guint               PortList[512];
-	guint               PortLen;
 	GtkCanMsg_Type      PortRxMsg;
-
+	for(int i=0;i<PortLen;i++)
+	{
+		if(gtk_can_poll_tx(PortList[i],&PortRxMsg))
+		{
+			for(int j=0;j<PortLen;j++)
+			{
+				if(i!=j)
+				{
+					gtk_can_poll_rx(PortList[j],&PortRxMsg);
+				}
+			}
+		}
+	}
+	return TRUE;
+}
+static void Init(int argc, char *argv[])
+{
 	PortLen = argc -1;
 	if(PortLen != 0)
 	{
@@ -164,24 +192,74 @@ int main (int argc, char *argv[])
 		PortLen = 1;
 	}
 	gtk_can_log_init();
+
 	/* initialize glib */
 	g_type_init ();
 	pSysTimer = g_timer_new();
-	while (TRUE)
+
+	//g_idle_add(Idle,NULL);
+	g_timeout_add(5,Idle,NULL);
+}
+
+#if cfgWithGui == 1
+static GtkWidget* CreateLog(void)
+{
+	GtkWidget* pBox;
+
+	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+
 	{
-		for(int i=0;i<PortLen;i++)
-		{
-			if(gtk_can_poll_tx(PortList[i],&PortRxMsg))
-			{
-				for(int j=0;j<PortLen;j++)
-				{
-					if(i!=j)
-					{
-						gtk_can_poll_rx(PortList[j],&PortRxMsg);
-					}
-				}
-			}
-		}
+		GtkWidget *swindow;
+		GtkWidget *textview;
+		GtkTextIter Iter;
+		swindow = gtk_scrolled_window_new (NULL, NULL);
+		gtk_widget_set_size_request(swindow,800,600);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swindow),
+									  GTK_POLICY_AUTOMATIC,
+									  GTK_POLICY_AUTOMATIC);
+		gtk_box_pack_start (GTK_BOX (pBox), swindow, TRUE, TRUE, 0);
+		textview = gtk_text_view_new ();
+		//gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (textview), GTK_WRAP_WORD);
+		gtk_text_view_set_editable(GTK_TEXT_VIEW (textview),FALSE);
+		gtk_container_add (GTK_CONTAINER (swindow), textview);
+		pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+		gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+		gtk_text_buffer_insert(pTextBuffer,&Iter,"CAN LOG:\n",8);
 	}
-  return 0;
+	return pBox;
+}
+#endif
+int main (int argc, char *argv[])
+{
+	GtkWidget *pWindow;
+	GtkWidget* pBox;
+
+	Init(argc,argv);
+
+#if cfgWithGui == 1
+	gtk_init (&argc, &argv);
+
+	pWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+
+
+	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+	gtk_box_set_homogeneous(GTK_BOX(pBox),FALSE);
+
+	gtk_container_add(GTK_CONTAINER (pWindow), pBox);
+
+	// Initialize
+	gtk_window_set_title(pWindow,(const gchar*)"GtkCan (CAN TOOL SERVER)\n");
+	gtk_container_set_border_width (GTK_CONTAINER (pWindow), 0);
+
+	gtk_box_pack_start(GTK_BOX(pBox),CreateLog(),FALSE,FALSE,0);
+
+	gtk_widget_show_all (pWindow);
+
+	gtk_main ();
+#else
+	GMainLoop *loop = g_main_loop_new(NULL, FALSE);
+	g_main_loop_run(loop);
+#endif
+
+	return 0;
 }

@@ -7,7 +7,7 @@
 
 // ============================= LOCAL FUNCTIONs  ======================
 static void on_menu_activate  (GtkMenuItem* item,gpointer data);
-static void on_toolbar_clicked(GtkButton *button,gpointer data);
+//static void on_toolbar_clicked(GtkButton *button,gpointer data);
 // ============================= LOCAL  DATAs     ======================
 GtkTextBuffer *pFL_TextBuffer = NULL;
 // ============================= LOCAL  FUNCTIONs ======================
@@ -15,7 +15,7 @@ static void on_menu_activate  (GtkMenuItem* item,gpointer data)
 {
 	g_print("You clicked on:  %s !\n",(gchar*)data);
 }
-
+#if 0
 static void on_start_stop_clicked(GtkButton *button,gpointer data)
 {
 	const gchar * stock_id = gtk_tool_button_get_stock_id(GTK_TOOL_BUTTON(button));
@@ -31,6 +31,7 @@ static void on_start_stop_clicked(GtkButton *button,gpointer data)
 		FL_Stop();
 	}
 }
+#endif
 static GtkWidget* CreateMenubar(void)
 {
 	GtkWidget* pMenubar;
@@ -66,7 +67,7 @@ static GtkWidget* CreateMenubar(void)
 	gtk_widget_show(pMenubar);
 	return pMenubar;
 }
-
+#if 0
 static GtkWidget* CreateToolbar(void)
 {
 	GtkWidget* pToolbar;
@@ -85,6 +86,7 @@ static GtkWidget* CreateToolbar(void)
 	gtk_widget_show(pToolbar);
 	return pToolbar;
 }
+#endif
 static void on_fl_button_clicked(GtkButton *button,gpointer data)
 {
 	if(0==strcmp(data,"Start"))

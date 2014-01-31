@@ -181,7 +181,7 @@ all:$(obj-y) $(OUT)/Flash.img
 
 $(OUT)/Flash.img:
 	dd if=/dev/zero of=$(OUT)/Flash.img bs=1M count=1
-Flash.img:
+Flash.img:$(OUT)/Flash.img
 	dd if=/dev/zero of=Flash.img bs=1M count=1
 	
 $(OUT)/GtkCan:GtkCan
