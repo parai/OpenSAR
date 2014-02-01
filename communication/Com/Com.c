@@ -281,3 +281,194 @@ BufReq_ReturnType Com_StartOfReception(PduIdType ComRxPduId, PduLengthType TpSdu
 	Irq_Restore(state);
 	return r;
 }
+#if defined(__GTK__)
+#include <gtk/gtk.h>
+static GtkWidget* pEntryList[COM_N_SIGNALS];
+static uint8 Buffer[COM_N_IPDUS][8];
+static uint32 Timer[COM_N_IPDUS];
+static void Update(uint32 IpduID,uint32 SigStart,uint32 SigSize,uint32 SigValue)
+{
+
+    int BA = 0;
+    int bitsize = SigSize;
+    int start   = SigStart;
+    int value   = SigValue;
+    uint8* data = Buffer[IpduID];
+    int pos = start/8;
+    int CrossB = (SigSize+7)/8;
+    if(SigStart>=(pos*8) && (SigStart+SigSize)<=(pos+CrossB)*8)
+    {
+    }
+    else
+    {
+        CrossB += 1;
+    }
+    for(int i=0;i<CrossB;i++)
+    {
+        start   += BA;   // bit accessed in this cycle
+        bitsize -= BA;
+        pos = start/8;
+        int offset = start%8;
+        if((8-offset) > bitsize){
+            BA =  bitsize;
+        }
+        else
+        {
+            BA = (8-offset);
+        }
+        int BM = ((1<<BA)-1)<<offset;
+        data[pos] &=  ~BM;
+        data[pos] |=  BM&(value<<offset);
+        value = value>>(bitsize-BA);
+    }
+}
+static uint32 Read(const ComIPdu_type *IPdu,int SigStart,int SigSize)
+{
+	int value   = 0;
+	uint8* data    = IPdu->ComIPduDataPtr;
+	int pos = SigStart/8;
+	int CrossB = (SigSize+7)/8;
+	if(SigStart>=(pos*8) && (SigStart+SigSize)<=(pos+CrossB)*8)
+	{
+	}
+	else
+	{
+		CrossB += 1;
+	}
+	for(int i=0;i<CrossB;i++)
+	{
+		value = value+(data[pos+i]<<(8*i));
+	}
+	int offset = SigStart%8;
+	return (value>>offset)&((1<<SigSize)-1);
+}
+static void Refresh(const ComIPdu_type *IPdu)
+{
+	for (uint16 j = 0; (IPdu->ComIPduSignalRef != NULL) && (IPdu->ComIPduSignalRef[j] != NULL) ; j++) {
+		const ComSignal_type * Signal = IPdu->ComIPduSignalRef[j];
+		GtkWidget* pEntry = pEntryList[Signal->ComHandleId];
+		gchar value[32];
+		sprintf(value,"%d",Read(IPdu,Signal->ComBitPosition,Signal->ComBitSize));
+		gtk_entry_set_text(GTK_ENTRY(pEntry),value);
+	}
+}
+static void on_entry_activate(GtkEntry *entry,gpointer data)
+{
+	int Id = (int)(data);
+	gchar* pValue = gtk_entry_get_text(entry);
+
+	const ComSignal_type * Signal = &(ComConfig->ComSignal[Id]);
+
+	uint32 max = (1u<<Signal->ComBitSize)-1u;
+
+	uint32 value = atoi(pValue);
+
+	if(value <= max)
+	{
+		Update(Signal->ComIPduHandleId,Signal->ComBitPosition,Signal->ComBitSize,value);
+	}
+	else
+	{
+		gchar value[32];
+		gtk_entry_set_text(GTK_ENTRY(entry),value);
+		Update(Signal->ComIPduHandleId,Signal->ComBitPosition,Signal->ComBitSize,max);
+	}
+}
+static gboolean simulator(gpointer data)
+{
+	if(NULL == ComConfig)
+	{
+		return TRUE;
+	}
+	for (uint16 i = 0; !ComConfig->ComIPdu[i].Com_Arc_EOL; i++) {
+		const ComIPdu_type *IPdu = GET_IPdu(i);
+		if (IPdu->ComIPduDirection == SEND) {
+			Refresh(IPdu);
+		}
+		else
+		{
+			if(0u==Timer[i])
+			{
+				PduInfoType pdu;
+				pdu.SduDataPtr = Buffer[i];
+				pdu.SduLength  = 8;
+				Com_RxIndication(i,&pdu);
+				Timer[i] = IPdu->ComTxIPdu.ComTxModeTrue.ComTxModeTimePeriodFactor*2;
+			}
+			else
+			{
+				Timer[i]--;
+			}
+		}
+	}
+
+	return TRUE;
+}
+static GtkWidget* ComPage(const ComIPdu_type *IPdu)
+{
+	GtkWidget* pGrid;
+	gboolean   isSensetive = TRUE;
+
+	pGrid = gtk_grid_new();
+
+	if (IPdu->ComIPduDirection == SEND) {
+		isSensetive = FALSE;
+	}
+	for (uint16 j = 0; (IPdu->ComIPduSignalRef != NULL) && (IPdu->ComIPduSignalRef[j] != NULL) ; j++) {
+		const ComSignal_type * Signal = IPdu->ComIPduSignalRef[j];
+		GtkWidget* pEntry = gtk_entry_new();
+		pEntryList[Signal->ComHandleId] = pEntry;
+		gtk_grid_attach(GTK_GRID(pGrid),gtk_label_new(Signal->name),(j%2)*2,j/2,1,1);
+		gtk_grid_attach(GTK_GRID(pGrid),pEntry,(j%2)*2+1,j/2,1,1);
+		gtk_entry_set_width_chars(GTK_ENTRY(pEntry),32);
+		gchar value[32];
+		if(Signal->ComBitSize<=8)
+		{
+			sprintf(value,"%d",*(uint8*)Signal->ComSignalInitValue);
+			Update(Signal->ComIPduHandleId,Signal->ComBitPosition,Signal->ComBitSize,*(uint8*)Signal->ComSignalInitValue);
+		}
+		else if(Signal->ComBitSize<=16)
+		{
+			sprintf(value,"%d",*(uint16*)Signal->ComSignalInitValue);
+			Update(Signal->ComIPduHandleId,Signal->ComBitPosition,Signal->ComBitSize,*(uint16*)Signal->ComSignalInitValue);
+		}
+		else if(Signal->ComBitSize<=32)
+		{
+			sprintf(value,"%d",*(uint32*)Signal->ComSignalInitValue);
+			Update(Signal->ComIPduHandleId,Signal->ComBitPosition,Signal->ComBitSize,*(uint32*)Signal->ComSignalInitValue);
+		}
+		else
+		{
+			sprintf(value,"un-support type");
+		}
+		gtk_entry_set_text(GTK_ENTRY(pEntry),value);
+		gtk_widget_set_sensitive(GTK_WIDGET(pEntry),isSensetive);
+
+		if(isSensetive)
+		{
+			g_signal_connect(G_OBJECT (pEntry), "activate",
+				G_CALLBACK(on_entry_activate) , (gpointer)(Signal->ComHandleId));
+		}
+	}
+
+	return pGrid;
+}
+GtkWidget* Com(void)
+{
+	GtkWidget* pNotebook;
+
+	ComConfig = &ComConfiguration;
+
+	pNotebook = gtk_notebook_new ();
+	for (uint16 i = 0; !ComConfig->ComIPdu[i].Com_Arc_EOL; i++) {
+		const ComIPdu_type *IPdu = GET_IPdu(i);
+		Com_Arc_IPdu_type *Arc_IPdu = GET_ArcIPdu(i);
+		gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),ComPage(IPdu),gtk_label_new(IPdu->name));
+	}
+
+	g_timeout_add(5,simulator,NULL);
+	memset(Timer,0,sizeof(Timer));
+	ComConfig = NULL;
+	return pNotebook;
+}
+#endif

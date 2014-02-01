@@ -72,6 +72,9 @@ uint8 MSG1_TX_IPduBuffer[8];
 const ComSignal_type ComSignal[] = {
 
     {
+        #if defined(__GTK__)
+        .name = "VehicleSpeed",
+        #endif
         .ComBitPosition =  0,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
@@ -96,6 +99,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "TachoSpeed",
+        #endif
         .ComBitPosition =  16,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
@@ -120,6 +126,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Led1Sts",
+        #endif
         .ComBitPosition =  32,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
@@ -144,6 +153,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Led2Sts",
+        #endif
         .ComBitPosition =  34,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
@@ -168,6 +180,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Led3Sts",
+        #endif
         .ComBitPosition =  36,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
@@ -192,6 +207,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Year",
+        #endif
         .ComBitPosition =  0,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
@@ -216,6 +234,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Month",
+        #endif
         .ComBitPosition =  16,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
@@ -240,6 +261,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Day",
+        #endif
         .ComBitPosition =  24,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
@@ -264,6 +288,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Hour",
+        #endif
         .ComBitPosition =  32,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
@@ -288,6 +315,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Minute",
+        #endif
         .ComBitPosition =  40,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
@@ -312,6 +342,9 @@ const ComSignal_type ComSignal[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "Second",
+        #endif
         .ComBitPosition =  48,
         .ComBitSize =  8,
         .ComErrorNotification =  NULL,
@@ -373,6 +406,9 @@ const ComSignal_type * const MSG1_TX_SignalRefs[] = {
 const ComIPdu_type ComIPdu[] = {
 
     {
+        #if defined(__GTK__)
+        .name = "MSG0",
+        #endif
         .ComIPduCallout =  NULL,
         .ArcIPduOutgoingId =  PDUR_MSG0_RX,
         .ComIPduSignalProcessing =  IMMEDIATE,
@@ -398,6 +434,9 @@ const ComIPdu_type ComIPdu[] = {
     },
 
     {
+        #if defined(__GTK__)
+        .name = "MSG1",
+        #endif    
         .ComIPduCallout =  NULL,
         .ArcIPduOutgoingId =  PDUR_MSG1_TX,
         .ComIPduSignalProcessing =  IMMEDIATE,

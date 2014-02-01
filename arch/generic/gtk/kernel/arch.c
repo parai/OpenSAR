@@ -16,9 +16,8 @@
 extern void start_main(void);
 extern OsTaskVarType Os_TaskVarList[OS_TASK_CNT];
 
-#ifdef USE_DIO
 extern GtkWidget* Dio(void);
-#endif
+extern GtkWidget* Com(void);
 
 // ====================================== TYPEs ====================================
 static GTimer* pSysTimer;
@@ -155,6 +154,9 @@ static GtkWidget*  Notebook(void)
 	pNotebook = gtk_notebook_new ();
 #ifdef USE_DIO
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Dio(),gtk_label_new("Dio"));
+#endif
+#ifdef USE_COM
+	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Com(),gtk_label_new("Com"));
 #endif
 	return pNotebook;
 }

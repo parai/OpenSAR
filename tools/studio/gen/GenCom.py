@@ -312,6 +312,9 @@ const ComGroupSignal_type * const COM PDUID_SignalRefs[] = {
     for sig in GLGet('Signal'):
         cstr += """
     {
+        #if defined(__GTK__)
+        .name = "%s",
+        #endif
         .ComBitPosition =  %s,
         .ComBitSize =  %s,
         .ComErrorNotification =  NULL,
@@ -333,7 +336,8 @@ const ComGroupSignal_type * const COM PDUID_SignalRefs[] = {
         .Com_Arc_ShadowBuffer_Mask =  NULL,
         .ComIPduHandleId = COM_%s_%s,
         .Com_Arc_EOL =  FALSE
-    },\n"""%(GAGet(sig,'start'),
+    },\n"""%(GAGet(sig,'name'),
+             GAGet(sig,'start'),
              GAGet(sig,'size'),
              GAGet(sig,'name'),
              GAGet(sig,'name'),
@@ -377,6 +381,9 @@ const ComIPduGroup_type ComIPduGroup[] = {
     for pdu in GLGet('RxPdu'):
         cstr += """
     {
+        #if defined(__GTK__)
+        .name = "%s",
+        #endif
         .ComIPduCallout =  NULL,
         .ArcIPduOutgoingId =  PDUR_%s_RX,
         .ComIPduSignalProcessing =  IMMEDIATE,
@@ -399,11 +406,14 @@ const ComIPduGroup_type ComIPduGroup[] = {
         .ComIPduSignalRef =  %s_RX_SignalRefs,
         .ComIPduDynSignalRef =  NULL,
         .Com_Arc_EOL =  FALSE,
-    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'))
+    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'))
     id = 0
     for pdu in GLGet('TxPdu'):
         cstr += """
     {
+        #if defined(__GTK__)
+        .name = "%s",
+        #endif    
         .ComIPduCallout =  NULL,
         .ArcIPduOutgoingId =  PDUR_%s_TX,
         .ComIPduSignalProcessing =  IMMEDIATE,
@@ -426,7 +436,7 @@ const ComIPduGroup_type ComIPduGroup[] = {
         .ComIPduSignalRef =  %s_TX_SignalRefs,
         .ComIPduDynSignalRef =  NULL,
         .Com_Arc_EOL =  FALSE,
-    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'))    
+    },\n"""%(GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'),GAGet(pdu,'name'))    
     fp.write("""
 //I-PDU definitions
 const ComIPdu_type ComIPdu[] = {

@@ -202,6 +202,9 @@ typedef struct {
 
 /** Configuration structure for signals and signal groups. */
 typedef struct {
+#if defined(__GTK__)
+	uint8 name[64];
+#endif
 
 	/** Starting position (bit) of the signal within the IPDU.
 	 * Range 0 to 2031.
@@ -369,7 +372,9 @@ typedef struct ComIPduGroup_type {
 
 /** Configuration structure for an I-PDU. */
 typedef struct {
-
+#if defined(__GTK__)
+	uint8 name[64];
+#endif
 	/** Callout function of this IPDU.
 	 * The callout function is an optional function used both on sender and receiver side.
 	 * If configured, it determines whether an IPdu is considered for further processing. If
