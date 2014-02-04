@@ -3,17 +3,27 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <assert.h>
+#include <string.h>
 
 // ===================================== MACROs    =======================================
 #define LCD_WIDTH   800
 #define LCD_HEIGHT  600
 // ===================================== TYPEs     =======================================
+typedef struct
+{
+	uint32_t color;
+}tPixel;
 
+typedef struct
+{
+	tPixel P[LCD_WIDTH][LCD_HEIGHT];
+}tLcd;
 // ===================================== DATAs     =======================================
 /* Pixmap for scribble area, to store current scribbles */
 static cairo_surface_t *pLcdSurface = NULL;
 static GtkWidget*       pLcd        = NULL;
 const Font gFont = {10, 14};
+static tLcd sLcd;
 
 // ===================================== FUNCTIONs =======================================
 /* Create a new surface of the appropriate size to store our scribbles */
@@ -57,6 +67,45 @@ scribble_draw (GtkWidget *widget,
 
   return FALSE;
 }
+static void DrawPixel( uint32_t x, uint32_t y, uint32_t color )
+{
+	GdkRectangle update_rect;
+	cairo_t *cr;
+
+	update_rect.x = (x>0?(x-1):0);
+	update_rect.y = (y>0?(y-1):0);
+	update_rect.width = 1;
+	update_rect.height = 1;
+
+	/* Paint to the surface, where we store our state */
+	cr = cairo_create (pLcdSurface);
+	cairo_set_source_rgb (cr, (double)((color>>16)&0xFF)/(double)255,
+							  (double)((color>>8 )&0xFF)/(double)255,
+							  (double)((color>>0 )&0xFF)/(double)255);
+	gdk_cairo_rectangle (cr, &update_rect);
+	cairo_fill (cr);
+
+	cairo_destroy (cr);
+
+	/* Now invalidate the affected region of the drawing area. */
+	gdk_window_invalidate_rect (gtk_widget_get_window (pLcd),
+							  &update_rect,
+							  FALSE);
+}
+
+static gboolean Refresh(gpointer data)
+{
+	uint32_t x,y;
+
+	for(x=0;x<10;x++)
+	{
+		for(y=0;y<10;y++)
+		{
+			DrawPixel(x,y,sLcd.P[x][y].color);
+		}
+	}
+	return TRUE;
+}
 
 GtkWidget* Lcd(void)
 {
@@ -76,6 +125,9 @@ GtkWidget* Lcd(void)
 				   G_CALLBACK (scribble_draw), NULL);
 	g_signal_connect (pLcd,"configure-event",
 				   G_CALLBACK (scribble_configure_event), NULL);
+
+//	g_timeout_add(40,Refresh,NULL); // Refresh LCD 25 times each 1s
+//	memset(&sLcd,0,sizeof(&sLcd));
     return frame;
 }
 // =========================== DATAs =================================
