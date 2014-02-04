@@ -27,7 +27,7 @@ void PostTaskHook( void )
 
 void Task10ms(void)
 {
-
+	Lcd_Test();
 	TerminateTask();
 }
 
@@ -37,6 +37,7 @@ void Task20ms(void)
 	app_gauge_20ms_runnable();
 	TerminateTask();
 }
+extern void Lcd_Test(void);
 void Task100ms(void)
 {
 	TerminateTask();

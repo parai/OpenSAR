@@ -32,6 +32,7 @@
 									<listOptionValue builtIn="false" value="/usr/include"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/gtk-3.0"/>
 									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
+									<listOptionValue builtIn="false" value="&quot;D:\usr\opt\gtk\include\cairo&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1899998887" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -45,6 +46,7 @@
 									<listOptionValue builtIn="false" value="/usr/include/glib-2.0"/>
 									<listOptionValue builtIn="false" value="/usr/include"/>
 									<listOptionValue builtIn="false" value="/usr/local/include/gtk-3.0"/>
+									<listOptionValue builtIn="false" value="&quot;D:\usr\opt\gtk\include\cairo&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1318009084" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
