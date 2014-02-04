@@ -3,28 +3,17 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <assert.h>
-#include <string.h>
 
 // ===================================== MACROs    =======================================
 #define LCD_WIDTH   800
 #define LCD_HEIGHT  600
 // ===================================== TYPEs     =======================================
-typedef struct
-{
-	uint32_t color;
-}tPixel;
 
-typedef struct
-{
-	tPixel P[LCD_WIDTH][LCD_HEIGHT];
-}tLcd;
 // ===================================== DATAs     =======================================
 /* Pixmap for scribble area, to store current scribbles */
 static cairo_surface_t *pLcdSurface = NULL;
 static GtkWidget*       pLcd        = NULL;
 const Font gFont = {10, 14};
-
-static tLcd sLcd;
 
 // ===================================== FUNCTIONs =======================================
 /* Create a new surface of the appropriate size to store our scribbles */
@@ -68,51 +57,7 @@ scribble_draw (GtkWidget *widget,
 
   return FALSE;
 }
-static void DrawPixel( uint32_t x, uint32_t y, uint32_t color )
-{
-	GdkRectangle update_rect;
-	cairo_t *cr;
 
-	update_rect.x = (x>0?(x-1):0);
-	update_rect.y = (y>0?(y-1):0);
-	update_rect.width = 1;
-	update_rect.height = 1;
-	printf("Draw X=%d,Y=%d;\n",x,y);
-
-	/* Paint to the surface, where we store our state */
-	cr = cairo_create (pLcdSurface);
-	cairo_set_source_rgb (cr, (double)((color>>16)&0xFF)/(double)255,
-							  (double)((color>>8 )&0xFF)/(double)255,
-							  (double)((color>>0 )&0xFF)/(double)255);
-	gdk_cairo_rectangle (cr, &update_rect);
-	cairo_fill (cr);
-
-	cairo_destroy (cr);
-}
-static gboolean Refresh(gpointer data)
-{
-	uint32_t x,y;
-	GdkRectangle update_rect;
-
-	for(x=0;x<LCD_WIDTH;x++)
-	{
-		for(y=0;y<LCD_HEIGHT;y++)
-		{
-			DrawPixel(x,y,sLcd.P[x][y].color);
-		}
-	}
-
-	update_rect.x = 0;
-	update_rect.y = 0;
-	update_rect.width = LCD_WIDTH;
-	update_rect.height = LCD_HEIGHT;
-
-	/* Now invalidate the affected region of the drawing area. */
-	gdk_window_invalidate_rect (gtk_widget_get_window (pLcd),
-							  &update_rect,
-							  FALSE);
-	return TRUE;
-}
 GtkWidget* Lcd(void)
 {
 	GtkWidget* frame = gtk_frame_new (NULL);
@@ -131,9 +76,6 @@ GtkWidget* Lcd(void)
 				   G_CALLBACK (scribble_draw), NULL);
 	g_signal_connect (pLcd,"configure-event",
 				   G_CALLBACK (scribble_configure_event), NULL);
-
-	g_timeout_add(40,Refresh,NULL); // Refresh LCD 25 times each 1s
-	memset(&sLcd,0,sizeof(&sLcd));
     return frame;
 }
 // =========================== DATAs =================================
@@ -176,9 +118,28 @@ void LCDD_Fill(uint32_t color)
 
 void LCDD_DrawPixel( uint32_t x, uint32_t y, uint32_t color )
 {
-	assert(x<LCD_WIDTH);
-	assert(y<LCD_HEIGHT);
-	sLcd.P[x][y].color=color;
+	GdkRectangle update_rect;
+	cairo_t *cr;
+
+	update_rect.x = (x>0?(x-1):0);
+	update_rect.y = (y>0?(y-1):0);
+	update_rect.width = 1;
+	update_rect.height = 1;
+
+	/* Paint to the surface, where we store our state */
+	cr = cairo_create (pLcdSurface);
+	cairo_set_source_rgb (cr, (double)((color>>16)&0xFF)/(double)255,
+							  (double)((color>>8 )&0xFF)/(double)255,
+							  (double)((color>>0 )&0xFF)/(double)255);
+	gdk_cairo_rectangle (cr, &update_rect);
+	cairo_fill (cr);
+
+	cairo_destroy (cr);
+
+	/* Now invalidate the affected region of the drawing area. */
+	gdk_window_invalidate_rect (gtk_widget_get_window (pLcd),
+							  &update_rect,
+							  FALSE);
 }
 
 void LCDD_DrawLine( uint32_t sX, uint32_t sY, uint32_t oX, uint32_t oY, uint32_t color )
