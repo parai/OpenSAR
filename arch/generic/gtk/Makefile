@@ -168,7 +168,12 @@ GtkCom:$(GtkCom-obj)
 	@$(LD) $(GtkCom-obj) -o $(OUT)/GtkCom $(LDFLGS)	
 	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCom.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
-
+GtkGimp-dir-y = $(BD)/arch/generic/gtk/drivers/tool/Lcd/src
+GtkGimp-obj = $(subst .c,.o,$(foreach x,$(GtkGimp-dir-y),$(wildcard $(addprefix $(x)/*,.c))))	
+GtkGimp:$(GtkGimp-obj)
+	@$(LD) $(GtkGimp-obj) -o $(OUT)/GtkGimp $(LDFLGS)	
+	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkGimp.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
+	
 GtkCan-dir-y = $(BD)/arch/generic/gtk/drivers/tool/Can/src
 GtkCan-obj = $(subst .c,.o,$(foreach x,$(GtkCan-dir-y),$(wildcard $(addprefix $(x)/*,.c))))	
 GtkCan:$(GtkCan-obj)
@@ -186,8 +191,9 @@ Flash.img:$(OUT)/Flash.img
 	
 $(OUT)/GtkCan:GtkCan
 $(OUT)/GtkCom:GtkCom
+$(OUT)/GtkGimp:GtkGimp
 
-tool:$(OUT)/GtkCan $(OUT)/GtkCom
+tool:$(OUT)/GtkCan $(OUT)/GtkCom $(OUT)/GtkGimp
 	@echo ">>>>>>>>>>>>>>>>>  BUILD TOOL DONE   <<<<<<<<<<<<<<<<<<<<<<"
 	
 run:Flash.img

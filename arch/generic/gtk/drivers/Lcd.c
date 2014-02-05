@@ -11,7 +11,7 @@
 #define LCD_IMAGE        0
 #define LCD_DRAWING_AREA 1
 #define cfgLcdHandle   LCD_DRAWING_AREA
-#define LCD_WIDTH   800
+#define LCD_WIDTH   1024
 #define LCD_HEIGHT  600
 // ===================================== TYPEs     =======================================
 typedef struct
@@ -127,9 +127,10 @@ void LCDD_Fill(uint32_t color)
 
 void LCDD_DrawPixel( uint32_t x, uint32_t y, uint32_t color )
 {
-	assert(x<LCD_WIDTH);
-	assert(y<LCD_HEIGHT);
-	sLcd.P[x][y].color = color;
+	if((x<LCD_WIDTH) && (y<LCD_HEIGHT))
+	{
+		sLcd.P[x][y].color = color;
+	}
 }
 
 void LCDD_DrawLine( uint32_t sX, uint32_t sY, uint32_t oX, uint32_t oY, uint32_t color )
@@ -366,6 +367,26 @@ void LCDD_GetStringSize( const uint8_t *pString, uint32_t *pWidth, uint32_t *pHe
         *pHeight = height ;
     }
 }
+void LCDD_DrawImage( uint32_t dwX, uint32_t dwY, const uint8_t *pImage, uint32_t dwWidth, uint32_t dwHeight )
+{
+    uint32_t dwColor ;
+
+	for(uint32_t Y=dwY;Y<(dwY+dwHeight);Y++)
+	{
+		for(uint32_t X=dwX;X<(dwX+dwWidth);X++)
+		{
+			dwColor = ((uint32_t)pImage[0]<<16) + ((uint32_t)pImage[1]<<8) + (pImage[2]);
+			LCDD_DrawPixel(X,Y,dwColor);
+			pImage = pImage+3;
+		}
+	}
+}
+
+void LCDD_DrawGIMPImage( uint32_t dwX, uint32_t dwY, const SGIMPImage* pGIMPImage )
+{
+    LCDD_DrawImage(dwX,dwY,pGIMPImage->pucPixel_data,pGIMPImage->dwWidth,pGIMPImage->dwHeight);
+}
+
 void Lcd_Test(void)
 {
 	static unsigned int caller=0;
@@ -391,6 +412,11 @@ void Lcd_Test(void)
 	else if(50==caller)
 	{
 		LCDD_DrawStringWithBGColor(50,50,(const uint8*)"Hello World!\nMy Baby!",COLOR_CYAN,COLOR_RED);
+	}
+	else if(60==caller)
+	{
+		LCDD_DrawGIMPImage(50,50,pGIMPImage[0]);
+		LCDD_DrawGIMPImage(300,50,pGIMPImage[1]);
 	}
 	else if(2000 == caller)
 	{

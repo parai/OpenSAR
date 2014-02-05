@@ -55,9 +55,18 @@ typedef struct _Font {
 	uint8_t height;
 } Font;
 
+typedef struct _SGIMPImage
+{
+  uint32_t dwWidth;
+  uint32_t dwHeight;
+  uint32_t dwBytes_per_pixel; /* 3:RGB, 4:RGBA(not-support) */
+  uint8_t* pucPixel_data ;
+} SGIMPImage ;
+
 // ===================================== DATAs     =======================================
 extern const uint8_t pCharset10x14[] ;
 extern const Font gFont;
+extern const SGIMPImage* pGIMPImage[];
 
 // ===================================== FUNCTIONs =======================================
 extern void LCDD_Initialize(void);
@@ -76,7 +85,7 @@ extern void LCDD_DrawString( uint32_t x, uint32_t y, const uint8_t *pString, uin
 extern void LCDD_DrawStringWithBGColor( uint32_t x, uint32_t y, const uint8_t *pString, uint32_t fontColor, uint32_t bgColor ) ;
 extern void LCDD_GetStringSize( const uint8_t *pString, uint32_t *pWidth, uint32_t *pHeight ) ;
 extern void LCDD_DrawImage( uint32_t x, uint32_t y, const uint8_t *pImage, uint32_t width, uint32_t height ) ;
-//extern void LCDD_DrawGIMPImage( uint32_t dwX, uint32_t dwY, const SGIMPImage* pGIMPImage );
+extern void LCDD_DrawGIMPImage( uint32_t dwX, uint32_t dwY, const SGIMPImage* pGIMPImage );
 extern void LCDD_ClearWindow( uint32_t dwX, uint32_t dwY, uint32_t dwWidth, uint32_t dwHeight, uint32_t dwColor ) ;
 
 extern void LCDD_DrawChar( uint32_t x, uint32_t y, uint8_t c, uint32_t color ) ;
