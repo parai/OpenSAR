@@ -5,6 +5,7 @@
 # System: Linux Windows
 SYSTEM=Windows
 GTK_VERSION=3.0
+USE_GUI=TRUE
 
 #output EXE
 ifeq ($(SYSTEM),Linux)
@@ -77,9 +78,12 @@ INCDIR = 	$(Gtk-INC)				\
 			-I$(BD)/system/SchM			\
 			-I$(BD)/diagnostic/Dcm		\
 			-I$(BD)/communication/Com
-
+ifeq ($(USE_GUI),TRUE)
+INCDIR += 	-I$(BD)/system/Gui/include
+endif
 MACROS = 	$(Gtk-Macros)		\
 			-DWIN32 			\
+			-D_WIN32			\
 			-DAUTOSAR_SIMULATOR	\
 			-DUSE_DEBUG_PRINTF	\
 			-DUSE_ECUM		\
@@ -133,6 +137,9 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/memory/MemIf			\
 		$(BD)/system/Crc
 		
+ifeq ($(USE_GUI),TRUE)
+dir-y += 	$(BD)/system/Gui
+endif
 src-y = $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.c)))
 obj-y = $(subst .c,.o,$(src-y))	
 

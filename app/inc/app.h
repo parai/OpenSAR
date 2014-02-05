@@ -24,6 +24,7 @@
 #if defined(WIN32)
 #include "Stmo.h"
 #endif
+#include "Gui.h"
 
 #include "Diag.h"
 

@@ -133,6 +133,14 @@ void LCDD_DrawPixel( uint32_t x, uint32_t y, uint32_t color )
 	}
 }
 
+uint32_t LCDD_ReadPixel( uint32_t x, uint32_t y )
+{
+	if((x<LCD_WIDTH) && (y<LCD_HEIGHT))
+	{
+		return sLcd.P[x][y].color;
+	}
+}
+
 void LCDD_DrawLine( uint32_t sX, uint32_t sY, uint32_t oX, uint32_t oY, uint32_t color )
 {   //                      oY - sY
 	// Y = k(X-sX) + sX = ----------- (X - sX) + sY
