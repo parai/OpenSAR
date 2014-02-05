@@ -73,7 +73,7 @@ extern void LCDD_DrawRectangle( uint32_t dwX, uint32_t dwY, uint32_t dwWidth, ui
 extern void LCDD_DrawRectangleWithFill( uint32_t dwX, uint32_t dwY, uint32_t dwWidth, uint32_t dwHeight, uint32_t dwColor ) ;
 extern void LCDD_DrawCircle( uint32_t x, uint32_t y, uint32_t r, uint32_t color ) ;
 extern void LCDD_DrawString( uint32_t x, uint32_t y, const uint8_t *pString, uint32_t color ) ;
-extern void LCDD_DrawStringWithBGColor( uint32_t x, uint32_t y, const char *pString, uint32_t fontColor, uint32_t bgColor ) ;
+extern void LCDD_DrawStringWithBGColor( uint32_t x, uint32_t y, const uint8_t *pString, uint32_t fontColor, uint32_t bgColor ) ;
 extern void LCDD_GetStringSize( const uint8_t *pString, uint32_t *pWidth, uint32_t *pHeight ) ;
 extern void LCDD_DrawImage( uint32_t x, uint32_t y, const uint8_t *pImage, uint32_t width, uint32_t height ) ;
 //extern void LCDD_DrawGIMPImage( uint32_t dwX, uint32_t dwY, const SGIMPImage* pGIMPImage );

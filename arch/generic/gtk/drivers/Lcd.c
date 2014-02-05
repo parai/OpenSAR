@@ -6,6 +6,11 @@
 #include <string.h>
 
 // ===================================== MACROs    =======================================
+// 0 --> use GtkImage
+// 1 --> use GtkDrawingArea  : this is more powerful, so use this
+#define LCD_IMAGE        0
+#define LCD_DRAWING_AREA 1
+#define cfgLcdHandle   LCD_DRAWING_AREA
 #define LCD_WIDTH   800
 #define LCD_HEIGHT  600
 // ===================================== TYPEs     =======================================
@@ -26,6 +31,16 @@ const Font gFont = {10, 14};
 static tLcd sLcd;
 
 // ===================================== FUNCTIONs =======================================
+#if(cfgLcdHandle == LCD_DRAWING_AREA)
+static gboolean scribble_draw (GtkWidget *widget,
+         cairo_t   *cr,
+         gpointer   data)
+{
+	gdk_cairo_set_source_pixbuf (cr, pLcdImage, 0, 0);
+	cairo_paint (cr);
+	return TRUE;
+}
+#endif
 static gboolean Refresh(gpointer data)
 {
 	uint32_t x,y;
@@ -60,7 +75,12 @@ static gboolean Refresh(gpointer data)
 			p[2] = (color>>0 )&0xFF; // blue
 		}
 	}
+#if(cfgLcdHandle == LCD_DRAWING_AREA)
+	gtk_widget_queue_draw (pLcd);
+#else
 	gtk_image_set_from_pixbuf(GTK_IMAGE(pLcd),pLcdImage);
+#endif
+
 	return TRUE;
 }
 
@@ -76,8 +96,14 @@ GtkWidget* Lcd(void)
 
 	pLcdImage = gdk_pixbuf_new(GDK_COLORSPACE_RGB,FALSE,8,LCD_WIDTH,LCD_HEIGHT);
 
+#if(cfgLcdHandle == LCD_DRAWING_AREA)
+	pLcd = gtk_drawing_area_new ();
+	gtk_widget_set_size_request (pLcd, LCD_WIDTH, LCD_HEIGHT);
+	g_signal_connect (pLcd, "draw",
+	                        G_CALLBACK (scribble_draw), NULL);
+#else
 	pLcd = gtk_image_new();
-
+#endif
 	gtk_box_pack_start(GTK_BOX(pBox),pLcd,FALSE,FALSE,0);
 
 	return pBox;
@@ -285,7 +311,7 @@ void LCDD_DrawString( uint32_t x, uint32_t y, const uint8_t *pString, uint32_t c
     }
 }
 
-void LCDD_DrawStringWithBGColor( uint32_t x, uint32_t y, const char *pString, uint32_t fontColor, uint32_t bgColor )
+void LCDD_DrawStringWithBGColor( uint32_t x, uint32_t y, const uint8_t *pString, uint32_t fontColor, uint32_t bgColor )
 {
     unsigned xorg = x;
 

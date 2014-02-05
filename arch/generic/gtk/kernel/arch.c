@@ -236,7 +236,7 @@ int main( int argc, char *argv[] )
 	gtk_box_pack_start(GTK_BOX(pBox),Notebook(),FALSE,FALSE,0);
 
 	gtk_widget_show_all (pWindow);
-
+	g_signal_connect (pWindow, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 	arch_init_daemon();
 	gtk_main ();
 
