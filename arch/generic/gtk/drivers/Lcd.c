@@ -16,145 +16,71 @@ typedef struct
 
 typedef struct
 {
-	tPixel P[LCD_WIDTH+1][LCD_HEIGHT+1];
+	tPixel P[LCD_WIDTH][LCD_HEIGHT];
 }tLcd;
 // ===================================== DATAs     =======================================
 /* Pixmap for scribble area, to store current scribbles */
-static cairo_surface_t *pLcdSurface = NULL;
 static GtkWidget*       pLcd        = NULL;
-static GdkPixbuf*       pPixbuf     = NULL;
+static GdkPixbuf*       pLcdImage   = NULL;
 const Font gFont = {10, 14};
 static tLcd sLcd;
 
 // ===================================== FUNCTIONs =======================================
-/* Create a new surface of the appropriate size to store our scribbles */
-static gboolean
-scribble_configure_event (GtkWidget         *widget,
-                          GdkEventConfigure *event,
-                          gpointer           data)
-{
-  GtkAllocation allocation;
-  cairo_t *cr;
-
-  if (pLcdSurface)
-    cairo_surface_destroy (pLcdSurface);
-
-  gtk_widget_get_allocation (widget, &allocation);
-  pLcdSurface = gdk_window_create_similar_surface (gtk_widget_get_window (widget),
-                                               CAIRO_CONTENT_COLOR,
-                                               allocation.width,
-                                               allocation.height);
-
-  /* Initialize the surface to white */
-  cr = cairo_create (pLcdSurface);
-
-  cairo_set_source_rgb (cr, 1, 1, 1);
-  cairo_paint (cr);
-
-  cairo_destroy (cr);
-
-  /* We've handled the configure event, no need for further processing. */
-  return TRUE;
-}
-
-/* Redraw the screen from the surface */
-static gboolean
-scribble_draw (GtkWidget *widget,
-               cairo_t   *cr,
-               gpointer   data)
-{
-  cairo_set_source_surface (cr, pLcdSurface, 0, 0);
-  cairo_paint (cr);
-
-  return FALSE;
-}
-static void DrawPixel (GdkPixbuf *pixbuf, uint32_t x, uint32_t y, uint32_t color)
-{
-  int width, height, rowstride, n_channels;
-  guchar *pixels, *p;
-
-  n_channels = gdk_pixbuf_get_n_channels (pixbuf);
-
-  g_assert (gdk_pixbuf_get_colorspace (pixbuf) == GDK_COLORSPACE_RGB);
-  g_assert (gdk_pixbuf_get_bits_per_sample (pixbuf) == 8);
-  g_assert (gdk_pixbuf_get_has_alpha (pixbuf));
-  g_assert (n_channels == 4);
-
-  width = gdk_pixbuf_get_width (pixbuf);
-  height = gdk_pixbuf_get_height (pixbuf);
-
-  g_assert (x >= 0 && x < width);
-  g_assert (y >= 0 && y < height);
-
-  rowstride = gdk_pixbuf_get_rowstride (pixbuf);
-  pixels = gdk_pixbuf_get_pixels (pixbuf);
-
-  p = pixels + y * rowstride + x * n_channels;
-  p[0] = (color>>16)&0xFF; // red
-  p[1] = (color>>8 )&0xFF; // green
-  p[2] = (color>>0 )&0xFF; // blue
-  p[3] = (color>>24)&0xFF; // alpha
-}
 static gboolean Refresh(gpointer data)
 {
 	uint32_t x,y;
+	int width, height, rowstride, n_channels;
+	guchar *pixels, *p;
 
-	for(x=0;x<10;x++)
+	n_channels = gdk_pixbuf_get_n_channels (pLcdImage);
+
+	g_assert (gdk_pixbuf_get_colorspace (pLcdImage) == GDK_COLORSPACE_RGB);
+	g_assert (gdk_pixbuf_get_bits_per_sample (pLcdImage) == 8);
+
+	g_assert (!gdk_pixbuf_get_has_alpha (pLcdImage));
+	g_assert (n_channels == 3);
+
+	width = gdk_pixbuf_get_width (pLcdImage);
+	height = gdk_pixbuf_get_height (pLcdImage);
+
+	g_assert (LCD_WIDTH==width);
+	g_assert (LCD_HEIGHT==height);
+
+	rowstride = gdk_pixbuf_get_rowstride (pLcdImage);
+	pixels = gdk_pixbuf_get_pixels (pLcdImage);
+
+	for(x=0;x<LCD_WIDTH;x++)
 	{
-		for(y=0;y<10;y++)
+		for(y=0;y<LCD_HEIGHT;y++)
 		{
-			DrawPixel(pPixbuf,x,y,sLcd.P[x][y].color);
+			uint32_t color = sLcd.P[x][y].color;
+			p = pixels + y * rowstride + x * n_channels;
+			p[0] = (color>>16)&0xFF; // red
+			p[1] = (color>>8 )&0xFF; // green
+			p[2] = (color>>0 )&0xFF; // blue
 		}
 	}
-	{
-		GdkRectangle update_rect;
-		cairo_t *cr;
-
-		update_rect.x = 0;
-		update_rect.y = 0;
-		update_rect.width = LCD_WIDTH;
-		update_rect.height = LCD_HEIGHT;
-
-		/* Paint to the surface, where we store our state */
-		cr = cairo_create (pLcdSurface);
-		gdk_cairo_set_source_pixbuf(cr,pPixbuf,0,0);
-
-		cairo_destroy (cr);
-
-		/* Now invalidate the affected region of the drawing area. */
-		gdk_window_invalidate_rect (gtk_widget_get_window (pLcd),
-								  &update_rect,
-								  FALSE);
-	}
-//	g_object_unref(pPixbuf);
+	gtk_image_set_from_pixbuf(GTK_IMAGE(pLcd),pLcdImage);
 	return TRUE;
 }
 
 GtkWidget* Lcd(void)
 {
-	GtkWidget* frame = gtk_frame_new (NULL);
-    gtk_frame_set_shadow_type (GTK_FRAME (frame), GTK_SHADOW_IN);
+	GtkWidget* pBox;
+	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+	gtk_box_set_homogeneous(GTK_BOX(pBox),FALSE);
 
-    pLcd = gtk_drawing_area_new ();
-
-    /* set a minimum size */
-    gtk_widget_set_size_request (pLcd, LCD_WIDTH, LCD_HEIGHT);
-
-    gtk_container_add (GTK_CONTAINER (frame), pLcd);
-
-	/* Signals used to handle backing surface */
-
-	g_signal_connect (pLcd, "draw",
-				   G_CALLBACK (scribble_draw), NULL);
-	g_signal_connect (pLcd,"configure-event",
-				   G_CALLBACK (scribble_configure_event), NULL);
-
-	g_timeout_add(40,Refresh,NULL); // Refresh LCD 25 times each 1s
 	memset(&sLcd,0,sizeof(&sLcd));
 
-	pPixbuf=gdk_pixbuf_new(GDK_COLORSPACE_RGB,TRUE,8,LCD_WIDTH,LCD_HEIGHT);
+	g_timeout_add(40,Refresh,NULL); // Refresh LCD 25 times each 1s
 
-    return frame;
+	pLcdImage = gdk_pixbuf_new(GDK_COLORSPACE_RGB,FALSE,8,LCD_WIDTH,LCD_HEIGHT);
+
+	pLcd = gtk_image_new();
+
+	gtk_box_pack_start(GTK_BOX(pBox),pLcd,FALSE,FALSE,0);
+
+	return pBox;
 }
 // =========================== DATAs =================================
 
@@ -170,60 +96,14 @@ void LCDD_Off(void)
 
 void LCDD_Fill(uint32_t color)
 {
-	GdkRectangle update_rect;
-	cairo_t *cr;
-
-	update_rect.x = 0;
-	update_rect.y = 0;
-	update_rect.width = LCD_WIDTH;
-	update_rect.height = LCD_HEIGHT;
-
-	/* Paint to the surface, where we store our state */
-	cr = cairo_create (pLcdSurface);
-	cairo_set_source_rgb (cr, (double)((color>>16)&0xFF)/(double)255,
-							  (double)((color>>8 )&0xFF)/(double)255,
-							  (double)((color>>0 )&0xFF)/(double)255);
-	gdk_cairo_rectangle (cr, &update_rect);
-	cairo_fill (cr);
-
-	cairo_destroy (cr);
-
-	/* Now invalidate the affected region of the drawing area. */
-	gdk_window_invalidate_rect (gtk_widget_get_window (pLcd),
-							  &update_rect,
-							  FALSE);
+	LCDD_DrawRectangleWithFill(0,0,LCD_WIDTH,LCD_HEIGHT,color);
 }
 
 void LCDD_DrawPixel( uint32_t x, uint32_t y, uint32_t color )
 {
-#if  1
-	assert(x<=LCD_WIDTH);
-	assert(y<=LCD_HEIGHT);
+	assert(x<LCD_WIDTH);
+	assert(y<LCD_HEIGHT);
 	sLcd.P[x][y].color = color;
-#else
-	GdkRectangle update_rect;
-	cairo_t *cr;
-
-	update_rect.x = (x>0?(x-1):0);
-	update_rect.y = (y>0?(y-1):0);
-	update_rect.width = 1;
-	update_rect.height = 1;
-
-	/* Paint to the surface, where we store our state */
-	cr = cairo_create (pLcdSurface);
-	cairo_set_source_rgb (cr, (double)((color>>16)&0xFF)/(double)255,
-							  (double)((color>>8 )&0xFF)/(double)255,
-							  (double)((color>>0 )&0xFF)/(double)255);
-	gdk_cairo_rectangle (cr, &update_rect);
-	cairo_fill (cr);
-
-	cairo_destroy (cr);
-
-	/* Now invalidate the affected region of the drawing area. */
-	gdk_window_invalidate_rect (gtk_widget_get_window (pLcd),
-							  &update_rect,
-							  FALSE);
-#endif
 }
 
 void LCDD_DrawLine( uint32_t sX, uint32_t sY, uint32_t oX, uint32_t oY, uint32_t color )
@@ -278,28 +158,13 @@ void LCDD_DrawRectangle( uint32_t dwX, uint32_t dwY, uint32_t dwWidth, uint32_t 
 }
 void LCDD_DrawRectangleWithFill( uint32_t dwX, uint32_t dwY, uint32_t dwWidth, uint32_t dwHeight, uint32_t dwColor )
 {
-	GdkRectangle update_rect;
-	cairo_t *cr;
-
-	update_rect.x = dwX;
-	update_rect.y = dwY;
-	update_rect.width = dwWidth;
-	update_rect.height = dwHeight;
-
-	/* Paint to the surface, where we store our state */
-	cr = cairo_create (pLcdSurface);
-	cairo_set_source_rgb (cr, (double)((dwColor>>16)&0xFF)/(double)255,
-							  (double)((dwColor>>8 )&0xFF)/(double)255,
-							  (double)((dwColor>>0 )&0xFF)/(double)255);
-	gdk_cairo_rectangle (cr, &update_rect);
-	cairo_fill (cr);
-
-	cairo_destroy (cr);
-
-	/* Now invalidate the affected region of the drawing area. */
-	gdk_window_invalidate_rect (gtk_widget_get_window (pLcd),
-							  &update_rect,
-							  FALSE);
+	for(uint32_t X=dwX;X<(dwX+dwWidth);X++)
+	{
+		for(uint32_t Y=dwY;Y<(dwY+dwHeight);Y++)
+		{
+			LCDD_DrawPixel(X,Y,dwColor);
+		}
+	}
 }
 
 void LCDD_DrawCircle( uint32_t x, uint32_t y, uint32_t r, uint32_t color )
@@ -481,29 +346,29 @@ void Lcd_Test(void)
 	caller ++;
 	if(10 == caller)
 	{
-//		LCDD_On();
+		LCDD_On();
 	}
 	else if(20==caller)
 	{
 		LCDD_DrawString(0,0,(const uint8*)"Start to learn something about LCD GUI,Welcome!",COLOR_CYAN);
-		//LCDD_DrawRectangle(5,3,50,30,0x000000);
+		LCDD_DrawRectangle(5,3,50,30,COLOR_BEIGE);
 	}
 	else if(30==caller)
 	{
 		LCDD_DrawString(0,20,(const uint8*)"~`@#$%^&*()_+-=[]{}\\|<>,./?",COLOR_CYAN);
-		//LCDD_DrawRectangleWithFill(50,30,50,30,0x334455);
+		LCDD_DrawRectangleWithFill(50,30,50,30,COLOR_GOLD);
 	}
 	else if(40==caller)
 	{
-		//LCDD_DrawCircle(100,100,70,0x334455);
+		LCDD_DrawCircle(100,100,70,COLOR_SKYBLUE);
 	}
 	else if(50==caller)
 	{
-		LCDD_DrawString(50,50,(const uint8*)"Hello World!\nMy Baby!",COLOR_CYAN);
+		LCDD_DrawStringWithBGColor(50,50,(const uint8*)"Hello World!\nMy Baby!",COLOR_CYAN,COLOR_RED);
 	}
 	else if(2000 == caller)
 	{
-		//LCDD_Off();
+		LCDD_Off();
 		caller = 0;
 	}
 }
