@@ -7,14 +7,15 @@ typedef struct
 	uint8  head;
 	uint8  tail;
 	uint32 length;
+	uint32 start; // start degree
 	uint32 color;
 }Gui_PointerType;
 
 void DrawPointer(const GuiWidget_Type* widget)
 {
 	GuiWidgetContext_Type* pContext = widget->pContext;
-	uint32 degree = (pContext->degree%360);
 	const Gui_PointerType* pointer = widget->data;
+	uint32 degree = (pContext->degree+pointer->start)%360;
 	for(uint32 r=pointer->head;r<pointer->head+7;r++)
 	{
 		LCDD_DrawCircle(widget->center.x,widget->center.y,r,pointer->color);
@@ -50,12 +51,14 @@ static const Gui_PointerType Pointers[2] =
 		.head = 10,
 		.tail = 2,
 		.length =70,
+		.start = 123-10,
 		.color = 0xD63441
 	},
 	{
 		.head = 10,
 		.tail = 2,
 		.length =80,
+		.start = 144-10,
 		.color = 0x7453A2
 	}
 };

@@ -3,6 +3,7 @@
 #include <assert.h>
 #include <stdio.h>
 #include "Stmo.h"
+#include "Gui.h"
 // ====================== LOCAL TYPE  =========================
 typedef struct
 {
@@ -49,7 +50,7 @@ cleanup:
 	return ercd;
 }
 
-// Period In 1ms
+// Period better In 1ms
 void Stmo_MainFunction(void)
 {
 	for(int i=0;i<STMO_CFG_NUM;i++)
@@ -82,6 +83,20 @@ void Stmo_MainFunction(void)
 			{
 				StmoCtrl[i].Current = StmoCtrl[i].Command;
 			}
+		}
+	}
+	for(int i=0;i<STMO_CFG_NUM;i++)
+	{
+		switch(i)
+		{
+			case STMO_ID_SPEED:
+				Gui_SetWidgetDegree(GUI_W_SPEED_P,StmoCtrl[i].Current/100);
+				break;
+			case STMO_ID_TACHO:
+				Gui_SetWidgetDegree(GUI_W_TACHO_P,StmoCtrl[i].Current/100);
+				break;
+			default:
+				break;
 		}
 	}
 }

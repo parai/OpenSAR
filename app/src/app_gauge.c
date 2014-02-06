@@ -15,6 +15,7 @@ static void Refresh(void)
 	// Range of Signal[0, 28000]km, unit in 0.01 km
 	Degree = ((uint32)VehicleSpeed*(uint32)285/(uint32)280);
 	Stmo_SetPosDegree(STMO_ID_SPEED,Degree);
+
 	Degree = ((uint32)TachoSpeed*(uint32)250/(uint32)100);
 	Stmo_SetPosDegree(STMO_ID_TACHO,Degree);
 #endif

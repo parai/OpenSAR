@@ -167,6 +167,10 @@ static GtkWidget*  Notebook(void)
 void OsIdle(void)
 {
 }
+boolean arch_is_paused(void)
+{
+	return isPaused;
+}
 imask_t arch_save_int(void)
 {
 	return 0;

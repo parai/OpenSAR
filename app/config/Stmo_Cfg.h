@@ -5,7 +5,7 @@
 #define STMO_MAX_DEGREE  (36000)
 #define STMO_ONE_DEGREE  (100)
 
-#define STMO_ONE_STEP    (25)  // Degree Change in 1 Stmo_MainFunction call
+#define STMO_ONE_STEP    (250*2)  // Degree Change in 1 Stmo_MainFunction call
 
 typedef enum
 {

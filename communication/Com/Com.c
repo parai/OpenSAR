@@ -374,9 +374,11 @@ static void on_entry_activate(GtkEntry *entry,gpointer data)
 		Update(Signal->ComIPduHandleId,Signal->ComBitPosition,Signal->ComBitSize,max);
 	}
 }
+extern boolean arch_is_paused(void);
 static gboolean simulator(gpointer data)
 {
-	if(NULL == ComConfig)
+	if( (NULL == ComConfig) ||
+		(arch_is_paused()) )
 	{
 		return TRUE;
 	}

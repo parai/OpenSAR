@@ -30,15 +30,16 @@ void PostTaskHook( void )
 
 void Task10ms(void)
 {
+//	static uint32 degree = 0;
+//	degree += 2;
+//	Gui_SetWidgetDegree(GUI_W_SPEED_P,degree);
+//	Gui_SetWidgetDegree(GUI_W_TACHO_P,degree);
+	Stmo_MainFunction();
 	TerminateTask();
 }
 
 void Task20ms(void)
 {
-	static uint32 degree = 0;
-	degree += 2;
-	Gui_SetWidgetDegree(2,degree);
-	Gui_SetWidgetDegree(3,degree);
 	app_led_20ms_runnable();
 	app_gauge_20ms_runnable();
 	TerminateTask();
