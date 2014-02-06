@@ -28,14 +28,12 @@ static void Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPositio
 
 		pX[0] += center2->x*(1-cos(O)) + center2->y*sin(O);
 		pY[0] -= center2->x*sin(O)     - center2->y*(1-cos(O));
-
-
 	}
 }
 static void Draw(uint32 Widget)
 {
 	GuiWidgetContext_Type* pContext = pConfig->widgets[Widget].pContext;
-	const GuiImage_Type*     image = pConfig->widgets[Widget].image;
+	const GuiImage_Type*     image = pConfig->widgets[Widget].data;
 	uint32 degree = (pContext->degree%360);
 	if(0u == degree)
 	{
@@ -56,6 +54,7 @@ static void Draw(uint32 Widget)
 				Calc(&tX,&tY,&(pContext->area.top_left),&(pConfig->widgets[Widget].center),degree);
 				uint32 dwColor = ((uint32_t)pImage[0]<<16) + ((uint32_t)pImage[1]<<8) + (pImage[2]);
 				LCDD_DrawPixel(tX,tY,dwColor);
+				LCDD_DrawPixel(tX,tY+1,dwColor);
 				pImage = pImage+3;
 			}
 		}
@@ -66,7 +65,7 @@ void Gui_Init(const GuiConfig_Type* config)
 	pConfig = config;
 	for(uint32 W=0;W<(pConfig->number);W++)
 	{
-		GuiWidget_Type* pWidget = &(pConfig->widgets[W]);
+		const GuiWidget_Type* pWidget = &(pConfig->widgets[W]);
 		memcpy(pWidget->pContext,&(pWidget->defaultContext),sizeof(GuiWidgetContext_Type));
 	}
 }
@@ -117,6 +116,11 @@ Std_ReturnType Gui_SetWidgetLayer(uint32 id,uint8 layer)
 	}
 	return ercd;
 }
+
+void Gui_Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPosition_Type* center2,uint32 degree)
+{
+	Calc(pX,pY,center,center2,degree);
+}
 void Gui_MainFunction(void)
 {
 	LCDD_On();
@@ -126,10 +130,21 @@ void Gui_MainFunction(void)
 		{
 			for(uint32 W=0;W<pConfig->number;W++)
 			{
-				GuiWidgetContext_Type* pContext = pConfig->widgets[W].pContext;
+				const GuiWidget_Type* pWidget = &pConfig->widgets[W];
+				GuiWidgetContext_Type* pContext = pWidget->pContext;
 				if(layer == pContext->layer)
 				{
-					Draw(W);
+					if(NULL == pWidget->draw)
+					{
+						if(NULL != pWidget->data)
+						{
+							Draw(W);
+						}
+					}
+					else
+					{
+						pWidget->draw(pWidget);
+					}
 				}
 			}
 		}

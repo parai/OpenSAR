@@ -35,6 +35,10 @@ void Task10ms(void)
 
 void Task20ms(void)
 {
+	static uint32 degree = 0;
+	degree += 2;
+	Gui_SetWidgetDegree(2,degree);
+	Gui_SetWidgetDegree(3,degree);
 	app_led_20ms_runnable();
 	app_gauge_20ms_runnable();
 	TerminateTask();
@@ -48,9 +52,6 @@ void Task100ms(void)
 
 void Task1000ms(void)
 {
-	static uint32 degree = 0;
-	degree += 10;
-	Gui_SetWidgetDegree(0,degree);
 	app_led_1000ms_runnable();
 	app_time_1000ms_runnable();
 	app_nvm_1000ms_runnable();
