@@ -30,9 +30,6 @@ void PostTaskHook( void )
 
 void Task10ms(void)
 {
-	Gui_SetWidgetImage(0,(GuiImage_Type*)pGIMPImage[0]);
-	Gui_SetWidgetArea(0,0,0,100,100);
-	Gui_SetWidgetLayer(0,0);
 	TerminateTask();
 }
 
@@ -51,6 +48,9 @@ void Task100ms(void)
 
 void Task1000ms(void)
 {
+	static uint32 degree = 0;
+	degree += 10;
+	Gui_SetWidgetDegree(0,degree);
 	app_led_1000ms_runnable();
 	app_time_1000ms_runnable();
 	app_nvm_1000ms_runnable();

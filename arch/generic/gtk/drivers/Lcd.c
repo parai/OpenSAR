@@ -423,8 +423,8 @@ void Lcd_Test(void)
 	}
 	else if(60==caller)
 	{
-		LCDD_DrawGIMPImage(50,50,pGIMPImage[0]);
-		LCDD_DrawGIMPImage(300,50,pGIMPImage[1]);
+//		LCDD_DrawGIMPImage(50,50,pGIMPImage[0]);
+//		LCDD_DrawGIMPImage(300,50,pGIMPImage[1]);
 	}
 	else if(2000 == caller)
 	{

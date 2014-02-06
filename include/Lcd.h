@@ -66,7 +66,6 @@ typedef struct _SGIMPImage
 // ===================================== DATAs     =======================================
 extern const uint8_t pCharset10x14[] ;
 extern const Font gFont;
-extern const SGIMPImage* pGIMPImage[];
 
 // ===================================== FUNCTIONs =======================================
 extern void LCDD_Initialize(void);

@@ -1,16 +1,10 @@
-/*
- * Gui.h
- *
- *  Created on: 2014Äê2ÔÂ5ÈÕ
- *      Author: Administrator
- */
-
 #ifndef GUI_H_
 #define GUI_H_
 
 // ==================================== INCLUDEs =========================
 #include "Std_Types.h"
 #include "Lcd.h"
+#include <string.h>
 
 // ==================================== MACROs   =========================
 #define GUI_NOT_VISIBLE   0xFF
@@ -38,8 +32,14 @@ typedef struct
 	 * For example: layer 1 is above layer 0.*/
 	uint8              layer;
 	GuiRectangle_Type  area;
-
-	const GuiImage_Type*     image;
+	uint32             degree;  // related to center point, unit in 1 degree
+}GuiWidgetContext_Type;
+typedef struct
+{
+	GuiWidgetContext_Type* pContext;
+	GuiWidgetContext_Type defaultContext;
+	GuiPosition_Type   center;
+	const GuiImage_Type* image;
 }GuiWidget_Type;
 
 typedef struct
@@ -55,6 +55,7 @@ typedef struct
 void Gui_Init(const GuiConfig_Type* config);
 Std_ReturnType Gui_SetWidgetImage(uint32 id,GuiImage_Type* image);
 Std_ReturnType Gui_SetWidgetArea(uint32 id,uint32 x,uint32 y,uint32 width,uint32 height);
+Std_ReturnType Gui_SetWidgetDegree(uint32 id,uint32 degree);
 Std_ReturnType Gui_SetWidgetLayer(uint32 id,uint8 layer);
 void Gui_MainFunction(void);
 
