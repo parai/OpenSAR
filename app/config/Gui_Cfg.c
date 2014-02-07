@@ -1,5 +1,5 @@
 #include "Gui.h"
-
+#include "app.h"
 #include "Lcd_Res/Lcd_Res.c"
 
 typedef struct
@@ -11,7 +11,15 @@ typedef struct
 	uint32 color;
 }Gui_PointerType;
 
-void DrawPointer(const GuiWidget_Type* widget)
+static void DrawSpeedString(const GuiWidget_Type* widget)
+{
+	uint16 VehicleSpeed;
+	uint8 text[32];
+	Com_ReceiveSignal(COM_SID_VehicleSpeed,&VehicleSpeed);
+	sprintf((char*)text,"%3d",VehicleSpeed/100);
+	LCDD_DrawString(75,170,text,COLOR_RED);
+}
+static void DrawPointer(const GuiWidget_Type* widget)
 {
 	GuiWidgetContext_Type* pContext = widget->pContext;
 	const Gui_PointerType* pointer = widget->data;
@@ -38,12 +46,12 @@ void DrawPointer(const GuiWidget_Type* widget)
 			Gui_Calc(&tX,&tY,&(widget->pContext->area.top_left),&(widget->center),degree);
 
 			LCDD_DrawPixel(tX,tY,pointer->color);
-			LCDD_DrawPixel(tX,tY+1,pointer->color);
+			LCDD_DrawPixel(tX-1,tY+1,pointer->color);
 		}
 	}
 }
 
-static GuiWidgetContext_Type Context[4];
+static GuiWidgetContext_Type Context[5];
 
 static const Gui_PointerType Pointers[2] =
 {
@@ -62,19 +70,20 @@ static const Gui_PointerType Pointers[2] =
 		.color = 0x7453A2
 	}
 };
-static const GuiWidget_Type widgets[4]=
+
+static const GuiWidget_Type widgets[]=
 {
 	{
 		.pContext=&Context[0],
 		.defaultContext.layer = 0,
 		.defaultContext.area.top_left.x = 0,
 		.defaultContext.area.top_left.y = 0,
-		.defaultContext.area.width = 0,  // If Zero, use the default of Image
+		.defaultContext.area.width  = 0,  // If Zero, use the default of Image
 		.defaultContext.area.height = 0, // If Zero, use the default of Image
 		.defaultContext.degree      = 0,
 		.center.x                   = 97,
 		.center.y                   = 90,
-		.data                      = &IMG0_image,  //SpeedG
+		.data                       = &IMG0_image,  //SpeedG
 		.draw                       = NULL	// use the default to Draw the image
 	},
 	{
@@ -82,12 +91,12 @@ static const GuiWidget_Type widgets[4]=
 		.defaultContext.layer = 0,
 		.defaultContext.area.top_left.x = 300,
 		.defaultContext.area.top_left.y = 0,
-		.defaultContext.area.width = 0,  // If Zero, use the default of Image
+		.defaultContext.area.width  = 0,  // If Zero, use the default of Image
 		.defaultContext.area.height = 0, // If Zero, use the default of Image
 		.defaultContext.degree      = 0,
 		.center.x                   = 107,
 		.center.y                   = 104,
-		.data                      = &IMG1_image,  //TachoG
+		.data                       = &IMG1_image,  //TachoG
 		.draw                       = NULL	// use the default to Draw the image
 	},
 	{
@@ -95,12 +104,12 @@ static const GuiWidget_Type widgets[4]=
 		.defaultContext.layer = 1,
 		.defaultContext.area.top_left.x = 0,  // must be
 		.defaultContext.area.top_left.y = 0,  // must be
-		.defaultContext.area.width = 0,  // If Zero, use the default of Image
+		.defaultContext.area.width  = 0,  // If Zero, use the default of Image
 		.defaultContext.area.height = 0, // If Zero, use the default of Image
 		.defaultContext.degree      = 0,
 		.center.x                   = 100,
 		.center.y                   = 92,
-		.data                       = &Pointers[0],         //PointerG
+		.data                       = &Pointers[0],         //Pointer Speed
 		.draw                       = DrawPointer
 	},
 	{
@@ -108,17 +117,31 @@ static const GuiWidget_Type widgets[4]=
 		.defaultContext.layer = 1,
 		.defaultContext.area.top_left.x = 0,  // must be
 		.defaultContext.area.top_left.y = 0,  // must be
-		.defaultContext.area.width = 0,  // If Zero, use the default of Image
-		.defaultContext.area.height = 0, // If Zero, use the default of Image
+		.defaultContext.area.width  = 0,
+		.defaultContext.area.height = 0,
 		.defaultContext.degree      = 0,
 		.center.x                   = 109+300,
 		.center.y                   = 105,
-		.data                       = &Pointers[1],         //PointerG
+		.data                       = &Pointers[1],         //Pointer Tacho
 		.draw                       = DrawPointer
+	},
+	{
+		.pContext=&Context[4],
+		.defaultContext.layer = 2,
+		.defaultContext.area.top_left.x = 75,
+		.defaultContext.area.top_left.y = 170,
+		.defaultContext.area.width  = 0,
+		.defaultContext.area.height = 0,
+		.defaultContext.degree      = 0,
+		.center.x                   = 109+300,
+		.center.y                   = 105,
+		.data                       = NULL,              //String Speed
+		.draw                       = DrawSpeedString
 	}
 };
 const GuiConfig_Type GuiConfigData=
 {
-	.widgets = widgets,
-	.number  = sizeof(widgets)/sizeof(GuiWidget_Type)
+	.widgets  = widgets,
+	.number   = sizeof(widgets)/sizeof(GuiWidget_Type),
+	.maxLayer = 3
 };

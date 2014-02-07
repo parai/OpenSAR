@@ -10,6 +10,10 @@ static App_TimeType SystemTime =
 	.second = 0
 };
 
+void app_get_system(App_TimeType* time)
+{
+	memcpy(time,&SystemTime,sizeof(App_TimeType));
+}
 void app_time_1000ms_runnable(void)
 {
 

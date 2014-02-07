@@ -37,9 +37,12 @@ typedef struct
 typedef struct _GuiWidget_Type
 {
 	GuiWidgetContext_Type* pContext;
-	GuiWidgetContext_Type defaultContext;
-	GuiPosition_Type   center;
-	const void*     data;  // if draw is NULL, data != NULL and must be a GuiImage_Type*
+	GuiWidgetContext_Type  defaultContext;
+	GuiPosition_Type       center;
+	// For Image: data is GuiImage_Type
+	// data is special according to the method draw.
+	void*                  data;
+	// If draw is NULL, default method draw Image is used.
 	void (*draw)(const struct _GuiWidget_Type* widget);
 }GuiWidget_Type;
 
@@ -47,6 +50,7 @@ typedef struct
 {
 	const GuiWidget_Type*  widgets;
 	const uint32           number;
+	const uint8            maxLayer;
 }GuiConfig_Type;
 
 #include "Gui_Cfg.h"

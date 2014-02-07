@@ -23,6 +23,7 @@ extern GtkWidget* Com(void);
 // ====================================== TYPEs ====================================
 static GTimer* pSysTimer;
 static gboolean isPaused = FALSE;
+static GtkWidget* pStatusbar = NULL;
 
 // ====================================== DATAs ====================================
 
@@ -163,9 +164,27 @@ static GtkWidget*  Notebook(void)
 	return pNotebook;
 }
 
+static GtkWidget* Statusbar(void)
+{
+	pStatusbar = gtk_statusbar_new ();
+
+	return pStatusbar;
+}
 // ====================================== FUNCTIONs ====================================
 void OsIdle(void)
 {
+}
+void arch_update_statusbar(guchar* text)
+{
+	if(NULL != pStatusbar)
+	{
+		gtk_statusbar_pop (pStatusbar, 0); /* clear any previous message,
+										    * underflow is allowed
+										    */
+
+		gtk_statusbar_push (pStatusbar, 0, text);
+
+	}
 }
 boolean arch_is_paused(void)
 {
@@ -238,6 +257,7 @@ int main( int argc, char *argv[] )
 	gtk_box_pack_start(GTK_BOX(pBox),Menubar(),FALSE,FALSE,0);
 	gtk_box_pack_start(GTK_BOX(pBox),Toolbar(),FALSE,FALSE,0);
 	gtk_box_pack_start(GTK_BOX(pBox),Notebook(),FALSE,FALSE,0);
+	gtk_box_pack_start(GTK_BOX(pBox),Statusbar(),FALSE,FALSE,0);
 
 	gtk_widget_show_all (pWindow);
 	g_signal_connect (pWindow, "destroy", G_CALLBACK (gtk_main_quit), NULL);

@@ -10,6 +10,7 @@
 #include "debug.h"
 
 #include <stdio.h>
+#include <string.h>
 
 #include "Can.h"
 #include "CanIf.h"

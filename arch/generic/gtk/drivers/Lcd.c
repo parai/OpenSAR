@@ -4,6 +4,7 @@
 #include <gdk/gdk.h>
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 
 // ===================================== MACROs    =======================================
 // 0 --> use GtkImage
@@ -31,6 +32,8 @@ const Font gFont = {10, 14};
 static tLcd sLcd;
 
 // ===================================== FUNCTIONs =======================================
+extern void arch_update_statusbar(guchar* text);
+
 #if(cfgLcdHandle == LCD_DRAWING_AREA)
 static gboolean scribble_draw (GtkWidget *widget,
          cairo_t   *cr,
@@ -39,6 +42,35 @@ static gboolean scribble_draw (GtkWidget *widget,
 	gdk_cairo_set_source_pixbuf (cr, pLcdImage, 0, 0);
 	cairo_paint (cr);
 	return TRUE;
+}
+static gboolean
+scribble_motion_notify_event (GtkWidget      *widget,
+                              GdkEventMotion *event,
+                              gpointer        data)
+{
+  int x, y;
+  guchar text[256];
+  GdkModifierType state;
+
+  /* This call is very important; it requests the next motion event.
+   * If you don't call gdk_window_get_pointer() you'll only get
+   * a single motion event. The reason is that we specified
+   * GDK_POINTER_MOTION_HINT_MASK to gtk_widget_set_events().
+   * If we hadn't specified that, we could just use event->x, event->y
+   * as the pointer location. But we'd also get deluged in events.
+   * By requesting the next event as we handle the current one,
+   * we avoid getting a huge number of events faster than we
+   * can cope.
+   */
+
+  gdk_window_get_device_position (event->window, event->device, &x, &y, &state);
+
+// if (state & GDK_BUTTON1_MASK)
+  sprintf((char*)text,"X=%d,Y=%d",x,y);
+  arch_update_statusbar(text);
+
+  /* We've handled it, stop processing */
+  return TRUE;
 }
 #endif
 static gboolean Refresh(gpointer data)
@@ -101,6 +133,17 @@ GtkWidget* Lcd(void)
 	gtk_widget_set_size_request (pLcd, LCD_WIDTH, LCD_HEIGHT);
 	g_signal_connect (pLcd, "draw",
 	                        G_CALLBACK (scribble_draw), NULL);
+
+	g_signal_connect (pLcd, "motion-notify-event",
+	                        G_CALLBACK (scribble_motion_notify_event), NULL);
+	/* Ask to receive events the drawing area doesn't normally
+	 * subscribe to
+	 */
+	gtk_widget_set_events (pLcd, gtk_widget_get_events (pLcd)
+							 /*| GDK_LEAVE_NOTIFY_MASK
+							 | GDK_BUTTON_PRESS_MASK*/
+							 | GDK_POINTER_MOTION_MASK
+							 | GDK_POINTER_MOTION_HINT_MASK);
 #else
 	pLcd = gtk_image_new();
 #endif
@@ -139,6 +182,8 @@ uint32_t LCDD_ReadPixel( uint32_t x, uint32_t y )
 	{
 		return sLcd.P[x][y].color;
 	}
+
+	return COLOR_BLACK;
 }
 
 void LCDD_DrawLine( uint32_t sX, uint32_t sY, uint32_t oX, uint32_t oY, uint32_t color )
@@ -394,42 +439,3 @@ void LCDD_DrawGIMPImage( uint32_t dwX, uint32_t dwY, const SGIMPImage* pGIMPImag
 {
     LCDD_DrawImage(dwX,dwY,pGIMPImage->pucPixel_data,pGIMPImage->dwWidth,pGIMPImage->dwHeight);
 }
-
-void Lcd_Test(void)
-{
-	static unsigned int caller=0;
-	caller ++;
-	if(10 == caller)
-	{
-		LCDD_On();
-	}
-	else if(20==caller)
-	{
-		LCDD_DrawString(0,0,(const uint8*)"Start to learn something about LCD GUI,Welcome!",COLOR_CYAN);
-		LCDD_DrawRectangle(5,3,50,30,COLOR_BEIGE);
-	}
-	else if(30==caller)
-	{
-		LCDD_DrawString(0,20,(const uint8*)"~`@#$%^&*()_+-=[]{}\\|<>,./?",COLOR_CYAN);
-		LCDD_DrawRectangleWithFill(50,30,50,30,COLOR_GOLD);
-	}
-	else if(40==caller)
-	{
-		LCDD_DrawCircle(100,100,70,COLOR_SKYBLUE);
-	}
-	else if(50==caller)
-	{
-		LCDD_DrawStringWithBGColor(50,50,(const uint8*)"Hello World!\nMy Baby!",COLOR_CYAN,COLOR_RED);
-	}
-	else if(60==caller)
-	{
-//		LCDD_DrawGIMPImage(50,50,pGIMPImage[0]);
-//		LCDD_DrawGIMPImage(300,50,pGIMPImage[1]);
-	}
-	else if(2000 == caller)
-	{
-		LCDD_Off();
-		caller = 0;
-	}
-}
-

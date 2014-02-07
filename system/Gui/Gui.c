@@ -20,14 +20,16 @@ static void Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPositio
 	else
 	{
 		double O = (double)M_PI*degree / (double)180;
+		double COS = cos(O);
+		double SIN = sin(O);
 		int X = pX[0];
 		int Y = pY[0];
 
-		pX[0]= (int)(center->x + (double)(X-center->x)*cos(O) - (double)(Y-center->y)*sin(O));
-		pY[0]= (int)(center->y + (double)(X-center->x)*sin(O) + (double)(Y-center->y)*cos(O));
+		pX[0]= (int)(center->x + (double)(X-center->x)*COS - (double)(Y-center->y)*SIN);
+		pY[0]= (int)(center->y + (double)(X-center->x)*SIN + (double)(Y-center->y)*COS);
 
-		pX[0] += center2->x*(1-cos(O)) + center2->y*sin(O);
-		pY[0] -= center2->x*sin(O)     - center2->y*(1-cos(O));
+		pX[0] += center2->x*(1-COS) + center2->y*SIN;
+		pY[0] -= center2->x*SIN     - center2->y*(1-COS);
 	}
 }
 static void Draw(uint32 Widget)
@@ -123,10 +125,9 @@ void Gui_Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPosition_T
 }
 void Gui_MainFunction(void)
 {
-	LCDD_On();
 	if(NULL != pConfig)
 	{
-		for(uint8 layer=0;layer<GUI_MAX_LAYERS;layer++)
+		for(uint8 layer=0;layer<pConfig->maxLayer;layer++)
 		{
 			for(uint32 W=0;W<pConfig->number;W++)
 			{

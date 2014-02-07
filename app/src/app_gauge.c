@@ -5,6 +5,7 @@ static void Refresh(void)
 {
 	uint16 TachoSpeed;
 	uint16 VehicleSpeed;
+	uint8   speed[8];
 #if defined(WIN32)    
 	Stmo_DegreeType Degree;
 #endif    
