@@ -38,7 +38,7 @@ static void Gimp(char* filename)
 			printf("\n\t");
 		}
 		printf("\n};\n");
-		printf("static const GuiImage_Type IMG%d_image=\n{/* %s */\n",Index,filename);
+		printf("static const SGIMPImage IMG%d_image=\n{/* %s */\n",Index,filename);
 		printf("\t.dwWidth=%d,\n",width);
 		printf("\t.dwHeight=%d,\n",height);
 		printf("\t.dwBytes_per_pixel=%d,\n",3);

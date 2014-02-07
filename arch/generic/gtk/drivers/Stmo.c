@@ -90,10 +90,10 @@ void Stmo_MainFunction(void)
 		switch(i)
 		{
 			case STMO_ID_SPEED:
-				Gui_SetWidgetDegree(GUI_W_SPEED_P,StmoCtrl[i].Current/100);
+				Sg_SetWidgetDegree(GUI_W_SPEED_P,StmoCtrl[i].Current/100);
 				break;
 			case STMO_ID_TACHO:
-				Gui_SetWidgetDegree(GUI_W_TACHO_P,StmoCtrl[i].Current/100);
+				Sg_SetWidgetDegree(GUI_W_TACHO_P,StmoCtrl[i].Current/100);
 				break;
 			default:
 				break;

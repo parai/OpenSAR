@@ -9,9 +9,54 @@
 // ==================================== TYPEs    =========================
 
 // ==================================== DATAs    =========================
-static const GuiConfig_Type* pConfig = NULL;
+static const SgConfig* pConfig = NULL;
 // ==================================== FUNCTIONs=========================
-static void Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPosition_Type* center2,uint32 degree)
+// [[[[[[[[[[[[[[[[[[[[[[[ LOCAL START ]]]]]]]]]]]]]]]]]]]]]]]]
+static void GetImageTopLeft(SgWidget* widget,SgPoint* top_left)
+{
+
+	// Widget area must be bigger than Image Area
+	const SGIMPImage*  image = widget->pConst->data;
+	SgAlign align= widget->pContext->align;
+	top_left->x  = widget->pContext->area.pos.x;
+	if(align&SG_H_CENTER_ALIGN)
+	{
+		top_left->x += (widget->pContext->area.width - image->dwWidth)/2;
+	}
+	else if(align&SG_RIGHT_ALIGN)
+	{
+		top_left->x += (widget->pContext->area.width - image->dwWidth);
+	}
+
+	top_left->y  = widget->pContext->area.pos.y;
+	if(align&SG_V_CENTER_ALIGN)
+	{
+		top_left->y += (widget->pContext->area.height - image->dwHeight)/2;
+	}
+	else if(align&SG_BOTTOM_ALIGN)
+	{
+		top_left->y += (widget->pContext->area.height - image->dwHeight);
+	}
+
+}
+
+static boolean PointWithInArea(int x,int y,SgRectange *area)
+{
+	if( (x>=area->pos.x) &&
+	    (y>=area->pos.y) &&
+	    ((x-area->pos.x)<=area->width) &&
+	    ((y-area->pos.y)<=area->height))
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+// [[[[[[[[[[[[[[[[[[[[[[[ LOCAL END ]]]]]]]]]]]]]]]]]]]]]]]]
+
+void Sg_Calc(int *pX,int *pY,const SgPoint* center,uint32 degree)
 { // This is difficult, I think I need a lib to do this job
 	if(degree == 0)
 	{
@@ -25,61 +70,99 @@ static void Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPositio
 		int X = pX[0];
 		int Y = pY[0];
 
-		pX[0]= (int)(center->x + (double)(X-center->x)*COS - (double)(Y-center->y)*SIN);
-		pY[0]= (int)(center->y + (double)(X-center->x)*SIN + (double)(Y-center->y)*COS);
+		pX[0]= (int)((double)(X)*COS - (double)(Y)*SIN);
+		pY[0]= (int)((double)(X)*SIN + (double)(Y)*COS);
 
-		pX[0] += center2->x*(1-COS) + center2->y*SIN;
-		pY[0] -= center2->x*SIN     - center2->y*(1-COS);
+		pX[0] += center->x*(1-COS) + center->y*SIN;
+		pY[0] -= center->x*SIN     - center->y*(1-COS);
 	}
 }
-static void Draw(uint32 Widget)
+void Sg_DrawImage(SgWidget* widget)
 {
-	GuiWidgetContext_Type* pContext = pConfig->widgets[Widget].pContext;
-	const GuiImage_Type*     image = pConfig->widgets[Widget].data;
-	uint32 degree = (pContext->degree%360);
-	if(0u == degree)
-	{
-		LCDD_DrawGIMPImage(pContext->area.top_left.x,
-							pContext->area.top_left.y,
-							image);
-	}
-	else
-	{	// rotate draw
-		uint8* pImage= image->pucPixel_data;
 
-		for(uint32_t Y=pContext->area.top_left.y;Y<(pContext->area.top_left.y+image->dwHeight);Y++)
+	const SGIMPImage*  image = widget->pConst->data;
+	uint32 degree = (widget->pContext->degree%360);
+	SgPoint top_left;
+
+	assert(SG_IMAGE==widget->pConst->type);
+
+	GetImageTopLeft(widget,&top_left);
+
+	uint8* pImage= image->pucPixel_data;
+	SgPoint center;
+	center.x = top_left.x + image->dwWidth/2;
+	center.y = top_left.y + image->dwHeight/2;
+
+	for(int Y=top_left.y;Y<(top_left.y+image->dwHeight);Y++)
+	{
+		for(int X=top_left.x;X<(top_left.x+image->dwWidth);X++)
 		{
-			for(uint32_t X=pContext->area.top_left.x;X<(pContext->area.top_left.x+image->dwWidth);X++)
+			int tX,tY;
+			tX=X;tY=Y;
+			Sg_Calc(&tX,&tY,&center,degree);
+			if(PointWithInArea(tX,tY,&(widget->pContext->area)))
 			{
-				int tX,tY;
-				tX=X;tY=Y;
-				Calc(&tX,&tY,&(pContext->area.top_left),&(pConfig->widgets[Widget].center),degree);
 				uint32 dwColor = ((uint32_t)pImage[0]<<16) + ((uint32_t)pImage[1]<<8) + (pImage[2]);
 				LCDD_DrawPixel(tX,tY,dwColor);
 				LCDD_DrawPixel(tX,tY+1,dwColor);
-				pImage = pImage+3;
 			}
+			pImage = pImage+3;
 		}
 	}
 }
-void Gui_Init(const GuiConfig_Type* config)
+void Sg_DrawPointer(SgWidget* widget)
+{
+	const cSgPointer* pointer = widget->pConst->data;
+	uint32 degree    = (widget->pContext->degree+pointer->start)%360;
+	SgPoint* center  = &(widget->pContext->area.pos);
+	assert(SG_POINTER==widget->pConst->type);
+	for(int r=pointer->head;r<pointer->head+7;r++)
+	{
+		LCDD_DrawCircle(center->x,center->y,r,pointer->color);
+		LCDD_DrawCircle(center->x,center->y+1,r,pointer->color);
+	}
+
+	for(int r=pointer->head+5;r<=pointer->length;r++)
+	{   //                      oY - sY
+		// Y = k(X-sX) + sX = ----------- (X - sX) + sY
+		//                      oX - sX
+
+		int y =  (r-(pointer->head+5))*(pointer->head - pointer->tail)/2;
+		y = y/(pointer->length-(pointer->head+5));
+		y = pointer->head/2 - y;
+		int X = r+center->x;
+		for(int Y = center->y-y;Y<=center->y+y;Y++)
+		{
+			int tX,tY;
+			tX=X;tY=Y;
+			Sg_Calc(&tX,&tY,center,degree);
+
+			LCDD_DrawPixel(tX,tY,pointer->color);
+			LCDD_DrawPixel(tX-1,tY+1,pointer->color);
+		}
+	}
+}
+void Sg_Init(const SgConfig* config)
 {
 	pConfig = config;
 	for(uint32 W=0;W<(pConfig->number);W++)
 	{
-		const GuiWidget_Type* pWidget = &(pConfig->widgets[W]);
-		memcpy(pWidget->pContext,&(pWidget->defaultContext),sizeof(GuiWidgetContext_Type));
+		const SgWidget* pWidget = &(pConfig->widgets[W]);
+		pWidget->pContext->degree = 0;
+		pWidget->pContext->align = SG_V_CENTER_ALIGN|SG_H_CENTER_ALIGN;
+		pWidget->pContext->layer = pWidget->pConst->layer;
+		memcpy(&(pWidget->pContext->area),&(pWidget->pConst->area),sizeof(SgRectange));
 	}
 }
 
-Std_ReturnType Gui_SetWidgetArea(uint32 id,uint32 x,uint32 y,uint32 width,uint32 height)
+Std_ReturnType Sg_SetWidgetArea(uint32 id,uint32 x,uint32 y,uint32 width,uint32 height)
 {
 	Std_ReturnType ercd = E_OK;
 	if((NULL != pConfig) && (id<pConfig->number))
 	{
-		GuiWidgetContext_Type* pContext = pConfig->widgets[id].pContext;
-		pContext->area.top_left.x=x;
-		pContext->area.top_left.y=y;
+		SgContext* pContext = pConfig->widgets[id].pContext;
+		pContext->area.pos.x=x;
+		pContext->area.pos.y=y;
 		pContext->area.width=width;
 		pContext->area.height=height;
 	}
@@ -90,12 +173,12 @@ Std_ReturnType Gui_SetWidgetArea(uint32 id,uint32 x,uint32 y,uint32 width,uint32
 	return ercd;
 }
 
-Std_ReturnType Gui_SetWidgetDegree(uint32 id,uint32 degree)
+Std_ReturnType Sg_SetWidgetDegree(uint32 id,uint32 degree)
 {
 	Std_ReturnType ercd = E_OK;
 	if((NULL != pConfig) && (id<pConfig->number))
 	{
-		GuiWidgetContext_Type* pContext = pConfig->widgets[id].pContext;
+		SgContext* pContext = pConfig->widgets[id].pContext;
 		pContext->degree = degree;
 	}
 	else
@@ -104,12 +187,12 @@ Std_ReturnType Gui_SetWidgetDegree(uint32 id,uint32 degree)
 	}
 	return ercd;
 }
-Std_ReturnType Gui_SetWidgetLayer(uint32 id,uint8 layer)
+Std_ReturnType Sg_SetWidgetLayer(uint32 id,SgLayer layer)
 {
 	Std_ReturnType ercd = E_OK;
 	if((NULL != pConfig) && (id<pConfig->number))
 	{
-		GuiWidgetContext_Type* pContext = pConfig->widgets[id].pContext;
+		SgContext* pContext = pConfig->widgets[id].pContext;
 		pContext->layer = layer;
 	}
 	else
@@ -118,12 +201,7 @@ Std_ReturnType Gui_SetWidgetLayer(uint32 id,uint8 layer)
 	}
 	return ercd;
 }
-
-void Gui_Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPosition_Type* center2,uint32 degree)
-{
-	Calc(pX,pY,center,center2,degree);
-}
-void Gui_MainFunction(void)
+void Sg_MainFunction(void)
 {
 	if(NULL != pConfig)
 	{
@@ -131,20 +209,16 @@ void Gui_MainFunction(void)
 		{
 			for(uint32 W=0;W<pConfig->number;W++)
 			{
-				const GuiWidget_Type* pWidget = &pConfig->widgets[W];
-				GuiWidgetContext_Type* pContext = pWidget->pContext;
-				if(layer == pContext->layer)
+				const SgWidget* pWidget = &pConfig->widgets[W];
+				if(layer == pWidget->pContext->layer)
 				{
-					if(NULL == pWidget->draw)
+					if(NULL != pWidget->pConst->draw)
 					{
-						if(NULL != pWidget->data)
-						{
-							Draw(W);
-						}
+						pWidget->pConst->draw((void*)pWidget);
 					}
 					else
 					{
-						pWidget->draw(pWidget);
+
 					}
 				}
 			}

@@ -1,3 +1,4 @@
+// In Car, Every thing is static, so call it ST_GUI --> SG -->Sg
 #ifndef GUI_H_
 #define GUI_H_
 
@@ -7,62 +8,102 @@
 #include <string.h>
 
 // ==================================== MACROs   =========================
-#define GUI_NOT_VISIBLE   0xFF
-
+#define GUI_NOT_VISIBLE   ((SgLayer)(0xFF))
 // ==================================== TYPEs    =========================
-typedef SGIMPImage GuiImage_Type ;
+typedef enum
+{
+	SG_IMAGE,
+	SG_POINTER,
+	SG_USER_DEFINE
+}SgWidgetType;
 
 typedef struct
 {
-	uint32 x;
-	uint32 y;
-}GuiPosition_Type;
+	int x;
+	int y;
+}SgPoint;
 
 typedef struct
 {
-	GuiPosition_Type top_left;
-	uint32           width;
-	uint32           height;
-}GuiRectangle_Type;
+	SgPoint pos;
+	uint32  width;
+	uint32  height;
+}SgRectange;
 
 typedef struct
 {
-	/* 0xFF: not displayed,
-	 * other values: the layer with bigger value is above the layers with smaller value
-	 * For example: layer 1 is above layer 0.*/
-	uint8              layer;
-	GuiRectangle_Type  area;
-	uint32             degree;  // related to center point, unit in 1 degree
-}GuiWidgetContext_Type;
-typedef struct _GuiWidget_Type
+	SgPoint center;
+	uint32  radius;
+}SgCycle;
+
+enum
 {
-	GuiWidgetContext_Type* pContext;
-	GuiWidgetContext_Type  defaultContext;
-	GuiPosition_Type       center;
-	// For Image: data is GuiImage_Type
-	// data is special according to the method draw.
-	void*                  data;
-	// If draw is NULL, default method draw Image is used.
-	void (*draw)(const struct _GuiWidget_Type* widget);
-}GuiWidget_Type;
+	SG_TOP_ALIGN      = 0x01,
+	SG_V_CENTER_ALIGN = 0x02,
+	SG_BOTTOM_ALIGN   = 0x04,
+
+	SG_LEFT_ALIGN     = 0x10,
+	SG_H_CENTER_ALIGN = 0x20,
+	SG_RIGHT_ALIGN    = 0x40,
+};
+typedef uint8  SgAlign;
+
+typedef uint16 SgDegree; // [0,360]
+
+typedef uint8  SgLayer;
 
 typedef struct
 {
-	const GuiWidget_Type*  widgets;
-	const uint32           number;
-	const uint8            maxLayer;
-}GuiConfig_Type;
+	SgLayer      layer; // see GUI_NOT_VISIBLE
+	SgRectange   area;
+	SgAlign      align;
+	SgDegree     degree;
+	void*        data;  // defined by the widget type
+}SgContext;
 
+typedef struct
+{
+	const SgWidgetType type;   // widget type
+	const SgLayer      layer;  // default layer used when Sg_Init()
+	const SgRectange   area;   // default area  used when Sg_Init()
+	void             (*draw)(void* data);
+	void* const        data;   // defined by the widget type
+}SgConst;
+
+typedef struct
+{
+	SgContext*      pContext;  // Widget Context Data in RAM
+	const SgConst*  pConst;    // Widget Constant Data in ROM
+}SgWidget;
+
+typedef struct
+{
+	uint8    head;
+	uint8    tail;
+	SgDegree start; // start degree
+	uint32   length;
+	uint32   color;
+}cSgPointer;  // c means "config"
+
+// ---------------- Config
+typedef struct
+{
+	SgWidget* widgets;
+	uint32    number;
+	SgLayer   maxLayer;
+}SgConfig;
 #include "Gui_Cfg.h"
 // ==================================== DATAs    =========================
 
 // ==================================== FUNCTIONs=========================
-void Gui_Init(const GuiConfig_Type* config);
-Std_ReturnType Gui_SetWidgetImage(uint32 id,GuiImage_Type* image);
-Std_ReturnType Gui_SetWidgetArea(uint32 id,uint32 x,uint32 y,uint32 width,uint32 height);
-Std_ReturnType Gui_SetWidgetDegree(uint32 id,uint32 degree);
-Std_ReturnType Gui_SetWidgetLayer(uint32 id,uint8 layer);
-void Gui_Calc(int *pX,int *pY,const GuiPosition_Type* center,const GuiPosition_Type* center2,uint32 degree);
-void Gui_MainFunction(void);
+void Sg_Init(const SgConfig* config);
+void Sg_Calc(int *pX,int *pY,const SgPoint* center,uint32 degree);
+void Sg_DrawImage(SgWidget* widget);
+void Sg_DrawPointer(SgWidget* widget);
+
+Std_ReturnType Sg_SetWidgetArea(uint32 id,uint32 x,uint32 y,uint32 width,uint32 height);
+Std_ReturnType Sg_SetWidgetDegree(uint32 id,uint32 degree);
+Std_ReturnType Sg_SetWidgetLayer(uint32 id,SgLayer layer);
+void Sg_MainFunction(void);
 
 #endif /* GUI_H_ */

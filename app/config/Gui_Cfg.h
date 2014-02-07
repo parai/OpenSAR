@@ -12,5 +12,5 @@ enum
 	GUI_W_TACHO_P,
 
 };
-extern const GuiConfig_Type GuiConfigData;
+const SgConfig GuiConfigData;
 #endif /* GUI_CFG_H_ */

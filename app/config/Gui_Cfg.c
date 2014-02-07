@@ -2,58 +2,10 @@
 #include "app.h"
 #include "Lcd_Res/Lcd_Res.c"
 
-typedef struct
-{
-	uint8  head;
-	uint8  tail;
-	uint32 length;
-	uint32 start; // start degree
-	uint32 color;
-}Gui_PointerType;
+static void DrawSpeedString(const SgWidget* widget);
 
-static void DrawSpeedString(const GuiWidget_Type* widget)
-{
-	uint16 VehicleSpeed;
-	uint8 text[32];
-	Com_ReceiveSignal(COM_SID_VehicleSpeed,&VehicleSpeed);
-	sprintf((char*)text,"%3d",VehicleSpeed/100);
-	LCDD_DrawString(75,170,text,COLOR_RED);
-}
-static void DrawPointer(const GuiWidget_Type* widget)
-{
-	GuiWidgetContext_Type* pContext = widget->pContext;
-	const Gui_PointerType* pointer = widget->data;
-	uint32 degree = (pContext->degree+pointer->start)%360;
-	for(uint32 r=pointer->head;r<pointer->head+7;r++)
-	{
-		LCDD_DrawCircle(widget->center.x,widget->center.y,r,pointer->color);
-		LCDD_DrawCircle(widget->center.x,widget->center.y+1,r,pointer->color);
-	}
 
-	for(uint32 r=pointer->head+5;r<=pointer->length;r++)
-	{   //                      oY - sY
-		// Y = k(X-sX) + sX = ----------- (X - sX) + sY
-		//                      oX - sX
-
-		uint32 y =  (r-(pointer->head+5))*(pointer->head - pointer->tail)/2;
-		y = y/(pointer->length-(pointer->head+5));
-		y = pointer->head/2 - y;
-		uint32 X = r+widget->center.x;
-		for(uint32 Y = widget->center.y-y;Y<=widget->center.y+y;Y++)
-		{
-			int tX,tY;
-			tX=X;tY=Y;
-			Gui_Calc(&tX,&tY,&(widget->pContext->area.top_left),&(widget->center),degree);
-
-			LCDD_DrawPixel(tX,tY,pointer->color);
-			LCDD_DrawPixel(tX-1,tY+1,pointer->color);
-		}
-	}
-}
-
-static GuiWidgetContext_Type Context[5];
-
-static const Gui_PointerType Pointers[2] =
+static const cSgPointer Pointers[2] =
 {
 	{
 		.head = 10,
@@ -71,77 +23,90 @@ static const Gui_PointerType Pointers[2] =
 	}
 };
 
-static const GuiWidget_Type widgets[]=
+static const SgConst sgConstList [] =
+{
+	{  // Background Speed Gauge
+		.type    = SG_IMAGE,
+		.layer   = 0,
+		.area.pos.x  = 0,
+		.area.pos.y  = 0,
+		.area.width  = 250,
+		.area.height = 250,
+		.data        = &IMG0_image,
+		.draw        = Sg_DrawImage
+	},
+	{  // Background Tacho Gauge
+		.type    = SG_IMAGE,
+		.layer   = 0,
+		.area.pos.x  = 250,
+		.area.pos.y  = 0,
+		.area.width  = 250,
+		.area.height = 250,
+		.data        = &IMG1_image,
+		.draw        = Sg_DrawImage
+	},
+	{  // Pointer Of Speed Gauge
+		.type    = SG_POINTER,
+		.layer   = 1,
+		.area.pos.x  = 125,
+		.area.pos.y  = 125,
+		.data        = &Pointers[0],
+		.draw        = Sg_DrawPointer
+	},
+	{  // Pointer Tacho Gauge
+		.type    = SG_POINTER,
+		.layer   = 1,
+		.area.pos.x  = 375,
+		.area.pos.y  = 125,
+		.data        = &Pointers[1],
+		.draw        = Sg_DrawPointer
+	},
+	{  // Speed String
+		.type    = SG_USER_DEFINE,
+		.layer   = 1,
+		.area.pos.x  = 90,
+		.area.pos.y  = 190,
+		.data        = NULL,
+		.draw        = DrawSpeedString
+	},
+
+};
+static SgContext Context[5];
+static const SgWidget widgets[]=
 {
 	{
-		.pContext=&Context[0],
-		.defaultContext.layer = 0,
-		.defaultContext.area.top_left.x = 0,
-		.defaultContext.area.top_left.y = 0,
-		.defaultContext.area.width  = 0,  // If Zero, use the default of Image
-		.defaultContext.area.height = 0, // If Zero, use the default of Image
-		.defaultContext.degree      = 0,
-		.center.x                   = 97,
-		.center.y                   = 90,
-		.data                       = &IMG0_image,  //SpeedG
-		.draw                       = NULL	// use the default to Draw the image
+		.pContext = &Context[0],
+		.pConst   = &sgConstList[0],
 	},
 	{
-		.pContext=&Context[1],
-		.defaultContext.layer = 0,
-		.defaultContext.area.top_left.x = 300,
-		.defaultContext.area.top_left.y = 0,
-		.defaultContext.area.width  = 0,  // If Zero, use the default of Image
-		.defaultContext.area.height = 0, // If Zero, use the default of Image
-		.defaultContext.degree      = 0,
-		.center.x                   = 107,
-		.center.y                   = 104,
-		.data                       = &IMG1_image,  //TachoG
-		.draw                       = NULL	// use the default to Draw the image
+		.pContext = &Context[1],
+		.pConst   = &sgConstList[1],
 	},
 	{
-		.pContext=&Context[2],
-		.defaultContext.layer = 1,
-		.defaultContext.area.top_left.x = 0,  // must be
-		.defaultContext.area.top_left.y = 0,  // must be
-		.defaultContext.area.width  = 0,  // If Zero, use the default of Image
-		.defaultContext.area.height = 0, // If Zero, use the default of Image
-		.defaultContext.degree      = 0,
-		.center.x                   = 100,
-		.center.y                   = 92,
-		.data                       = &Pointers[0],         //Pointer Speed
-		.draw                       = DrawPointer
+		.pContext = &Context[2],
+		.pConst   = &sgConstList[2],
 	},
 	{
-		.pContext=&Context[3],
-		.defaultContext.layer = 1,
-		.defaultContext.area.top_left.x = 0,  // must be
-		.defaultContext.area.top_left.y = 0,  // must be
-		.defaultContext.area.width  = 0,
-		.defaultContext.area.height = 0,
-		.defaultContext.degree      = 0,
-		.center.x                   = 109+300,
-		.center.y                   = 105,
-		.data                       = &Pointers[1],         //Pointer Tacho
-		.draw                       = DrawPointer
+		.pContext = &Context[3],
+		.pConst   = &sgConstList[3],
 	},
 	{
-		.pContext=&Context[4],
-		.defaultContext.layer = 2,
-		.defaultContext.area.top_left.x = 75,
-		.defaultContext.area.top_left.y = 170,
-		.defaultContext.area.width  = 0,
-		.defaultContext.area.height = 0,
-		.defaultContext.degree      = 0,
-		.center.x                   = 109+300,
-		.center.y                   = 105,
-		.data                       = NULL,              //String Speed
-		.draw                       = DrawSpeedString
+		.pContext = &Context[4],
+		.pConst   = &sgConstList[4],
 	}
 };
-const GuiConfig_Type GuiConfigData=
+const SgConfig GuiConfigData=
 {
 	.widgets  = widgets,
-	.number   = sizeof(widgets)/sizeof(GuiWidget_Type),
+	.number   = sizeof(widgets)/sizeof(SgWidget),
 	.maxLayer = 3
 };
+
+static void DrawSpeedString(const SgWidget* widget)
+{
+	uint16 VehicleSpeed;
+	uint8 text[32];
+	Com_ReceiveSignal(COM_SID_VehicleSpeed,&VehicleSpeed);
+	sprintf((char*)text,"%3d",VehicleSpeed/100);
+	LCDD_DrawString(widget->pConst->area.pos.x,widget->pConst->area.pos.y,text,COLOR_RED);
+}

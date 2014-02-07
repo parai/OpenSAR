@@ -8,7 +8,7 @@ void StartupHook( void )
 #endif    
 
 	LCDD_On();
-	Gui_Init(&GuiConfigData);
+	Sg_Init(&GuiConfigData);
 }
 
 void ShutdownHook( StatusType Error )
@@ -32,8 +32,8 @@ void Task10ms(void)
 {
 //	static uint32 degree = 0;
 //	degree += 2;
-//	Gui_SetWidgetDegree(GUI_W_SPEED_P,degree);
-//	Gui_SetWidgetDegree(GUI_W_TACHO_P,degree);
+//	Sg_SetWidgetDegree(GUI_W_SPEED_B,degree);
+//	Sg_SetWidgetDegree(GUI_W_TACHO_B,degree);
 	Stmo_MainFunction();
 	TerminateTask();
 }
@@ -47,7 +47,7 @@ void Task20ms(void)
 
 void Task100ms(void)
 {
-	Gui_MainFunction();
+	Sg_MainFunction();
 	TerminateTask();
 }
 

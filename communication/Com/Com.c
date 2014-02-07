@@ -370,6 +370,7 @@ static void on_entry_activate(GtkEntry *entry,gpointer data)
 	else
 	{
 		gchar value[32];
+		sprintf(value,"%d",max);
 		gtk_entry_set_text(GTK_ENTRY(entry),value);
 		Update(Signal->ComIPduHandleId,Signal->ComBitPosition,Signal->ComBitSize,max);
 	}
