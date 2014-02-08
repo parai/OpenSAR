@@ -6,9 +6,10 @@ void StartupHook( void )
 #if defined(WIN32)
 	Stmo_Init(&Stmo_ConfigData);
 #endif    
-
+#if defined(USE_GUI)
 	LCDD_On();
 	Sg_Init(&GuiConfigData);
+#endif
 }
 
 void ShutdownHook( StatusType Error )
@@ -47,7 +48,9 @@ void Task20ms(void)
 
 void Task100ms(void)
 {
+#if defined(USE_GUI)
 	Sg_MainFunction();
+#endif
 	TerminateTask();
 }
 
@@ -56,6 +59,7 @@ void Task1000ms(void)
 	app_led_1000ms_runnable();
 	app_time_1000ms_runnable();
 	app_nvm_1000ms_runnable();
+
 	TerminateTask();
 }
 

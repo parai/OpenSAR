@@ -21,6 +21,11 @@
 #ifndef MCU_CFG_H_
 #define MCU_CFG_H_
 
+#include "Std_Types.h"
+
+#if defined(STM32F10X_CL)
+#include "Mcu_ConfigTypes.h"
+#endif
 
 #define MCU_PERFORM_RESET_API 	STD_ON
 

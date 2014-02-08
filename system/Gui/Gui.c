@@ -21,21 +21,21 @@ static void GetImageTopLeft(SgWidget* widget,SgPoint* top_left)
 	top_left->x  = widget->pContext->area.pos.x;
 	if(align&SG_H_CENTER_ALIGN)
 	{
-		top_left->x += (widget->pContext->area.width - image->dwWidth)/2;
+		top_left->x += ((int)widget->pContext->area.width - (int)image->dwWidth)/2;
 	}
 	else if(align&SG_RIGHT_ALIGN)
 	{
-		top_left->x += (widget->pContext->area.width - image->dwWidth);
+		top_left->x += ((int)widget->pContext->area.width - (int)image->dwWidth);
 	}
 
 	top_left->y  = widget->pContext->area.pos.y;
 	if(align&SG_V_CENTER_ALIGN)
 	{
-		top_left->y += (widget->pContext->area.height - image->dwHeight)/2;
+		top_left->y += ((int)widget->pContext->area.height - (int)image->dwHeight)/2;
 	}
 	else if(align&SG_BOTTOM_ALIGN)
 	{
-		top_left->y += (widget->pContext->area.height - image->dwHeight);
+		top_left->y += ((int)widget->pContext->area.height - (int)image->dwHeight);
 	}
 
 }
@@ -70,11 +70,11 @@ void Sg_Calc(int *pX,int *pY,const SgPoint* center,uint32 degree)
 		int X = pX[0];
 		int Y = pY[0];
 
-		pX[0]= (int)((double)(X)*COS - (double)(Y)*SIN);
-		pY[0]= (int)((double)(X)*SIN + (double)(Y)*COS);
+		// assert X > 0 Y > 0
 
-		pX[0] += center->x*(1-COS) + center->y*SIN;
-		pY[0] -= center->x*SIN     - center->y*(1-COS);
+		pX[0]= (int)((double)(X-center->x)*COS - (double)(Y-center->y)*SIN) + center->x;
+		pY[0]= (int)((double)(X-center->x)*SIN + (double)(Y-center->y)*COS) + center->y;
+
 	}
 }
 void Sg_DrawImage(SgWidget* widget)
@@ -104,7 +104,6 @@ void Sg_DrawImage(SgWidget* widget)
 			{
 				uint32 dwColor = ((uint32_t)pImage[0]<<16) + ((uint32_t)pImage[1]<<8) + (pImage[2]);
 				LCDD_DrawPixel(tX,tY,dwColor);
-				LCDD_DrawPixel(tX,tY+1,dwColor);
 			}
 			pImage = pImage+3;
 		}

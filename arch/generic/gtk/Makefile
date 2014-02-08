@@ -106,7 +106,8 @@ MACROS = 	$(Gtk-Macros)		\
 			-DUSE_FEE	\
 			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	\
 			-DUSE_NVM	\
-			-DUSE_MEMIF	
+			-DUSE_MEMIF	\
+			-DUSE_GUI
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) $(Gtk-CCFLGS)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) $(Gtk-LDFLGS) 

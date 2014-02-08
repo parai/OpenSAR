@@ -25,7 +25,9 @@
 #if defined(WIN32)
 #include "Stmo.h"
 #endif
+#if defined(USE_GUI)
 #include "Gui.h"
+#endif
 
 #include "Diag.h"
 

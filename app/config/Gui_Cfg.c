@@ -1,3 +1,4 @@
+#if defined(USE_GUI)
 #include "Gui.h"
 #include "app.h"
 #include "Lcd_Res/Lcd_Res.c"
@@ -110,3 +111,5 @@ static void DrawSpeedString(const SgWidget* widget)
 	sprintf((char*)text,"%3d",VehicleSpeed/100);
 	LCDD_DrawString(widget->pConst->area.pos.x,widget->pConst->area.pos.y,text,COLOR_RED);
 }
+
+#endif // USE_GUI

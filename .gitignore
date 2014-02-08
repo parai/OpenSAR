@@ -8,7 +8,6 @@
 boards
 STM32_ETH_Driver
 STM32F10x_StdPeriph_Driver
-arch/arm
 arch/hc1x
 arch/ppc
 arch/generic/linux

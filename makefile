@@ -78,7 +78,7 @@ export USE_T32_SIM
 # Tools
 # Ugly thing to make things work under cmd.exe 
 PATH := /usr/bin/:$(PATH) 
-FIND := $(shell which find)
+FIND := $(shell which gfind)
 
 export objdir = obj_$(BOARDDIR)
 export CFG_MCU 
