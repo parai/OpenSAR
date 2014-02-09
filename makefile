@@ -28,6 +28,20 @@
 #     $ make BOARDDIR= mpc551xsim BDIR=examples/simple all
 #
 
+# ====================== [ CONFIG ] ========================
+#BOARDDIR=stm32_stm3210c
+#BDIR=examples/os_simple
+
+BOARDDIR=gtk
+BDIR=app
+
+export  BOARDDIR
+export BDIR
+#COMPILER=gcc
+#export COMPILER
+#CROSS_COMPILE=gcc
+#export CROSS_COMPILE
+# ==========================================================
 
 export UNAME:=$(shell uname)
 
@@ -78,7 +92,7 @@ export USE_T32_SIM
 # Tools
 # Ugly thing to make things work under cmd.exe 
 PATH := /usr/bin/:$(PATH) 
-FIND := $(shell which gfind)
+FIND := $(shell which find)
 
 export objdir = obj_$(BOARDDIR)
 export CFG_MCU 
