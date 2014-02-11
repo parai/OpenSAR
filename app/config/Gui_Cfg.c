@@ -1,7 +1,9 @@
 #if defined(USE_GUI)
 #include "Gui.h"
 #include "app.h"
+
 #include "Lcd_Res/Lcd_Res.c"
+
 
 static void DrawSpeedString(const SgWidget* widget);
 
@@ -33,7 +35,7 @@ static const SgConst sgConstList [] =
 		.area.pos.y  = 0,
 		.area.width  = 250,
 		.area.height = 250,
-		.data        = &IMG0_image,
+		.data        = &SpeedG_bmp_image,
 		.draw        = Sg_DrawImage
 	},
 	{  // Background Tacho Gauge
@@ -43,7 +45,7 @@ static const SgConst sgConstList [] =
 		.area.pos.y  = 0,
 		.area.width  = 250,
 		.area.height = 250,
-		.data        = &IMG1_image,
+		.data        = &TachoG_bmp_image,
 		.draw        = Sg_DrawImage
 	},
 	{  // Pointer Of Speed Gauge
@@ -103,6 +105,21 @@ const SgConfig GuiConfigData=
 	.maxLayer = 3
 };
 
+static void DrawDot(void)
+{  // guo_bmp_dots
+
+	for(uint32 Y=0;Y<73;Y++)
+	{
+		for(uint32 X=0;X<66;X++)
+		{
+			uint8 Dot = guo_bmp_dots[Y*((66+7)/8)+X/8];
+			if(Dot&(1<<(X&7)))
+			{
+				LCDD_DrawPixel(200+X,200+Y,COLOR_CYAN);
+			}
+		}
+	}
+}
 static void DrawSpeedString(const SgWidget* widget)
 {
 	uint16 VehicleSpeed;
@@ -110,6 +127,8 @@ static void DrawSpeedString(const SgWidget* widget)
 	Com_ReceiveSignal(COM_SID_VehicleSpeed,&VehicleSpeed);
 	sprintf((char*)text,"%3d",VehicleSpeed/100);
 	LCDD_DrawString(widget->pConst->area.pos.x,widget->pConst->area.pos.y,text,COLOR_RED);
+
+	DrawDot();
 }
 
 #endif // USE_GUI

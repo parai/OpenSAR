@@ -163,7 +163,8 @@ lib-y =
 #common rules
 .SUFFIXES: .c
 %.o:%.c
-	@echo compile $<  to $@
+	@echo
+	@echo "  >> CC $(notdir $<)"
 	@$(CC) $(CCFLGS) -o $@ $<
 
 .PHONY:all clean gen
