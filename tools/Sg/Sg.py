@@ -33,6 +33,11 @@ class Sg():
             if(B>0):
                 fp.write('0x%-2s,'%(DOT))
         fp.write('\n};\n')
+        fp.write('static const cSgDotmap %s_dotmap=\n'%(name))
+        fp.write('{  /* %s */\n'%(aname))
+        fp.write('\t.size.width=%s,\n'%(IM.size().width()))
+        fp.write('\t.size.height=%s,\n'%(IM.size().height()))
+        fp.write('\t.dots=%s_dots\n};\n'%(name))
     def toU8Pixel(self,fp):
         name = os.path.basename(self.file).replace('.','_')
         aname = os.path.abspath(self.file)
@@ -44,12 +49,11 @@ class Sg():
                 rgb = IM.pixel(x,y)
                 fp.write('%-3s,%-3s,%-3s,  '%((rgb>>16)&0xFF,(rgb>>8)&0xFF,(rgb>>0)&0xFF))
         fp.write('\n};\n')
-        fp.write('static const SGIMPImage %s_image=\n'%(name))
+        fp.write('static const cSgImage %s_image=\n'%(name))
         fp.write('{  /* %s */\n'%(aname))
-        fp.write('\t.dwWidth=%s,\n'%(IM.size().width()))
-        fp.write('\t.dwHeight=%s,\n'%(IM.size().height()))
-        fp.write('\t.dwBytes_per_pixel=3,\n')
-        fp.write('\t.pucPixel_data=%s_pixels\n};\n'%(name))
+        fp.write('\t.size.width=%s,\n'%(IM.size().width()))
+        fp.write('\t.size.height=%s,\n'%(IM.size().height()))
+        fp.write('\t.pixels=%s_pixels\n};\n'%(name))
 
 def GetSgImage(IML=[],fp=None):
     for image in IML:

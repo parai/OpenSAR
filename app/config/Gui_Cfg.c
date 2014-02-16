@@ -72,9 +72,19 @@ static const SgConst sgConstList [] =
 		.data        = NULL,
 		.draw        = DrawSpeedString
 	},
+	{  // Dotmap
+		.type    = SG_DOTMAP,
+		.layer   = 1,
+		.area.pos.x  = 0,
+		.area.pos.y  = 0,
+		.area.width  = 500,
+		.area.height = 500,
+		.data        = &guo_bmp_dotmap,
+		.draw        = Sg_DrawDotMap
+	},
 
 };
-static SgContext Context[5];
+static SgContext Context[6];
 static const SgWidget widgets[]=
 {
 	{
@@ -96,6 +106,10 @@ static const SgWidget widgets[]=
 	{
 		.pContext = &Context[4],
 		.pConst   = &sgConstList[4],
+	},
+	{
+		.pContext = &Context[5],
+		.pConst   = &sgConstList[5],
 	}
 };
 const SgConfig GuiConfigData=
@@ -105,21 +119,6 @@ const SgConfig GuiConfigData=
 	.maxLayer = 3
 };
 
-static void DrawDot(void)
-{  // guo_bmp_dots
-
-	for(uint32 Y=0;Y<73;Y++)
-	{
-		for(uint32 X=0;X<66;X++)
-		{
-			uint8 Dot = guo_bmp_dots[Y*((66+7)/8)+X/8];
-			if(Dot&(1<<(X&7)))
-			{
-				LCDD_DrawPixel(200+X,200+Y,COLOR_CYAN);
-			}
-		}
-	}
-}
 static void DrawSpeedString(const SgWidget* widget)
 {
 	uint16 VehicleSpeed;
@@ -127,8 +126,6 @@ static void DrawSpeedString(const SgWidget* widget)
 	Com_ReceiveSignal(COM_SID_VehicleSpeed,&VehicleSpeed);
 	sprintf((char*)text,"%3d",VehicleSpeed/100);
 	LCDD_DrawString(widget->pConst->area.pos.x,widget->pConst->area.pos.y,text,COLOR_RED);
-
-	DrawDot();
 }
 
 #endif // USE_GUI

@@ -14,7 +14,6 @@
 
 // ==================================== EXTENDs ===================================
 extern void start_main(void);
-extern OsTaskVarType Os_TaskVarList[OS_TASK_CNT];
 
 extern GtkWidget* Lcd(void);
 extern GtkWidget* Dio(void);
@@ -95,6 +94,7 @@ static void on_start_stop_clicked(GtkButton *button,gpointer data)
 		isPaused = FALSE;
 	}
 }
+
 // --------------- Gui Target ----------------
 static GtkWidget* Menubar(void)
 {
@@ -154,7 +154,7 @@ static GtkWidget*  Notebook(void)
 {
 	GtkWidget* pNotebook;
 	pNotebook = gtk_notebook_new ();
-	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Lcd(),gtk_label_new("Lcd"));
+	// gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Lcd(),gtk_label_new("Lcd"));
 #ifdef USE_DIO
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Dio(),gtk_label_new("Dio"));
 #endif
@@ -170,6 +170,20 @@ static GtkWidget* Statusbar(void)
 
 	return pStatusbar;
 }
+
+static GtkWidget* LcdBoard(void)
+{
+	GtkWidget* pWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(pWindow),"LCD\n");
+
+	gtk_window_set_modal(GTK_WINDOW(pWindow),FALSE);
+	gtk_window_set_deletable(GTK_CONTAINER (pWindow),FALSE);
+
+	gtk_container_add(GTK_CONTAINER (pWindow), Lcd());
+
+	gtk_widget_show_all (pWindow);
+	return pWindow;
+}
 // ====================================== FUNCTIONs ====================================
 void OsIdle(void)
 {
@@ -178,11 +192,11 @@ void arch_update_statusbar(guchar* text)
 {
 	if(NULL != pStatusbar)
 	{
-		gtk_statusbar_pop (pStatusbar, 0); /* clear any previous message,
+		gtk_statusbar_pop (GTK_STATUSBAR(pStatusbar), 0); /* clear any previous message,
 										    * underflow is allowed
 										    */
 
-		gtk_statusbar_push (pStatusbar, 0, text);
+		gtk_statusbar_push (GTK_STATUSBAR(pStatusbar), 0, text);
 
 	}
 }
@@ -248,8 +262,8 @@ int main( int argc, char *argv[] )
 	GtkWidget* pBox;
 	gtk_init (&argc, &argv);
 	pWindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WIDGET(pWindow),"https://github.com/parai/OpenSAR.git\n");
-	gtk_window_resize(GTK_WIDGET(pWindow),800,40);
+	gtk_window_set_title(GTK_WINDOW(pWindow),"https://github.com/parai/OpenSAR.git\n");
+	gtk_window_resize(GTK_WINDOW(pWindow),800,40);
 
 	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
 	gtk_box_set_homogeneous(GTK_BOX(pBox),FALSE);
@@ -260,6 +274,8 @@ int main( int argc, char *argv[] )
 	gtk_box_pack_start(GTK_BOX(pBox),Statusbar(),FALSE,FALSE,0);
 
 	gtk_widget_show_all (pWindow);
+
+	(void)LcdBoard(); // On
 	g_signal_connect (pWindow, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 	arch_init_daemon();
 	gtk_main ();

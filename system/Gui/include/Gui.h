@@ -13,9 +13,20 @@
 typedef enum
 {
 	SG_IMAGE,
+	SG_DOTMAP,
 	SG_POINTER,
 	SG_USER_DEFINE
 }SgWidgetType;
+
+typedef uint16 SgLegth;
+
+typedef uint8  SgAlign;
+
+typedef uint16 SgDegree; // [0,360]
+
+typedef uint32 SgColor;
+
+typedef uint8  SgLayer;
 
 typedef struct
 {
@@ -25,15 +36,21 @@ typedef struct
 
 typedef struct
 {
-	SgPoint pos;
-	uint32  width;
-	uint32  height;
+	SgLegth width;
+	SgLegth height;
+}SgSize;
+
+typedef struct
+{
+	SgPoint  pos;
+	SgLegth  width;
+	SgLegth  height;
 }SgRectange;
 
 typedef struct
 {
 	SgPoint center;
-	uint32  radius;
+	SgLegth radius;
 }SgCycle;
 
 enum
@@ -46,11 +63,6 @@ enum
 	SG_H_CENTER_ALIGN = 0x20,
 	SG_RIGHT_ALIGN    = 0x40,
 };
-typedef uint8  SgAlign;
-
-typedef uint16 SgDegree; // [0,360]
-
-typedef uint8  SgLayer;
 
 typedef struct
 {
@@ -58,6 +70,7 @@ typedef struct
 	SgRectange   area;
 	SgAlign      align;
 	SgDegree     degree;
+	SgColor      color;
 	void*        data;  // defined by the widget type
 }SgContext;
 
@@ -76,14 +89,27 @@ typedef struct
 	const SgConst*  pConst;    // Widget Constant Data in ROM
 }SgWidget;
 
+// Const Config Data of widget
 typedef struct
 {
-	uint8    head;
-	uint8    tail;
-	SgDegree start; // start degree
-	uint32   length;
-	uint32   color;
-}cSgPointer;  // c means "config"
+	SgLegth    head;
+	SgLegth    tail;
+	SgDegree   start; // start degree
+	SgLegth    length;
+	SgColor    color;
+}cSgPointer;
+
+typedef struct
+{
+	SgSize size;
+	uint8* pixels; // each pixel is (R,G,B)
+}cSgImage;
+
+typedef struct
+{
+	SgSize size;
+	uint8* dots;
+}cSgDotmap;
 
 // ---------------- Config
 typedef struct
@@ -98,7 +124,17 @@ typedef struct
 // ==================================== FUNCTIONs=========================
 void Sg_Init(const SgConfig* config);
 void Sg_Calc(int *pX,int *pY,const SgPoint* center,uint32 degree);
+// basic draw
+void Sg_DrawPixel(int x,int y,SgColor color);
+void Sg_DrawLine(int x0,int y0,int x1,int y1,SgColor color);
+void Sg_FillArea(int x, int y, int cx, int cy, SgColor color);
+void Sg_DrawCircle(int x, int y, int radius, SgColor color);
+void Sg_FillCircle(int x, int y, int radius, SgColor color);
+void Sg_DrawEllipse(int x, int y, int a, int b, SgColor color);
+void Sg_FillEllipse(int x, int y, int a, int b, SgColor color);
+// high level draw
 void Sg_DrawImage(SgWidget* widget);
+void Sg_DrawDotMap(SgWidget* widget);
 void Sg_DrawPointer(SgWidget* widget);
 
 Std_ReturnType Sg_SetWidgetArea(uint32 id,uint32 x,uint32 y,uint32 width,uint32 height);

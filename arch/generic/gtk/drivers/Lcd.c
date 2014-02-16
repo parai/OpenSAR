@@ -13,7 +13,7 @@
 #define LCD_DRAWING_AREA 1
 #define cfgLcdHandle   LCD_DRAWING_AREA
 #define LCD_WIDTH   1024
-#define LCD_HEIGHT  600
+#define LCD_HEIGHT  350
 // ===================================== TYPEs     =======================================
 typedef struct
 {
