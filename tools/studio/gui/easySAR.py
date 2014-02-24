@@ -4,6 +4,7 @@ from PyQt4.QtCore import *
 import sys,os
 from easyOs     import easyOsGui
 from easyCom  import easyComGui
+from easyNvM  import easyNvMGui
 
 __all__ = ['easySAR']
 
@@ -21,6 +22,7 @@ class easySARGui(QMainWindow):
     easyCan = None
     easyCom = None
     easyOs  = None
+    easyNvM = None
     pdir = ''
     def __init__(self):
         QMainWindow.__init__(self, None)
@@ -30,6 +32,7 @@ class easySARGui(QMainWindow):
         self.creStatusBar()
         self.easyOsCfg = easyOsGui()
         self.easyComCfg = easyComGui()
+        self.easyNvMCfg = easyNvMGui()
     def creMenu(self):
         # File
         tMenu=self.menuBar().addMenu(self.tr('File'))
@@ -62,16 +65,23 @@ class easySARGui(QMainWindow):
         sItem=QAction(self.tr('easyCom'),self) 
         self.connect(sItem,SIGNAL('triggered()'),self.measyCom) 
         sItem.setStatusTip('Open easyCom console.') 
-        tMenu.addAction(sItem)   
+        tMenu.addAction(sItem) 
+        ## easyNvM
+        sItem=QAction(self.tr('easyNvM'),self) 
+        self.connect(sItem,SIGNAL('triggered()'),self.measyNvM) 
+        sItem.setStatusTip('Open easyNvM console.') 
+        tMenu.addAction(sItem)          
     def mOpen(self):
         self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
         if(self.pdir == ''):
             return
         self.easyOsCfg.mOpen(self.pdir)
         self.easyComCfg.mOpen(self.pdir)
+        self.easyNvMCfg.mOpen(self.pdir)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^) Workspace=%s'%(self.pdir));
         self.measyOs()
         self.measyCom()
+        self.measyNvM()
         QMessageBox(QMessageBox.Information, 'Info', 
                         'Open OpenSAR Configuration xml Successfully !').exec_();
     def mSave(self):
@@ -81,6 +91,7 @@ class easySARGui(QMainWindow):
             return
         self.easyOsCfg.mSave(self.pdir)
         self.easyComCfg.mSave(self.pdir)
+        self.easyNvMCfg.mSave(self.pdir)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^) Workspace=%s'%(self.pdir));
         QMessageBox(QMessageBox.Information, 'Info', 
                         'Save OpenSAR Configuration xml Successfully !').exec_();
@@ -92,6 +103,17 @@ class easySARGui(QMainWindow):
         self.easyComCfg.mGen(self.pdir)
         QMessageBox(QMessageBox.Information, 'Info', 
                         'Generate OpenSAR Configuration C Code Successfully !').exec_();
+    def measyNvM(self):
+        if(self.easyNvM==None):
+            self.easyNvM = easyDockWidget('easyNvM', self)  
+            self.easyNvM.setWidget(self.easyNvMCfg)  
+            self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyNvM)
+        elif(self.easyNvM.isClosed==True):
+            self.easyNvM = easyDockWidget('easyNvM', self)  
+            self.easyNvM.setWidget(self.easyNvMCfg)  
+            self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.easyNvM)
+        else:
+            print('easyOs already started.')    
     def measyOs(self):
         if(self.easyOs==None):
             self.easyOs = easyDockWidget('easyOs', self)  
