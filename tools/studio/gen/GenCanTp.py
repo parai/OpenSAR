@@ -1,7 +1,7 @@
 import sys,os
 import xml.etree.ElementTree as ET
 
-__all__ = ['GenCanIf']
+__all__ = ['GenCanTp']
 
 __Header = \
 """/*

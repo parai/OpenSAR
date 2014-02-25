@@ -13,6 +13,23 @@
  * for more details.
  * -------------------------------- Arctic Core ------------------------------*/
 
+// parai:
+//  FEE Map
+//| Low Address
+//|--------------+----------------------------|
+//|              | DATA Of Block Id1          | <-- all data is page aligned
+//|              | DATA Of Block Id3          |
+//|              | DATA Of Block Id2          |
+//|              | ......                     |
+//|              | ......                     |
+//|              | ......                     |
+//|              | Blcok Id1(DataPage+IdPage) | <-- see type FlsBlockControlType
+//|              | Blcok Id1(DataPage+IdPage) |
+//|              | Blcok Id1(DataPage+IdPage) |
+//|              | BANK MAGIC                 | <-- see type FlsBankControlDataType
+//|--------------+----------------------------|
+//| High Address
+
 /** @reqSettings DEFAULT_SPECIFICATION_REVISION=3.1.5 */
 
 

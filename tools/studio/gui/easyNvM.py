@@ -17,7 +17,7 @@ class easyFeeCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Size','Use Crc','Comment']
+        list = ['Name','Type','Size','Comment']
         self.setHeaderLabels(QStringList(list))
         self.setColumnWidth(0,150)
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
@@ -46,7 +46,7 @@ class easyFeeCfgTree(QTreeWidget):
             self.root.qAction1.setDisabled(True)
             self.root.qAction2.setDisabled(True)
     def toXML(self):
-        BlockList = ET.Element('BlockList')
+        BlockList = ET.Element('FeeBlockList')
         for i in range(0,self.topLevelItemCount()):
             Block = ET.Element('Block')
             treeBlock = self.topLevelItem(i)
@@ -57,7 +57,7 @@ class easyFeeCfgTree(QTreeWidget):
                 treeData = treeBlock.child(j)
                 Data.attrib['name'] = str(self.itemWidget(treeData,0).text())
                 Data.attrib['type'] = str(self.itemWidget(treeData,1).currentText())
-                Data.attrib['crc'] = str(self.itemWidget(treeData,2).currentText())
+                Data.attrib['size'] = str(self.itemWidget(treeData,2).text())
                 Data.attrib['comment'] = str(self.itemWidget(treeData,3).text())
                 DataList.append(Data)
             Block.append(DataList)
@@ -69,9 +69,9 @@ class easyFeeCfgTree(QTreeWidget):
         for i in range(0,self.topLevelItemCount()):
             self.takeTopLevelItem(0)
         # reload
-        if(ROOT.find('BlockList') == None):
+        if(ROOT.find('FeeBlockList') == None):
             return
-        for Block in ROOT.find('BlockList'):
+        for Block in ROOT.find('FeeBlockList'):
             self.addNvMBlock(Block)
 
     def addNvMBlock(self,Block=None):
@@ -97,25 +97,25 @@ class easyFeeCfgTree(QTreeWidget):
         if Data != None:
             sName = Data.attrib['name']
             sType = Data.attrib['type']
-            sCrc  = Data.attrib['crc']
+            #sSize  = Data.attrib['size']
+            sSize = '4'
             sComment  = Data.attrib['comment']
         else:
             sName = 'Data%s'%(self.dataid)
             sType = 'uint32'
-            sCrc  = 'True'
+            sSize = '4'
             sComment = ''
         dataName = QLineEdit(sName)
         dataName.setStatusTip('Name For Data, each Data must has a unique name.')
         dataType = QComboBox()
-        dataType.addItems(QStringList(['uint32','uint16','uint8']))
+        dataType.addItems(QStringList(['uint32','uint16','uint8','uint32_n','uint16_n','uint8_n']))
         dataType.setCurrentIndex(dataType.findText(sType))
-        dataCrc = QComboBox()
-        dataCrc.addItems(QStringList(['True','False']))
-        dataCrc.setCurrentIndex(dataCrc.findText(sCrc))  
+        dataSize = QLineEdit(sSize)
+        dataSize.setToolTip('Only valid for type [uint32_n,uint16_n,uint8_n]')
         Comment = QLineEdit(sComment)      
         self.setItemWidget(dataItem,0,dataName)
         self.setItemWidget(dataItem,1,dataType)
-        self.setItemWidget(dataItem,2,dataCrc)
+        self.setItemWidget(dataItem,2,dataSize)
         self.setItemWidget(dataItem,3,Comment)
         blockItem.setExpanded(True)
         self.dataid += 1
@@ -222,6 +222,6 @@ class easyNvMGui(QMainWindow):
         tree = ET.ElementTree(root)
         tree.write(wfxml, encoding="utf-8", xml_declaration=True);
     def mGen(self,pdir):
-        from gen.GenOS import GenOS
-        wfxml = '%s/os.wfxml'%(pdir)
-        GenOS(str(wfxml))
+        from gen.GenNvM import GenNvM
+        wfxml = '%s/nvm.wfxml'%(pdir)
+        GenNvM(str(wfxml))

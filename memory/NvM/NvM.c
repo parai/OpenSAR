@@ -257,7 +257,7 @@
 
 #define FIXME		0
 
-#define DEBUG_BLOCK	1
+//#define DEBUG_BLOCK	1
 #if defined(DEBUG_BLOCK)
 #define DEBUG_BLOCK_STATE(_str,_block,_state)       printf("%s BLOCK NR:%d STATE:%d\n",_str,_block, _state); fflush(stdout);
 #define DEBUG_STATE(_state,_substate)				printf("MAIN_STATE:%s/%d\n",StateToStr[_state],_substate); fflush(stdout);

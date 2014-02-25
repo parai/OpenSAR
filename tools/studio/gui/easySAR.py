@@ -101,6 +101,7 @@ class easySARGui(QMainWindow):
                         'Open or Configure a Workspace first !').exec_();
         self.easyOsCfg.mGen(self.pdir)
         self.easyComCfg.mGen(self.pdir)
+        self.easyNvMCfg.mGen(self.pdir)
         QMessageBox(QMessageBox.Information, 'Info', 
                         'Generate OpenSAR Configuration C Code Successfully !').exec_();
     def measyNvM(self):

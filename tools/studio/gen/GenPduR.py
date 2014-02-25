@@ -2,7 +2,7 @@ import sys,os
 import xml.etree.ElementTree as ET
 import traceback
 
-__all__ = ['GenCanIf']
+__all__ = ['GenPduR']
 
 __Header = \
 """/*

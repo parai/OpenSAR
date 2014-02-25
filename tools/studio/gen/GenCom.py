@@ -36,6 +36,7 @@ def GenCom(wfxml):
     GenH()
     GenC()
     GenPy()
+    print '>>> Gen Com DONE <<<'
 
 
 def tInt(strnum):
