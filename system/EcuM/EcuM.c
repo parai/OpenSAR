@@ -228,12 +228,23 @@ void EcuM_StartupTwo(void)
 	Rte_Start();
 #endif
 
-#if defined(USE_NVM) && !defined(__GTK__)
+#if defined(USE_NVM)
 	/* Wait for the NVM job (NvM_ReadAll) to terminate. This assumes that:
 	 * - A task runs the memory MainFunctions, e.g. Ea_MainFunction(), Eep_MainFunction()
 	 *   are run in a higher priority task that the task that executes this code.
 	 */
 	do {
+        #if defined(__GTK__)
+        #ifdef USE_FEE
+		Fls_MainFunction();
+		Fee_MainFunction();
+        #endif
+        #ifdef USE_EA
+		Eep_MainFunction();
+		Ea_MainFunction();
+        #endif
+		NvM_MainFunction();
+        #endif
 		/* Read the multiblock status */
 		NvM_GetErrorStatus(0, &readAllResult);
 		tickTimerElapsed = OS_TICKS2MS_OS_TICK(GetOsTick() - tickTimerStart);

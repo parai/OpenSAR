@@ -17,7 +17,7 @@ class easyFeeCfgTree(QTreeWidget):
     def __init__(self,parent):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Type','Size','Comment']
+        list = ['Name','Type','Size','Default Value','Comment']
         self.setHeaderLabels(QStringList(list))
         self.setColumnWidth(0,150)
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
@@ -58,7 +58,8 @@ class easyFeeCfgTree(QTreeWidget):
                 Data.attrib['name'] = str(self.itemWidget(treeData,0).text())
                 Data.attrib['type'] = str(self.itemWidget(treeData,1).currentText())
                 Data.attrib['size'] = str(self.itemWidget(treeData,2).text())
-                Data.attrib['comment'] = str(self.itemWidget(treeData,3).text())
+                Data.attrib['default'] = str(self.itemWidget(treeData,3).text())
+                Data.attrib['comment'] = str(self.itemWidget(treeData,4).text())
                 DataList.append(Data)
             Block.append(DataList)
             BlockList.append(Block)
@@ -97,13 +98,14 @@ class easyFeeCfgTree(QTreeWidget):
         if Data != None:
             sName = Data.attrib['name']
             sType = Data.attrib['type']
-            #sSize  = Data.attrib['size']
-            sSize = '4'
+            sSize = Data.attrib['size']
+            sDefault = Data.attrib['default']
             sComment  = Data.attrib['comment']
         else:
             sName = 'Data%s'%(self.dataid)
             sType = 'uint32'
             sSize = '4'
+            sDefault = '0'
             sComment = ''
         dataName = QLineEdit(sName)
         dataName.setStatusTip('Name For Data, each Data must has a unique name.')
@@ -112,11 +114,14 @@ class easyFeeCfgTree(QTreeWidget):
         dataType.setCurrentIndex(dataType.findText(sType))
         dataSize = QLineEdit(sSize)
         dataSize.setToolTip('Only valid for type [uint32_n,uint16_n,uint8_n]')
+        dataDefault = QLineEdit(sDefault)
+        dataDefault.setToolTip(('If Array, use comma to seperate each value,such as "0,1,2"'))
         Comment = QLineEdit(sComment)      
         self.setItemWidget(dataItem,0,dataName)
         self.setItemWidget(dataItem,1,dataType)
         self.setItemWidget(dataItem,2,dataSize)
-        self.setItemWidget(dataItem,3,Comment)
+        self.setItemWidget(dataItem,3,dataDefault)
+        self.setItemWidget(dataItem,4,Comment)
         blockItem.setExpanded(True)
         self.dataid += 1
             

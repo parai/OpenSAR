@@ -65,8 +65,22 @@
 							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.1614876551" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base"/>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="cdt.managedbuild.toolchain.gnu.mingw.base.1012264272.2147139808" name="/" resourcePath="arch">
+						<toolChain id="cdt.managedbuild.toolchain.gnu.mingw.base.1625503212" name="cdt.managedbuild.toolchain.gnu.mingw.base" superClass="cdt.managedbuild.toolchain.gnu.mingw.base" unusedChildren="">
+							<tool id="cdt.managedbuild.tool.gnu.assembler.mingw.base.1787596128" name="GCC Assembler" superClass="cdt.managedbuild.tool.gnu.assembler.mingw.base.1691009137">
+								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.2144020258" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.archiver.mingw.base.1259165049" name="GCC Archiver" superClass="cdt.managedbuild.tool.gnu.archiver.mingw.base.2136663486"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1311605282" name="GCC C++ Compiler" superClass="cdt.managedbuild.tool.gnu.cpp.compiler.mingw.base.1190705901"/>
+							<tool id="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.545123550" name="GCC C Compiler" superClass="cdt.managedbuild.tool.gnu.c.compiler.mingw.base.293932995">
+								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.345017963" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
+							</tool>
+							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.514066686" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1938826711"/>
+							<tool id="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.1825688156" name="MinGW C++ Linker" superClass="cdt.managedbuild.tool.gnu.cpp.linker.mingw.base.1614876551"/>
+						</toolChain>
+					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="boot|boards|examples|arch/hc1x|arch/ppc|arch/arm|arch/generic/linux|arch/generic/mingw|arch/generic/Qt" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

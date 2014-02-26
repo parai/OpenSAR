@@ -1,5 +1,6 @@
 #include "app.h"
 
+#if 0
 static void Fee_Test(void)
 {
 	static App_TimeType SystemTime;
@@ -16,9 +17,9 @@ static void Fee_Test(void)
 	}
 	else if(1 == stage)
 	{
-		printf("Year=%d,Month=%d,Day=%d,Hour=%d,Minute=%d,Second=%d\n",
-				SystemTime_Read.year,SystemTime_Read.month,SystemTime_Read.day,
-				SystemTime_Read.hour,SystemTime_Read.minute,SystemTime_Read.second);
+//		printf("Year=%d,Month=%d,Day=%d,Hour=%d,Minute=%d,Second=%d\n",
+//				SystemTime_Read.year,SystemTime_Read.month,SystemTime_Read.day,
+//				SystemTime_Read.hour,SystemTime_Read.minute,SystemTime_Read.second);
 		Fee_Read(FEE_BLOCK_NUM_Config,0,&Flag_Read,4);
 	}
 	else if(2 == stage)
@@ -28,7 +29,7 @@ static void Fee_Test(void)
 	}
 	else if(3 == stage)
 	{
-		printf("Flag=0x%X\n",Flag_Read);
+		//printf("Flag=0x%X\n",Flag_Read);
 		Fee_Read(FEE_BLOCK_NUM_FingerPrint,0,&Flag_Read,4);
 	}
 	else if(4 == stage)
@@ -37,7 +38,7 @@ static void Fee_Test(void)
 	}
 	else if(5 == stage)
 	{
-		printf("Flag=0x%X\n",Flag_Read);
+		//printf("Flag=0x%X\n",Flag_Read);
 		Fee_Read(FEE_BLOCK_NUM_Time,0,&SystemTime_Read,7);
 	}
 	stage ++;
@@ -46,16 +47,36 @@ static void Fee_Test(void)
 		stage = 0;
 	}
 }
+#endif
 
 static void NvM_Test(void)
 {
-//	static uint32 Flag_Read[8];
-//	NvM_ReadBlock(NVM_BLOCK_ID_TEST1,Flag_Read);
-//	printf("NvM: Read = 0x%x\n",Flag_Read[0]);
+	App_TimeType SystemTime;
+
+	app_get_system(&SystemTime);
+//	NvM_ReadBlock(NVM_BLOCK_ID_Time,(uint8*)&NvM_BlockTime_DataGroup_RAM);
+//	printf("NvM>>> Year=%d,Month=%d,Day=%d,Hour=%d,Minute=%d,Second=%d\n",
+//			NvM_BlockTime_DataGroup_RAM.Year,NvM_BlockTime_DataGroup_RAM.Month,NvM_BlockTime_DataGroup_RAM.Day,
+//			NvM_BlockTime_DataGroup_RAM.Hour,NvM_BlockTime_DataGroup_RAM.Minute,NvM_BlockTime_DataGroup_RAM.Second);
+	printf("NvM>>> Year=%d,Month=%d,Day=%d,Hour=%d,Minute=%d,Second=%d\n",
+			Rte_NvMRead(Time,Year),Rte_NvMRead(Time,Month),Rte_NvMRead(Time,Day),
+			Rte_NvMRead(Time,Hour),Rte_NvMRead(Time,Minute),Rte_NvMRead(Time,Second));
+
+	Rte_NvMWrite(Time,Year,SystemTime.year);
+	Rte_NvMWrite(Time,Month,SystemTime.month);
+	Rte_NvMWrite(Time,Day,SystemTime.day);
+	Rte_NvMWrite(Time,Hour,SystemTime.hour);
+	Rte_NvMWrite(Time,Minute,SystemTime.minute);
+	Rte_NvMWrite(Time,Second,SystemTime.second);
+
+	//Rte_NvmDownloadBlock(Time);
+	//NvM_WriteAll();
+
+
 }
 
 void app_nvm_1000ms_runnable(void)
 {
-	Fee_Test();
+	//Fee_Test();
 	NvM_Test();
 }

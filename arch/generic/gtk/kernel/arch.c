@@ -6,9 +6,6 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 #include "Os.h"
-#include "NvM.h"
-#include "Fee.h"
-#include "Fls.h"
 #include "internal.h"
 #include "sys.h"
 #include "irq_types.h"
@@ -68,30 +65,9 @@ static gboolean arch_daemon(gpointer data)
 }
 static void arch_init_daemon(void)
 {
-	static NvM_RequestResultType readAllResult;
 	g_type_init ();	// for glib socket
 	start_main();
 
-	// NvM fast start-up
-#ifdef USE_NVM
-	do {
-
-		NvM_MainFunction();
-#ifdef USE_FEE
-		Fee_MainFunction();
-		Fls_MainFunction();
-#endif
-#ifdef USE_EA
-		Eep_MainFunction();
-		Ea_MainFunction();
-#endif
-
-		/* Read the multiblock status */
-		NvM_GetErrorStatus(0, &readAllResult);
-		/* The timeout EcuMNvramReadAllTimeout is in ms */
-	} while( (readAllResult == NVM_REQ_PENDING) );
-#endif
-	//
 	g_print(">>>> Start-up Done! <<<<\n");
 	pSysTimer = g_timer_new();
 	g_idle_add(arch_daemon,NULL);

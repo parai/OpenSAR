@@ -69,7 +69,6 @@ def GLGet(what,which = None):
         return None 
 def GenH():
     global __dir
-    # =========================  PduR_Cfg.h ==================
     fp = open('%s/Fee_Cfg.h'%(__dir),'w')
     fp.write(__Header) 
     fp.write("""
@@ -86,11 +85,11 @@ def GenH():
 #define FEE_INDEX                        0
 #define FEE_VIRTUAL_PAGE_SIZE            8
 #define FEE_MAX_NUM_SETS                 1\n\n""") 
-    Num = 0
+    Num = 1
     for block in GLGet('FeeBlockList'):
         fp.write('#define FEE_BLOCK_NUM_%-32s %s\n'%(GAGet(block,'name'),Num))
-        Num += 1
-    fp.write('\n#define FEE_NUM_OF_BLOCKS %s\n'%(Num))
+        Num += (GAGet(block,'BlockSize')+7)/8
+    fp.write('\n#define FEE_NUM_OF_BLOCKS %s\n'%(len(GLGet('FeeBlockList'))))
     fp.write('#endif /*FEE_CFG_H_*/\n\n')
     fp.close()  
     

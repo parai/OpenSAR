@@ -16,16 +16,18 @@
 // parai:
 //  FEE Map
 //| Low Address
-//|--------------+----------------------------|
-//|              | DATA Of Block Id1          | <-- all data is page aligned
+//|--------------+----------------------------| <- all part is PAGE aligned.
+//|              | DATA Of Block Id1          |
 //|              | DATA Of Block Id3          |
 //|              | DATA Of Block Id2          |
+//|              | DATA Of Block Id3          |
 //|              | ......                     |
 //|              | ......                     |
 //|              | ......                     |
-//|              | Blcok Id1(DataPage+IdPage) | <-- see type FlsBlockControlType
-//|              | Blcok Id1(DataPage+IdPage) |
-//|              | Blcok Id1(DataPage+IdPage) |
+//|              | Block Id3(DataPage+IdPage) |
+//|              | Block Id2(DataPage+IdPage) | <-- see type FlsBlockControlType
+//|              | Block Id3(DataPage+IdPage) |
+//|              | Block Id1(DataPage+IdPage) |
 //|              | BANK MAGIC                 | <-- see type FlsBankControlDataType
 //|--------------+----------------------------|
 //| High Address

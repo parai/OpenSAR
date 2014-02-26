@@ -28,7 +28,7 @@ const Fee_BlockConfigType BlockConfigList[] = {
     {    /* Config */
         .DeviceIndex = 0,/*TODO*/
         .BlockNumber = FEE_BLOCK_NUM_Config,
-        .BlockSize  =  4,
+        .BlockSize  =  32,
         .ImmediateData = FALSE,
         .NumberOfWriteCycles = 0xFFFFFFFF
     },        
@@ -36,7 +36,7 @@ const Fee_BlockConfigType BlockConfigList[] = {
     {    /* FingerPrint */
         .DeviceIndex = 0,/*TODO*/
         .BlockNumber = FEE_BLOCK_NUM_FingerPrint,
-        .BlockSize  =  16,
+        .BlockSize  =  256,
         .ImmediateData = FALSE,
         .NumberOfWriteCycles = 0xFFFFFFFF
     },        

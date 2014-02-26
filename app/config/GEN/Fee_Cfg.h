@@ -26,9 +26,9 @@
 #define FEE_VIRTUAL_PAGE_SIZE            8
 #define FEE_MAX_NUM_SETS                 1
 
-#define FEE_BLOCK_NUM_Time                             0
-#define FEE_BLOCK_NUM_Config                           1
-#define FEE_BLOCK_NUM_FingerPrint                      2
+#define FEE_BLOCK_NUM_Time                             1
+#define FEE_BLOCK_NUM_Config                           2
+#define FEE_BLOCK_NUM_FingerPrint                      6
 
 #define FEE_NUM_OF_BLOCKS 3
 #endif /*FEE_CFG_H_*/
