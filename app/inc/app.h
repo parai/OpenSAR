@@ -20,6 +20,7 @@
 #include "Dcm.h"
 #include "Dio.h"
 #include "Port.h"
+#include "Ea.h"
 #include "Fee.h"
 #include "NvM.h"
 #if defined(WIN32)

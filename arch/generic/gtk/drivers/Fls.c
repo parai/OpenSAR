@@ -618,12 +618,14 @@ void Fls_MainFunction(void) {
 			if( E_NOT_OK == ercd ){
 				fls_ReadFail();
 			} else {
-				if( 0 != Fls_Global.length ) {
-					if (result == 0) {
-						Fls_Global.jobResultType = MEMIF_JOB_OK;
-					} else {
-						Fls_Global.jobResultType = MEMIF_BLOCK_INCONSISTENT;
-					}
+				if(result != 0)
+				{
+					Fls_Global.jobResultType = MEMIF_BLOCK_INCONSISTENT;
+					Fls_Global.status = MEMIF_IDLE;
+					Fls_Global.jobType = FLS_JOB_NONE;
+				}
+				else if( 0 == Fls_Global.length ) {
+					Fls_Global.jobResultType = MEMIF_JOB_OK;
 					Fls_Global.status = MEMIF_IDLE;
 					Fls_Global.jobType = FLS_JOB_NONE;
 				} else {

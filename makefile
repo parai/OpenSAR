@@ -41,6 +41,10 @@ export BDIR
 #export COMPILER
 #CROSS_COMPILE=gcc
 #export CROSS_COMPILE
+
+# show compile detailed information
+#VERBOSE = y
+
 # ==========================================================
 
 export UNAME:=$(shell uname)

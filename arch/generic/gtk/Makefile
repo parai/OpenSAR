@@ -107,7 +107,9 @@ MACROS = 	$(Gtk-Macros)		\
 			-DcfgCPU_ENDIAN=COM_LITTLE_ENDIAN	\
 			-DUSE_NVM	\
 			-DUSE_MEMIF	\
-			-DUSE_GUI
+			-DUSE_GUI	\
+			-DUSE_EEP	\
+			-DUSE_EA
 
 CCFLGS = -c -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) $(Gtk-CCFLGS)
 LDFLGS = -g $(MACROS) -std=gnu99 -O2 -Wall $(INCDIR) $(Gtk-LDFLGS) 
@@ -134,6 +136,7 @@ dir-y =	$(BD)/app/config	\
 		$(BD)/system/EcuM			\
 		$(BD)/system/SchM			\
 		$(BD)/memory/Fee			\
+		$(BD)/memory/Ea				\
 		$(BD)/memory/NvM			\
 		$(BD)/memory/MemIf			\
 		$(BD)/system/Crc
@@ -169,7 +172,7 @@ lib-y =
 
 .PHONY:all clean gen
 
-gen:Flash.img
+gen:Flash.img Eeprom.img
 	@(cd ../../../tools/studio; python Gen.py)
 	@echo ">>>>>> Gen Config DONE <<<<<<"
 GtkCom-dir-y = $(BD)/arch/generic/gtk/drivers/tool/Com/src
@@ -190,7 +193,7 @@ GtkCan:$(GtkCan-obj)
 	@$(LD) $(GtkCan-obj) -o $(OUT)/GtkCan $(LDFLGS)	
 	@echo ">>>>>>>>>>>>>>>>>  BUILD GtkCan.EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 		
-all:$(obj-y) $(OUT)/Flash.img
+all:$(obj-y) $(OUT)/Flash.img $(OUT)/Eeprom.img
 	@$(LD) -o $(OUT)/$(TARGET) $(obj-y) $(LDFLGS)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET).EXE DONE   <<<<<<<<<<<<<<<<<<<<<<"
 
@@ -198,6 +201,11 @@ $(OUT)/Flash.img:
 	dd if=/dev/zero of=$(OUT)/Flash.img bs=1M count=1
 Flash.img:$(OUT)/Flash.img
 	dd if=/dev/zero of=Flash.img bs=1M count=1
+	
+$(OUT)/Eeprom.img:
+	dd if=/dev/zero of=$(OUT)/Eeprom.img bs=16K count=1
+Eeprom.img:$(OUT)/Eeprom.img
+	dd if=/dev/zero of=Eeprom.img bs=16K count=1	
 	
 $(OUT)/GtkCan:GtkCan
 $(OUT)/GtkCom:GtkCom

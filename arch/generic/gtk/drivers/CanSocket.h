@@ -78,7 +78,7 @@ typedef struct{
 
 extern CAN_HW_t Can_HwUnit[CAN_ARC_CTRL_CONFIG_CNT];
 
-inline GtkCanMsgBox_Type* GtkCanGetBusyMsgBox(GtkCanQueue_Type* Q)
+static inline GtkCanMsgBox_Type* GtkCanGetBusyMsgBox(GtkCanQueue_Type* Q)
 {
 	GtkCanMsgBox_Type* pMsgBox = NULL;
 	uint8 head = Q->head;
@@ -103,7 +103,7 @@ inline GtkCanMsgBox_Type* GtkCanGetBusyMsgBox(GtkCanQueue_Type* Q)
 	return pMsgBox;
 }
 
-inline GtkCanMsgBox_Type* GtkCanGetEmptyMsgBox(GtkCanQueue_Type* Q)
+static inline GtkCanMsgBox_Type* GtkCanGetEmptyMsgBox(GtkCanQueue_Type* Q)
 {
 	GtkCanMsgBox_Type* pMsgBox = NULL;
 	uint8 tail = Q->tail;

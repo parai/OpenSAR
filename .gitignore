@@ -19,7 +19,6 @@ clib
 out
 drivers_
 examples
-scripts
 tools/pls
 tools/t32
 rte

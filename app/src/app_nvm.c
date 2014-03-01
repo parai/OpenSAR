@@ -49,6 +49,7 @@ static void Fee_Test(void)
 }
 #endif
 
+#if 0
 static void NvM_Test(void)
 {
 	App_TimeType SystemTime;
@@ -79,9 +80,43 @@ static void NvM_Test(void)
 		Rte_NvmWriteBlock(FingerPrint);
 	}
 }
-
+#endif
+static void Ea_Test(void)
+{
+	static uint32 caller = 0;
+	static uint8 buffer[512];
+	caller ++;
+	switch(caller)
+	{
+		case 1:
+			for(int i=0;i<260;i++)
+			{
+				buffer[i] = i;
+			}
+			Ea_Write(1,buffer);
+			break;
+		case 2:
+			memset(buffer,0,512);
+			if(E_OK != Ea_Read(1,0,buffer,260))
+			{
+				printf("## Request Read failed\n");
+			}
+			break;
+		case 3:
+			printf("Buffer = [");
+			for(int i=0;i<260;i++)
+			{
+				printf("%-2X,",buffer[i]);
+			}
+			printf("]\n");
+			break;
+		default:
+			break;
+	}
+}
 void app_nvm_1000ms_runnable(void)
 {
 	//Fee_Test();
-	NvM_Test();
+	//NvM_Test();
+	Ea_Test();
 }
