@@ -15,6 +15,7 @@ tools/pls
 tools/t32
 rte
 Flash.img
+Eeprom.img
 *.exe
 *.EXE
 # std arccore directorys  >>>
