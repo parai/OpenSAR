@@ -72,16 +72,21 @@ extern const NvM_BlockConfig_DataGroupType NvM_BlockConfig_DataGroup_ROM;
 extern NvM_BlockFingerPrint_DataGroupType NvM_BlockFingerPrint_DataGroup_RAM;
 extern const NvM_BlockFingerPrint_DataGroupType NvM_BlockFingerPrint_DataGroup_ROM;
 
+#define Rte_NvMReadBuffer(GroupName)    ((uint8*)&NvM_Block##GroupName##_DataGroup_RAM)    
 #define Rte_NvMRead(GroupName,DataName) (NvM_Block##GroupName##_DataGroup_RAM._##DataName)
+#define Rte_NvMReadArrayBuffer(GroupName,DataName) ((uint8*)NvM_Block##GroupName##_DataGroup_RAM._##DataName)
 #define Rte_NvMReadArray(GroupName,DataName,Index) (NvM_Block##GroupName##_DataGroup_RAM._##DataName[Index])
+
+#define Rte_NvMReadBufferConst(GroupName)    ((uint8*)&NvM_Block##GroupName##_DataGroup_ROM) 
 #define Rte_NvMReadConst(GroupName,DataName) (NvM_Block##GroupName##_DataGroup_ROM._##DataName)
+#define Rte_NvMReadArrayBufferConst(GroupName,DataName) ((uint8*)NvM_Block##GroupName##_DataGroup_ROM._##DataName)
 #define Rte_NvMReadArrayConst(GroupName,DataName,Index) (NvM_Block##GroupName##_DataGroup_ROM._##DataName[Index])
 
 #define Rte_NvMWrite(GroupName,DataName,Value) (NvM_Block##GroupName##_DataGroup_RAM._##DataName = Value)
 #define Rte_NvMWriteArray(GroupName,DataName,Index,Value) (NvM_Block##GroupName##_DataGroup_RAM._##DataName[Index] = Value)
 
-#define Rte_NvmDownloadBlock(GroupName) NvM_WriteBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
-#define Rte_NvmUploadBlock(GroupName) NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
+#define Rte_NvmWriteBlock(GroupName) NvM_WriteBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
+#define Rte_NvmReadBlock(GroupName)  NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
         
     
 

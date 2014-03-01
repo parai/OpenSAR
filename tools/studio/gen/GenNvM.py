@@ -130,16 +130,21 @@ def GenH():
         cstr+= 'extern const NvM_Block%s_DataGroupType NvM_Block%s_DataGroup_ROM;\n'%(GAGet(block,'name'),GAGet(block,'name'))
         fp.write(cstr)
     fp.write("""
+#define Rte_NvMReadBuffer(GroupName)    ((uint8*)&NvM_Block##GroupName##_DataGroup_RAM)    
 #define Rte_NvMRead(GroupName,DataName) (NvM_Block##GroupName##_DataGroup_RAM._##DataName)
+#define Rte_NvMReadArrayBuffer(GroupName,DataName) ((uint8*)NvM_Block##GroupName##_DataGroup_RAM._##DataName)
 #define Rte_NvMReadArray(GroupName,DataName,Index) (NvM_Block##GroupName##_DataGroup_RAM._##DataName[Index])
+
+#define Rte_NvMReadBufferConst(GroupName)    ((uint8*)&NvM_Block##GroupName##_DataGroup_ROM) 
 #define Rte_NvMReadConst(GroupName,DataName) (NvM_Block##GroupName##_DataGroup_ROM._##DataName)
+#define Rte_NvMReadArrayBufferConst(GroupName,DataName) ((uint8*)NvM_Block##GroupName##_DataGroup_ROM._##DataName)
 #define Rte_NvMReadArrayConst(GroupName,DataName,Index) (NvM_Block##GroupName##_DataGroup_ROM._##DataName[Index])
 
 #define Rte_NvMWrite(GroupName,DataName,Value) (NvM_Block##GroupName##_DataGroup_RAM._##DataName = Value)
 #define Rte_NvMWriteArray(GroupName,DataName,Index,Value) (NvM_Block##GroupName##_DataGroup_RAM._##DataName[Index] = Value)
 
-#define Rte_NvmDownloadBlock(GroupName) NvM_WriteBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
-#define Rte_NvmUploadBlock(GroupName) NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
+#define Rte_NvmWriteBlock(GroupName) NvM_WriteBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
+#define Rte_NvmReadBlock(GroupName)  NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
         
     """)
     
@@ -171,7 +176,7 @@ def GenC():
         .SelectBlockForReadall = TRUE,
         .SingleBlockCallback = NULL,
         .NvBlockLength        = %s,
-        .BlockUseCrc  = FALSE,    // TODO
+        .BlockUseCrc  = TRUE,
         .BlockCRCType =NVM_CRC16,
         .RamBlockDataAddress = (uint8*)&NvM_Block%s_DataGroup_RAM,
         .CalcRamBlockCrc = FALSE, // TODO

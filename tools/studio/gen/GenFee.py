@@ -55,7 +55,7 @@ def GAGet(what,which):
                     Size += 2*tInt(data.attrib['size'])
                 elif(data.attrib['type']=='uint8_n'):
                     Size += tInt(data.attrib['size'])
-            return Size
+            return Size+4  # length for Crc16 or Crc32
         else:
             return None    
 def GLGet(what,which = None):

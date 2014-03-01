@@ -69,10 +69,15 @@ static void NvM_Test(void)
 	Rte_NvMWrite(Time,Minute,SystemTime.minute);
 	Rte_NvMWrite(Time,Second,SystemTime.second);
 
-	//Rte_NvmDownloadBlock(Time);
-	//NvM_WriteAll();
-
-
+	if(SystemTime.second%2 != 0)
+	{
+		Rte_NvmWriteBlock(Time);
+	}
+	else
+	{
+		memcpy(Rte_NvMReadBuffer(FingerPrint),"Test by parai@foxmail.com\n",26);
+		Rte_NvmWriteBlock(FingerPrint);
+	}
 }
 
 void app_nvm_1000ms_runnable(void)

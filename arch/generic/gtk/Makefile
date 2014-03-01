@@ -169,8 +169,9 @@ lib-y =
 
 .PHONY:all clean gen
 
-gen:
-
+gen:Flash.img
+	@(cd ../../../tools/studio; python Gen.py)
+	@echo ">>>>>> Gen Config DONE <<<<<<"
 GtkCom-dir-y = $(BD)/arch/generic/gtk/drivers/tool/Com/src
 GtkCom-obj = $(subst .c,.o,$(foreach x,$(GtkCom-dir-y),$(wildcard $(addprefix $(x)/*,.c))))	
 GtkCom:$(GtkCom-obj)
