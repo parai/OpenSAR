@@ -217,6 +217,7 @@ clean: FORCE
 	@echo "  >> Rules Clean $(CURDIR)"
 	$(Q)-rm -v *
 	$(Q)-rm -v $(ROOTDIR)/binaries/$(BOARDDIR)/*
+	$(Q)-rm -v $(build-exe-y)
 	
 .PHONY : config 
 config: FORCE
