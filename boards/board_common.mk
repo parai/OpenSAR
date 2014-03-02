@@ -180,6 +180,10 @@ obj-$(USE_EEP) += Eep.o
 obj-$(USE_EEP) += Eep_Lcfg.o
 #obj-$(USE_EEP) += Eeprom_Lcfg.o
 
+#MemIf
+obj-$(USE_MEMIF) += MemIf.o
+vpath-$(USE_NVM) += $(ROOTDIR)/memory/MemIf
+
 #Fls ext
 obj-$(USE_FLS_SST25XX) += Fls_SST25xx.o
 obj-$(USE_FLS_SST25XX) += Fls_SST25xx_Cfg.o

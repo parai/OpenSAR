@@ -223,7 +223,7 @@ void Eep_SetMode(MemIf_ModeType Mode) {
 
 Std_ReturnType Eep_Read(Eep_AddressType EepromAddress, uint8 *TargetAddressPtr, Eep_LengthType Length) {
 	Eep_JobInfoType *job = &Eep_Global.job;
-
+	LDEBUG_PRINTF("EEP: Read(%d,%d) pBuffer=0x%X\n",EepromAddress,Length,(uint32)TargetAddressPtr);
 	VALIDATE_W_RV( ( Eep_Global.status != MEMIF_UNINIT ), EEP_READ_ID, EEP_E_UNINIT, E_NOT_OK);
 	VALIDATE_W_RV( ( Eep_Global.status != MEMIF_BUSY ), EEP_READ_ID, EEP_E_BUSY, E_NOT_OK);
 	VALIDATE_W_RV( ( TargetAddressPtr != NULL ), EEP_READ_ID, EEP_E_PARAM_DATA, E_NOT_OK);
@@ -267,7 +267,14 @@ Std_ReturnType Eep_Erase(Eep_AddressType TargetAddress, Eep_LengthType Length) {
 
 Std_ReturnType Eep_Write(Eep_AddressType EepromAddress, const uint8* DataBufferPtr, Eep_LengthType Length) {
 	Eep_JobInfoType *job = &Eep_Global.job;
-
+#if defined(USE_LDEBUG_PRINTF)
+	LDEBUG_PRINTF("EEP: Write(%d) = [",EepromAddress);
+	for(int i=0;i<Length;i++)
+	{
+		LDEBUG_PRINTF("0x%-2X,",DataBufferPtr[i]);
+	}
+	LDEBUG_PRINTF("]\n");
+#endif
 	VALIDATE_W_RV( ( Eep_Global.status != MEMIF_UNINIT ), EEP_WRITE_ID, EEP_E_UNINIT, E_NOT_OK);
 	VALIDATE_W_RV( ( Eep_Global.status != MEMIF_BUSY ), EEP_WRITE_ID, EEP_E_BUSY, E_NOT_OK);
 	VALIDATE_W_RV( ( DataBufferPtr != NULL ), EEP_WRITE_ID, EEP_E_PARAM_DATA, E_NOT_OK);

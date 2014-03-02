@@ -88,9 +88,9 @@
 #endif
 
 #if (MEMIF_NUMBER_OF_DEVICES > 1) || defined(CFG_MEMIF_NO_MACRO)
-#if (MEMIF_NUMBER_OF_DEVICES > 1)
-#error "Support for more than one device is not implemented yet!"
-#endif
+//#if (MEMIF_NUMBER_OF_DEVICES > 1)
+//#error "Support for more than one device is not implemented yet!"
+//#endif
 void MemIf_SetMode(MemIf_ModeType Mode);
 Std_ReturnType MemIf_Read(uint8 DeviceIndex, uint16 BlockNumber, uint16 BlockOffset, uint8 *DataBufferPtr, uint16 Length);
 Std_ReturnType MemIf_Write(uint8 DeviceIndex, uint16 BlockNumber, uint8 *DataBufferPtr);

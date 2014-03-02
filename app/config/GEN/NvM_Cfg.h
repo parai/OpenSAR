@@ -37,11 +37,13 @@
 
 #define NVM_MAX_BLOCK_LENGTH 256
 
-#define NVM_NUM_OF_NVRAM_BLOCKS 3
+#define NVM_NUM_OF_NVRAM_BLOCKS 5
 
 #define NVM_BLOCK_ID_Time 1
 #define NVM_BLOCK_ID_Config 2
 #define NVM_BLOCK_ID_FingerPrint 3
+#define NVM_BLOCK_ID_EaTest1 4
+#define NVM_BLOCK_ID_EaTest2 5
 
 typedef struct{
 	uint16 _Year;
@@ -63,6 +65,22 @@ typedef struct{
 }NvM_BlockFingerPrint_DataGroupType;
 
 
+typedef struct{
+	uint32 _Data0;
+	uint32 _Data1;
+	uint32 _Data2;
+	uint32 _Data3;
+}NvM_BlockEaTest1_DataGroupType;
+
+
+typedef struct{
+	uint32 _Data1;
+	uint32 _Data2;
+	uint32 _Data3;
+	uint32 _Data4;
+}NvM_BlockEaTest2_DataGroupType;
+
+
 extern NvM_BlockTime_DataGroupType NvM_BlockTime_DataGroup_RAM;
 extern const NvM_BlockTime_DataGroupType NvM_BlockTime_DataGroup_ROM;
 
@@ -71,6 +89,12 @@ extern const NvM_BlockConfig_DataGroupType NvM_BlockConfig_DataGroup_ROM;
 
 extern NvM_BlockFingerPrint_DataGroupType NvM_BlockFingerPrint_DataGroup_RAM;
 extern const NvM_BlockFingerPrint_DataGroupType NvM_BlockFingerPrint_DataGroup_ROM;
+
+extern NvM_BlockEaTest1_DataGroupType NvM_BlockEaTest1_DataGroup_RAM;
+extern const NvM_BlockEaTest1_DataGroupType NvM_BlockEaTest1_DataGroup_ROM;
+
+extern NvM_BlockEaTest2_DataGroupType NvM_BlockEaTest2_DataGroup_RAM;
+extern const NvM_BlockEaTest2_DataGroupType NvM_BlockEaTest2_DataGroup_ROM;
 
 #define Rte_NvMReadBuffer(GroupName)    ((uint8*)&NvM_Block##GroupName##_DataGroup_RAM)    
 #define Rte_NvMRead(GroupName,DataName) (NvM_Block##GroupName##_DataGroup_RAM._##DataName)
@@ -86,9 +110,9 @@ extern const NvM_BlockFingerPrint_DataGroupType NvM_BlockFingerPrint_DataGroup_R
 #define Rte_NvMWriteArray(GroupName,DataName,Index,Value) (NvM_Block##GroupName##_DataGroup_RAM._##DataName[Index] = Value)
 
 #define Rte_NvmWriteBlock(GroupName) NvM_WriteBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
-#define Rte_NvmReadBlock(GroupName)  NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
-        
-    
+#define Rte_NvmReadBlock(GroupName)  NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)      
+
+
 
 #endif /*NVM_CFG_H_*/
 

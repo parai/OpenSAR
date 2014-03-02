@@ -553,7 +553,7 @@ static boolean CheckMemIfJobFinished(void)
 	MemIf_JobResultType jobResult;
 
 	if (!MemIfJobAdmin.JobFinished) {
-		jobResult = MemIf_GetJobResult(FIXME);
+		jobResult = MemIf_GetJobResult(nvmBlock->NvramDeviceId);
 
 		if (jobResult == MEMIF_JOB_OK) {
 			MemIfJobAdmin.JobFinished = TRUE;
@@ -736,7 +736,7 @@ static void DriveBlock( const NvM_BlockDescriptorType	*bPtr,
 				rv = MemIf_Write(bPtr->NvramDeviceId, BLOCK_BASE_AND_SET_TO_BLOCKNR(bPtr->NvBlockBaseNumber, admPtr->DataIndex), Nvm_WorkBuffer);
 
 				if (rv != E_OK) {
-					if ( MemIf_GetStatus(FIXME) == MEMIF_IDLE ) {
+					if ( MemIf_GetStatus(bPtr->NvramDeviceId) == MEMIF_IDLE ) {
 						AbortMemIfJob(MEMIF_JOB_FAILED);
 						fail = TRUE;
 					} else {
@@ -803,7 +803,7 @@ static void DriveBlock( const NvM_BlockDescriptorType	*bPtr,
 											Nvm_WorkBuffer,
 											length );
 					if (rv != E_OK) {
-						if ( MemIf_GetStatus(FIXME) == MEMIF_IDLE ) {
+						if ( MemIf_GetStatus(bPtr->NvramDeviceId) == MEMIF_IDLE ) {
 							AbortMemIfJob(MEMIF_JOB_FAILED);
 							fail = TRUE;
 						} else {
@@ -839,7 +839,7 @@ static void DriveBlock( const NvM_BlockDescriptorType	*bPtr,
 	case BLOCK_STATE_MEMIF_PROCESS:
 	{
 		/* Check read */
-		MemIf_JobResultType jobResult = MemIf_GetJobResult(FIXME);
+		MemIf_JobResultType jobResult = MemIf_GetJobResult(bPtr->NvramDeviceId);
 
 		if( MEMIF_JOB_PENDING == jobResult ) {
 			/* Keep on waiting */
@@ -2003,7 +2003,7 @@ void NvM_MainFunction(void)
             break;
         case NS_PENDING:
 
-            jobResult = MemIf_GetJobResult(FIXME);
+            jobResult = MemIf_GetJobResult(nvmBlock->NvramDeviceId);
             if( MEMIF_JOB_PENDING == jobResult ) {
                 /* Keep on waiting */
             } else if( MEMIF_JOB_OK == jobResult ) {
@@ -2058,9 +2058,12 @@ void NvM_MainFunction(void)
  */
 void NvM_JobEndNotification(void)
 {
-	MemIfJobAdmin.JobFinished = TRUE;
-	MemIfJobAdmin.JobStatus = E_OK;
-	MemIfJobAdmin.JobResult = MemIf_GetJobResult(FIXME);
+	if(nvmBlock != NULL)
+	{
+		MemIfJobAdmin.JobFinished = TRUE;
+		MemIfJobAdmin.JobStatus = E_OK;
+		MemIfJobAdmin.JobResult = MemIf_GetJobResult(nvmBlock->NvramDeviceId);
+	}
 }
 
 /*
@@ -2069,9 +2072,12 @@ void NvM_JobEndNotification(void)
  */
 void NvM_JobErrorNotification(void)
 {
-	MemIfJobAdmin.JobFinished = TRUE;
-	MemIfJobAdmin.JobStatus = E_NOT_OK;
-	MemIfJobAdmin.JobResult = MemIf_GetJobResult(FIXME);
+	if(nvmBlock != NULL)
+	{
+		MemIfJobAdmin.JobFinished = TRUE;
+		MemIfJobAdmin.JobStatus = E_NOT_OK;
+		MemIfJobAdmin.JobResult = MemIf_GetJobResult(nvmBlock->NvramDeviceId);
+	}
 }
 #endif
 

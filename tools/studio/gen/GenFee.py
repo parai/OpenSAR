@@ -82,7 +82,7 @@ def GenH():
 #define FEE_VERSION_INFO_API            STD_ON
 #define FEE_POLLING_MODE                STD_ON
 
-#define FEE_INDEX                        0
+#define FEE_INDEX                        (0xFE)
 #define FEE_VIRTUAL_PAGE_SIZE            8
 #define FEE_MAX_NUM_SETS                 1\n\n""") 
     Num = 1
@@ -102,7 +102,7 @@ def GenC():
     for block in GLGet('FeeBlockList'):
         cstr += """
     {    /* %s */
-        .DeviceIndex = 0,/*TODO*/
+        .DeviceIndex = FEE_INDEX,
         .BlockNumber = FEE_BLOCK_NUM_%s,
         .BlockSize  =  %s,
         .ImmediateData = FALSE,

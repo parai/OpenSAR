@@ -22,7 +22,7 @@
 #define FEE_VERSION_INFO_API            STD_ON
 #define FEE_POLLING_MODE                STD_ON
 
-#define FEE_INDEX                        0
+#define FEE_INDEX                        (0xFE)
 #define FEE_VIRTUAL_PAGE_SIZE            8
 #define FEE_MAX_NUM_SETS                 1
 

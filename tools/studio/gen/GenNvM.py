@@ -1,6 +1,7 @@
 import sys,os
 import xml.etree.ElementTree as ET
 from GenFee import GenFee
+from GenEa import GenEa
 
 __all__ = ['GenNvM']
 
@@ -65,6 +66,7 @@ def GenNvM(wfxml):
     __root = ET.parse(wfxml).getroot();
     __dir = os.path.dirname(wfxml)
     GenFee(wfxml)
+    GenEa(wfxml)
     GenH()
     GenC()
     print '>>> Gen NvM DONE <<<'
@@ -106,13 +108,19 @@ def GenH():
     for block in GLGet('FeeBlockList'):
         if(GAGet(block,'BlockSize')>max_block_size):
             max_block_size = GAGet(block,'BlockSize')
+    for block in GLGet('EaBlockList'):
+        if(GAGet(block,'BlockSize')>max_block_size):
+            max_block_size = GAGet(block,'BlockSize')            
     fp.write('#define NVM_MAX_BLOCK_LENGTH %s\n\n'%(max_block_size))
-    fp.write('#define NVM_NUM_OF_NVRAM_BLOCKS %s\n\n'%(len(GLGet('FeeBlockList'))))
+    fp.write('#define NVM_NUM_OF_NVRAM_BLOCKS %s\n\n'%(len(GLGet('FeeBlockList'))+len(GLGet('EaBlockList'))))
     #Zero Id reserved by NvM
     Id = 1
     for block in GLGet('FeeBlockList'):
         fp.write('#define NVM_BLOCK_ID_%s %s\n'%(GAGet(block,'name'),Id))
         Id += 1
+    for block in GLGet('EaBlockList'):
+        fp.write('#define NVM_BLOCK_ID_%s %s\n'%(GAGet(block,'name'),Id))
+        Id += 1        
     #for each block, generate a readable memory map type
     for block in GLGet('FeeBlockList'):
         cstr = '\ntypedef struct{\n'
@@ -125,10 +133,25 @@ def GenH():
                 cstr += '\t%s _%s[%s];\n'%(GAGet(data,'type')[:-2],GAGet(data,'name'),GAGet(data,'size'))
         cstr += '}NvM_Block%s_DataGroupType;\n\n'%(GAGet(block,'name'))
         fp.write(cstr)
+    for block in GLGet('EaBlockList'):
+        cstr = '\ntypedef struct{\n'
+        for data in GLGet(block,'DataList'):
+            if( GAGet(data,'type') == 'uint32' or 
+                GAGet(data,'type') == 'uint16' or 
+                GAGet(data,'type') == 'uint8'):
+                cstr += '\t%s _%s;\n'%(GAGet(data,'type'),GAGet(data,'name'))
+            else:
+                cstr += '\t%s _%s[%s];\n'%(GAGet(data,'type')[:-2],GAGet(data,'name'),GAGet(data,'size'))
+        cstr += '}NvM_Block%s_DataGroupType;\n\n'%(GAGet(block,'name'))
+        fp.write(cstr)        
     for block in GLGet('FeeBlockList'):
         cstr = '\nextern NvM_Block%s_DataGroupType NvM_Block%s_DataGroup_RAM;\n'%(GAGet(block,'name'),GAGet(block,'name'))
         cstr+= 'extern const NvM_Block%s_DataGroupType NvM_Block%s_DataGroup_ROM;\n'%(GAGet(block,'name'),GAGet(block,'name'))
         fp.write(cstr)
+    for block in GLGet('EaBlockList'):
+        cstr = '\nextern NvM_Block%s_DataGroupType NvM_Block%s_DataGroup_RAM;\n'%(GAGet(block,'name'),GAGet(block,'name'))
+        cstr+= 'extern const NvM_Block%s_DataGroupType NvM_Block%s_DataGroup_ROM;\n'%(GAGet(block,'name'),GAGet(block,'name'))
+        fp.write(cstr)        
     fp.write("""
 #define Rte_NvMReadBuffer(GroupName)    ((uint8*)&NvM_Block##GroupName##_DataGroup_RAM)    
 #define Rte_NvMRead(GroupName,DataName) (NvM_Block##GroupName##_DataGroup_RAM._##DataName)
@@ -144,9 +167,7 @@ def GenH():
 #define Rte_NvMWriteArray(GroupName,DataName,Index,Value) (NvM_Block##GroupName##_DataGroup_RAM._##DataName[Index] = Value)
 
 #define Rte_NvmWriteBlock(GroupName) NvM_WriteBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
-#define Rte_NvmReadBlock(GroupName)  NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)
-        
-    """)
+#define Rte_NvmReadBlock(GroupName)  NvM_ReadBlock(NVM_BLOCK_ID_##GroupName,(uint8*)&NvM_Block##GroupName##_DataGroup_RAM)      \n\n""")
     
     fp.write('\n\n#endif /*NVM_CFG_H_*/\n\n')
     fp.close()
@@ -155,7 +176,7 @@ def GenC():
     global __dir
     fp = open('%s/NvM_Cfg.c'%(__dir),'w')
     fp.write(__Header) 
-    fp.write('#include "NvM.h"\n#include "Fee.h"\n\n') 
+    fp.write('#include "NvM.h"\n#include "Fee.h"\n#include "Ea.h"\n\n') 
     for block in GLGet('FeeBlockList'):
         cstr = '\nNvM_Block%s_DataGroupType NvM_Block%s_DataGroup_RAM;\n'%(GAGet(block,'name'),GAGet(block,'name'))
         cstr+= 'const NvM_Block%s_DataGroupType NvM_Block%s_DataGroup_ROM={\n'%(GAGet(block,'name'),GAGet(block,'name'))
@@ -168,6 +189,18 @@ def GenC():
                 cstr += '\t._%s={%s},\n'%(GAGet(data,'name'),GAGet(data,'default'))
         cstr += '};\n\n'
         fp.write(cstr)
+    for block in GLGet('EaBlockList'):
+        cstr = '\nNvM_Block%s_DataGroupType NvM_Block%s_DataGroup_RAM;\n'%(GAGet(block,'name'),GAGet(block,'name'))
+        cstr+= 'const NvM_Block%s_DataGroupType NvM_Block%s_DataGroup_ROM={\n'%(GAGet(block,'name'),GAGet(block,'name'))
+        for data in GLGet(block,'DataList'):
+            if( GAGet(data,'type') == 'uint32' or 
+                GAGet(data,'type') == 'uint16' or 
+                GAGet(data,'type') == 'uint8'):
+                cstr += '\t._%s=%s,\n'%(GAGet(data,'name'),GAGet(data,'default'))
+            else:
+                cstr += '\t._%s={%s},\n'%(GAGet(data,'name'),GAGet(data,'default'))
+        cstr += '};\n\n'
+        fp.write(cstr)        
     cstr = 'const NvM_BlockDescriptorType BlockDescriptorList[] = {\n'
     for block in GLGet('FeeBlockList'):
         cstr += """
@@ -181,7 +214,7 @@ def GenC():
         .RamBlockDataAddress = (uint8*)&NvM_Block%s_DataGroup_RAM,
         .CalcRamBlockCrc = FALSE, // TODO
         .NvBlockNum = FEE_BLOCK_NUM_%s,
-        .NvramDeviceId = 0,
+        .NvramDeviceId = FEE_INDEX,
         .NvBlockBaseNumber = FEE_BLOCK_NUM_%s,
         .InitBlockCallback = NULL,
         .RomBlockDataAdress = (uint8*)&NvM_Block%s_DataGroup_ROM,
@@ -191,6 +224,28 @@ def GenC():
              GAGet(block,'name'),
              GAGet(block,'name'),
              )
+    for block in GLGet('EaBlockList'):
+        cstr += """
+    {
+        .BlockManagementType = NVM_BLOCK_NATIVE,
+        .SelectBlockForReadall = TRUE,
+        .SingleBlockCallback = NULL,
+        .NvBlockLength        = %s,
+        .BlockUseCrc  = TRUE,
+        .BlockCRCType =NVM_CRC16,
+        .RamBlockDataAddress = (uint8*)&NvM_Block%s_DataGroup_RAM,
+        .CalcRamBlockCrc = FALSE, // TODO
+        .NvBlockNum = EA_BLOCK_NUM_%s,
+        .NvramDeviceId = EA_INDEX,
+        .NvBlockBaseNumber = EA_BLOCK_NUM_%s,
+        .InitBlockCallback = NULL,
+        .RomBlockDataAdress = (uint8*)&NvM_Block%s_DataGroup_ROM,
+    },\n"""%(GAGet(block,'BlockSize'),
+             GAGet(block,'name'),
+             GAGet(block,'name'),
+             GAGet(block,'name'),
+             GAGet(block,'name'),
+             )    
     cstr += """};
 
 const NvM_ConfigType NvM_Config = {

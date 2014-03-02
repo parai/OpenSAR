@@ -49,7 +49,7 @@ static void Fee_Test(void)
 }
 #endif
 
-#if 0
+#if 1
 static void NvM_Test(void)
 {
 	App_TimeType SystemTime;
@@ -63,6 +63,14 @@ static void NvM_Test(void)
 			Rte_NvMRead(Time,Year),Rte_NvMRead(Time,Month),Rte_NvMRead(Time,Day),
 			Rte_NvMRead(Time,Hour),Rte_NvMRead(Time,Minute),Rte_NvMRead(Time,Second));
 
+	printf("NvM>> EaTest1 = [0x%X,0x%X,0x%X,0x%X]\n",
+			Rte_NvMRead(EaTest1,Data0),Rte_NvMRead(EaTest1,Data1),
+			Rte_NvMRead(EaTest1,Data2),Rte_NvMRead(EaTest1,Data3));
+
+	printf("NvM>> EaTest2 = [0x%X,0x%X,0x%X,0x%X]\n",
+			Rte_NvMRead(EaTest2,Data1),Rte_NvMRead(EaTest2,Data2),
+			Rte_NvMRead(EaTest2,Data3),Rte_NvMRead(EaTest2,Data4));
+
 	Rte_NvMWrite(Time,Year,SystemTime.year);
 	Rte_NvMWrite(Time,Month,SystemTime.month);
 	Rte_NvMWrite(Time,Day,SystemTime.day);
@@ -70,9 +78,27 @@ static void NvM_Test(void)
 	Rte_NvMWrite(Time,Minute,SystemTime.minute);
 	Rte_NvMWrite(Time,Second,SystemTime.second);
 
-	if(SystemTime.second%2 != 0)
+	Rte_NvMWrite(EaTest1,Data0,0xDEADBEEF);
+	Rte_NvMWrite(EaTest1,Data1,0xAABBCCDD);
+	Rte_NvMWrite(EaTest1,Data2,0xFFAA33BB);
+	Rte_NvMWrite(EaTest1,Data3,0x12345678);
+
+	Rte_NvMWrite(EaTest2,Data1,0xABCDEFA);
+	Rte_NvMWrite(EaTest2,Data2,0x12345678);
+	Rte_NvMWrite(EaTest2,Data3,0xBB994567);
+	Rte_NvMWrite(EaTest2,Data4,0x12345678);
+
+	if(SystemTime.second%3 == 0)
 	{
 		Rte_NvmWriteBlock(Time);
+	}
+	else if(SystemTime.second%5 == 0)
+	{
+		Rte_NvmWriteBlock(EaTest1);
+	}
+	else if(SystemTime.second%7 == 0)
+	{
+		Rte_NvmWriteBlock(EaTest2);
 	}
 	else
 	{
@@ -81,6 +107,7 @@ static void NvM_Test(void)
 	}
 }
 #endif
+#if 0
 static void Ea_Test(void)
 {
 	static uint32 caller = 0;
@@ -88,21 +115,24 @@ static void Ea_Test(void)
 	caller ++;
 	switch(caller)
 	{
-		case 1:
+		case 5:
 			for(int i=0;i<260;i++)
 			{
 				buffer[i] = i;
 			}
-			Ea_Write(1,buffer);
+			if(E_OK != Ea_Write(1,buffer))
+			{
+				printf("## Request Write failed\n");
+			}
 			break;
-		case 2:
+		case 6:
 			memset(buffer,0,512);
-			if(E_OK != Ea_Read(1,0,buffer,260))
+			if(E_OK != Ea_Read(1,0,buffer,16))
 			{
 				printf("## Request Read failed\n");
 			}
 			break;
-		case 3:
+		case 7:
 			printf("Buffer = [");
 			for(int i=0;i<260;i++)
 			{
@@ -114,9 +144,11 @@ static void Ea_Test(void)
 			break;
 	}
 }
+#endif
 void app_nvm_1000ms_runnable(void)
 {
 	//Fee_Test();
-	//NvM_Test();
-	Ea_Test();
+	//Ea_Test();
+	NvM_Test();
+
 }
