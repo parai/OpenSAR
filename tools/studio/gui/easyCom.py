@@ -149,47 +149,84 @@ class easyComTree(QTreeWidget):
         self.setItemWidget(treeItem,6,init) 
         self.setItemWidget(treeItem,7,comment) 
         self.signalid += 1
-        
-    
-class easyDcmTree(QTreeWidget):
-    def __init__(self,parent):  
+
+# ================================================= [ DCM ] ==============================================        
+   
+class easyDcmDefaultTree(QTreeWidget):
+    def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Service Name','Stack Size','Priority','Activation','Autostart','Schedule']
+        list = ['Not Supported','Not Supported']
         self.setHeaderLabels(QStringList(list))
         self.setColumnWidth(0,150)
-        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-    def itemSelectionChanged(self):
-        pass
+
     def loadXML(self,ROOT):
-        # delete all as reload
-        for i in range(0,self.topLevelItemCount()):
-            self.takeTopLevelItem(0)
-        # reload
+        pass
 
     def toXML(self):
-        List = ET.Element('TODOList')
-        for i in range(0,self.topLevelItemCount()):
-            Node = ET.Element('TODO')
-            tree = self.topLevelItem(i)
-            Node.attrib['name'] = str(self.itemWidget(tree,0).text())
-            List.append(Node)
-        return List
+        return None
+
+dcm_TreeTable =  {
+    'SessionControl':easyDcmDefaultTree,
+    'EcuReset':easyDcmDefaultTree,
+    'SecurityAccess':easyDcmDefaultTree,
+    'CommunicationControl':easyDcmDefaultTree,
+    'ReadWriteDataByIdentifier':easyDcmDefaultTree,
+    'ReadWriteMemoryByAddress':easyDcmDefaultTree,
+    'ReadScalingDataByIdentifier':easyDcmDefaultTree,
+    'DynamicallyDefineDataIdentifier':easyDcmDefaultTree,
+    'ClearDiagnosticInformation':easyDcmDefaultTree,
+    'ReadDTCInformation':easyDcmDefaultTree,
+    'InputOutputControlByIdentifier':easyDcmDefaultTree,
+    'RoutineControl':easyDcmDefaultTree,
+    'RequestDownload':easyDcmDefaultTree,
+    'RequestUpload':easyDcmDefaultTree,
+    'TransferData':easyDcmDefaultTree,
+    'RequestTransferExit':easyDcmDefaultTree,
+};
 
 class easyComCfgTree(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent)
         self.setHeaderLabel('easyCom')
         self.addTopLevelItem(QTreeWidgetItem(QStringList('Com')))
-        self.addTopLevelItem(QTreeWidgetItem(QStringList('Dcm')))
-        self.setMaximumWidth(200); 
+        Item = QTreeWidgetItem(QStringList('Dcm')) 
+        self.addTopLevelItem(Item)
+        Item.addChild(QTreeWidgetItem(QStringList('SessionControl')))
+        Item.addChild(QTreeWidgetItem(QStringList('EcuReset')))
+        Item.addChild(QTreeWidgetItem(QStringList('SecurityAccess')))
+        Item.addChild(QTreeWidgetItem(QStringList('CommunicationControl')))
+        # Item.addChild(QTreeWidgetItem(QStringList('TesterPresent'))) default has it
+        # ============= [ UN-SUPPORT START ] ===================================
+        # Item.addChild(QTreeWidgetItem(QStringList('AccessTimingParameter')))
+        # Item.addChild(QTreeWidgetItem(QStringList('ControlDTCSetting')))
+        # Item.addChild(QTreeWidgetItem(QStringList('ResponseOnEvent')))
+        # Item.addChild(QTreeWidgetItem(QStringList('LinkControl')))  
+        Item.addChild(QTreeWidgetItem(QStringList('ReadWriteDataByIdentifier')))
+        Item.addChild(QTreeWidgetItem(QStringList('ReadWriteMemoryByAddress')))
+        Item.addChild(QTreeWidgetItem(QStringList('ReadScalingDataByIdentifier')))
+        Item.addChild(QTreeWidgetItem(QStringList('ReadDataByPeriodicIdentifier')))
+        Item.addChild(QTreeWidgetItem(QStringList('DynamicallyDefineDataIdentifier')))
+        Item.addChild(QTreeWidgetItem(QStringList('ClearDiagnosticInformation')))
+        Item.addChild(QTreeWidgetItem(QStringList('ReadDTCInformation')))
+        Item.addChild(QTreeWidgetItem(QStringList('InputOutputControlByIdentifier')))
+        Item.addChild(QTreeWidgetItem(QStringList('RoutineControl')))
+        Item.addChild(QTreeWidgetItem(QStringList('RequestDownload')))
+        Item.addChild(QTreeWidgetItem(QStringList('RequestUpload')))
+        Item.addChild(QTreeWidgetItem(QStringList('TransferData')))
+        Item.addChild(QTreeWidgetItem(QStringList('RequestTransferExit ')))
+        Item.setExpanded(True)
+        self.setMaximumWidth(350); 
 
 class easyComGui(QMainWindow):
+    DcmWidgetList = []
     def __init__(self):
+        global dcm_TreeTable
         QMainWindow.__init__(self, None)
         self.easyTree = easyComCfgTree(self)
         self.easyComTree = easyComTree(self)
-        self.easyDcmTree = easyDcmTree(self)
+        for (k, v) in dcm_TreeTable.items():
+            self.DcmWidgetList.append([k,v(self)])
         self.qSplitter = QSplitter(Qt.Horizontal,self)
         self.creMenu()
         self.creGui()
@@ -235,17 +272,19 @@ class easyComGui(QMainWindow):
     def creGui(self):
         self.qSplitter.insertWidget(0,self.easyTree)
         self.qSplitter.insertWidget(1,self.easyComTree)
-        self.qSplitter.insertWidget(1,self.easyDcmTree)
+        id = 1
+        for wd in self.DcmWidgetList:
+            self.qSplitter.insertWidget(id,wd[1])
+            id += 1
         self.showTableWidget(self.easyComTree)
         self.setCentralWidget(self.qSplitter)
         self.connect(self.easyTree,SIGNAL('itemClicked(QTreeWidgetItem*, int)'),self.easyTreeClicked)  
     def showTableWidget(self,widget):
-        if(self.easyDcmTree == widget):
-            self.qAction1.setDisabled(True)
-            self.qAction2.setDisabled(True)            
-            self.easyDcmTree.setVisible(True);
-        else:
-            self.easyDcmTree.setVisible(False);
+        for wd in self.DcmWidgetList:
+            if(wd[0] == widget):
+                wd[1].setVisible(True)
+            else:
+                wd[1].setVisible(False)
             
         if(self.easyComTree == widget):
             self.qAction1.setText('Add Signal')
@@ -259,19 +298,25 @@ class easyComGui(QMainWindow):
         if(item.text(0) == 'Com'):
             self.showTableWidget(self.easyComTree)
         elif(item.text(0) == 'Dcm'):
-            self.showTableWidget(self.easyDcmTree)
+            self.showTableWidget(None)
+        else:
+            if(item.parent().text(0) == 'Dcm'):
+                self.showTableWidget(str(item.text(0)))
     def mOpen(self,pdir):
         wfxml = '%s/com.wfxml'%(pdir)
         root = ET.parse(wfxml).getroot();
         self.easyComTree.loadXML(root)
-        self.easyDcmTree.loadXML(root)
+        for wd in self.DcmWidgetList:
+            wd[1].loadXML(root)
         self.qAction1.setDisabled(True)
         self.qAction2.setDisabled(True)
     def mSave(self,pdir):
         wfxml = '%s/com.wfxml'%(pdir)
         ROOT = ET.Element('COMROOT')
         ROOT.append(self.easyComTree.toXML())
-        ROOT.append(self.easyDcmTree.toXML())
+        for wd in self.DcmWidgetList:
+            if(wd[1].toXML() != None):
+                ROOT.append(wd[1].toXML())
         tree = ET.ElementTree(ROOT)
         tree.write(wfxml, encoding="utf-8", xml_declaration=True);
     def mGen(self,pdir):
