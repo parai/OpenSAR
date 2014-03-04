@@ -150,8 +150,7 @@ class easyComTree(QTreeWidget):
         self.setItemWidget(treeItem,7,comment) 
         self.signalid += 1
 
-# ================================================= [ DCM ] ==============================================        
-   
+# ================================================= [ DCM ] ==============================================         
 class easyDcmDefaultTree(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
@@ -159,19 +158,121 @@ class easyDcmDefaultTree(QTreeWidget):
         list = ['Not Supported','Not Supported']
         self.setHeaderLabels(QStringList(list))
         self.setColumnWidth(0,150)
-
+    def updateAction(self):
+        self.root.qAction1.setText('')
+        self.root.qAction1.setStatusTip('')
+        self.root.qAction1.setDisabled(True)
+        self.root.qAction2.setText('')
+        self.root.qAction2.setStatusTip('')
+        self.root.qAction2.setDisabled(True)
+    def onAction(self,action):
+        pass      
     def loadXML(self,ROOT):
         pass
+    def toXML(self):
+        return None  
+
+def tBool(strr):
+    if(strr.upper() == 'TRUE'):
+        return True
+    else:
+        return False
+    
+# tw = Tree Widget
+class twSession(QTreeWidget):
+    def __init__(self,parent=None):  
+        super(QTreeWidget,self).__init__(parent) 
+        self.root =  parent
+        list = ['Name','Identifier','P2P','P2A','Comment']
+        self.setHeaderLabels(QStringList(list))
+        self.setColumnWidth(0,150)
+        self.setColumnWidth(2,40)
+        self.setColumnWidth(3,40)
+    def itemSelectionChanged(self):
+        try:
+            pTree = self.currentItem()
+            name = self.itemWidget(pTree,0).text()
+            # update Action 
+            self.root.qAction1.setText('Delete Session <%s>'%(name))
+            self.root.qAction1.setStatusTip('Delete This Session <%s> Object, BeCareful as this action is dangerous.'%(name))
+            self.root.qAction1.setDisabled(False)
+            self.root.qAction2.setDisabled(True)
+        except:
+            self.root.qAction1.setDisabled(True)
+            self.root.qAction2.setDisabled(True)
+    def updateAction(self):
+        self.root.qAction1.setText('Add Session')
+        self.root.qAction1.setStatusTip('')
+        self.root.qAction1.setDisabled(False)
+        self.root.qAction2.setText('')
+        self.root.qAction2.setStatusTip('')
+        self.root.qAction2.setDisabled(True)
+    def onAction(self,action):
+        if(action == 'Add Session'):
+            self.addSession()
+        elif(action.find('Delete Session')):
+            self.deleteSession()
+            
+    def loadXML(self,ROOT):
+        # delete all as reload
+        for i in range(0,self.topLevelItemCount()):
+            self.takeTopLevelItem(0)
+        # reload
+        SessionList = ROOT.find('SessionList')
+        if(SessionList == None):
+            return
+        for Session in SessionList:
+            self.addSession(Session)
 
     def toXML(self):
-        return None
-
+        List = ET.Element('SessionList')
+        for i in range(0,self.topLevelItemCount()):
+            Node = ET.Element('Session')
+            tree = self.topLevelItem(i)
+            Node.attrib['name'] = str(self.itemWidget(tree,0).text())
+            Node.attrib['identifier'] = str(self.itemWidget(tree,1).text())
+            Node.attrib['p2p'] = str(self.itemWidget(tree,2).isChecked())
+            Node.attrib['p2a'] = str(self.itemWidget(tree,3).isChecked())
+            Node.attrib['comment'] = str(self.itemWidget(tree,4).text())
+            List.append(Node)
+        return List 
+    def deleteSession(self):
+        self.takeTopLevelItem(self.indexOfTopLevelItem(self.currentItem()))    
+    def addSession(self,Node=None):
+        treeItem = QTreeWidgetItem()
+        self.addTopLevelItem(treeItem) 
+        if(Node != None):
+            sname = Node.attrib['name']
+            sidentifier = Node.attrib['identifier']
+            scomment = Node.attrib['comment']
+            sp2p = Node.attrib['p2p']
+            sp2a = Node.attrib['p2a']
+        else:  
+            sname =  'SessionTBD'
+            sidentifier = 'TBD'
+            scomment = ''
+            sp2p = 'True'
+            sp2a = 'False'
+        name = QLineEdit(sname)
+        identifier = QLineEdit(sidentifier)
+        p2p = QCheckBox()
+        p2p.setChecked(tBool(sp2p))
+        p2a = QCheckBox()
+        p2a.setChecked(tBool(sp2a))
+        comment = QLineEdit(scomment)
+        self.setItemWidget(treeItem,0,name)    
+        self.setItemWidget(treeItem,1,identifier)  
+        self.setItemWidget(treeItem,2,p2p) 
+        self.setItemWidget(treeItem,3,p2a)    
+        self.setItemWidget(treeItem,4,comment)      
+           
 dcm_TreeTable =  {
-    'SessionControl':easyDcmDefaultTree,
+    'SessionControl':twSession,
     'EcuReset':easyDcmDefaultTree,
     'SecurityAccess':easyDcmDefaultTree,
     'CommunicationControl':easyDcmDefaultTree,
     'ReadWriteDataByIdentifier':easyDcmDefaultTree,
+    'ReadDataByPeriodicIdentifier':easyDcmDefaultTree,
     'ReadWriteMemoryByAddress':easyDcmDefaultTree,
     'ReadScalingDataByIdentifier':easyDcmDefaultTree,
     'DynamicallyDefineDataIdentifier':easyDcmDefaultTree,
@@ -261,13 +362,20 @@ class easyComGui(QMainWindow):
         self.connect(self.qAction2,SIGNAL('triggered()'),self.mqAction2) 
         self.menuBar().addAction(self.qAction2)
         self.qAction2.setDisabled(True)
+        
     def mqAction1(self):
         if(self.qAction1.text() == 'Add Signal'):
             self.easyComTree.addSignal()
         elif(str(self.qAction1.text()).find('Delete Signal') != -1):
             self.easyComTree.deleteSignal()
+        else:
+            for wd in self.DcmWidgetList:
+                if(wd[1].isVisible()):
+                    wd[1].onAction(self.qAction1.text())
     def mqAction2(self):
-        pass
+        for wd in self.DcmWidgetList:
+            if(wd[1].isVisible()):
+                wd[1].onAction(self.qAction1.text())
 
     def creGui(self):
         self.qSplitter.insertWidget(0,self.easyTree)
@@ -282,6 +390,7 @@ class easyComGui(QMainWindow):
     def showTableWidget(self,widget):
         for wd in self.DcmWidgetList:
             if(wd[0] == widget):
+                wd[1].updateAction()
                 wd[1].setVisible(True)
             else:
                 wd[1].setVisible(False)
@@ -299,6 +408,12 @@ class easyComGui(QMainWindow):
             self.showTableWidget(self.easyComTree)
         elif(item.text(0) == 'Dcm'):
             self.showTableWidget(None)
+            self.qAction1.setText('')
+            self.qAction1.setStatusTip('')
+            self.qAction1.setDisabled(False)
+            self.qAction2.setText('')
+            self.qAction2.setStatusTip('')
+            self.qAction2.setDisabled(False)
         else:
             if(item.parent().text(0) == 'Dcm'):
                 self.showTableWidget(str(item.text(0)))
