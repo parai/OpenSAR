@@ -33,6 +33,8 @@ class easySARGui(QMainWindow):
         self.easyOsCfg = easyOsGui()
         self.easyComCfg = easyComGui()
         self.easyNvMCfg = easyNvMGui()
+        # default open
+        self.mOpen(gDefault_GEN)
     def creMenu(self):
         # File
         tMenu=self.menuBar().addMenu(self.tr('File'))
@@ -71,10 +73,13 @@ class easySARGui(QMainWindow):
         self.connect(sItem,SIGNAL('triggered()'),self.measyNvM) 
         sItem.setStatusTip('Open easyNvM console.') 
         tMenu.addAction(sItem)          
-    def mOpen(self):
-        self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
-        if(self.pdir == ''):
-            return
+    def mOpen(self,default=None):
+        if(default == None):
+            self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
+            if(self.pdir == ''):
+                return
+        else:
+            self.pdir = default
         self.easyOsCfg.mOpen(self.pdir)
         self.easyComCfg.mOpen(self.pdir)
         self.easyNvMCfg.mOpen(self.pdir)
@@ -82,8 +87,9 @@ class easySARGui(QMainWindow):
         self.measyOs()
         self.measyCom()
         self.measyNvM()
-        QMessageBox(QMessageBox.Information, 'Info', 
-                        'Open OpenSAR Configuration xml Successfully !').exec_();
+        if(default == None):
+            QMessageBox(QMessageBox.Information, 'Info', 
+                            'Open OpenSAR Configuration xml Successfully !').exec_();
     def mSave(self):
         if(self.pdir == ''):
             self.pdir = QFileDialog.getExistingDirectory(None,'Save OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
