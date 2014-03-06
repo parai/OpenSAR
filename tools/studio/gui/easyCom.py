@@ -165,6 +165,9 @@ class easyDcmDefaultTree(QTreeWidget):
         self.root.qAction2.setText('')
         self.root.qAction2.setStatusTip('')
         self.root.qAction2.setDisabled(True)
+        self.root.qAction3.setText('')
+        self.root.qAction3.setStatusTip('')
+        self.root.qAction3.setDisabled(True)
     def onAction(self,action):
         pass      
     def loadXML(self,ROOT):
@@ -208,6 +211,9 @@ class twSession(QTreeWidget):
         self.root.qAction2.setText('')
         self.root.qAction2.setStatusTip('')
         self.root.qAction2.setDisabled(True)
+        self.root.qAction3.setText('')
+        self.root.qAction3.setStatusTip('')
+        self.root.qAction3.setDisabled(True)        
     def onAction(self,action):
         if(action == 'Add Session'):
             self.addSession()
@@ -306,6 +312,9 @@ class twSecurity(QTreeWidget):
         self.root.qAction2.setText('')
         self.root.qAction2.setStatusTip('')
         self.root.qAction2.setDisabled(True)
+        self.root.qAction3.setText('')
+        self.root.qAction3.setStatusTip('')
+        self.root.qAction3.setDisabled(True)        
     def onAction(self,action):
         if(action == 'Add Security'):
             self.addSecurity()
@@ -416,6 +425,9 @@ class twEcuReset(QTreeWidget):
         self.root.qAction2.setText('')
         self.root.qAction2.setStatusTip('')
         self.root.qAction2.setDisabled(True)
+        self.root.qAction3.setText('')
+        self.root.qAction3.setStatusTip('')
+        self.root.qAction3.setDisabled(True)        
 
     def onAction(self,action):
         if(action == 'Add SessionRef'):
@@ -437,7 +449,6 @@ class twEcuReset(QTreeWidget):
     def addSubRef(self,RefName,Node=None):
         pItem = self.currentItem()
         Item = QTreeWidgetItem()
-        pItem.addChild(Item)
         if Node != None:
             sName = Node.attrib['name']
             sRef = Node.attrib['ref']
@@ -447,6 +458,10 @@ class twEcuReset(QTreeWidget):
             sName = RefName
             sRef = ''
             scomment = ''
+        if(sName == 'Session'):
+            pItem.insertChild(0,Item)
+        else:
+            pItem.addChild(Item)
         name = QLineEdit(sName)
         name.setDisabled(True)
         ref = QComboBox()
@@ -519,12 +534,334 @@ class twEcuReset(QTreeWidget):
             for sNode in Node.find('SSRefList'):
                 self.addSubRef(None, sNode)
                       
+class twCommunicationControl(QTreeWidget):
+    def __init__(self,parent=None):  
+        super(QTreeWidget,self).__init__(parent) 
+        self.root =  parent
+        list = ['Name','P2P','P2A','Comment','']
+        self.setHeaderLabels(QStringList(list))
+        self.setColumnWidth(0,150)
+        self.setColumnWidth(1,150)
+        self.setColumnWidth(2,40)
+        self.setColumnWidth(3,600)
+        self.addRoot()
+        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+    def itemSelectionChanged(self):
+        pTree = self.currentItem()
+        name = self.itemWidget(pTree,0).text()
+        # update Action 
+        if(name=='ROOT'):
+            self.root.qAction1.setText('Add SessionRef')
+            self.root.qAction1.setStatusTip('')
+            self.root.qAction1.setDisabled(False)
+            self.root.qAction2.setText('Add SecurityRef')
+            self.root.qAction2.setStatusTip('')
+            self.root.qAction2.setDisabled(False)
+        else:
+            ref = str(self.itemWidget(pTree,1).currentText())
+            self.itemWidget(pTree,1).clear()
+            self.itemWidget(pTree,1).addItems(QStringList(self.root.GetList(name)))
+            self.itemWidget(pTree,1).setCurrentIndex(self.itemWidget(pTree,1).findText(ref))
+            
+            self.root.qAction1.setText('Delete %sRef <%s>'%(name,ref))
+            self.root.qAction1.setStatusTip('')
+            self.root.qAction1.setDisabled(False)
+            self.root.qAction2.setText('')
+            self.root.qAction2.setStatusTip('')
+            self.root.qAction2.setDisabled(True)
+    def updateAction(self):
+        self.root.qAction1.setText('')
+        self.root.qAction1.setStatusTip('')
+        self.root.qAction1.setDisabled(True)
+        self.root.qAction2.setText('')
+        self.root.qAction2.setStatusTip('')
+        self.root.qAction2.setDisabled(True)
+        self.root.qAction3.setText('')
+        self.root.qAction3.setStatusTip('')
+        self.root.qAction3.setDisabled(True)        
+
+    def onAction(self,action):
+        if(action == 'Add SessionRef'):
+            self.addSubRef('Session')
+        elif(action == 'Add SecurityRef'):
+            self.addSubRef('Security')
+        elif(action.find('Delete SecurityRef')!=-1):
+            self.deleteSubRef('Security')
+        elif(action.find('Delete SessionRef')!=-1):
+            self.deleteSubRef('Security')
+            
+    def deleteSubRef(self,what=None):
+        if(self.indexOfTopLevelItem(self.currentItem()) == -1):
+            pTree = self.currentItem().parent()
+            index = pTree.indexOfChild(self.currentItem())
+            pTree.takeChild(index)
+        else:
+            print 'system error when remove event.'
+    def addSubRef(self,RefName,Node=None):
+        pItem = self.currentItem()
+        Item = QTreeWidgetItem()
+        if Node != None:
+            sName = Node.attrib['name']
+            sRef = Node.attrib['ref']
+            #scomment = Node.attrib['comment']
+            scomment = ''
+        else:
+            sName = RefName
+            sRef = ''
+            scomment = ''
+        if(sName == 'Session'):
+            pItem.insertChild(0,Item)
+        else:
+            pItem.addChild(Item)
+        name = QLineEdit(sName)
+        name.setDisabled(True)
+        ref = QComboBox()
+        ref.addItems(QStringList(self.root.GetList(sName)))
+        ref.setCurrentIndex(ref.findText(sRef))
+        comment =QLineEdit(scomment)
+        self.setItemWidget(Item,0,name)
+        self.setItemWidget(Item,1,ref)
+        self.setItemWidget(Item,3,comment)
+        pItem.setExpanded(True)
+ 
+    def loadXML(self,ROOT):
+        print "## Load CommunicationControl!"
+        # delete all as reload
+        for i in range(0,self.topLevelItemCount()):
+            self.takeTopLevelItem(0)
+        # reload
+        List = ROOT.find('CommunicationControlList')
+        if(List != None):
+            for Node in List:
+                self.addRoot(Node)
+        else:
+            self.addRoot()
+
+    def toXML(self):
+        List = ET.Element('CommunicationControlList')
+        for i in range(0,self.topLevelItemCount()):
+            Node = ET.Element('CommunicationControl')
+            tree = self.topLevelItem(i)
+            Node.attrib['p2p'] = str(self.itemWidget(tree,1).isChecked())
+            Node.attrib['p2a'] = str(self.itemWidget(tree,2).isChecked())
+            Node.attrib['comment'] = str(self.itemWidget(tree,3).text())
+            sList = ET.Element('SSRefList') #SS = Session && Security
+            for j in range(0,tree.childCount()):
+                sNode = ET.Element('SS')
+                stree = tree.child(j)
+                sNode.attrib['name'] = str(self.itemWidget(stree,0).text())
+                sNode.attrib['ref'] = str(self.itemWidget(stree,1).currentText())
+                sNode.attrib['comment'] = str(self.itemWidget(stree,3).text())
+                sList.append(sNode)
+            Node.append(sList)
+            List.append(Node)
+        return List 
+    def deleteRoot(self):
+        self.takeTopLevelItem(self.indexOfTopLevelItem(self.currentItem())) 
+    def addRoot(self,Node=None):
+        treeItem = QTreeWidgetItem()
+        self.addTopLevelItem(treeItem) 
+        if(Node != None):
+            scomment = Node.attrib['comment']
+            sp2p = Node.attrib['p2p']
+            sp2a = Node.attrib['p2a']
+        else:  
+            scomment = ''
+            sp2p = 'True'
+            sp2a = 'False'
+        name = QLineEdit('ROOT')
+        name.setDisabled(True)
+        p2p = QCheckBox()
+        p2p.setChecked(tBool(sp2p))
+        p2a = QCheckBox()
+        p2a.setChecked(tBool(sp2a))
+        comment = QLineEdit(scomment) 
+        self.setItemWidget(treeItem,0,name)
+        self.setItemWidget(treeItem,1,p2p) 
+        self.setItemWidget(treeItem,2,p2a)    
+        self.setItemWidget(treeItem,3,comment)  
+        if(Node != None and Node.find('SSRefList') != None):
+            self.setCurrentItem(treeItem)
+            for sNode in Node.find('SSRefList'):
+                self.addSubRef(None, sNode)
+
+class twRWDID(QTreeWidget):
+    def __init__(self,parent=None):  
+        super(QTreeWidget,self).__init__(parent) 
+        self.root =  parent
+        list = ['Name','Identifier','rw','P2P','P2A','Comment','']
+        self.setHeaderLabels(QStringList(list))
+        self.setColumnWidth(0,150)
+        self.setColumnWidth(1,150)
+        self.setColumnWidth(3,40)
+        self.setColumnWidth(4,40)
+        self.setColumnWidth(5,600)
+        self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
+    def itemSelectionChanged(self):
+        pTree = self.currentItem()
+        name = self.itemWidget(pTree,0).text()
+        if(self.indexOfTopLevelItem(pTree) != -1):
+            self.root.qAction1.setText('Add SessionRef')
+            self.root.qAction1.setStatusTip('')
+            self.root.qAction1.setDisabled(False)
+            self.root.qAction2.setText('Add SecurityRef')
+            self.root.qAction2.setStatusTip('')
+            self.root.qAction2.setDisabled(False)
+            self.root.qAction3.setText('Delete DataIdentifier <%s>'%(name))
+            self.root.qAction3.setStatusTip('')
+            self.root.qAction3.setDisabled(False)
+        else:
+            ref = str(self.itemWidget(pTree,1).currentText())
+            self.itemWidget(pTree,1).clear()
+            self.itemWidget(pTree,1).addItems(QStringList(self.root.GetList(name)))
+            self.itemWidget(pTree,1).setCurrentIndex(self.itemWidget(pTree,1).findText(ref))
+            
+            self.root.qAction1.setText('Delete %sRef <%s>'%(name,ref))
+            self.root.qAction1.setStatusTip('')
+            self.root.qAction1.setDisabled(False)
+            self.root.qAction2.setText('')
+            self.root.qAction2.setStatusTip('')
+            self.root.qAction2.setDisabled(True)
+            self.root.qAction3.setText('')
+            self.root.qAction3.setStatusTip('')
+            self.root.qAction3.setDisabled(True)
+    def updateAction(self):
+        self.root.qAction1.setText('Add DataIdentifier')
+        self.root.qAction1.setStatusTip('')
+        self.root.qAction1.setDisabled(False)
+        self.root.qAction2.setText('')
+        self.root.qAction2.setStatusTip('')
+        self.root.qAction2.setDisabled(True)
+        self.root.qAction3.setText('')
+        self.root.qAction3.setStatusTip('')
+        self.root.qAction3.setDisabled(True)
+
+    def onAction(self,action):
+        if(action == 'Add SessionRef'):
+            self.addSubRef('Session')
+        elif(action == 'Add SecurityRef'):
+            self.addSubRef('Security')
+        elif(action.find('Delete SecurityRef')!=-1):
+            self.deleteSubRef('Security')
+        elif(action.find('Delete SessionRef')!=-1):
+            self.deleteSubRef('Security')
+        elif(action == 'Add DataIdentifier'):
+            self.addRoot()
+        elif(action.find('Delete DataIdentifier')!= -1):
+            self.deleteRoot()
+            
+    def deleteSubRef(self,what=None):
+        if(self.indexOfTopLevelItem(self.currentItem()) == -1):
+            pTree = self.currentItem().parent()
+            index = pTree.indexOfChild(self.currentItem())
+            pTree.takeChild(index)
+        else:
+            print 'system error when remove event.'
+    def addSubRef(self,RefName,Node=None):
+        pItem = self.currentItem()
+        Item = QTreeWidgetItem()
+        if Node != None:
+            sName = Node.attrib['name']
+            sRef = Node.attrib['ref']
+            #scomment = Node.attrib['comment']
+            scomment = ''
+        else:
+            sName = RefName
+            sRef = ''
+            scomment = ''
+        if(sName == 'Session'):
+            pItem.insertChild(0,Item)
+        else:
+            pItem.addChild(Item)
+        name = QLineEdit(sName)
+        name.setDisabled(True)
+        ref = QComboBox()
+        ref.addItems(QStringList(self.root.GetList(sName)))
+        ref.setCurrentIndex(ref.findText(sRef))
+        comment =QLineEdit(scomment)
+        self.setItemWidget(Item,0,name)
+        self.setItemWidget(Item,1,ref)
+        self.setItemWidget(Item,5,comment)
+        pItem.setExpanded(True)
+ 
+    def loadXML(self,ROOT):
+        print "## Load ReadWriteByIdentifier!"
+        # delete all as reload
+        for i in range(0,self.topLevelItemCount()):
+            self.takeTopLevelItem(0)
+        # reload
+        List = ROOT.find('RWDIDList')
+        if(List != None):
+            for Node in List:
+                self.addRoot(Node)
+
+    def toXML(self):
+        List = ET.Element('RWDIDList')
+        for i in range(0,self.topLevelItemCount()):
+            Node = ET.Element('RWDID')
+            tree = self.topLevelItem(i)
+            Node.attrib['name'] = str(self.itemWidget(tree,0).text())
+            Node.attrib['identifier'] = str(self.itemWidget(tree,1).text())
+            Node.attrib['rw'] = str(self.itemWidget(tree,2).currentText())
+            Node.attrib['p2p'] = str(self.itemWidget(tree,3).isChecked())
+            Node.attrib['p2a'] = str(self.itemWidget(tree,4).isChecked())
+            Node.attrib['comment'] = str(self.itemWidget(tree,5).text())
+            sList = ET.Element('SSRefList') #SS = Session && Security
+            for j in range(0,tree.childCount()):
+                sNode = ET.Element('SS')
+                stree = tree.child(j)
+                sNode.attrib['name'] = str(self.itemWidget(stree,0).text())
+                sNode.attrib['ref'] = str(self.itemWidget(stree,1).currentText())
+                sNode.attrib['comment'] = str(self.itemWidget(stree,5).text())
+                sList.append(sNode)
+            Node.append(sList)
+            List.append(Node)
+        return List 
+    def deleteRoot(self):
+        self.takeTopLevelItem(self.indexOfTopLevelItem(self.currentItem())) 
+    def addRoot(self,Node=None):
+        treeItem = QTreeWidgetItem()
+        self.addTopLevelItem(treeItem) 
+        if(Node != None):
+            sname = Node.attrib['name']
+            sidentifier = Node.attrib['identifier']
+            srw = Node.attrib['rw']
+            scomment = Node.attrib['comment']
+            sp2p = Node.attrib['p2p']
+            sp2a = Node.attrib['p2a']
+        else:  
+            sname = 'TBD'
+            sidentifier = 'TBD'
+            srw = 'rw'
+            scomment = ''
+            sp2p = 'True'
+            sp2a = 'False'
+        name = QLineEdit(sname)
+        identifier = QLineEdit(sidentifier)
+        rw = QComboBox()
+        rw.addItems(QStringList(['-r-','--w','-rw']))
+        rw.setCurrentIndex(rw.findText(srw))
+        p2p = QCheckBox()
+        p2p.setChecked(tBool(sp2p))
+        p2a = QCheckBox()
+        p2a.setChecked(tBool(sp2a))
+        comment = QLineEdit(scomment) 
+        self.setItemWidget(treeItem,0,name)
+        self.setItemWidget(treeItem,1,identifier) 
+        self.setItemWidget(treeItem,2,rw)    
+        self.setItemWidget(treeItem,3,p2p) 
+        self.setItemWidget(treeItem,4,p2a)
+        self.setItemWidget(treeItem,5,comment) 
+        if(Node != None and Node.find('SSRefList') != None):
+            self.setCurrentItem(treeItem)
+            for sNode in Node.find('SSRefList'):
+                self.addSubRef(None, sNode)
 dcm_TreeTable =  [
     ['SessionControl',twSession],
     ['SecurityAccess',twSecurity],
     ['EcuReset',twEcuReset],
-    ['CommunicationControl',easyDcmDefaultTree],
-    ['ReadWriteDataByIdentifier',easyDcmDefaultTree],
+    ['CommunicationControl',twCommunicationControl],
+    ['ReadWriteDataByIdentifier',twRWDID],
     ['ReadDataByPeriodicIdentifier',easyDcmDefaultTree],
     ['ReadWriteMemoryByAddress',easyDcmDefaultTree],
     ['ReadScalingDataByIdentifier',easyDcmDefaultTree],
@@ -625,6 +962,11 @@ class easyComGui(QMainWindow):
         self.menuBar().addAction(self.qAction2)
         self.qAction2.setDisabled(True)
         
+        self.qAction3=QAction(self.tr('Action3'),self) 
+        self.connect(self.qAction3,SIGNAL('triggered()'),self.mqAction3) 
+        self.menuBar().addAction(self.qAction3)
+        self.qAction3.setDisabled(True)
+        
     def mqAction1(self):
         if(self.qAction1.text() == 'Add Signal'):
             self.easyComTree.addSignal()
@@ -639,6 +981,10 @@ class easyComGui(QMainWindow):
             if(wd[1].isVisible()):
                 wd[1].onAction(str(self.qAction2.text()))
 
+    def mqAction3(self):
+        for wd in self.DcmWidgetList:
+            if(wd[1].isVisible()):
+                wd[1].onAction(str(self.qAction3.text()))
     def creGui(self):
         self.qSplitter.insertWidget(0,self.easyTree)
         self.qSplitter.insertWidget(1,self.easyComTree)

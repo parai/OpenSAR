@@ -214,6 +214,12 @@ clean: $(dir_cmd_goals)
 	@echo "  >>>>>>>>>  DONE  <<<<<<<<<"
 	@echo
 
+studio:
+	@(cd ./tools/studio;python main.py)
+
+gen:
+	@(cd ./tools/studio;python Gen.py)
+
 		
 	
 
