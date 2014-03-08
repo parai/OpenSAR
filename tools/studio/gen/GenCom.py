@@ -3,6 +3,7 @@ import xml.etree.ElementTree as ET
 from GenCanIf import GenCanIf
 from GenCanTp import GenCanTp
 from GenPduR import GenPduR
+from GenDcm import GenDcm
 
 __all__ = ['GenCom']
 
@@ -33,6 +34,7 @@ def GenCom(wfxml):
     GenCanIf(wfxml)
     GenCanTp(wfxml)
     GenPduR (wfxml)
+    GenDcm(wfxml)
     GenH()
     GenC()
     GenPy()
