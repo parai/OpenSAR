@@ -822,7 +822,7 @@ class twRWDID(QTreeWidget):
         if(Node != None):
             sname = Node.attrib['name']
             sidentifier = Node.attrib['identifier']
-            sattribute = Node.attrib['rw']
+            sattribute = Node.attrib['attribute']
             scomment = Node.attrib['comment']
             sp2p = Node.attrib['p2p']
             sp2a = Node.attrib['p2a']
