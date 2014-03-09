@@ -52,7 +52,7 @@ static const Dcm_DspSecurityRowType DspSecurityList[] = {
     },
 
     { // PRGS, level,that is for easy implementation of an easyDcm .
-        .DspSecurityLevel =  6,
+        .DspSecurityLevel =  10,
         .DspSecurityDelayTimeOnBoot =  0,//Value is not configurable
         .DspSecurityNumAttDelay =  0,    //Value is not configurable
         .DspSecurityDelayTime =  0,      //Value is not configurable
@@ -146,14 +146,14 @@ static const Dcm_DspSessionType DspSession = {
 //************************************************************************
 static const Dcm_DspSessionRowType* SWVersion_DID_sessionRefList[]=
 {
-	&DspSessionList[2],//Ses_EXTDS,
 	&DspSessionList[1],//Ses_PRGS,
+	&DspSessionList[2],//Ses_EXTDS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
 static const Dcm_DspSessionRowType* NvMVersion_DID_sessionRefList[]=
 {
-	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[2],//Ses_EXTDS,
+	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
 static const Dcm_DspSessionRowType* FingerPrint_DID_sessionRefList[]=
@@ -542,8 +542,8 @@ const Dcm_DspType Dsp = {
 
 static const Dcm_DspSessionRowType* EcuReset_SessionList[]=
 {
-	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[0],//Ses_DS,
+	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
 static const Dcm_DspSecurityRowType* EcuReset_SecurityList[]=
@@ -554,8 +554,8 @@ static const Dcm_DspSecurityRowType* EcuReset_SecurityList[]=
 };
 static const Dcm_DspSessionRowType* CommunicationControl_SessionList[]=
 {
-	&DspSessionList[2],//Ses_EXTDS,
 	&DspSessionList[1],//Ses_PRGS,
+	&DspSessionList[2],//Ses_EXTDS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
 static const Dcm_DspSecurityRowType* CommunicationControl_SecurityList[]=

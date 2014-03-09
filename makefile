@@ -219,6 +219,12 @@ studio:
 
 gen:
 	@(cd ./tools/studio;python Gen.py)
+	
+run:
+	@(cd ./arch/generic/gtk;make run)
+	
+tool:
+	@(cd ./arch/generic/gtk;make tool)	
 
 		
 	

@@ -300,8 +300,21 @@ void DsdHandleRequest(void)
 	if ((DCM_RESPOND_ALL_REQUEST == STD_ON) || ((currentSid & 0x7Fu) < 0x40)) {		/** @req DCM084 */
 		if (lookupSid(currentSid, &sidConfPtr)) {		/** @req DCM192 */ /** @req DCM193 */ /** @req DCM196 */
 			// SID found!
-			if (DspCheckSessionLevel(sidConfPtr->DsdSidTabSessionLevelRef)) {		 /** @req DCM211 */
-				if (DspCheckSecurityLevel(sidConfPtr->DsdSidTabSecurityLevelRef)) {	 /** @req DCM217 */
+			// Non-AUTOSAR process,
+			// For easy implementation, As most of the service will check the session and
+			// security for its each data identifier(DID,IOC,RC)
+			boolean isCheckSkipped = TRUE;
+			switch(currentSid)
+			{
+				case SID_ECU_RESET:
+				case SID_COMMUNICATION_CONTROL:
+					isCheckSkipped = FALSE;
+					break;
+				default:
+					break;
+			}
+			if (isCheckSkipped || DspCheckSessionLevel(sidConfPtr->DsdSidTabSessionLevelRef)) {		 /** @req DCM211 */
+				if (isCheckSkipped || DspCheckSecurityLevel(sidConfPtr->DsdSidTabSecurityLevelRef)) {	 /** @req DCM217 */
 					//lint --e(506, 774)	PC-Lint exception Misra 13.7, 14.1 Allow configuration variables in boolean expression
 					if (DCM_REQUEST_INDICATION_ENABLED == STD_ON) {	 /** @req DCM218 */
 						 result = askApplicationForServicePermission(msgData.pduRxData->SduDataPtr, msgData.pduRxData->SduLength);

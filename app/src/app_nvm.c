@@ -149,6 +149,5 @@ void app_nvm_1000ms_runnable(void)
 {
 	//Fee_Test();
 	//Ea_Test();
-	NvM_Test();
-
+	//NvM_Test();
 }

@@ -1,12 +1,6 @@
 
-#obj-y += $(subst .c,.o,$(wildcard $(addprefix $(ROOTDIR)/app/src/*,.c)))
-#obj-y += $(subst .c,.o,$(wildcard $(addprefix $(ROOTDIR)/app/src/Dia/*,.c)))
-obj-y += app_gauge.o
-obj-y += app_led.o
-obj-y += app_nvm.o
-obj-y += app_time.o
-obj-y += app.o
-obj-y += Diag.o
+obj-y += $(subst .c,.o,$(notdir $(wildcard $(addprefix $(ROOTDIR)/app/src/*,.c))))
+obj-y += $(subst .c,.o,$(notdir $(wildcard $(addprefix $(ROOTDIR)/app/src/Dia/*,.c))))
 
 inc-y += $(ROOTDIR)/app/config
 inc-y += $(ROOTDIR)/app/config/GEN

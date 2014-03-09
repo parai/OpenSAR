@@ -3,7 +3,7 @@
 # Hope better quality of true-time 
 # >>>>>>>> Config <<<<<<<<<<<<<<<<<
 # System: Linux Windows
-SYSTEM=Linux
+SYSTEM=Windows
 GTK_VERSION=3.0
 USE_GUI=TRUE
 
