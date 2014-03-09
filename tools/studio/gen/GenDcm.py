@@ -38,21 +38,922 @@ def tInt(strnum):
         return int(strnum,10)
     
 def GAGet(what,which):
-    pass
+    try:
+        return what.attrib[which]
+    except:
+        if(which == 'SessionIndex'):
+            index = 0
+            for sec in GLGet('SessionList'):
+                if(GAGet(sec,'name') == GAGet(what,'ref')[4:]):
+                    break
+                else:
+                    index += 1
+            return index
+        elif(which == 'SecurityIndex'):
+            index = 1
+            for sec in GLGet('SecurityList'):
+                if(GAGet(sec,'name') == GAGet(what,'ref')[4:]):
+                    break
+                else:
+                    index += 1
+            return index
+        elif(which == 'DidInfoIndex'):
+            index = 0
+            for did in GLGet('RWDIDList'):
+                if(GAGet(did,'name') == GAGet(what,'name')):
+                    break
+                else:
+                    index += 1
+            for did in GLGet('IOControlList'):
+                if(GAGet(did,'name') == GAGet(what,'name')):
+                    break
+                else:
+                    index += 1
+            return index
+        elif(which == 'RCInfoIndex'):
+            index = 0
+            for did in GLGet('RoutineControlList'):
+                if(GAGet(did,'name') == GAGet(what,'name')):
+                    break
+                else:
+                    index += 1
+            return index        
+        elif(which == 'DynamicllyDefined'):
+            if(what.attrib['attribute'].find('d')!=-1):
+                return 'TRUE'
+            else:
+                return 'FALSE'
+        elif(which == 'Op' or which == 'EnM' or which == 'Sts'):
+            return 0
+        elif(which == 'STARef' or which == 'RTDRef' or which == 'RCTERef' or which == 'FCSRef'):
+            wh = which[:-3]
+            for si in GLGet(what,'DidSizeInfoList'):
+                if(wh == GAGet(si,'name')):
+                    return '&%s_%s_Size'%(GAGet(what,'name'),GAGet(si,'name'))
+            return 'NULL'
+        elif(which == 'StartRef' or which == 'StopRef' or which == 'ResultRef'):
+            wh = which[:-3]
+            for si in GLGet(what,'RCSizeInfoList'):
+                if(wh == GAGet(si,'name')):
+                    return '&%s_%s_Size'%(GAGet(what,'name'),GAGet(si,'name'))
+            return 'NULL'
 
 def GLGet(what,which = None):
-    pass
+    import re
+    global __root
+    if(which == None):
+        if(__root.find(what) != None):
+            return __root.find(what)
+        else:
+            return []
+    else:
+        if(what.find(which) != None):
+            return what.find(which)
+        else:
+            if(which == 'DidSizeInfoList'):
+                reInfo = re.compile(r'\(\s*(STA|RTD|RCTE|FCS)\s*,(Op|EnM|Sts)\s*=\s*(\d+)\s*,\s*(Op|EnM|Sts)\s*=\s*(\d+)\s*,\s*(Op|EnM|Sts)\s*=\s*(\d+)\s*\)')
+                List = []
+                for S in what.attrib['info'].split(';'):
+                    if(reInfo.search(S) != None):
+                        grp = reInfo.search(S).groups()
+                        Node = ET.Element('Info')
+                        Node.attrib['name'] = grp[0]
+                        for i in range(0,len(grp)/2):
+                            Node.attrib[grp[i*2+1]] = grp[i*2+2]
+                        List.append(Node)
+                return List
+            elif(which == 'RCSizeInfoList'):
+                reInfo = re.compile(r'\(\s*(Start|Stop|Result)\s*,(Op|Sts)\s*=\s*(\d+)\s*,\s*(Op|Sts)\s*=\s*(\d+)\)')
+                reInfo2 = re.compile(r'\(\s*(Start|Stop|Result)\s*,(Op|Sts)\s*=\s*(\d+)\)')
+                List = []
+                for S in what.attrib['info'].split(';'):
+                    if(reInfo.search(S) != None):
+                        grp = reInfo.search(S).groups()
+                        Node = ET.Element('Info')
+                        Node.attrib['name'] = grp[0]
+                        for i in range(0,len(grp)/2):
+                            Node.attrib[grp[i*2+1]] = grp[i*2+2]
+                        List.append(Node)
+                    elif(reInfo2.search(S) != None):
+                        grp = reInfo2.search(S).groups()
+                        Node = ET.Element('Info')
+                        Node.attrib['name'] = grp[0]
+                        for i in range(0,len(grp)/2):
+                            Node.attrib[grp[i*2+1]] = grp[i*2+2]
+                        List.append(Node)
+                return List
+                
 
 def GenH():
     global __dir
     # =========================  PduR_Cfg.h ==================
     fp = open('%s/Dcm_Cfg.h'%(__dir),'w')
     fp.write(__Header)
+    fp.write("""
+#ifndef DCM_CFG_H_
+#define DCM_CFG_H_
+
+#define DCM_VERSION_INFO_API              STD_ON
+#if defined(USE_DET)
+#define DCM_DEV_ERROR_DETECT STD_ON
+#else
+#define DCM_DEV_ERROR_DETECT STD_OFF
+#endif
+
+#define DCM_RESPOND_ALL_REQUEST           STD_ON  // Activate/Deactivate response on SID 0x40-0x7f and 0xc0-0xff.
+#define DCM_REQUEST_INDICATION_ENABLED    STD_ON  // Activate/Deactivate indication request mechanism.
+#define DCM_PAGEDBUFFER_ENABLED           STD_OFF    // Enable/disable page buffer mechanism (currently only disabled supported)
+
+#define DCM_DSL_BUFFER_LIST_LENGTH            4
+#define DCM_DSL_TX_PDU_ID_LIST_LENGTH         2
+#define DCM_DSL_RX_PDU_ID_LIST_LENGTH         2
+
+#define DCM_MAIN_FUNCTION_PERIOD_TIME_MS    10
+
+// default Size configuration
+#define DCM_LIMITNUMBER_PERIODDATA        5  //MaxNumberofSimultaneousPeriodictransmissions
+#define DCM_MAX_DDDSOURCE_NUMBER          4  //MaxSourcesforOneDynamicIdentifier
+#define DCM_MAX_DDD_NUMBER                2 
+ // default Period configuration
+#define DCM_PERIODICTRANSMIT_SLOW            50  
+#define DCM_PERIODICTRANSMIT_MEDIUM          30
+#define DCM_PERIODICTRANSMIT_FAST            15
+
+// index
+#define DCM_DIAG_P2P_REQ        0
+#define DCM_DIAG_P2A_REQ        1
+
+#define DCM_DIAG_P2P_ACK        0
+#define DCM_DIAG_P2A_ACK        1
+
+
+
+//do add/subtract by hand.please
+//#define USE_DEM
+#define DCM_USE_SERVICE_DIAGNOSTICSESSIONCONTROL
+#define DCM_USE_SERVICE_ECURESET
+//#define DCM_USE_SERVICE_COMMUNICATIONCONTROL
+//#define DCM_USE_SERVICE_CLEARDIAGNOSTICINFORMATION
+//#define DCM_USE_SERVICE_READDTCINFORMATION
+#define DCM_USE_SERVICE_READDATABYIDENTIFIER
+//#define DCM_USE_SERVICE_READMEMORYBYADDRESS
+//#define DCM_USE_SERVICE_WRITEMEMORYBYADDRESS
+//#define DCM_USE_SERVICE_READSCALINGDATABYIDENTIFIER
+#define DCM_USE_SERVICE_SECURITYACCESS
+#define DCM_USE_SERVICE_WRITEDATABYIDENTIFIER
+#define DCM_USE_SERVICE_ROUTINECONTROL
+#define DCM_USE_SERVICE_TESTERPRESENT
+//#define DCM_USE_SERVICE_CONTROLDTCSETTING
+#define DCM_USE_SERVICE_READDATABYPERIODICIDENTIFIER
+#define DCM_USE_SERVICE_DYNAMICALLYDEFINEDATAIDENTIFIER
+//#define DCM_USE_SERVICE_INPUTOUTPUTCONTROLBYIDENTIFIER
+#define DCM_USE_SERVICE_UPLOAD_DOWNLOAD
+
+#define fGetSeed(NN) NULL
+#define fCompareKey(NN) NULL
+#define fDidGetDataLength(NN) NULL
+#define fDidConditionReadCheck(NN) NULL
+#define fDidReadData(NN) NULL
+#define fDidConditionCheckWrite(NN) NULL
+#define fDidWriteData(NN) NULL
+
+#define fDidFreezeCurrentState(NN) NULL
+#define fDidResetToDefault(NN) NULL
+#define fDidReturnControlToEcu(NN) NULL
+#define fDidShortTermAdjustment(NN) NULL
+#endif /*DCM_CFG_H_*/    
+    """)
     fp.close()
 def GenC():
     fp = open('%s/Dcm_LCfg.c'%(__dir),'w')
     fp.write(__Header)
+    fp.write("""
+#include "Std_Types.h"
+#include "Dcm.h"
+#include "Dcm_Internal.h"
+#include "PduR.h"
+
+#define DCM_SECURITY_EOL_INDEX %s
+#define DCM_SESSION_EOL_INDEX  %s
+#define DCM_DID_LIST_EOL_INDEX %s\n\n"""%(len(GLGet('SecurityList'))+1,len(GLGet('SessionList')),len(GLGet('RWDIDList'))))
+# ================ [ Security ] =================================================================
+    cstr = ''
+    for sec in GLGet('SecurityList'):
+        cstr += """
+    { // %s, %s
+        .DspSecurityLevel =  %s,
+        .DspSecurityDelayTimeOnBoot =  0,//Value is not configurable
+        .DspSecurityNumAttDelay =  0,    //Value is not configurable
+        .DspSecurityDelayTime =  0,      //Value is not configurable
+        .DspSecurityNumAttLock =  0,     //Value is not configurable
+        .DspSecurityADRSize =  0,
+        .DspSecuritySeedSize =  %s,
+        .DspSecurityKeySize =  %s,
+        .GetSeed =  fGetSeed(%s),
+        .CompareKey =  fCompareKey(%s),
+        .Arc_EOL =  FALSE
+    },\n"""%(GAGet(sec,'name'),GAGet(sec,'comment'),
+             GAGet(sec,'identifier'),
+             GAGet(sec,'seedSize'),
+             GAGet(sec,'keySize'),
+             GAGet(sec,'name'),
+             GAGet(sec,'name'))
+    fp.write("""
+static const Dcm_DspSecurityRowType DspSecurityList[] = {
+    { // Default Security Level, that is for each session
+        .DspSecurityLevel =  0,
+        .DspSecurityDelayTimeOnBoot =  0,//Value is not configurable
+        .DspSecurityNumAttDelay =  0,     //Value is not configurable
+        .DspSecurityDelayTime =  0,     //Value is not configurable
+        .DspSecurityNumAttLock =  0,     //Value is not configurable
+        .DspSecurityADRSize =  0,
+        .DspSecuritySeedSize =  4,
+        .DspSecurityKeySize =  4,
+        .GetSeed =  NULL,    // as each session entered, it is already in this level, cause send NRC
+        .CompareKey =  NULL,
+        .Arc_EOL =  FALSE
+    },
+%s
+    {
+        .Arc_EOL =  TRUE
+    }
+};
+
+static const Dcm_DspSecurityType DspSecurity = {
+    .DspSecurityRow =  DspSecurityList
+};\n\n"""%(cstr))
+# ================ [ Session ] =================================================================
+    cstr = ''
+    for ses in GLGet('SessionList'):  
+        cstr += """
+    { // %s
+        .DspSessionLevel =  %s,
+        .DspSessionP2ServerMax =  5000,
+        .DspSessionP2StarServerMax =  5000,
+        .Arc_EOL =  FALSE
+    },\n"""%(GAGet(ses,'name'),GAGet(ses,'identifier'))  
+    fp.write("""
+static const Dcm_DspSessionRowType DspSessionList[] = {
+%s
+    {
+        .Arc_EOL =  TRUE
+    },
+};
+
+static const Dcm_DspSessionType DspSession = {
+    .DspSessionRow =  DspSessionList,
+};
+//************************************************************************
+//*                       Data Identifier                                *
+//************************************************************************\n"""%(cstr))
+# ================ [ DataIdentifier ] =================================================================
+    # ============== [ RW DID ] ================================
+    cstr = ''
+    for did in GLGet('RWDIDList'):    
+        cstr += 'static const Dcm_DspSessionRowType* %s_DID_sessionRefList[]=\n{\n'%(GAGet(did,'name'))
+        for ss in GLGet(did,'SSRefList'):
+           if(GAGet(ss,'name') == 'Session'):
+               cstr += '\t&DspSessionList[%s],//%s,%s\n'%(GAGet(ss,'SessionIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSessionList[DCM_SESSION_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for did in GLGet('RWDIDList'):    
+        cstr += 'static const Dcm_DspSecurityRowType* %s_DID_securityRefList[]=\n{\n'%(GAGet(did,'name'))
+        for ss in GLGet(did,'SSRefList'):
+           if(GAGet(ss,'name') == 'Security'):
+               cstr += '\t&DspSecurityList[%s],//%s,%s\n'%(GAGet(ss,'SecurityIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSecurityList[DCM_SECURITY_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for did in GLGet('RWDIDList'):    
+        cstr += """
+static const Dcm_DspDidReadType %s_didAccess = {
+    .DspDidReadSessionRef =  %s_DID_sessionRefList,
+    .DspDidReadSecurityLevelRef =  %s_DID_securityRefList
+};\n"""%(GAGet(did,'name'),GAGet(did,'name'),GAGet(did,'name'))
+    fp.write(cstr)
+    # ============== [ IOControl ] ================================
+    cstr = ''
+    for did in GLGet('IOControlList'):    
+        cstr += 'static const Dcm_DspSessionRowType* %s_DID_sessionRefList[]=\n{\n'%(GAGet(did,'name'))
+        for ss in GLGet(did,'SSRefList'):
+           if(GAGet(ss,'name') == 'Session'):
+               cstr += '\t&DspSessionList[%s],//%s,%s\n'%(GAGet(ss,'SessionIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSessionList[DCM_SESSION_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for did in GLGet('IOControlList'):    
+        cstr += 'static const Dcm_DspSecurityRowType* %s_DID_securityRefList[]=\n{\n'%(GAGet(did,'name'))
+        for ss in GLGet(did,'SSRefList'):
+           if(GAGet(ss,'name') == 'Security'):
+               cstr += '\t&DspSecurityList[%s],//%s,%s\n'%(GAGet(ss,'SecurityIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSecurityList[DCM_SECURITY_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for did in GLGet('IOControlList'): 
+        for si in GLGet(did,'DidSizeInfoList'):
+            cstr += """
+static const Dcm_DspDidControlRecordSizesType %s_%s_Size = {
+    .DspDidControlEnableMaskRecordSize = %s,
+    .DspDidControlOptionRecordSize = %s,
+    .DspDidControlStatusRecordSize = %s
+};\n"""%(GAGet(did,'name'),GAGet(si,'name'),GAGet(si,'EnM'),GAGet(si,'Op'),GAGet(si,'Sts'))
+    fp.write(cstr)
+    cstr = ''
+    for did in GLGet('IOControlList'):    
+        cstr += """
+static const Dcm_DspDidControlType %s_didControl = {
+    .DspDidControlSessionRef =  %s_DID_sessionRefList,
+    .DspDidControlSecurityLevelRef =  %s_DID_securityRefList,
+    .DspDidFreezeCurrentState = %s,
+    .DspDidResetToDefault = %s,
+    .DspDidReturnControlToEcu = %s,
+    .DspDidShortTermAdjustment = %s
+};\n"""%(GAGet(did,'name'),GAGet(did,'name'),GAGet(did,'name'),
+         GAGet(did,'FCSRef'),GAGet(did,'RTDRef'),GAGet(did,'RCTERef'),GAGet(did,'STARef'))
+    fp.write(cstr)
+    # Info
+    cstr = ''
+    for did in GLGet('RWDIDList'):
+        cstr += """
+    {    
+         .DspDidDynamicllyDefined =  %s,
+         .DspDidFixedLength =  FALSE, // for easy implementation, all DID length is dynamic.
+         .DspDidScalingInfoSize =  (uint8)0xdead,
+         .DspDidAccess.DspDidRead  =&%s_didAccess,
+         .DspDidAccess.DspDidWrite = (Dcm_DspDidWriteType*)&%s_didAccess, // for easy implementation, use the same one as read
+         .DspDidAccess.DspDidControl = NULL,
+    },\n"""%(GAGet(did,'DynamicllyDefined'),GAGet(did,'name'),GAGet(did,'name'))
+    for did in GLGet('IOControlList'): 
+        cstr += """
+    {    
+         .DspDidDynamicllyDefined =  FALSE,
+         .DspDidFixedLength =  FALSE, // not used
+         .DspDidScalingInfoSize =  (uint8)0xdead,
+         .DspDidAccess.DspDidRead  = NULL,
+         .DspDidAccess.DspDidWrite = NULL,
+         .DspDidAccess.DspDidControl = &%s_didControl,
+    },\n"""%(GAGet(did,'name')) 
+    fp.write("""
+static const Dcm_DspDidInfoType DspDidInfoList[] = {
+    %s
+};
+extern const Dcm_DspDidType DspDidList[];
+const Dcm_DspDidType* TODO_RWDID_RefList[] =
+{
+    &DspDidList[DCM_DID_LIST_EOL_INDEX]  //add did ref by hand please,If you need it
+};\n\n"""%(cstr))
+    cstr = ''
+    for did in GLGet('RWDIDList'):
+        cstr += """
+    { // RWDID,%s,%s
+        .DspDidUsePort =  FALSE,//.Value is not configurable
+        .DspDidIdentifier =  %s,   
+        .DspDidInfoRef =  &DspDidInfoList[%s],
+        .DspDidRef =  TODO_RWDID_RefList,    // TODO:
+        .DspDidSize = 0xdead,
+        .DspDidReadDataLengthFnc =  fDidGetDataLength(%s),
+        .DspDidConditionCheckReadFnc =  fDidConditionReadCheck(%s),
+        .DspDidReadDataFnc =  fDidReadData(%s),
+        .DspDidConditionCheckWriteFnc =  fDidConditionCheckWrite(%s),
+        .DspDidWriteDataFnc =  fDidWriteData(%s),
+        .DspDidGetScalingInfoFnc =  NULL,
+        .DspDidFreezeCurrentStateFnc =  NULL,
+        .DspDidResetToDefaultFnc =  NULL,
+        .DspDidReturnControlToEcuFnc =  NULL,
+        .DspDidShortTermAdjustmentFnc =  NULL,
+        .DspDidControlRecordSize =  NULL,
+        .Arc_EOL =  FALSE
+    },"""%(GAGet(did,'attribute'),GAGet(did,'comment'),GAGet(did,'identifier'),GAGet(did,'DidInfoIndex'),GAGet(did,'name'),GAGet(did,'name'),GAGet(did,'name'),GAGet(did,'name'),GAGet(did,'name'))
+    for did in GLGet('IOControlList'):
+        cstr += """
+    { // IOControl,%s
+        .DspDidUsePort =  FALSE,//.Value is not configurable
+        .DspDidIdentifier =  %s,   
+        .DspDidInfoRef =  &DspDidInfoList[%s],
+        .DspDidRef =  NULL,
+        .DspDidSize = 0xdead,
+        .DspDidReadDataLengthFnc =  NULL,
+        .DspDidConditionCheckReadFnc =  NULL,
+        .DspDidReadDataFnc =  NULL,
+        .DspDidConditionCheckWriteFnc =  NULL,
+        .DspDidWriteDataFnc =  NULL,
+        .DspDidGetScalingInfoFnc =  NULL,
+        .DspDidFreezeCurrentStateFnc =  fDidFreezeCurrentState(%s),
+        .DspDidResetToDefaultFnc =  fDidResetToDefault(%s),
+        .DspDidReturnControlToEcuFnc =  fDidReturnControlToEcu(%s),
+        .DspDidShortTermAdjustmentFnc =  fDidShortTermAdjustment(%s),
+        .DspDidControlRecordSize =  NULL,
+        .Arc_EOL =  FALSE
+    },"""%(GAGet(did,'comment'),GAGet(did,'identifier'),GAGet(did,'DidInfoIndex'),
+           GAGet(did,'name'),GAGet(did,'name'),GAGet(did,'name'),GAGet(did,'name'))
+    fp.write("""
+const Dcm_DspDidType DspDidList[] = { 
+%s
+    {
+        .Arc_EOL =  TRUE
+    }
+};
+
+//************************************************************************
+//*                       Routine control                                *
+//************************************************************************\n"""%(cstr)) 
+    cstr = ''
+    for rc in GLGet('RoutineControlList'):   
+        cstr += 'static const Dcm_DspSessionRowType* %s_RC_sessionRefList[]=\n{\n'%(GAGet(rc,'name'))
+        for ss in GLGet(rc,'SSRefList'):
+           if(GAGet(ss,'name') == 'Session'):
+               cstr += '\t&DspSessionList[%s],//%s,%s\n'%(GAGet(ss,'SessionIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSessionList[DCM_SESSION_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for rc in GLGet('RoutineControlList'):    
+        cstr += 'static const Dcm_DspSecurityRowType* %s_RC_securityRefList[]=\n{\n'%(GAGet(rc,'name'))
+        for ss in GLGet(did,'SSRefList'):
+           if(GAGet(ss,'name') == 'Security'):
+               cstr += '\t&DspSecurityList[%s],//%s,%s\n'%(GAGet(ss,'SecurityIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSecurityList[DCM_SECURITY_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for rc in GLGet('RoutineControlList'): 
+        for si in GLGet(rc,'RCSizeInfoList'):
+            if(GAGet(si,'name') == 'Start'):
+                cstr += """
+static const Dcm_DspStartRoutineType %s_%s_Size = {
+    .DspStartRoutineCtrlOptRecSize = %s,
+    .DspStartRoutineStsOptRecSize = %s,
+};\n"""%(GAGet(rc,'name'),GAGet(si,'name'),GAGet(si,'Op'),GAGet(si,'Sts'))
+            elif(GAGet(si,'name') == 'Stop'):
+                cstr += """
+static const Dcm_DspRoutineStopType %s_%s_Size = {
+    .DspStopRoutineCtrlOptRecSize = %s,
+    .DspStopRoutineStsOptRecSize = %s,
+};\n"""%(GAGet(rc,'name'),GAGet(si,'name'),GAGet(si,'Op'),GAGet(si,'Sts'))
+            elif(GAGet(si,'name') == 'Result'):
+                cstr += """
+static const Dcm_DspRoutineRequestResType %s_%s_Size = {
+    .DspReqResRtnCtrlOptRecSize = %s,
+};\n"""%(GAGet(rc,'name'),GAGet(si,'name'),GAGet(si,'Sts'))
+    fp.write(cstr)
+    cstr = ''
+    for rc in GLGet('RoutineControlList'): 
+        cstr += """
+    { // %s
+         .DspRoutineAuthorization.DspRoutineSessionRef =  %s_RC_sessionRefList,
+         .DspRoutineAuthorization.DspRoutineSecurityLevelRef =  %s_RC_securityRefList,
+         .DspStartRoutine =  %s,
+         .DspRoutineStop =  %s,
+         .DspRoutineRequestRes =  %s,
+    },\n"""%(GAGet(rc,'name'),GAGet(rc,'name'),GAGet(rc,'name'),
+             GAGet(rc,'StartRef'),GAGet(rc,'StopRef'),GAGet(rc,'ResultRef'),)
+    fp.write("""
+static const Dcm_DspRoutineInfoType DspRoutineInfoList[] = {
+%s
+};\n\n"""%(cstr))
+    cstr = ''
+    for rc in GLGet('RoutineControlList'): 
+        cstr += """
+    { //%s,%s
+         .DspRoutineUsePort =  FALSE,
+         .DspRoutineIdentifier =  %s,
+         .DspRoutineInfoRef =  &DspRoutineInfoList[%s],
+         .DspStartRoutineFnc =  fStartRoutine(%s),
+         .DspStopRoutineFnc =  fStopRoutine(%s),
+         .DspRequestResultRoutineFnc =  fRequestResultRoutine(%s),
+         .Arc_EOL = FALSE
+    },\n"""%(GAGet(rc,'name'),GAGet(rc,'comment'),GAGet(rc,'identifier'),GAGet(rc,'RCInfoIndex'),
+             GAGet(rc,'name'),GAGet(rc,'name'),GAGet(rc,'name'),)
+    fp.write("""
+static const Dcm_DspRoutineType  DspRoutineList[] = {
+%s
+    {
+         .Arc_EOL = TRUE
+    }
+};\n\n"""%(cstr))
+    fp.write("""
+//************************************************************************
+//*                            Memory Info                                 *
+//***********************************************************************
+
+const Dcm_DspType Dsp = {
+    .DspMaxDidToRead =  0xdead, // TODO: what does it mean?
+    .DspDid =  DspDidList,
+    .DspDidInfo =  DspDidInfoList,
+    .DspEcuReset =  NULL,
+    .DspPid =  NULL,
+    .DspReadDTC =  NULL,
+    .DspRequestControl =  NULL,
+    .DspRoutine =  DspRoutineList,
+    .DspRoutineInfo =  DspRoutineInfoList,
+    .DspSecurity =  &DspSecurity,
+    .DspSession =  &DspSession,
+    .DspTestResultByObdmid =  NULL,
+    .DspVehInfo =  NULL
+};\n\n""")
     
+    cstr = ''
+    for reset in GLGet('EcuResetList'):    
+        cstr += 'static const Dcm_DspSessionRowType* EcuReset_SessionList[]=\n{\n'
+        for ss in GLGet(reset,'SSRefList'):
+           if(GAGet(ss,'name') == 'Session'):
+               cstr += '\t&DspSessionList[%s],//%s,%s\n'%(GAGet(ss,'SessionIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSessionList[DCM_SESSION_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for reset in GLGet('EcuResetList'):    
+        cstr += 'static const Dcm_DspSecurityRowType* EcuReset_SecurityList[]=\n{\n'
+        for ss in GLGet(reset,'SSRefList'):
+           if(GAGet(ss,'name') == 'Security'):
+               cstr += '\t&DspSecurityList[%s],//%s,%s\n'%(GAGet(ss,'SecurityIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSecurityList[DCM_SECURITY_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for commctrl in GLGet('CommunicationControlList'):    
+        cstr += 'static const Dcm_DspSessionRowType* CommunicationControl_sessionRefList[]=\n{\n'
+        for ss in GLGet(commctrl,'SSRefList'):
+           if(GAGet(ss,'name') == 'Session'):
+               cstr += '\t&DspSessionList[%s],//%s,%s\n'%(GAGet(ss,'SessionIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSessionList[DCM_SESSION_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    cstr = ''
+    for commctrl in GLGet('CommunicationControlList'):    
+        cstr += 'static const Dcm_DspSecurityRowType* CommunicationControl_securityRefList[]=\n{\n'
+        for ss in GLGet(commctrl,'SSRefList'):
+           if(GAGet(ss,'name') == 'Security'):
+               cstr += '\t&DspSecurityList[%s],//%s,%s\n'%(GAGet(ss,'SecurityIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
+        cstr += '\t&DspSecurityList[DCM_SECURITY_EOL_INDEX]\n};\n'
+    fp.write(cstr)
+    
+    fp.write("""
+//************************************************************************
+//*                                    DSD                                    *
+//***********************************************************************
+
+const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
+    {
+         .DsdSidTabServiceId = SID_DIAGNOSTIC_SESSION_CONTROL,
+         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .DsdSidTabServiceId = SID_SECURITY_ACCESS,
+         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .DsdSidTabServiceId = SID_READ_DATA_BY_IDENTIFIER,
+         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .DsdSidTabServiceId = SID_WRITE_DATA_BY_IDENTIFIER,
+         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .DsdSidTabServiceId = SID_ROUTINE_CONTROL,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .DsdSidTabServiceId = SID_READ_SCALING_DATA_BY_IDENTIFIER,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    { 
+         .DsdSidTabServiceId = SID_TESTER_PRESENT,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    { 
+         .DsdSidTabServiceId = SID_ECU_RESET,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = EcuReset_SecurityList,
+         .DsdSidTabSessionLevelRef  = EcuReset_SessionList,
+         .Arc_EOL =  FALSE
+    },
+    { 
+         .DsdSidTabServiceId = SID_DYNAMICALLY_DEFINE_DATA_IDENTIFIER,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    { 
+         .DsdSidTabServiceId = SID_READ_DATA_BY_PERIODIC_IDENTIFIER,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL
+         .Arc_EOL =  FALSE
+    },
+    {
+         .DsdSidTabServiceId = SID_INPUT_OUTPUT_CONTROL_BY_IDENTIFIER,
+         .DsdSidTabSubfuncAvail = TRUE,
+         .DsdSidTabSecurityLevelRef = NULL
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    { 
+         .DsdSidTabServiceId = SID_READ_MEMORY_BY_ADDRESS,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef  = NULL,
+         .Arc_EOL =  FALSE
+    },
+    { 
+         .DsdSidTabServiceId = SID_WRITE_MEMORY_BY_ADDRESS,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = NULL,
+         .DsdSidTabSessionLevelRef = NULL,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .Arc_EOL =  TRUE
+    }
+};
+
+const Dcm_DsdServiceTableType DsdServiceTable[] = {    
+    {
+         .DsdSidTabId =  0,
+         .DsdService =  DIAG_P2PorP2A_serviceList,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .Arc_EOL =  TRUE
+    }
+};
+
+const Dcm_DsdType Dsd = {
+    .DsdServiceTable =  DsdServiceTable
+};    
+    \n""")
+    
+    fp.write("""
+//************************************************************************
+//*                                    DSL                                    *
+//***********************************************************************
+
+static uint8 rxDcmBuffer_DiagP2P[512];
+static Dcm_DslBufferRuntimeType rxBufferParams_DiagP2P =
+{
+    .status =  NOT_IN_USE
+};
+static uint8 txDcmBuffer_DiagP2P[512];
+static Dcm_DslBufferRuntimeType txBufferParams_DiagP2P =
+{
+    .status =  NOT_IN_USE
+};
+static uint8 rxDcmBuffer_DiagP2A[512];
+static Dcm_DslBufferRuntimeType rxBufferParams_DiagP2A =
+{
+    .status =  NOT_IN_USE
+};
+static uint8 txDcmBuffer_DiagP2A[512];
+static Dcm_DslBufferRuntimeType txBufferParams_DiagP2A =
+{
+    .status =  NOT_IN_USE
+};
+static const Dcm_DslBufferType DcmDslBufferList[DCM_DSL_BUFFER_LIST_LENGTH] = {
+    {
+        .DslBufferID =  0,    //? I am not that clear.
+        .DslBufferSize =  512,//.?Value is not configurable
+        .pduInfo.SduDataPtr =  rxDcmBuffer_DiagP2P,
+        .pduInfo.SduLength =  512,
+        .externalBufferRuntimeData =  &rxBufferParams_DiagP2P
+    },
+    {
+        .DslBufferID =  1,//? I am not that clear.
+        .DslBufferSize =  512,//.?Value is not configurable
+        .pduInfo.SduDataPtr =  txDcmBuffer_DiagP2P,
+        .pduInfo.SduLength =  512,
+        .externalBufferRuntimeData =  &txBufferParams_DiagP2P
+    },
+    {
+        .DslBufferID =  0,//? I am not that clear.
+        .DslBufferSize =  512,//.?Value is not configurable
+        .pduInfo.SduDataPtr =  rxDcmBuffer_DiagP2A,
+        .pduInfo.SduLength =  512,
+        .externalBufferRuntimeData =  &rxBufferParams_DiagP2P
+    },
+    {
+        .DslBufferID =  1,//? I am not that clear.
+        .DslBufferSize =  512,//.?Value is not configurable
+        .pduInfo.SduDataPtr =  txDcmBuffer_DiagP2A,
+        .pduInfo.SduLength =  512,
+        .externalBufferRuntimeData =  &txBufferParams_DiagP2A
+    }
+};
+
+static const Dcm_DslCallbackDCMRequestServiceType DCMRequestServiceList[] = {
+    { // vRequestService_1
+        .StartProtocol =  Diag_RequestServiceStart,  // must at least config one
+        .StopProtocol =   Diag_RequestServiceStop,
+        .Arc_EOL =  FALSE
+    },
+    {
+        .Arc_EOL =  TRUE
+    }
+};
+
+static const Dcm_DslServiceRequestIndicationType DCMServiceRequestIndicationList[] = {
+    {
+        .Indication =  Diag_RequestServiceIndication, // can ignore this configure when turn DCM_REQUEST_INDICATION_ENABLED STD_OFF
+        .Arc_EOL =  FALSE
+    },
+    {
+        .Arc_EOL =  TRUE
+    }
+};
+
+extern const Dcm_DslMainConnectionType DslMainConnectionList[];
+
+static const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {
+    {
+        .DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2P_REQ],
+        .DslProtocolAddrType =  DCM_PROTOCOL_PHYSICAL_ADDR_TYPE,
+        .DcmDslProtocolRxPduId =  PDUR_DIAG_P2P_REQ,
+        .DcmDslProtocolRxTesterSourceAddr_v4 =  0,        //.Value is not configurable
+        .DcmDslProtocolRxChannelId_v4 =  0,                //.Value is not configurable
+        .Arc_EOL =  FALSE
+    },
+    {
+        .DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2A_REQ],
+        .DslProtocolAddrType =  DCM_PROTOCOL_PHYSICAL_ADDR_TYPE,
+        .DcmDslProtocolRxPduId =  PDUR_DIAG_P2A_REQ,
+        .DcmDslProtocolRxTesterSourceAddr_v4 =  0,        //.Value is not configurable
+        .DcmDslProtocolRxChannelId_v4 =  0,                //.Value is not configurable
+        .Arc_EOL =  FALSE
+    },
+    {
+        .Arc_EOL =  TRUE
+    }
+};
+
+static const Dcm_DslProtocolTxType DcmDslProtocolTxList[] = {
+    {
+        .DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2P_ACK],
+        .DcmDslProtocolTxPduId =  PDUR_DIAG_P2P_ACK,
+        .DcmDslProtocolDcmTxPduId = DCM_DIAG_P2P_ACK,
+        .Arc_EOL =  FALSE
+    },
+    {
+        .DslMainConnectionParent =  &DslMainConnectionList[DCM_DIAG_P2A_ACK],
+        .DcmDslProtocolTxPduId =  PDUR_DIAG_P2A_ACK,
+        .DcmDslProtocolDcmTxPduId = DCM_DIAG_P2A_ACK,
+        .Arc_EOL =  FALSE
+    },
+    {
+        .Arc_EOL =  TRUE
+    }
+};
+
+extern const Dcm_DslConnectionType DslConnectionList[];
+
+const Dcm_DslMainConnectionType DslMainConnectionList[] = {
+    {
+        .DslConnectionParent =  &DslConnectionList[DCM_DIAG_P2P_REQ],
+        .DslPeriodicTransmissionConRef =  NULL,        //.Value is not configurable
+        .DslROEConnectionRef =  NULL,                //.Value is not configurable
+        .DslProtocolRx =  NULL,                        //.Value is not configurable
+        .DslProtocolTx =  &DcmDslProtocolTxList[DCM_DIAG_P2P_ACK],
+    },
+    {
+        .DslConnectionParent =  &DslConnectionList[DCM_DIAG_P2A_REQ],
+        .DslPeriodicTransmissionConRef =  NULL,        //.Value is not configurable
+        .DslROEConnectionRef =  NULL,                //.Value is not configurable
+        .DslProtocolRx =  NULL,                        //.Value is not configurable
+        .DslProtocolTx =  &DcmDslProtocolTxList[DCM_DIAG_P2A_ACK],
+    },
+};
+
+extern const Dcm_DslProtocolRowType DslProtocolRowList[];
+
+const Dcm_DslConnectionType DslConnectionList[] = {
+    {
+        .DslProtocolRow =  &DslProtocolRowList[DCM_DIAG_P2P_REQ],
+        .DslMainConnection =  &DslMainConnectionList[DCM_DIAG_P2P_REQ],
+        .DslPeriodicTransmission =  NULL,    //.Value is not configurable
+        .DslResponseOnEvent =  NULL,    //.Value is not configurable
+        .Arc_EOL =  FALSE
+    },
+    {
+        .DslProtocolRow =  &DslProtocolRowList[DCM_DIAG_P2A_REQ],
+        .DslMainConnection =  &DslMainConnectionList[DCM_DIAG_P2A_REQ],
+        .DslPeriodicTransmission =  NULL,    //.Value is not configurable
+        .DslResponseOnEvent =  NULL,    //.Value is not configurable
+        .Arc_EOL =  FALSE
+    },
+    {
+        .Arc_EOL =  TRUE
+    }
+};
+
+extern const Dcm_DslProtocolTimingRowType ProtocolTimingList[];
+
+Dcm_DslRunTimeProtocolParametersType dcmDslRuntimeVariables[2]; // for DIAG_P2P and DIAG_P2A
+const Dcm_DslProtocolRowType DslProtocolRowList[]= {
+    {
+        .DslProtocolID =  DCM_UDS_ON_CAN,
+        .DslProtocolIsParallelExecutab =  FALSE, // not supported
+        .DslProtocolPreemptTimeout =  0,    // not supported
+        .DslProtocolPriority =  0,    // not supported
+        .DslProtocolTransType =  DCM_PROTOCOL_TRANS_TYPE_1,
+        .DslProtocolRxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2P_REQ+0],
+        .DslProtocolTxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2P_REQ+1],
+        .DslProtocolSIDTable =  &DsdServiceTable[0],
+        .DslProtocolTimeLimit =  &ProtocolTimingList[0],
+        .DslConnection =  DslConnectionList,
+        .DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[DCM_DIAG_P2P_REQ],
+        .Arc_EOL =  FALSE
+    },
+    {
+        .DslProtocolID =  DCM_UDS_ON_CAN,
+        .DslProtocolIsParallelExecutab =  FALSE, // not supported
+        .DslProtocolPreemptTimeout =  0,    // not supported
+        .DslProtocolPriority =  0,    // not supported
+        .DslProtocolTransType =  DCM_PROTOCOL_TRANS_TYPE_1,
+        .DslProtocolRxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2A_REQ+0],
+        .DslProtocolTxBufferID =  &DcmDslBufferList[2*DCM_DIAG_P2A_REQ+1],
+        .DslProtocolSIDTable =  &DsdServiceTable[0],
+        .DslProtocolTimeLimit =  &ProtocolTimingList[0],
+        .DslConnection =  DslConnectionList,
+        .DslRunTimeProtocolParameters =  &dcmDslRuntimeVariables[DCM_DIAG_P2A_REQ],
+        .Arc_EOL =  FALSE
+    },
+    {
+        .Arc_EOL = TRUE
+    }
+};
+
+const Dcm_DslProtocolType DslProtocol = {
+    .DslProtocolRxGlobalList =  DcmDslProtocolRxList,
+    .DslProtocolTxGlobalList =  DcmDslProtocolTxList,
+    .DslProtocolRowList =  DslProtocolRowList
+};
+
+const Dcm_DslProtocolTimingRowType ProtocolTimingList[] = {
+    {
+        .TimStrP2ServerMax =  5000,        // ms
+        .TimStrP2ServerMin =  3000,
+        .TimStrP2StarServerMax =  0,        //.Value is not configurable
+        .TimStrP2StarServerMin =  0,        //.Value is not configurable
+        .TimStrS3Server =  5000,
+        .Arc_EOL =  FALSE
+    },
+    {
+        .Arc_EOL =  TRUE
+    },
+};
+
+const Dcm_DslProtocolTimingType ProtocolTiming = {
+    .DslProtocolTimingRow =  ProtocolTimingList
+};
+
+const Dcm_DslSessionControlType SessionControlList[] = {
+    {
+         .GetSesChgPermission =  Diag_GetSesChgPer,
+         .ChangeIndication =  NULL,
+         .ConfirmationRespPend =  NULL,
+         .Arc_EOL =  FALSE
+    },
+    {
+         .Arc_EOL =  TRUE
+    }
+};
+
+const Dcm_DslDiagRespType DiagResp = {
+    .DslDiagRespForceRespPendEn =  TRUE,
+    .DslDiagRespMaxNumRespPend =  10
+};
+
+const Dcm_DslType Dsl = {
+    .DslBuffer =  DcmDslBufferList,
+    .DslCallbackDCMRequestService =  DCMRequestServiceList,
+    .DslDiagResp =  &DiagResp,
+    .DslProtocol =  &DslProtocol,
+    .DslProtocolTiming =  &ProtocolTiming,
+    .DslServiceRequestIndication =  DCMServiceRequestIndicationList,
+    .DslSessionControl =  SessionControlList
+};
+
+const Dcm_ConfigType DCM_Config = {
+    .Dsp =  &Dsp,
+    .Dsd =  &Dsd,
+    .Dsl =  &Dsl
+};\n\n""")
     fp.close()
-    
 

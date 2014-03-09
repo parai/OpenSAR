@@ -287,7 +287,7 @@ class twSecurity(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
-        list = ['Name','Identifier','P2P','P2A','Comment']
+        list = ['Name','Identifier','P2P','P2A','KeySize','SeedSize','Comment']
         self.setHeaderLabels(QStringList(list))
         self.setColumnWidth(0,150)
         self.setColumnWidth(2,40)
@@ -342,7 +342,9 @@ class twSecurity(QTreeWidget):
             Node.attrib['identifier'] = str(self.itemWidget(tree,1).text())
             Node.attrib['p2p'] = str(self.itemWidget(tree,2).isChecked())
             Node.attrib['p2a'] = str(self.itemWidget(tree,3).isChecked())
-            Node.attrib['comment'] = str(self.itemWidget(tree,4).text())
+            Node.attrib['keySize'] = str(self.itemWidget(tree,4).text())
+            Node.attrib['seedSize'] = str(self.itemWidget(tree,5).text())
+            Node.attrib['comment'] = str(self.itemWidget(tree,6).text())
             List.append(Node)
         return List 
     def GetList(self,what):
@@ -364,12 +366,16 @@ class twSecurity(QTreeWidget):
             scomment = Node.attrib['comment']
             sp2p = Node.attrib['p2p']
             sp2a = Node.attrib['p2a']
+            skeysize = Node.attrib['keySize']
+            sseedsize = Node.attrib['seedSize']
         else:  
             sname =  'SecurityTBD'
             sidentifier = 'TBD'
             scomment = ''
             sp2p = 'True'
             sp2a = 'False'
+            skeysize = '4'
+            sseedsize = '4'
         name = QLineEdit(sname)
         identifier = QLineEdit(sidentifier)
         p2p = QCheckBox()
@@ -377,11 +383,15 @@ class twSecurity(QTreeWidget):
         p2a = QCheckBox()
         p2a.setChecked(tBool(sp2a))
         comment = QLineEdit(scomment)
+        keysize = QLineEdit(skeysize)
+        seedsize = QLineEdit(sseedsize)
         self.setItemWidget(treeItem,0,name)    
         self.setItemWidget(treeItem,1,identifier)  
         self.setItemWidget(treeItem,2,p2p) 
-        self.setItemWidget(treeItem,3,p2a)    
-        self.setItemWidget(treeItem,4,comment)   
+        self.setItemWidget(treeItem,3,p2a)  
+        self.setItemWidget(treeItem,4,keysize) 
+        self.setItemWidget(treeItem,5,seedsize)  
+        self.setItemWidget(treeItem,6,comment)   
 class twEcuReset(QTreeWidget):
     def __init__(self,parent=None):  
         super(QTreeWidget,self).__init__(parent) 
