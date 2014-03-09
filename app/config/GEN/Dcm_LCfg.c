@@ -17,9 +17,9 @@
 #include "Dcm_Internal.h"
 #include "PduR.h"
 
-#define DCM_SECURITY_EOL_INDEX 5
-#define DCM_SESSION_EOL_INDEX  4
-#define DCM_DID_LIST_EOL_INDEX 3
+#define DCM_SECURITY_EOL_INDEX 3
+#define DCM_SESSION_EOL_INDEX  3
+#define DCM_DID_LIST_EOL_INDEX 1
 
 
 static const Dcm_DspSecurityRowType DspSecurityList[] = {
@@ -37,21 +37,7 @@ static const Dcm_DspSecurityRowType DspSecurityList[] = {
         .Arc_EOL =  FALSE
     },
 
-    { // DS, Note: Level for session only, all function will only one security
-        .DspSecurityLevel =  5,
-        .DspSecurityDelayTimeOnBoot =  0,//Value is not configurable
-        .DspSecurityNumAttDelay =  0,    //Value is not configurable
-        .DspSecurityDelayTime =  0,      //Value is not configurable
-        .DspSecurityNumAttLock =  0,     //Value is not configurable
-        .DspSecurityADRSize =  0,
-        .DspSecuritySeedSize =  4,
-        .DspSecurityKeySize =  4,
-        .GetSeed =  fGetSeed(DS),
-        .CompareKey =  fCompareKey(DS),
-        .Arc_EOL =  FALSE
-    },
-
-    { // PRGS, level,that is for easy implementation of an easyDcm .
+    { // PRGS, 
         .DspSecurityLevel =  10,
         .DspSecurityDelayTimeOnBoot =  0,//Value is not configurable
         .DspSecurityNumAttDelay =  0,    //Value is not configurable
@@ -66,7 +52,7 @@ static const Dcm_DspSecurityRowType DspSecurityList[] = {
     },
 
     { // EXTDS, 
-        .DspSecurityLevel =  7,
+        .DspSecurityLevel =  15,
         .DspSecurityDelayTimeOnBoot =  0,//Value is not configurable
         .DspSecurityNumAttDelay =  0,    //Value is not configurable
         .DspSecurityDelayTime =  0,      //Value is not configurable
@@ -76,20 +62,6 @@ static const Dcm_DspSecurityRowType DspSecurityList[] = {
         .DspSecurityKeySize =  4,
         .GetSeed =  fGetSeed(EXTDS),
         .CompareKey =  fCompareKey(EXTDS),
-        .Arc_EOL =  FALSE
-    },
-
-    { // SSDS, 
-        .DspSecurityLevel =  8,
-        .DspSecurityDelayTimeOnBoot =  0,//Value is not configurable
-        .DspSecurityNumAttDelay =  0,    //Value is not configurable
-        .DspSecurityDelayTime =  0,      //Value is not configurable
-        .DspSecurityNumAttLock =  0,     //Value is not configurable
-        .DspSecurityADRSize =  0,
-        .DspSecuritySeedSize =  4,
-        .DspSecurityKeySize =  4,
-        .GetSeed =  fGetSeed(SSDS),
-        .CompareKey =  fCompareKey(SSDS),
         .Arc_EOL =  FALSE
     },
 
@@ -126,13 +98,6 @@ static const Dcm_DspSessionRowType DspSessionList[] = {
         .Arc_EOL =  FALSE
     },
 
-    { // SSDS
-        .DspSessionLevel =  4,
-        .DspSessionP2ServerMax =  5000,
-        .DspSessionP2StarServerMax =  5000,
-        .Arc_EOL =  FALSE
-    },
-
     {
         .Arc_EOL =  TRUE
     },
@@ -144,144 +109,24 @@ static const Dcm_DspSessionType DspSession = {
 //************************************************************************
 //*                       Data Identifier                                *
 //************************************************************************
-static const Dcm_DspSessionRowType* SWVersion_DID_sessionRefList[]=
-{
-	&DspSessionList[1],//Ses_PRGS,
-	&DspSessionList[2],//Ses_EXTDS,
-	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
-static const Dcm_DspSessionRowType* NvMVersion_DID_sessionRefList[]=
-{
-	&DspSessionList[2],//Ses_EXTDS,
-	&DspSessionList[1],//Ses_PRGS,
-	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
 static const Dcm_DspSessionRowType* FingerPrint_DID_sessionRefList[]=
 {
-	&DspSessionList[2],//Ses_EXTDS,
+	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
-static const Dcm_DspSecurityRowType* SWVersion_DID_securityRefList[]=
-{
-	&DspSecurityList[2],//Sec_PRGS,
-	&DspSecurityList[3],//Sec_EXTDS,
-	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
-};
-static const Dcm_DspSecurityRowType* NvMVersion_DID_securityRefList[]=
-{
-	&DspSecurityList[3],//Sec_EXTDS,
-	&DspSecurityList[2],//Sec_PRGS,
-	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
 static const Dcm_DspSecurityRowType* FingerPrint_DID_securityRefList[]=
 {
-	&DspSecurityList[3],//Sec_EXTDS,
+	&DspSecurityList[1],//Sec_PRGS,
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
-};
-
-static const Dcm_DspDidReadType SWVersion_didAccess = {
-    .DspDidReadSessionRef =  SWVersion_DID_sessionRefList,
-    .DspDidReadSecurityLevelRef =  SWVersion_DID_securityRefList
-};
-
-static const Dcm_DspDidReadType NvMVersion_didAccess = {
-    .DspDidReadSessionRef =  NvMVersion_DID_sessionRefList,
-    .DspDidReadSecurityLevelRef =  NvMVersion_DID_securityRefList
 };
 
 static const Dcm_DspDidReadType FingerPrint_didAccess = {
     .DspDidReadSessionRef =  FingerPrint_DID_sessionRefList,
     .DspDidReadSecurityLevelRef =  FingerPrint_DID_securityRefList
 };
-static const Dcm_DspSessionRowType* LedControl_DID_sessionRefList[]=
-{
-	&DspSessionList[2],//Ses_EXTDS,
-	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
-static const Dcm_DspSessionRowType* SpeedControl_DID_sessionRefList[]=
-{
-	&DspSessionList[2],//Ses_EXTDS,
-	&DspSessionList[DCM_SESSION_EOL_INDEX]
-};
-static const Dcm_DspSecurityRowType* LedControl_DID_securityRefList[]=
-{
-	&DspSecurityList[3],//Sec_EXTDS,
-	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
-};
-static const Dcm_DspSecurityRowType* SpeedControl_DID_securityRefList[]=
-{
-	&DspSecurityList[3],//Sec_EXTDS,
-	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
-};
-
-static const Dcm_DspDidControlRecordSizesType LedControl_STA_Size = {
-    .DspDidControlEnableMaskRecordSize = 0,
-    .DspDidControlOptionRecordSize = 1,
-    .DspDidControlStatusRecordSize = 1
-};
-
-static const Dcm_DspDidControlRecordSizesType LedControl_RCTE_Size = {
-    .DspDidControlEnableMaskRecordSize = 0,
-    .DspDidControlOptionRecordSize = 0,
-    .DspDidControlStatusRecordSize = 1
-};
-
-static const Dcm_DspDidControlRecordSizesType SpeedControl_STA_Size = {
-    .DspDidControlEnableMaskRecordSize = 0,
-    .DspDidControlOptionRecordSize = 1,
-    .DspDidControlStatusRecordSize = 1
-};
-
-static const Dcm_DspDidControlRecordSizesType SpeedControl_RCTE_Size = {
-    .DspDidControlEnableMaskRecordSize = 0,
-    .DspDidControlOptionRecordSize = 0,
-    .DspDidControlStatusRecordSize = 1
-};
-
-static const Dcm_DspDidControlRecordSizesType SpeedControl_FCS_Size = {
-    .DspDidControlEnableMaskRecordSize = 0,
-    .DspDidControlOptionRecordSize = 0,
-    .DspDidControlStatusRecordSize = 1
-};
-
-static const Dcm_DspDidControlType LedControl_didControl = {
-    .DspDidControlSessionRef =  LedControl_DID_sessionRefList,
-    .DspDidControlSecurityLevelRef =  LedControl_DID_securityRefList,
-    .DspDidFreezeCurrentState = NULL,
-    .DspDidResetToDefault = NULL,
-    .DspDidReturnControlToEcu = &LedControl_RCTE_Size,
-    .DspDidShortTermAdjustment = &LedControl_STA_Size
-};
-
-static const Dcm_DspDidControlType SpeedControl_didControl = {
-    .DspDidControlSessionRef =  SpeedControl_DID_sessionRefList,
-    .DspDidControlSecurityLevelRef =  SpeedControl_DID_securityRefList,
-    .DspDidFreezeCurrentState = &SpeedControl_FCS_Size,
-    .DspDidResetToDefault = NULL,
-    .DspDidReturnControlToEcu = &SpeedControl_RCTE_Size,
-    .DspDidShortTermAdjustment = &SpeedControl_STA_Size
-};
 
 static const Dcm_DspDidInfoType DspDidInfoList[] = {
     
-    {    
-         .DspDidDynamicllyDefined =  TRUE,
-         .DspDidFixedLength =  FALSE, // for easy implementation, all DID length is dynamic.
-         .DspDidScalingInfoSize =  (uint8)0xdead,
-         .DspDidAccess.DspDidRead  =&SWVersion_didAccess,
-         .DspDidAccess.DspDidWrite = (Dcm_DspDidWriteType*)&SWVersion_didAccess, // for easy implementation, use the same one as read
-         .DspDidAccess.DspDidControl = NULL,
-    },
-
-    {    
-         .DspDidDynamicllyDefined =  TRUE,
-         .DspDidFixedLength =  FALSE, // for easy implementation, all DID length is dynamic.
-         .DspDidScalingInfoSize =  (uint8)0xdead,
-         .DspDidAccess.DspDidRead  =&NvMVersion_didAccess,
-         .DspDidAccess.DspDidWrite = (Dcm_DspDidWriteType*)&NvMVersion_didAccess, // for easy implementation, use the same one as read
-         .DspDidAccess.DspDidControl = NULL,
-    },
-
     {    
          .DspDidDynamicllyDefined =  FALSE,
          .DspDidFixedLength =  FALSE, // for easy implementation, all DID length is dynamic.
@@ -289,24 +134,6 @@ static const Dcm_DspDidInfoType DspDidInfoList[] = {
          .DspDidAccess.DspDidRead  =&FingerPrint_didAccess,
          .DspDidAccess.DspDidWrite = (Dcm_DspDidWriteType*)&FingerPrint_didAccess, // for easy implementation, use the same one as read
          .DspDidAccess.DspDidControl = NULL,
-    },
-
-    {    
-         .DspDidDynamicllyDefined =  FALSE,
-         .DspDidFixedLength =  FALSE, // not used
-         .DspDidScalingInfoSize =  (uint8)0xdead,
-         .DspDidAccess.DspDidRead  = NULL,
-         .DspDidAccess.DspDidWrite = NULL,
-         .DspDidAccess.DspDidControl = &LedControl_didControl,
-    },
-
-    {    
-         .DspDidDynamicllyDefined =  FALSE,
-         .DspDidFixedLength =  FALSE, // not used
-         .DspDidScalingInfoSize =  (uint8)0xdead,
-         .DspDidAccess.DspDidRead  = NULL,
-         .DspDidAccess.DspDidWrite = NULL,
-         .DspDidAccess.DspDidControl = &SpeedControl_didControl,
     },
 
 };
@@ -319,48 +146,10 @@ const Dcm_DspDidType* TODO_RWDID_RefList[] =
 
 const Dcm_DspDidType DspDidList[] = { 
 
-    { // RWDID,rwpd,Note: Length of DID is all dynamic, provided by app.
+    { // RWDID,rw,Flash loader finger print.
         .DspDidUsePort =  FALSE,//.Value is not configurable
-        .DspDidIdentifier =  0xF201,   
-        .DspDidInfoRef =  &DspDidInfoList[2],
-        .DspDidRef =  TODO_RWDID_RefList,    // TODO:
-        .DspDidSize = 0xdead,
-        .DspDidReadDataLengthFnc =  fDidGetDataLength(SWVersion),
-        .DspDidConditionCheckReadFnc =  fDidConditionReadCheck(SWVersion),
-        .DspDidReadDataFnc =  fDidReadData(SWVersion),
-        .DspDidConditionCheckWriteFnc =  fDidConditionCheckWrite(SWVersion),
-        .DspDidWriteDataFnc =  fDidWriteData(SWVersion),
-        .DspDidGetScalingInfoFnc =  NULL,
-        .DspDidFreezeCurrentStateFnc =  NULL,
-        .DspDidResetToDefaultFnc =  NULL,
-        .DspDidReturnControlToEcuFnc =  NULL,
-        .DspDidShortTermAdjustmentFnc =  NULL,
-        .DspDidControlRecordSize =  NULL,
-        .Arc_EOL =  FALSE
-    },
-    { // RWDID,rwpd,
-        .DspDidUsePort =  FALSE,//.Value is not configurable
-        .DspDidIdentifier =  0xF202,   
-        .DspDidInfoRef =  &DspDidInfoList[3],
-        .DspDidRef =  TODO_RWDID_RefList,    // TODO:
-        .DspDidSize = 0xdead,
-        .DspDidReadDataLengthFnc =  fDidGetDataLength(NvMVersion),
-        .DspDidConditionCheckReadFnc =  fDidConditionReadCheck(NvMVersion),
-        .DspDidReadDataFnc =  fDidReadData(NvMVersion),
-        .DspDidConditionCheckWriteFnc =  fDidConditionCheckWrite(NvMVersion),
-        .DspDidWriteDataFnc =  fDidWriteData(NvMVersion),
-        .DspDidGetScalingInfoFnc =  NULL,
-        .DspDidFreezeCurrentStateFnc =  NULL,
-        .DspDidResetToDefaultFnc =  NULL,
-        .DspDidReturnControlToEcuFnc =  NULL,
-        .DspDidShortTermAdjustmentFnc =  NULL,
-        .DspDidControlRecordSize =  NULL,
-        .Arc_EOL =  FALSE
-    },
-    { // RWDID,rwp,for program
-        .DspDidUsePort =  FALSE,//.Value is not configurable
-        .DspDidIdentifier =  0xF203,   
-        .DspDidInfoRef =  &DspDidInfoList[4],
+        .DspDidIdentifier =  0xFD01,   
+        .DspDidInfoRef =  &DspDidInfoList[0],
         .DspDidRef =  TODO_RWDID_RefList,    // TODO:
         .DspDidSize = 0xdead,
         .DspDidReadDataLengthFnc =  fDidGetDataLength(FingerPrint),
@@ -376,44 +165,6 @@ const Dcm_DspDidType DspDidList[] = {
         .DspDidControlRecordSize =  NULL,
         .Arc_EOL =  FALSE
     },
-    { // IOControl,
-        .DspDidUsePort =  FALSE,//.Value is not configurable
-        .DspDidIdentifier =  0xAB04,   
-        .DspDidInfoRef =  &DspDidInfoList[3],
-        .DspDidRef =  NULL,
-        .DspDidSize = 0xdead,
-        .DspDidReadDataLengthFnc =  NULL,
-        .DspDidConditionCheckReadFnc =  NULL,
-        .DspDidReadDataFnc =  NULL,
-        .DspDidConditionCheckWriteFnc =  NULL,
-        .DspDidWriteDataFnc =  NULL,
-        .DspDidGetScalingInfoFnc =  NULL,
-        .DspDidFreezeCurrentStateFnc =  fDidFreezeCurrentState(LedControl),
-        .DspDidResetToDefaultFnc =  fDidResetToDefault(LedControl),
-        .DspDidReturnControlToEcuFnc =  fDidReturnControlToEcu(LedControl),
-        .DspDidShortTermAdjustmentFnc =  fDidShortTermAdjustment(LedControl),
-        .DspDidControlRecordSize =  NULL,
-        .Arc_EOL =  FALSE
-    },
-    { // IOControl,
-        .DspDidUsePort =  FALSE,//.Value is not configurable
-        .DspDidIdentifier =  0xAB05,   
-        .DspDidInfoRef =  &DspDidInfoList[4],
-        .DspDidRef =  NULL,
-        .DspDidSize = 0xdead,
-        .DspDidReadDataLengthFnc =  NULL,
-        .DspDidConditionCheckReadFnc =  NULL,
-        .DspDidReadDataFnc =  NULL,
-        .DspDidConditionCheckWriteFnc =  NULL,
-        .DspDidWriteDataFnc =  NULL,
-        .DspDidGetScalingInfoFnc =  NULL,
-        .DspDidFreezeCurrentStateFnc =  fDidFreezeCurrentState(SpeedControl),
-        .DspDidResetToDefaultFnc =  fDidResetToDefault(SpeedControl),
-        .DspDidReturnControlToEcuFnc =  fDidReturnControlToEcu(SpeedControl),
-        .DspDidShortTermAdjustmentFnc =  fDidShortTermAdjustment(SpeedControl),
-        .DspDidControlRecordSize =  NULL,
-        .Arc_EOL =  FALSE
-    },
     {
         .Arc_EOL =  TRUE
     }
@@ -422,71 +173,61 @@ const Dcm_DspDidType DspDidList[] = {
 //************************************************************************
 //*                       Routine control                                *
 //************************************************************************
-static const Dcm_DspSessionRowType* Erase_RC_sessionRefList[]=
+static const Dcm_DspSessionRowType* FLErase_RC_sessionRefList[]=
 {
-	&DspSessionList[2],//Ses_EXTDS,
+	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
-static const Dcm_DspSessionRowType* CheckIntegrity_RC_sessionRefList[]=
+static const Dcm_DspSessionRowType* FLCheckProgrmIntegrity_RC_sessionRefList[]=
 {
-	&DspSessionList[2],//Ses_EXTDS,
+	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
-static const Dcm_DspSecurityRowType* Erase_RC_securityRefList[]=
+static const Dcm_DspSecurityRowType* FLErase_RC_securityRefList[]=
 {
-	&DspSecurityList[3],//Sec_EXTDS,
+	&DspSecurityList[1],//Sec_PRGS,
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
-static const Dcm_DspSecurityRowType* CheckIntegrity_RC_securityRefList[]=
+static const Dcm_DspSecurityRowType* FLCheckProgrmIntegrity_RC_securityRefList[]=
 {
-	&DspSecurityList[3],//Sec_EXTDS,
+	&DspSecurityList[1],//Sec_PRGS,
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
 
-static const Dcm_DspStartRoutineType Erase_Start_Size = {
+static const Dcm_DspStartRoutineType FLErase_Start_Size = {
     .DspStartRoutineCtrlOptRecSize = 1,
     .DspStartRoutineStsOptRecSize = 1,
 };
 
-static const Dcm_DspRoutineStopType Erase_Stop_Size = {
-    .DspStopRoutineCtrlOptRecSize = 0,
-    .DspStopRoutineStsOptRecSize = 1,
-};
-
-static const Dcm_DspRoutineRequestResType Erase_Result_Size = {
+static const Dcm_DspRoutineRequestResType FLErase_Result_Size = {
     .DspReqResRtnCtrlOptRecSize = 1,
 };
 
-static const Dcm_DspStartRoutineType CheckIntegrity_Start_Size = {
+static const Dcm_DspStartRoutineType FLCheckProgrmIntegrity_Start_Size = {
     .DspStartRoutineCtrlOptRecSize = 1,
     .DspStartRoutineStsOptRecSize = 1,
 };
 
-static const Dcm_DspRoutineStopType CheckIntegrity_Stop_Size = {
-    .DspStopRoutineCtrlOptRecSize = 0,
-    .DspStopRoutineStsOptRecSize = 1,
-};
-
-static const Dcm_DspRoutineRequestResType CheckIntegrity_Result_Size = {
-    .DspReqResRtnCtrlOptRecSize = 1,
+static const Dcm_DspRoutineRequestResType FLCheckProgrmIntegrity_Result_Size = {
+    .DspReqResRtnCtrlOptRecSize = 4,
 };
 
 static const Dcm_DspRoutineInfoType DspRoutineInfoList[] = {
 
-    { // Erase
-         .DspRoutineAuthorization.DspRoutineSessionRef =  Erase_RC_sessionRefList,
-         .DspRoutineAuthorization.DspRoutineSecurityLevelRef =  Erase_RC_securityRefList,
-         .DspStartRoutine =  &Erase_Start_Size,
-         .DspRoutineStop =  &Erase_Stop_Size,
-         .DspRoutineRequestRes =  &Erase_Result_Size,
+    { // FLErase
+         .DspRoutineAuthorization.DspRoutineSessionRef =  FLErase_RC_sessionRefList,
+         .DspRoutineAuthorization.DspRoutineSecurityLevelRef =  FLErase_RC_securityRefList,
+         .DspStartRoutine =  &FLErase_Start_Size,
+         .DspRoutineStop =  NULL,
+         .DspRoutineRequestRes =  &FLErase_Result_Size,
     },
 
-    { // CheckIntegrity
-         .DspRoutineAuthorization.DspRoutineSessionRef =  CheckIntegrity_RC_sessionRefList,
-         .DspRoutineAuthorization.DspRoutineSecurityLevelRef =  CheckIntegrity_RC_securityRefList,
-         .DspStartRoutine =  &CheckIntegrity_Start_Size,
-         .DspRoutineStop =  &CheckIntegrity_Stop_Size,
-         .DspRoutineRequestRes =  &CheckIntegrity_Result_Size,
+    { // FLCheckProgrmIntegrity
+         .DspRoutineAuthorization.DspRoutineSessionRef =  FLCheckProgrmIntegrity_RC_sessionRefList,
+         .DspRoutineAuthorization.DspRoutineSecurityLevelRef =  FLCheckProgrmIntegrity_RC_securityRefList,
+         .DspStartRoutine =  &FLCheckProgrmIntegrity_Start_Size,
+         .DspRoutineStop =  NULL,
+         .DspRoutineRequestRes =  &FLCheckProgrmIntegrity_Result_Size,
     },
 
 };
@@ -494,23 +235,23 @@ static const Dcm_DspRoutineInfoType DspRoutineInfoList[] = {
 
 static const Dcm_DspRoutineType  DspRoutineList[] = {
 
-    { //Erase,
+    { //FLErase,Erase Flash Sectors
          .DspRoutineUsePort =  FALSE,
-         .DspRoutineIdentifier =  0xAB07,
+         .DspRoutineIdentifier =  0xFC01,
          .DspRoutineInfoRef =  &DspRoutineInfoList[0],
-         .DspStartRoutineFnc =  fStartRoutine(Erase),
-         .DspStopRoutineFnc =  fStopRoutine(Erase),
-         .DspRequestResultRoutineFnc =  fRequestResultRoutine(Erase),
+         .DspStartRoutineFnc =  fStartRoutine(FLErase),
+         .DspStopRoutineFnc =  fStopRoutine(FLErase),
+         .DspRequestResultRoutineFnc =  fRequestResultRoutine(FLErase),
          .Arc_EOL = FALSE
     },
 
-    { //CheckIntegrity,
+    { //FLCheckProgrmIntegrity,Check the download program is integrity OK or not, return Sts is the Crc32 check sum
          .DspRoutineUsePort =  FALSE,
-         .DspRoutineIdentifier =  0xAB07,
+         .DspRoutineIdentifier =  0xFC05,
          .DspRoutineInfoRef =  &DspRoutineInfoList[1],
-         .DspStartRoutineFnc =  fStartRoutine(CheckIntegrity),
-         .DspStopRoutineFnc =  fStopRoutine(CheckIntegrity),
-         .DspRequestResultRoutineFnc =  fRequestResultRoutine(CheckIntegrity),
+         .DspStartRoutineFnc =  fStartRoutine(FLCheckProgrmIntegrity),
+         .DspStopRoutineFnc =  fStopRoutine(FLCheckProgrmIntegrity),
+         .DspRequestResultRoutineFnc =  fRequestResultRoutine(FLCheckProgrmIntegrity),
          .Arc_EOL = FALSE
     },
 
@@ -542,14 +283,14 @@ const Dcm_DspType Dsp = {
 
 static const Dcm_DspSessionRowType* EcuReset_SessionList[]=
 {
-	&DspSessionList[0],//Ses_DS,
 	&DspSessionList[1],//Ses_PRGS,
+	&DspSessionList[2],//Ses_EXTDS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
 static const Dcm_DspSecurityRowType* EcuReset_SecurityList[]=
 {
-	&DspSecurityList[1],//Sec_DS,
-	&DspSecurityList[2],//Sec_PRGS,
+	&DspSecurityList[1],//Sec_PRGS,
+	&DspSecurityList[2],//Sec_EXTDS,
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
 static const Dcm_DspSessionRowType* CommunicationControl_SessionList[]=
@@ -560,8 +301,8 @@ static const Dcm_DspSessionRowType* CommunicationControl_SessionList[]=
 };
 static const Dcm_DspSecurityRowType* CommunicationControl_SecurityList[]=
 {
-	&DspSecurityList[2],//Sec_PRGS,
-	&DspSecurityList[3],//Sec_EXTDS,
+	&DspSecurityList[1],//Sec_PRGS,
+	&DspSecurityList[2],//Sec_EXTDS,
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
 
@@ -572,35 +313,35 @@ static const Dcm_DspSecurityRowType* CommunicationControl_SecurityList[]=
 const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
     {
          .DsdSidTabServiceId = SID_DIAGNOSTIC_SESSION_CONTROL,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_SECURITY_ACCESS,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_READ_DATA_BY_IDENTIFIER,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_WRITE_DATA_BY_IDENTIFIER,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_ROUTINE_CONTROL,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
@@ -614,21 +355,21 @@ const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
     },
     { 
          .DsdSidTabServiceId = SID_TESTER_PRESENT,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     { 
          .DsdSidTabServiceId = SID_ECU_RESET,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = EcuReset_SecurityList,
          .DsdSidTabSessionLevelRef  = EcuReset_SessionList,
          .Arc_EOL =  FALSE
     },
     { 
          .DsdSidTabServiceId = SID_DYNAMICALLY_DEFINE_DATA_IDENTIFIER,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE

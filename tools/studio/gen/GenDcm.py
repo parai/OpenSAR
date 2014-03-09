@@ -658,35 +658,35 @@ const Dcm_DspType Dsp = {
 const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
     {
          .DsdSidTabServiceId = SID_DIAGNOSTIC_SESSION_CONTROL,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_SECURITY_ACCESS,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_READ_DATA_BY_IDENTIFIER,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_WRITE_DATA_BY_IDENTIFIER,
-         .DsdSidTabSubfuncAvail = True,
+         .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_ROUTINE_CONTROL,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
@@ -700,21 +700,21 @@ const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
     },
     { 
          .DsdSidTabServiceId = SID_TESTER_PRESENT,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     { 
          .DsdSidTabServiceId = SID_ECU_RESET,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = EcuReset_SecurityList,
          .DsdSidTabSessionLevelRef  = EcuReset_SessionList,
          .Arc_EOL =  FALSE
     },
     { 
          .DsdSidTabServiceId = SID_DYNAMICALLY_DEFINE_DATA_IDENTIFIER,
-         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSubfuncAvail = TRUE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE

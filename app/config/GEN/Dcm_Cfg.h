@@ -90,46 +90,24 @@
 #define fStopRoutine(Name)             Diag_StopRoutine##Name
 #define fRequestResultRoutine(Name)    Diag_RequestResultRoutine##Name
 
-extern Std_ReturnType Diag_GetSeedDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_CompareKeyDS(uint8 *key);
 extern Std_ReturnType Diag_GetSeedPRGS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
 extern Std_ReturnType Diag_CompareKeyPRGS(uint8 *key);
 extern Std_ReturnType Diag_GetSeedEXTDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
 extern Std_ReturnType Diag_CompareKeyEXTDS(uint8 *key);
-extern Std_ReturnType Diag_GetSeedSSDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_CompareKeySSDS(uint8 *key);
 
-extern Std_ReturnType Diag_DidGetDataLengthSWVersion(uint16 *didLength);
-extern Std_ReturnType Diag_DidConditionReadCheckSWVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidReadDataSWVersion(uint8 *data);
-extern Std_ReturnType Diag_DidConditionCheckWriteSWVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidWriteDataSWVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidGetDataLengthNvMVersion(uint16 *didLength);
-extern Std_ReturnType Diag_DidConditionReadCheckNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidReadDataNvMVersion(uint8 *data);
-extern Std_ReturnType Diag_DidConditionCheckWriteNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidWriteDataNvMVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
 extern Std_ReturnType Diag_DidGetDataLengthFingerPrint(uint16 *didLength);
 extern Std_ReturnType Diag_DidConditionReadCheckFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
 extern Std_ReturnType Diag_DidReadDataFingerPrint(uint8 *data);
 extern Std_ReturnType Diag_DidConditionCheckWriteFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
 extern Std_ReturnType Diag_DidWriteDataFingerPrint(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
 
-#define Diag_DidFreezeCurrentStateLedControl NULL
-#define Diag_DidResetToDefaultLedControl NULL
-extern Std_ReturnType Diag_DidReturnControlToEcuLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidShortTermAdjustmentLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidFreezeCurrentStateSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-#define Diag_DidResetToDefaultSpeedControl NULL
-extern Std_ReturnType Diag_DidReturnControlToEcuSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_DidShortTermAdjustmentSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
 
-extern Std_ReturnType Diag_StartRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_StopRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_RequestResultRoutineErase(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_StartRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_StopRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType Diag_RequestResultRoutineCheckIntegrity(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_StartRoutineFLErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+#define Diag_StopRoutineFLErase NULL
+extern Std_ReturnType Diag_RequestResultRoutineFLErase(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_StartRoutineFLCheckProgrmIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+#define Diag_StopRoutineFLCheckProgrmIntegrity NULL
+extern Std_ReturnType Diag_RequestResultRoutineFLCheckProgrmIntegrity(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
 
 
 extern Std_ReturnType Diag_GetSesChgPer(Dcm_SesCtrlType sesCtrlTypeActive,Dcm_SesCtrlType sesCtrlTypeNew);

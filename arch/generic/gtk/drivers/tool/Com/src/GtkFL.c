@@ -73,7 +73,7 @@ static void     FL_SecuritySendKey(void)
 static void     FL_ReadFingerPrint(void)
 {
 	Std_ReturnType ercd;
-	uint8 data[3] = {0x22,0x01,0x0A};
+	uint8 data[3] = {0x22,0xFD,0x01};
 	ercd = CanTp_Transmit(data,sizeof(data));
 	if(E_OK==ercd)
 	{
@@ -84,7 +84,7 @@ static void     FL_ReadFingerPrint(void)
 static void     FL_WriteFingerPrint(void)
 {
 	Std_ReturnType ercd;
-	uint8 data[3+128] = {0x2E,0x01,0x0A};
+	uint8 data[3+128] = {0x2E,0xFD,0x01};
 	for(int i=0;i<128;i++)
 	{
 		data[3+i] = i*2;
