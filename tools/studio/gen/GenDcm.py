@@ -149,6 +149,57 @@ def GenH():
     # =========================  PduR_Cfg.h ==================
     fp = open('%s/Dcm_Cfg.h'%(__dir),'w')
     fp.write(__Header)
+    cstr = ''
+    for sec in GLGet('SecurityList'):
+        cstr += 'extern Std_ReturnType fGetSeed%s(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(sec,'name'))
+        cstr += 'extern Std_ReturnType fCompareKey%s(uint8 *key);\n'%(GAGet(sec,'name'))
+    cstr += '\n' 
+    for did in GLGet('RWDIDList'):
+        cstr += 'extern Std_ReturnType fDidGetDataLength%s(uint16 *didLength);\n'%(GAGet(did,'name'))
+        if(GAGet(did,'attribute').find('r') != -1):
+            cstr += 'extern Std_ReturnType fDidConditionReadCheck%s(Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
+            cstr += 'extern Std_ReturnType fDidReadData%s(uint8 *data);\n'%(GAGet(did,'name'))
+        else:
+            cstr += '#define fDidConditionReadCheck%s NULL\n'%(GAGet(did,'name'))
+            cstr += '#define fDidReadData%s NULL\n'%(GAGet(did,'name'))
+        if(GAGet(did,'attribute').find('w') != -1):
+            cstr += 'extern Std_ReturnType fDidConditionCheckWrite%s(Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
+            cstr += 'extern Std_ReturnType fDidWriteData%s(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
+        else:
+            cstr += '#define fDidConditionWriteCheck%s NULL\n'%(GAGet(did,'name'))
+            cstr += '#define fDidWriteData%s NULL\n'%(GAGet(did,'name'))
+    cstr += '\n' 
+    for io in GLGet('IOControlList'):
+        if(GAGet(io,'FCSRef') != 'NULL'):
+            cstr += 'extern Std_ReturnType fDidFreezeCurrentState%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+        else:
+            cstr += '#define fDidFreezeCurrentState%s NULL\n'%(GAGet(io,'name'))
+        if(GAGet(io,'RTDRef') != 'NULL'):
+            cstr += 'extern Std_ReturnType fDidResetToDefault%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+        else:
+            cstr += '#define fDidResetToDefault%s NULL\n'%(GAGet(io,'name'))
+        if(GAGet(io,'RCTERef') != 'NULL'):
+            cstr += 'extern Std_ReturnType fDidReturnControlToEcu%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+        else:
+            cstr += '#define fDidReturnControlToEcu%s NULL\n'%(GAGet(io,'name'))
+        if(GAGet(io,'STARef') != 'NULL'):
+            cstr += 'extern Std_ReturnType fDidShortTermAdjustment%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+        else:
+            cstr += '#define fDidShortTermAdjustment%s NULL\n'%(GAGet(io,'name'))
+    cstr += '\n'
+    for rc in GLGet('RoutineControlList'):
+        if(GAGet(rc,'StartRef') != 'NULL'):
+            cstr += 'extern Std_ReturnType fStartRoutine%s(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
+        else:
+            cstr += '#define fStartRoutine%s NULL\n'%(GAGet(rc,'name'))
+        if(GAGet(rc,'StopRef') != 'NULL'):
+            cstr += 'extern Std_ReturnType fStopRoutine%s(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
+        else:
+            cstr += '#define fStopRoutine%s NULL\n'%(GAGet(rc,'name'))
+        if(GAGet(rc,'StartRef') != 'NULL'):
+            cstr += 'extern Std_ReturnType fRequestResultRoutine%s(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
+        else:
+            cstr += '#define fRequestResultRoutine%s NULL\n'%(GAGet(rc,'name'))                        
     fp.write("""
 #ifndef DCM_CFG_H_
 #define DCM_CFG_H_
@@ -192,7 +243,7 @@ def GenH():
 //#define USE_DEM
 #define DCM_USE_SERVICE_DIAGNOSTICSESSIONCONTROL
 #define DCM_USE_SERVICE_ECURESET
-//#define DCM_USE_SERVICE_COMMUNICATIONCONTROL
+#define DCM_USE_SERVICE_COMMUNICATIONCONTROL
 //#define DCM_USE_SERVICE_CLEARDIAGNOSTICINFORMATION
 //#define DCM_USE_SERVICE_READDTCINFORMATION
 #define DCM_USE_SERVICE_READDATABYIDENTIFIER
@@ -206,24 +257,39 @@ def GenH():
 //#define DCM_USE_SERVICE_CONTROLDTCSETTING
 #define DCM_USE_SERVICE_READDATABYPERIODICIDENTIFIER
 #define DCM_USE_SERVICE_DYNAMICALLYDEFINEDATAIDENTIFIER
-//#define DCM_USE_SERVICE_INPUTOUTPUTCONTROLBYIDENTIFIER
+#define DCM_USE_SERVICE_INPUTOUTPUTCONTROLBYIDENTIFIER
 #define DCM_USE_SERVICE_UPLOAD_DOWNLOAD
 
-#define fGetSeed(NN) NULL
-#define fCompareKey(NN) NULL
-#define fDidGetDataLength(NN) NULL
-#define fDidConditionReadCheck(NN) NULL
-#define fDidReadData(NN) NULL
-#define fDidConditionCheckWrite(NN) NULL
-#define fDidWriteData(NN) NULL
+#define fGetSeed(Name)                 fGetSeed##Name
+#define fCompareKey(Name)              fCompareKey##Name
 
-#define fDidFreezeCurrentState(NN) NULL
-#define fDidResetToDefault(NN) NULL
-#define fDidReturnControlToEcu(NN) NULL
-#define fDidShortTermAdjustment(NN) NULL
-#endif /*DCM_CFG_H_*/    
-    """)
+
+#define fDidGetDataLength(Name)        fDidGetDataLength##Name
+#define fDidConditionReadCheck(Name)   fDidConditionReadCheck##Name
+#define fDidReadData(Name)             fDidReadData##Name
+#define fDidConditionCheckWrite(Name)  fDidConditionCheckWrite##Name
+#define fDidWriteData(Name)            fDidWriteData##Name
+
+#define fDidFreezeCurrentState(Name)   fDidFreezeCurrentState##Name
+#define fDidResetToDefault(Name)       fDidResetToDefault##Name
+#define fDidReturnControlToEcu(Name)   fDidReturnControlToEcu##Name
+#define fDidShortTermAdjustment(Name)  fDidShortTermAdjustment##Name
+
+#define fStartRoutine(Name)            fStartRoutine##Name
+#define fStopRoutine(Name)             fStopRoutine##Name
+#define fRequestResultRoutine(Name)    fRequestResultRoutine##Name
+
+%s
+
+extern Std_ReturnType Diag_GetSesChgPer(Dcm_SesCtrlType sesCtrlTypeActive,Dcm_SesCtrlType sesCtrlTypeNew);
+
+extern Std_ReturnType Diag_RequestServiceStart (Dcm_ProtocolType protocolID);
+extern Std_ReturnType Diag_RequestServiceStop (Dcm_ProtocolType protocolID);
+extern Std_ReturnType Diag_RequestServiceIndication(uint8 *requestData, uint16 dataSize);
+
+#endif /*DCM_CFG_H_*/\n\n"""%(cstr))
     fp.close()
+
 def GenC():
     fp = open('%s/Dcm_LCfg.c'%(__dir),'w')
     fp.write(__Header)
@@ -536,7 +602,7 @@ static const Dcm_DspRoutineType  DspRoutineList[] = {
 //***********************************************************************
 
 const Dcm_DspType Dsp = {
-    .DspMaxDidToRead =  0xdead, // TODO: what does it mean?
+    .DspMaxDidToRead =  (uint8)0xdead, // TODO: what does it mean?
     .DspDid =  DspDidList,
     .DspDidInfo =  DspDidInfoList,
     .DspEcuReset =  NULL,
@@ -569,7 +635,7 @@ const Dcm_DspType Dsp = {
     fp.write(cstr)
     cstr = ''
     for commctrl in GLGet('CommunicationControlList'):    
-        cstr += 'static const Dcm_DspSessionRowType* CommunicationControl_sessionRefList[]=\n{\n'
+        cstr += 'static const Dcm_DspSessionRowType* CommunicationControl_SessionList[]=\n{\n'
         for ss in GLGet(commctrl,'SSRefList'):
            if(GAGet(ss,'name') == 'Session'):
                cstr += '\t&DspSessionList[%s],//%s,%s\n'%(GAGet(ss,'SessionIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
@@ -577,7 +643,7 @@ const Dcm_DspType Dsp = {
     fp.write(cstr)
     cstr = ''
     for commctrl in GLGet('CommunicationControlList'):    
-        cstr += 'static const Dcm_DspSecurityRowType* CommunicationControl_securityRefList[]=\n{\n'
+        cstr += 'static const Dcm_DspSecurityRowType* CommunicationControl_SecurityList[]=\n{\n'
         for ss in GLGet(commctrl,'SSRefList'):
            if(GAGet(ss,'name') == 'Security'):
                cstr += '\t&DspSecurityList[%s],//%s,%s\n'%(GAGet(ss,'SecurityIndex'),GAGet(ss,'ref'),GAGet(ss,'comment')) 
@@ -657,13 +723,13 @@ const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
          .DsdSidTabServiceId = SID_READ_DATA_BY_PERIODIC_IDENTIFIER,
          .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
-         .DsdSidTabSessionLevelRef  = NULL
+         .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_INPUT_OUTPUT_CONTROL_BY_IDENTIFIER,
          .DsdSidTabSubfuncAvail = TRUE,
-         .DsdSidTabSecurityLevelRef = NULL
+         .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
@@ -679,6 +745,13 @@ const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
          .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef = NULL,
+         .Arc_EOL =  FALSE
+    },    
+    { 
+         .DsdSidTabServiceId = SID_COMMUNICATION_CONTROL,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = CommunicationControl_SecurityList,
+         .DsdSidTabSessionLevelRef = CommunicationControl_SessionList,
          .Arc_EOL =  FALSE
     },
     {

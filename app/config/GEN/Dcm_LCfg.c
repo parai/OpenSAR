@@ -525,7 +525,7 @@ static const Dcm_DspRoutineType  DspRoutineList[] = {
 //***********************************************************************
 
 const Dcm_DspType Dsp = {
-    .DspMaxDidToRead =  0xdead, // TODO: what does it mean?
+    .DspMaxDidToRead =  (uint8)0xdead, // TODO: what does it mean?
     .DspDid =  DspDidList,
     .DspDidInfo =  DspDidInfoList,
     .DspEcuReset =  NULL,
@@ -552,13 +552,13 @@ static const Dcm_DspSecurityRowType* EcuReset_SecurityList[]=
 	&DspSecurityList[2],//Sec_PRGS,
 	&DspSecurityList[DCM_SECURITY_EOL_INDEX]
 };
-static const Dcm_DspSessionRowType* CommunicationControl_sessionRefList[]=
+static const Dcm_DspSessionRowType* CommunicationControl_SessionList[]=
 {
 	&DspSessionList[2],//Ses_EXTDS,
 	&DspSessionList[1],//Ses_PRGS,
 	&DspSessionList[DCM_SESSION_EOL_INDEX]
 };
-static const Dcm_DspSecurityRowType* CommunicationControl_securityRefList[]=
+static const Dcm_DspSecurityRowType* CommunicationControl_SecurityList[]=
 {
 	&DspSecurityList[2],//Sec_PRGS,
 	&DspSecurityList[3],//Sec_EXTDS,
@@ -637,13 +637,13 @@ const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
          .DsdSidTabServiceId = SID_READ_DATA_BY_PERIODIC_IDENTIFIER,
          .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
-         .DsdSidTabSessionLevelRef  = NULL
+         .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
     {
          .DsdSidTabServiceId = SID_INPUT_OUTPUT_CONTROL_BY_IDENTIFIER,
          .DsdSidTabSubfuncAvail = TRUE,
-         .DsdSidTabSecurityLevelRef = NULL
+         .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef  = NULL,
          .Arc_EOL =  FALSE
     },
@@ -659,6 +659,13 @@ const Dcm_DsdServiceType DIAG_P2PorP2A_serviceList[] = {
          .DsdSidTabSubfuncAvail = FALSE,
          .DsdSidTabSecurityLevelRef = NULL,
          .DsdSidTabSessionLevelRef = NULL,
+         .Arc_EOL =  FALSE
+    },    
+    { 
+         .DsdSidTabServiceId = SID_COMMUNICATION_CONTROL,
+         .DsdSidTabSubfuncAvail = FALSE,
+         .DsdSidTabSecurityLevelRef = CommunicationControl_SecurityList,
+         .DsdSidTabSessionLevelRef = CommunicationControl_SessionList,
          .Arc_EOL =  FALSE
     },
     {

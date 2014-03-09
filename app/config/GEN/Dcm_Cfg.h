@@ -54,7 +54,7 @@
 //#define USE_DEM
 #define DCM_USE_SERVICE_DIAGNOSTICSESSIONCONTROL
 #define DCM_USE_SERVICE_ECURESET
-//#define DCM_USE_SERVICE_COMMUNICATIONCONTROL
+#define DCM_USE_SERVICE_COMMUNICATIONCONTROL
 //#define DCM_USE_SERVICE_CLEARDIAGNOSTICINFORMATION
 //#define DCM_USE_SERVICE_READDTCINFORMATION
 #define DCM_USE_SERVICE_READDATABYIDENTIFIER
@@ -68,20 +68,75 @@
 //#define DCM_USE_SERVICE_CONTROLDTCSETTING
 #define DCM_USE_SERVICE_READDATABYPERIODICIDENTIFIER
 #define DCM_USE_SERVICE_DYNAMICALLYDEFINEDATAIDENTIFIER
-//#define DCM_USE_SERVICE_INPUTOUTPUTCONTROLBYIDENTIFIER
+#define DCM_USE_SERVICE_INPUTOUTPUTCONTROLBYIDENTIFIER
 #define DCM_USE_SERVICE_UPLOAD_DOWNLOAD
 
-#define fGetSeed(NN) NULL
-#define fCompareKey(NN) NULL
-#define fDidGetDataLength(NN) NULL
-#define fDidConditionReadCheck(NN) NULL
-#define fDidReadData(NN) NULL
-#define fDidConditionCheckWrite(NN) NULL
-#define fDidWriteData(NN) NULL
+#define fGetSeed(Name)                 fGetSeed##Name
+#define fCompareKey(Name)              fCompareKey##Name
 
-#define fDidFreezeCurrentState(NN) NULL
-#define fDidResetToDefault(NN) NULL
-#define fDidReturnControlToEcu(NN) NULL
-#define fDidShortTermAdjustment(NN) NULL
-#endif /*DCM_CFG_H_*/    
-    
+
+#define fDidGetDataLength(Name)        fDidGetDataLength##Name
+#define fDidConditionReadCheck(Name)   fDidConditionReadCheck##Name
+#define fDidReadData(Name)             fDidReadData##Name
+#define fDidConditionCheckWrite(Name)  fDidConditionCheckWrite##Name
+#define fDidWriteData(Name)            fDidWriteData##Name
+
+#define fDidFreezeCurrentState(Name)   fDidFreezeCurrentState##Name
+#define fDidResetToDefault(Name)       fDidResetToDefault##Name
+#define fDidReturnControlToEcu(Name)   fDidReturnControlToEcu##Name
+#define fDidShortTermAdjustment(Name)  fDidShortTermAdjustment##Name
+
+#define fStartRoutine(Name)            fStartRoutine##Name
+#define fStopRoutine(Name)             fStopRoutine##Name
+#define fRequestResultRoutine(Name)    fRequestResultRoutine##Name
+
+extern Std_ReturnType fGetSeedDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fCompareKeyDS(uint8 *key);
+extern Std_ReturnType fGetSeedPRGS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fCompareKeyPRGS(uint8 *key);
+extern Std_ReturnType fGetSeedEXTDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fCompareKeyEXTDS(uint8 *key);
+extern Std_ReturnType fGetSeedSSDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fCompareKeySSDS(uint8 *key);
+
+extern Std_ReturnType fDidGetDataLengthSWVersion(uint16 *didLength);
+extern Std_ReturnType fDidConditionReadCheckSWVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidReadDataSWVersion(uint8 *data);
+extern Std_ReturnType fDidConditionCheckWriteSWVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidWriteDataSWVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidGetDataLengthNvMVersion(uint16 *didLength);
+extern Std_ReturnType fDidConditionReadCheckNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidReadDataNvMVersion(uint8 *data);
+extern Std_ReturnType fDidConditionCheckWriteNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidWriteDataNvMVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidGetDataLengthFingerPrint(uint16 *didLength);
+extern Std_ReturnType fDidConditionReadCheckFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidReadDataFingerPrint(uint8 *data);
+extern Std_ReturnType fDidConditionCheckWriteFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidWriteDataFingerPrint(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
+
+#define fDidFreezeCurrentStateLedControl NULL
+#define fDidResetToDefaultLedControl NULL
+extern Std_ReturnType fDidReturnControlToEcuLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidShortTermAdjustmentLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidFreezeCurrentStateSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+#define fDidResetToDefaultSpeedControl NULL
+extern Std_ReturnType fDidReturnControlToEcuSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fDidShortTermAdjustmentSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+
+extern Std_ReturnType fStartRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fStopRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fRequestResultRoutineErase(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fStartRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fStopRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType fRequestResultRoutineCheckIntegrity(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+
+
+extern Std_ReturnType Diag_GetSesChgPer(Dcm_SesCtrlType sesCtrlTypeActive,Dcm_SesCtrlType sesCtrlTypeNew);
+
+extern Std_ReturnType Diag_RequestServiceStart (Dcm_ProtocolType protocolID);
+extern Std_ReturnType Diag_RequestServiceStop (Dcm_ProtocolType protocolID);
+extern Std_ReturnType Diag_RequestServiceIndication(uint8 *requestData, uint16 dataSize);
+
+#endif /*DCM_CFG_H_*/
+
