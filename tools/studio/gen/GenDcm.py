@@ -151,55 +151,55 @@ def GenH():
     fp.write(__Header)
     cstr = ''
     for sec in GLGet('SecurityList'):
-        cstr += 'extern Std_ReturnType fGetSeed%s(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(sec,'name'))
-        cstr += 'extern Std_ReturnType fCompareKey%s(uint8 *key);\n'%(GAGet(sec,'name'))
+        cstr += 'extern Std_ReturnType Diag_GetSeed%s(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(sec,'name'))
+        cstr += 'extern Std_ReturnType Diag_CompareKey%s(uint8 *key);\n'%(GAGet(sec,'name'))
     cstr += '\n' 
     for did in GLGet('RWDIDList'):
-        cstr += 'extern Std_ReturnType fDidGetDataLength%s(uint16 *didLength);\n'%(GAGet(did,'name'))
+        cstr += 'extern Std_ReturnType Diag_DidGetDataLength%s(uint16 *didLength);\n'%(GAGet(did,'name'))
         if(GAGet(did,'attribute').find('r') != -1):
-            cstr += 'extern Std_ReturnType fDidConditionReadCheck%s(Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
-            cstr += 'extern Std_ReturnType fDidReadData%s(uint8 *data);\n'%(GAGet(did,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidConditionReadCheck%s(Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidReadData%s(uint8 *data);\n'%(GAGet(did,'name'))
         else:
-            cstr += '#define fDidConditionReadCheck%s NULL\n'%(GAGet(did,'name'))
-            cstr += '#define fDidReadData%s NULL\n'%(GAGet(did,'name'))
+            cstr += '#define Diag_DidConditionReadCheck%s NULL\n'%(GAGet(did,'name'))
+            cstr += '#define Diag_DidReadData%s NULL\n'%(GAGet(did,'name'))
         if(GAGet(did,'attribute').find('w') != -1):
-            cstr += 'extern Std_ReturnType fDidConditionCheckWrite%s(Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
-            cstr += 'extern Std_ReturnType fDidWriteData%s(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidConditionCheckWrite%s(Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidWriteData%s(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(did,'name'))
         else:
-            cstr += '#define fDidConditionWriteCheck%s NULL\n'%(GAGet(did,'name'))
-            cstr += '#define fDidWriteData%s NULL\n'%(GAGet(did,'name'))
+            cstr += '#define Diag_DidConditionWriteCheck%s NULL\n'%(GAGet(did,'name'))
+            cstr += '#define Diag_DidWriteData%s NULL\n'%(GAGet(did,'name'))
     cstr += '\n' 
     for io in GLGet('IOControlList'):
         if(GAGet(io,'FCSRef') != 'NULL'):
-            cstr += 'extern Std_ReturnType fDidFreezeCurrentState%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidFreezeCurrentState%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
         else:
-            cstr += '#define fDidFreezeCurrentState%s NULL\n'%(GAGet(io,'name'))
+            cstr += '#define Diag_DidFreezeCurrentState%s NULL\n'%(GAGet(io,'name'))
         if(GAGet(io,'RTDRef') != 'NULL'):
-            cstr += 'extern Std_ReturnType fDidResetToDefault%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidResetToDefault%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
         else:
-            cstr += '#define fDidResetToDefault%s NULL\n'%(GAGet(io,'name'))
+            cstr += '#define Diag_DidResetToDefault%s NULL\n'%(GAGet(io,'name'))
         if(GAGet(io,'RCTERef') != 'NULL'):
-            cstr += 'extern Std_ReturnType fDidReturnControlToEcu%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidReturnControlToEcu%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
         else:
-            cstr += '#define fDidReturnControlToEcu%s NULL\n'%(GAGet(io,'name'))
+            cstr += '#define Diag_DidReturnControlToEcu%s NULL\n'%(GAGet(io,'name'))
         if(GAGet(io,'STARef') != 'NULL'):
-            cstr += 'extern Std_ReturnType fDidShortTermAdjustment%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
+            cstr += 'extern Std_ReturnType Diag_DidShortTermAdjustment%s(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(io,'name'))
         else:
-            cstr += '#define fDidShortTermAdjustment%s NULL\n'%(GAGet(io,'name'))
+            cstr += '#define Diag_DidShortTermAdjustment%s NULL\n'%(GAGet(io,'name'))
     cstr += '\n'
     for rc in GLGet('RoutineControlList'):
         if(GAGet(rc,'StartRef') != 'NULL'):
-            cstr += 'extern Std_ReturnType fStartRoutine%s(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
+            cstr += 'extern Std_ReturnType Diag_StartRoutine%s(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
         else:
-            cstr += '#define fStartRoutine%s NULL\n'%(GAGet(rc,'name'))
+            cstr += '#define Diag_StartRoutine%s NULL\n'%(GAGet(rc,'name'))
         if(GAGet(rc,'StopRef') != 'NULL'):
-            cstr += 'extern Std_ReturnType fStopRoutine%s(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
+            cstr += 'extern Std_ReturnType Diag_StopRoutine%s(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
         else:
-            cstr += '#define fStopRoutine%s NULL\n'%(GAGet(rc,'name'))
+            cstr += '#define Diag_StopRoutine%s NULL\n'%(GAGet(rc,'name'))
         if(GAGet(rc,'StartRef') != 'NULL'):
-            cstr += 'extern Std_ReturnType fRequestResultRoutine%s(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
+            cstr += 'extern Std_ReturnType Diag_RequestResultRoutine%s(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);\n'%(GAGet(rc,'name'))
         else:
-            cstr += '#define fRequestResultRoutine%s NULL\n'%(GAGet(rc,'name'))                        
+            cstr += '#define Diag_RequestResultRoutine%s NULL\n'%(GAGet(rc,'name'))                        
     fp.write("""
 #ifndef DCM_CFG_H_
 #define DCM_CFG_H_
@@ -260,24 +260,24 @@ def GenH():
 #define DCM_USE_SERVICE_INPUTOUTPUTCONTROLBYIDENTIFIER
 #define DCM_USE_SERVICE_UPLOAD_DOWNLOAD
 
-#define fGetSeed(Name)                 fGetSeed##Name
-#define fCompareKey(Name)              fCompareKey##Name
+#define fGetSeed(Name)                 Diag_GetSeed##Name
+#define fCompareKey(Name)              Diag_CompareKey##Name
 
 
-#define fDidGetDataLength(Name)        fDidGetDataLength##Name
-#define fDidConditionReadCheck(Name)   fDidConditionReadCheck##Name
-#define fDidReadData(Name)             fDidReadData##Name
-#define fDidConditionCheckWrite(Name)  fDidConditionCheckWrite##Name
-#define fDidWriteData(Name)            fDidWriteData##Name
+#define fDidGetDataLength(Name)        Diag_DidGetDataLength##Name
+#define fDidConditionReadCheck(Name)   Diag_DidConditionReadCheck##Name
+#define fDidReadData(Name)             Diag_DidReadData##Name
+#define fDidConditionCheckWrite(Name)  Diag_DidConditionCheckWrite##Name
+#define fDidWriteData(Name)            Diag_DidWriteData##Name
 
-#define fDidFreezeCurrentState(Name)   fDidFreezeCurrentState##Name
-#define fDidResetToDefault(Name)       fDidResetToDefault##Name
-#define fDidReturnControlToEcu(Name)   fDidReturnControlToEcu##Name
-#define fDidShortTermAdjustment(Name)  fDidShortTermAdjustment##Name
+#define fDidFreezeCurrentState(Name)   Diag_DidFreezeCurrentState##Name
+#define fDidResetToDefault(Name)       Diag_DidResetToDefault##Name
+#define fDidReturnControlToEcu(Name)   Diag_DidReturnControlToEcu##Name
+#define fDidShortTermAdjustment(Name)  Diag_DidShortTermAdjustment##Name
 
-#define fStartRoutine(Name)            fStartRoutine##Name
-#define fStopRoutine(Name)             fStopRoutine##Name
-#define fRequestResultRoutine(Name)    fRequestResultRoutine##Name
+#define fStartRoutine(Name)            Diag_StartRoutine##Name
+#define fStopRoutine(Name)             Diag_StopRoutine##Name
+#define fRequestResultRoutine(Name)    Diag_RequestResultRoutine##Name
 
 %s
 
@@ -820,7 +820,7 @@ static const Dcm_DslBufferType DcmDslBufferList[DCM_DSL_BUFFER_LIST_LENGTH] = {
         .DslBufferSize =  512,//.?Value is not configurable
         .pduInfo.SduDataPtr =  rxDcmBuffer_DiagP2A,
         .pduInfo.SduLength =  512,
-        .externalBufferRuntimeData =  &rxBufferParams_DiagP2P
+        .externalBufferRuntimeData =  &rxBufferParams_DiagP2A
     },
     {
         .DslBufferID =  1,//? I am not that clear.

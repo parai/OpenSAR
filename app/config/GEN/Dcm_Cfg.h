@@ -71,65 +71,65 @@
 #define DCM_USE_SERVICE_INPUTOUTPUTCONTROLBYIDENTIFIER
 #define DCM_USE_SERVICE_UPLOAD_DOWNLOAD
 
-#define fGetSeed(Name)                 fGetSeed##Name
-#define fCompareKey(Name)              fCompareKey##Name
+#define fGetSeed(Name)                 Diag_GetSeed##Name
+#define fCompareKey(Name)              Diag_CompareKey##Name
 
 
-#define fDidGetDataLength(Name)        fDidGetDataLength##Name
-#define fDidConditionReadCheck(Name)   fDidConditionReadCheck##Name
-#define fDidReadData(Name)             fDidReadData##Name
-#define fDidConditionCheckWrite(Name)  fDidConditionCheckWrite##Name
-#define fDidWriteData(Name)            fDidWriteData##Name
+#define fDidGetDataLength(Name)        Diag_DidGetDataLength##Name
+#define fDidConditionReadCheck(Name)   Diag_DidConditionReadCheck##Name
+#define fDidReadData(Name)             Diag_DidReadData##Name
+#define fDidConditionCheckWrite(Name)  Diag_DidConditionCheckWrite##Name
+#define fDidWriteData(Name)            Diag_DidWriteData##Name
 
-#define fDidFreezeCurrentState(Name)   fDidFreezeCurrentState##Name
-#define fDidResetToDefault(Name)       fDidResetToDefault##Name
-#define fDidReturnControlToEcu(Name)   fDidReturnControlToEcu##Name
-#define fDidShortTermAdjustment(Name)  fDidShortTermAdjustment##Name
+#define fDidFreezeCurrentState(Name)   Diag_DidFreezeCurrentState##Name
+#define fDidResetToDefault(Name)       Diag_DidResetToDefault##Name
+#define fDidReturnControlToEcu(Name)   Diag_DidReturnControlToEcu##Name
+#define fDidShortTermAdjustment(Name)  Diag_DidShortTermAdjustment##Name
 
-#define fStartRoutine(Name)            fStartRoutine##Name
-#define fStopRoutine(Name)             fStopRoutine##Name
-#define fRequestResultRoutine(Name)    fRequestResultRoutine##Name
+#define fStartRoutine(Name)            Diag_StartRoutine##Name
+#define fStopRoutine(Name)             Diag_StopRoutine##Name
+#define fRequestResultRoutine(Name)    Diag_RequestResultRoutine##Name
 
-extern Std_ReturnType fGetSeedDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fCompareKeyDS(uint8 *key);
-extern Std_ReturnType fGetSeedPRGS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fCompareKeyPRGS(uint8 *key);
-extern Std_ReturnType fGetSeedEXTDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fCompareKeyEXTDS(uint8 *key);
-extern Std_ReturnType fGetSeedSSDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fCompareKeySSDS(uint8 *key);
+extern Std_ReturnType Diag_GetSeedDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_CompareKeyDS(uint8 *key);
+extern Std_ReturnType Diag_GetSeedPRGS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_CompareKeyPRGS(uint8 *key);
+extern Std_ReturnType Diag_GetSeedEXTDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_CompareKeyEXTDS(uint8 *key);
+extern Std_ReturnType Diag_GetSeedSSDS(uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_CompareKeySSDS(uint8 *key);
 
-extern Std_ReturnType fDidGetDataLengthSWVersion(uint16 *didLength);
-extern Std_ReturnType fDidConditionReadCheckSWVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidReadDataSWVersion(uint8 *data);
-extern Std_ReturnType fDidConditionCheckWriteSWVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidWriteDataSWVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidGetDataLengthNvMVersion(uint16 *didLength);
-extern Std_ReturnType fDidConditionReadCheckNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidReadDataNvMVersion(uint8 *data);
-extern Std_ReturnType fDidConditionCheckWriteNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidWriteDataNvMVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidGetDataLengthFingerPrint(uint16 *didLength);
-extern Std_ReturnType fDidConditionReadCheckFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidReadDataFingerPrint(uint8 *data);
-extern Std_ReturnType fDidConditionCheckWriteFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidWriteDataFingerPrint(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidGetDataLengthSWVersion(uint16 *didLength);
+extern Std_ReturnType Diag_DidConditionReadCheckSWVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidReadDataSWVersion(uint8 *data);
+extern Std_ReturnType Diag_DidConditionCheckWriteSWVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidWriteDataSWVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidGetDataLengthNvMVersion(uint16 *didLength);
+extern Std_ReturnType Diag_DidConditionReadCheckNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidReadDataNvMVersion(uint8 *data);
+extern Std_ReturnType Diag_DidConditionCheckWriteNvMVersion(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidWriteDataNvMVersion(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidGetDataLengthFingerPrint(uint16 *didLength);
+extern Std_ReturnType Diag_DidConditionReadCheckFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidReadDataFingerPrint(uint8 *data);
+extern Std_ReturnType Diag_DidConditionCheckWriteFingerPrint(Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidWriteDataFingerPrint(uint8 *data, uint16 dataLength, Dcm_NegativeResponseCodeType *errorCode);
 
-#define fDidFreezeCurrentStateLedControl NULL
-#define fDidResetToDefaultLedControl NULL
-extern Std_ReturnType fDidReturnControlToEcuLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidShortTermAdjustmentLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidFreezeCurrentStateSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-#define fDidResetToDefaultSpeedControl NULL
-extern Std_ReturnType fDidReturnControlToEcuSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fDidShortTermAdjustmentSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+#define Diag_DidFreezeCurrentStateLedControl NULL
+#define Diag_DidResetToDefaultLedControl NULL
+extern Std_ReturnType Diag_DidReturnControlToEcuLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidShortTermAdjustmentLedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidFreezeCurrentStateSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+#define Diag_DidResetToDefaultSpeedControl NULL
+extern Std_ReturnType Diag_DidReturnControlToEcuSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_DidShortTermAdjustmentSpeedControl(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord, uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode);
 
-extern Std_ReturnType fStartRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fStopRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fRequestResultRoutineErase(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fStartRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fStopRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
-extern Std_ReturnType fRequestResultRoutineCheckIntegrity(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_StartRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_StopRoutineErase(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_RequestResultRoutineErase(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_StartRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_StopRoutineCheckIntegrity(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
+extern Std_ReturnType Diag_RequestResultRoutineCheckIntegrity(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode);
 
 
 extern Std_ReturnType Diag_GetSesChgPer(Dcm_SesCtrlType sesCtrlTypeActive,Dcm_SesCtrlType sesCtrlTypeNew);

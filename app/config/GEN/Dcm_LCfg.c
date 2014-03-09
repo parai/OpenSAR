@@ -733,7 +733,7 @@ static const Dcm_DslBufferType DcmDslBufferList[DCM_DSL_BUFFER_LIST_LENGTH] = {
         .DslBufferSize =  512,//.?Value is not configurable
         .pduInfo.SduDataPtr =  rxDcmBuffer_DiagP2A,
         .pduInfo.SduLength =  512,
-        .externalBufferRuntimeData =  &rxBufferParams_DiagP2P
+        .externalBufferRuntimeData =  &rxBufferParams_DiagP2A
     },
     {
         .DslBufferID =  1,//? I am not that clear.
