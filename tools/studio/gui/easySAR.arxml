@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='utf-8'?>
+<AUTOSAR>
+<OS>
+<TaskList Max="255">
+	<Task  name="Text" priority="Integer" schedule="Enum FULL NON MIXED" stackSize="Integer" activation="Integer" autostart="Boolean">
+	<EventList>
+	<Event name="Text" mask="Text"/>
+	</EventList>
+	</Task>
+</TaskList>
+<AlarmList Max="255">
+	<Alarm name="Text" >
+	</Alarm>
+</AlarmList>
+<CounterList Max="255">
+	<Counter name="Text" >
+	</Counter>
+</CounterList>
+</OS>
+</AUTOSAR>
