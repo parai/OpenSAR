@@ -40,9 +40,21 @@ class twiObj(QTreeWidgetItem):
     def onItemSelectionChanged(self):
         Index = 0
         for Descriptor in self.arxmlDescriptor:
-            self.root.actions[Index].setText('Add %s'%(Descriptor.tag))
-            self.root.actions[Index].setDisabled(False)
-            Index += 1
+            already = False
+            try:
+                max = Descriptor.attrib['Max']
+                # ok, it is a list things
+                for I in range(0,self.childCount()):
+                    tree = self.child(I)
+                    if(tree.text(0) == Descriptor.tag):
+                        already = True
+                        break
+            except:
+                pass
+            if(already == False): 
+                self.root.actions[Index].setText('Add %s'%(Descriptor.tag))
+                self.root.actions[Index].setDisabled(False)
+                Index += 1
         if(self.isTop != True):
             self.root.actions[Index].setText('Delete %s'%(self.arxmlDescriptor.tag))
             self.root.actions[Index].setDisabled(False)
@@ -60,11 +72,18 @@ class twiObj(QTreeWidgetItem):
                     else:
                         print 'Error:Maximum %s for %s is %s!'%(what,self.arxmlDescriptor.tag,max)
                 except:
-                    self.addChild(twiObj(Descriptor,self.root,self))
+                    # ok, by default this is list things
+                    already = False
+                    for I in range(0,self.childCount()):
+                        tree = self.child(I)
+                        if(tree.text(0) == Descriptor.tag):
+                            already = True
+                            break
+                    if(already == False):
+                        self.addChild(twiObj(Descriptor,self.root,self))
+                    else:
+                        print 'Info: Only 1 %s is allowed for %s.'%(Descriptor.tag,self.arxmlDescriptor.tag)
                 self.setExpanded(True)
-            else:
-                print 'Error: On Add %s!'%(what)
-
 
 class easyMenu(QTreeWidget):
     def __init__(self,arxmlDescriptor,parent):  
