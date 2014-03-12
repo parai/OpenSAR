@@ -2,18 +2,18 @@
 <AUTOSAR>
 <OS>
 <TaskList Max="255">
-	<Task  name="Text" priority="Integer" schedule="Enum FULL NON MIXED" stackSize="Integer" activation="Integer" autostart="Boolean">
-	<EventList>
-	<Event name="Text" mask="Text"/>
+	<Task  Name="Text" Priority="Integer" Schedule="Enum FULL NON MIXED" StackSize="Integer" Activation="Integer" Autostart="Boolean">
+	<EventList Max="32">
+	<Event Name="Text" Mask="Text"/>
 	</EventList>
 	</Task>
 </TaskList>
 <AlarmList Max="255">
-	<Alarm name="Text" >
+	<Alarm Name="Text" >
 	</Alarm>
 </AlarmList>
 <CounterList Max="255">
-	<Counter name="Text" >
+	<Counter Name="Text" >
 	</Counter>
 </CounterList>
 </OS>
