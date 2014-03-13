@@ -16,27 +16,49 @@ class easyAction(QAction):
  
     def onAction(self):
         self.root.onAction(self.text())
-
+    
 class twiObj(QTreeWidgetItem):
-    def __init__(self,arxmlDescriptor,root,parent=None):  
+    def __init__(self,arxmlDescriptor,root,arxmlConfig=None,parent=None):  
         assert(isinstance(root,easyModule))
         super(QTreeWidgetItem,self).__init__(parent)
         self.root =  root
         self.arxmlDescriptor = arxmlDescriptor
+        self.arxmlConfig = arxmlConfig
         self.isTop = (parent==None)
-        self.gui = self.creGui()
-        try:
-            # just to see it has a name attribute or not, if not a exception will be raised
-            if('Text' == arxmlDescriptor.attrib['Name']):
-                assert(isinstance(self.parent(),twiObj))
-                self.setText(0,'%s%s'%(arxmlDescriptor.tag,self.parent().childCount()))
-        except:
-            #print traceback.format_exc()
-            self.setText(0,arxmlDescriptor.tag)
-
-    def creGui(self):
+        if(arxmlConfig==None):
+            self.newObj()
+        else:
+            self.loadObj()
+    
+    def loadObj(self):
         pass
     
+    def newObj(self):
+        if(self.isObj()):
+            assert(isinstance(self.parent(),twiObj))
+            defaultName  = '%s%s'%(self.arxmlDescriptor.tag,self.parent().childCount())
+            self.arxmlConfig = ET.Element(self.arxmlDescriptor.tag)
+            for [key,type] in self.arxmlDescriptor.items():
+                if(key=='Name'):
+                    self.arxmlConfig.attrib[key] = defaultName
+                else:
+                    self.arxmlConfig.attrib[key] = 'TBD'
+        else:
+            # a List thing
+            defaultName = self.arxmlDescriptor.tag
+        
+        self.setText(0,defaultName)
+  
+    def isObj(self):
+        try:
+            # just to see it has a name attribute or not, if not a exception will be raised
+            if(self.arxmlDescriptor.attrib['Max']):
+                return False
+        except:
+            #print traceback.format_exc()
+            assert(isinstance(self.parent(),twiObj))
+            return True
+
     def onItemSelectionChanged(self):
         Index = 0
         for Descriptor in self.arxmlDescriptor:
@@ -61,14 +83,16 @@ class twiObj(QTreeWidgetItem):
             Index += 1
         for i in range(Index,4):
             self.root.actions[i].setDisabled(True)
+            
+        self.root.showConfig(self.arxmlConfig)
     
-    def onAction_Add(self,what):
+    def onAction_Add(self,what,arxmlConfig=None):
         for Descriptor in self.arxmlDescriptor:
             if(Descriptor.tag == what):
                 try:
                     max = int(self.arxmlDescriptor.attrib['Max'],10)
                     if(max > self.childCount()):
-                        self.addChild(twiObj(Descriptor,self.root,self))
+                        self.addChild(twiObj(Descriptor,self.root,arxmlConfig,self))
                     else:
                         print 'Error:Maximum %s for %s is %s!'%(what,self.arxmlDescriptor.tag,max)
                 except:
@@ -80,13 +104,13 @@ class twiObj(QTreeWidgetItem):
                             already = True
                             break
                     if(already == False):
-                        self.addChild(twiObj(Descriptor,self.root,self))
+                        self.addChild(twiObj(Descriptor,self.root,arxmlConfig,self))
                     else:
                         print 'Info: Only 1 %s is allowed for %s.'%(Descriptor.tag,self.arxmlDescriptor.tag)
                 self.setExpanded(True)
 
 class easyMenu(QTreeWidget):
-    def __init__(self,arxmlDescriptor,parent):  
+    def __init__(self,arxmlDescriptor,arxmlConfig=None,parent=None):  
         assert(isinstance(parent,easyModule))
         super(QTreeWidget,self).__init__(parent) 
         self.root =  parent
@@ -124,20 +148,40 @@ class easyMenu(QTreeWidget):
 
 class easyModule(QMainWindow):
     actions = []
-    def __init__(self,arxmlDescriptor,parent=None):
+    def __init__(self,arxmlDescriptor,arxmlConfig=None,parent=None):
         super(QMainWindow,self).__init__(parent)
         self.root = parent
         self.arxmlDescriptor = arxmlDescriptor
+        self.arxmlConfig     = arxmlConfig
         self.setWindowTitle('%s of AUTOSAR'%(arxmlDescriptor.tag))
-        self.menuTree = easyMenu(arxmlDescriptor,self)
         self.qSplitter = QSplitter(Qt.Horizontal,self)
         
+        self.menuTree = easyMenu(arxmlDescriptor,arxmlConfig,self)
+        self.wConfig  = QMainWindow()
         self.qSplitter.insertWidget(0,self.menuTree)
+        self.qSplitter.insertWidget(1,self.wConfig)
         
         self.setCentralWidget(self.qSplitter)
         self.creMenu()
         self.showMaximized()
 
+    def showConfig(self,arxmlConfig):
+        try:
+            print 'Show:',arxmlConfig.attrib
+        except:
+            pass
+        self.grid = QGridLayout()
+        self.frame = QFrame()
+        self.frame.setLayout(self.grid)
+        if(arxmlConfig != None):
+            Row = 0
+            for [key,value] in arxmlConfig.attrib.items():
+                K = QLabel(key)
+                V = QLineEdit(value)
+                self.grid.addWidget(K,Row,0)
+                self.grid.addWidget(V,Row,1)
+                Row += 1
+        self.wConfig.setCentralWidget(self.frame)
     def creMenu(self):
         #  create 4 action
         for i in range(0,4):
