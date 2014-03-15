@@ -6,11 +6,10 @@ import xml.etree.ElementTree as ET
 import traceback
 from Arxml import *
 
-__all__ = ['ArgModule']
+__all__ = ['ArgModule','ArgAction']
 
 class ArgAction(QAction):
-    def __init__(self,text,parent):
-        assert(isinstance(parent,ArgModule))  
+    def __init__(self,text,parent): 
         super(QAction,self).__init__(text,parent) 
         self.root =  parent
         self.connect(self,SIGNAL('triggered()'),self.onAction)
@@ -114,7 +113,7 @@ class ArgModule(QMainWindow):
     actions = []
     def __init__(self,arxml,parent=None):
         super(QMainWindow,self).__init__(parent)
-        self.setWindowTitle('%s of AUTOSAR'%(arxml.tag))
+        self.tag = arxml.tag
         
         self.qSplitter = QSplitter(Qt.Horizontal,self)
         
@@ -125,7 +124,6 @@ class ArgModule(QMainWindow):
         
         self.setCentralWidget(self.qSplitter)
         self.creActions()
-        self.showMaximized()
 
     def showConfig(self,arxml):
         try:
