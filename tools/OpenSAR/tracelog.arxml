@@ -1,2 +1,2 @@
 <?xml version='1.0' encoding='utf-8'?>
-<ROOT><Event Mask="TBD" Name="Event3" /></ROOT>
+<ROOT><SignalList Max="TBD"><Signal Format="TBD" Name="Signal1" Size="TBD" /><Signal Format="TBD" Name="Signal2" Size="TBD" /><Signal Format="TBD" Name="Sig" Size="TBD" /><Signal Format="TBD" Name="Signal4" Size="TBD" /></SignalList></ROOT>

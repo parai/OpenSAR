@@ -170,8 +170,12 @@ class ArgObjectTree(QTreeWidget):
         arobj.onObjectNameChanged(text)
 
 class ArgModule(QMainWindow):
-    actions = []
+    # TODO: actions = []
+    # members declare here seems to be static 
+    # that is the members can be accessed by all instance of class ArgModule
+    # SO BETTER TO DECALRE MEMEBERS in __init__()
     def __init__(self,arxml,parent=None):
+        self.actions = []
         super(QMainWindow,self).__init__(parent)
         self.tag = arxml.tag
         

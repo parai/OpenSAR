@@ -20,11 +20,12 @@ class easyDockWidget(QDockWidget):
         self.isClosed = True
 
 class easySARGui(QMainWindow):
-    modules = []
-    docks   = []
-    actions = []
-    pdir = '.'
     def __init__(self):
+        self.modules = []
+        self.docks   = []
+        self.actions = []
+        self.pdir = '.'
+        
         QMainWindow.__init__(self, None)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^)');
         self.showMaximized()
@@ -69,8 +70,9 @@ class easySARGui(QMainWindow):
         wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
         root = ET.parse(wfxml).getroot();
         for module in self.modules:
-            module.reloadArxml(Arxml(self.systemDescriptor.find(module.tag),
-                                     root.find(module.tag)))
+            if(root.find(module.tag) != None):
+                module.reloadArxml(Arxml(self.systemDescriptor.find(module.tag),
+                                         root.find(module.tag)))
     def mSave(self):
         wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
         ROOT = ET.Element('ROOT')
