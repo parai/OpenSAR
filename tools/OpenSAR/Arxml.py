@@ -53,7 +53,7 @@ class Arxml():
             if(value == None):
                 return self.configuration.attrib[key]
             else:
-                self.configuration.attrib[key] = value
+                self.configuration.attrib[key] = str(value)
         else:
             if(IsArxmlList(self)==False):
                 print 'Arxml: Error (key,value)=(%s,%s) for %s'%(key,value,self.descriptor.tag)

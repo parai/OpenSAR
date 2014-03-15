@@ -8,6 +8,21 @@ from Arxml import *
 
 __all__ = ['ArgModule','ArgAction']
 
+class ArgTextEdit(QLineEdit):
+    def __init__(self,attrib,arxml,root):
+        assert(isinstance(root,ArgModule))
+        self.attrib = attrib
+        self.arxml = arxml
+        self.root  = root
+        
+        super(QLineEdit,self).__init__(self.arxml.attrib(self.attrib))
+        self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
+    def onTextChanged(self,text):
+        self.arxml.attrib(self.attrib,text)
+        
+        if(self.attrib == 'Name'):
+            self.root.onObjectNameChanged(text)
+
 class ArgAction(QAction):
     def __init__(self,text,parent): 
         super(QAction,self).__init__(text,parent) 
@@ -25,6 +40,9 @@ class ArgObject(QTreeWidgetItem):
         self.arxml = arxml
         self.setText(0,'%s %s'%(self.arxml.tag,self.arxml.attrib('Name')))
 
+    def onObjectNameChanged(self,text):
+        assert(text == self.arxml.attrib('Name'))
+        self.setText(0,'%s %s'%(self.arxml.tag,self.arxml.attrib('Name')))
     def onItemSelectionChanged(self):
         Index = 0
         for Descriptor in self.arxml.childDescriptors():
@@ -108,6 +126,11 @@ class ArgObjectTree(QTreeWidget):
         object = self.currentItem()
         assert(isinstance(object,ArgObject))
         object.onItemSelectionChanged()
+    
+    def onObjectNameChanged(self,text):
+        object = self.currentItem()
+        assert(isinstance(object,ArgObject))
+        object.onObjectNameChanged(text)
 
 class ArgModule(QMainWindow):
     actions = []
@@ -137,7 +160,7 @@ class ArgModule(QMainWindow):
             Row = 0
             for [key,value] in arxml.configuration.items():
                 K = QLabel(key)
-                V = QLineEdit(value)
+                V = ArgTextEdit(key,arxml,self)
                 self.grid.addWidget(K,Row,0)
                 self.grid.addWidget(V,Row,1)
                 Row += 1
@@ -152,6 +175,9 @@ class ArgModule(QMainWindow):
             
     def onAction(self,text):
         self.objectTree.onAction(text)
+    
+    def onObjectNameChanged(self,text):
+        self.objectTree.onObjectNameChanged(text)
 
 if __name__ == '__main__':
     qtApp = QtGui.QApplication(sys.argv)
