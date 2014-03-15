@@ -20,6 +20,7 @@ class Arxml():
     understanding of AUTOSAR.
     """
     version = 0.01 # initialize 
+    isNewWithConfig = False
     def __init__(self,descriptor,configuration=None):
         # save input parameter
         assert(isinstance(descriptor, ET.Element))
@@ -28,10 +29,17 @@ class Arxml():
         # Load configuration
         if(configuration != None):
             self.configuration = configuration
+            isNewWithConfig = True
+            #print('Arxml: new %s([%s])with validate configuration'%(self.tag,configuration.attrib))
         # New configuration according to descriptor
         else:
             self.__newConfiguration()
-    
+    def toArxml(self):
+        """return a copy of configuration"""
+        arxml = ET.Element(self.descriptor.tag)
+        for [key,type] in self.descriptor.items():
+            arxml.attrib[key] = self.attrib(key)
+        return arxml
     def __newConfiguration(self): # private
         self.configuration = ET.Element(self.descriptor.tag)
         for [key,type] in self.descriptor.items():
@@ -61,10 +69,17 @@ class Arxml():
                 return ''
     
     def __str__(self):
-        cstr = '%s ['%(self.configuration.tag)
-        for config in self.configuration:
-            cstr += str(config)
-        cstr += ']'
+        wfxml = 'tracelog.arxml'
+        ROOT = ET.Element('ROOT')
+        
+        ROOT.append(self.configuration)
+        tree = ET.ElementTree(ROOT)
+        tree.write(wfxml, encoding="utf-8", xml_declaration=True);
+        fp = open(wfxml,'r')
+        cstr = ''
+        for el in fp.readlines():
+            cstr += el
+        fp.close()
         return cstr
 
     def childArxmls(self):
@@ -77,6 +92,17 @@ class Arxml():
                     break
             arxmls.append(Arxml(descriptor,tcfg))
         return arxmls
+
+    def childArxmls2(self):
+        # only validate configurations
+        arxmls = []
+        for descriptor in self.descriptor:
+            tcfg  = None
+            for configuration in self.configuration:
+                if(configuration.tag == descriptor.tag):
+                    tcfg = configuration
+                    arxmls.append(Arxml(descriptor,tcfg))
+        return arxmls 
     
     def childDescriptors(self):
         Descriptors = []

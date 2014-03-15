@@ -23,11 +23,12 @@ class easySARGui(QMainWindow):
     modules = []
     docks   = []
     actions = []
-    pdir = ''
+    pdir = '.'
     def __init__(self):
         QMainWindow.__init__(self, None)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^)');
         self.showMaximized()
+        self.setMinimumSize(300, 400)
         
         self.creStatusBar()
         self.systemDescriptor = ET.parse('./easySAR.arxml').getroot()
@@ -65,9 +66,20 @@ class easySARGui(QMainWindow):
             self.docks.append(None)
 
     def mOpen(self,default=None):
-        pass
+        wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
+        root = ET.parse(wfxml).getroot();
+        for module in self.modules:
+            module.reloadArxml(Arxml(self.systemDescriptor.find(module.tag),
+                                     root.find(module.tag)))
     def mSave(self):
-        pass
+        wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
+        ROOT = ET.Element('ROOT')
+        for module in self.modules:
+            ROOT.append(module.toArxml())
+        tree = ET.ElementTree(ROOT)
+        tree.write(wfxml, encoding="utf-8", xml_declaration=True);
+        QMessageBox(QMessageBox.Information, 'Info', 
+                    'Save OpenSAR Configuration arxml Successfully !').exec_();
     def mGen(self):
         pass
     def onAction(self,text):

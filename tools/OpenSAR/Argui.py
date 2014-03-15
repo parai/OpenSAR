@@ -39,10 +39,33 @@ class ArgObject(QTreeWidgetItem):
         self.root =  root
         self.arxml = arxml
         self.setText(0,'%s %s'%(self.arxml.tag,self.arxml.attrib('Name')))
+        
+        for arx in self.arxml.childArxmls2():
+            self.addChildArobj(ArgObject(arx,self.root,self))
+        self.setExpanded(True)
+        
+    def toArxml(self):
+        arxml = self.arxml.toArxml()
+        for i in range(0,self.childCount()):
+            arobj = self.child(i)
+            assert(isinstance(arobj, ArgObject))
+            arxml.append(arobj.toArxml())
+        return arxml
 
+    def addChildArobj(self,arobj):
+        assert(isinstance(arobj, ArgObject))
+        self.addChild(arobj)
+        if(IsArxmlList(arobj.arxml)):
+            pass
+        else:
+            if('TBD' == arobj.arxml.attrib('Name')):
+                arobj.arxml.attrib('Name','%s%s'%(arobj.arxml.tag,self.childCount()))
+                arobj.onObjectNameChanged(arobj.arxml.attrib('Name'))
+        
     def onObjectNameChanged(self,text):
         assert(text == self.arxml.attrib('Name'))
         self.setText(0,'%s %s'%(self.arxml.tag,self.arxml.attrib('Name')))
+
     def onItemSelectionChanged(self):
         Index = 0
         for Descriptor in self.arxml.childDescriptors():
@@ -58,7 +81,7 @@ class ArgObject(QTreeWidgetItem):
                 self.root.actions[Index].setText('Add %s'%(Descriptor.tag))
                 self.root.actions[Index].setDisabled(False)
                 Index += 1
-        if(self.parent() != None): # if parent is None, then it is top object, cann't be deleted
+        if(self.parent() != None): # if parent is None, then it is top arobj, cann't be deleted
             self.root.actions[Index].setText('Delete %s'%(self.arxml.tag))
             self.root.actions[Index].setDisabled(False)
             Index += 1
@@ -73,21 +96,21 @@ class ArgObject(QTreeWidgetItem):
                 if(IsArxmlList(self.arxml)):
                     max = self.arxml.getMaxChildAllowed()
                     if(max > self.childCount()):
-                        self.addChild(ArgObject(Arxml(Descriptor),self.root,self))
+                        self.addChildArobj(ArgObject(Arxml(Descriptor),self.root,self))
                     else:
                         print 'Error:Maximum %s for %s is %s!'%(what,self.arxml.tag,max)
                 else:
                     # ok, by default this is list things
                     already = False
                     for I in range(0,self.childCount()):
-                        tree = self.child(I)
-                        if(tree.text(0) == Descriptor.tag):
+                        arobj = self.child(I)
+                        if(arobj.arxml.tag == Descriptor.tag):
                             already = True
                             break
                     if(already == False):
-                        self.addChild(ArgObject(Arxml(Descriptor),self.root,self))
+                        self.addChildArobj(ArgObject(Arxml(Descriptor),self.root,self))
                     else:
-                        print 'Info: Only 1 %s is allowed for %s.'%(Descriptor.tag,self.self.arxml.tag)
+                        print 'Info: Only 1 %s is allowed for %s.'%(Descriptor.tag,self.arxml.tag)
                 self.setExpanded(True)        
 
 class ArgObjectTree(QTreeWidget):
@@ -103,34 +126,48 @@ class ArgObjectTree(QTreeWidget):
         self.setMaximumWidth(300)
         
     def onAction_Delete(self,what):
-        object = self.currentItem()
-        assert(isinstance(object,ArgObject))
-        assert(object.arxml.tag == what)
-        if(self.indexOfTopLevelItem(object) != -1):
-            self.takeTopLevelItem(self.indexOfTopLevelItem(object))
+        arobj = self.currentItem()
+        assert(isinstance(arobj,ArgObject))
+        assert(arobj.arxml.tag == what)
+        if(self.indexOfTopLevelItem(arobj) != -1):
+            self.takeTopLevelItem(self.indexOfTopLevelItem(arobj))
         else:
-            pObj = object.parent()
-            pObj.takeChild(pObj.indexOfChild(object))
+            pObj = arobj.parent()
+            pObj.takeChild(pObj.indexOfChild(arobj))
+    def reloadArxml(self,arxml):
+        for i in range(0,self.topLevelItemCount()):
+            self.takeTopLevelItem(0)
+        self.arxml = arxml
+        for arxml in self.arxml.childArxmls2():
+            arobj =ArgObject(arxml,self.root) 
+            self.addTopLevelItem(arobj)
 
+    def toArxml(self):
+        arxml = self.arxml.toArxml()
+        for i in range(0,self.topLevelItemCount()):
+            arobj = self.topLevelItem(i)
+            assert(isinstance(arobj, ArgObject))
+            arxml.append(arobj.toArxml())
+        return arxml
     def onAction(self,text):
         reAction = re.compile(r'(Add|Delete) (\w+)')
         action = reAction.search(text).groups()
         if(action[0] == 'Add'):
-            object = self.currentItem()
-            assert(isinstance(object,ArgObject))
-            object.onAction_Add(action[1])
+            arobj = self.currentItem()
+            assert(isinstance(arobj,ArgObject))
+            arobj.onAction_Add(action[1])
         elif(action[0] == 'Delete'):
             self.onAction_Delete(action[1])
        
     def itemSelectionChanged(self):
-        object = self.currentItem()
-        assert(isinstance(object,ArgObject))
-        object.onItemSelectionChanged()
+        arobj = self.currentItem()
+        assert(isinstance(arobj,ArgObject))
+        arobj.onItemSelectionChanged()
     
     def onObjectNameChanged(self,text):
-        object = self.currentItem()
-        assert(isinstance(object,ArgObject))
-        object.onObjectNameChanged(text)
+        arobj = self.currentItem()
+        assert(isinstance(arobj,ArgObject))
+        arobj.onObjectNameChanged(text)
 
 class ArgModule(QMainWindow):
     actions = []
@@ -140,14 +177,20 @@ class ArgModule(QMainWindow):
         
         self.qSplitter = QSplitter(Qt.Horizontal,self)
         
-        self.objectTree = ArgObjectTree(arxml,self)
+        self.arobjTree = ArgObjectTree(arxml,self)
         self.wConfig  = QMainWindow()
-        self.qSplitter.insertWidget(0,self.objectTree)
+        self.qSplitter.insertWidget(0,self.arobjTree)
         self.qSplitter.insertWidget(1,self.wConfig)
         
         self.setCentralWidget(self.qSplitter)
         self.creActions()
-
+    
+    def reloadArxml(self,arxml):
+        self.arobjTree.reloadArxml(arxml)
+    
+    def toArxml(self):
+        return self.arobjTree.toArxml()
+    
     def showConfig(self,arxml):
         try:
             print 'Show:',arxml
@@ -174,10 +217,10 @@ class ArgModule(QMainWindow):
             self.actions.append(qAction)
             
     def onAction(self,text):
-        self.objectTree.onAction(text)
+        self.arobjTree.onAction(text)
     
     def onObjectNameChanged(self,text):
-        self.objectTree.onObjectNameChanged(text)
+        self.arobjTree.onObjectNameChanged(text)
 
 if __name__ == '__main__':
     qtApp = QtGui.QApplication(sys.argv)
