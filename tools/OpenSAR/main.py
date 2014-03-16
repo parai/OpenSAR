@@ -4,6 +4,7 @@ from PyQt4.QtCore import *
 import sys,os
 from Argui import *
 from Arxml import *
+from ArGen import *
 import xml.etree.ElementTree as ET
 
 __all__ = ['easySAR']
@@ -83,6 +84,7 @@ class easySARGui(QMainWindow):
             if(root.find(module.tag) != None):
                 module.reloadArxml(Arxml(self.systemDescriptor.find(module.tag),
                                          root.find(module.tag)))
+                self.onAction(module.tag)
         if(default == None):
             QMessageBox(QMessageBox.Information, 'Info', 
                         'Open OpenSAR Configuration arxml Successfully !').exec_();
@@ -100,7 +102,14 @@ class easySARGui(QMainWindow):
         QMessageBox(QMessageBox.Information, 'Info', 
                     'Save OpenSAR Configuration arxml Successfully !').exec_();
     def mGen(self):
-        pass
+        if(self.pdir == ''):
+            QMessageBox(QMessageBox.Information, 'Info', 
+                        'Open or Configure a Workspace first !').exec_();
+            return
+        for module in self.modules:
+            ArGen(module.toArxml(),self.pdir)
+        QMessageBox(QMessageBox.Information, 'Info', 
+                        'Generate OpenSAR Configuration C Code Successfully !').exec_();
     def onAction(self,text):
         I = 0
         for module in self.modules:

@@ -45,11 +45,11 @@ GEN_APPLICATION_HEAD = {
     
 // #################################    COUNTERS     ###############################
 GEN_COUNTER_HEAD = {
-	GEN_COUNTER(    COUNTER_ID_Counter0,
-                    "Counter0",
+	GEN_COUNTER(    COUNTER_ID_SystemCounter,
+                    "SystemCounter",
                     COUNTER_TYPE_SOFT,     // Default
                     COUNTER_UNIT_TICKS,    // Default
-                    65535,                // maxallowedvalue
+                    0xFFFF,                // maxallowedvalue
                     1,                // ticksperbase
                     1,                // mincycle
                     0,            // TODO:Gpt Channel
@@ -58,7 +58,7 @@ GEN_COUNTER_HEAD = {
                 ),
 };
 
-	CounterType Os_Arc_OsTickCounter = COUNTER_ID_Counter0;
+	CounterType Os_Arc_OsTickCounter = COUNTER_ID_SystemCounter;
 
 // ##################################    ALARMS     ################################
 GEN_ALARM_AUTOSTART(ALARM_ID_Alarm10ms, ALARM_AUTOSTART_RELATIVE, 10, 10, OSDEFAULTAPPMODE );
@@ -68,7 +68,7 @@ GEN_ALARM_AUTOSTART(ALARM_ID_Alarm1000ms, ALARM_AUTOSTART_RELATIVE, 10, 1000, OS
 GEN_ALARM_HEAD = {
 	GEN_ALARM(  ALARM_ID_Alarm10ms,
                 "Alarm10ms",
-                COUNTER_ID_Counter0,
+                COUNTER_ID_SystemCounter,
                 GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm10ms),
                 ALARM_ACTION_ACTIVATETASK,
                 TASK_ID_Task10ms,
@@ -79,7 +79,7 @@ GEN_ALARM_HEAD = {
             ),
  	GEN_ALARM(  ALARM_ID_Alarm20ms,
                 "Alarm20ms",
-                COUNTER_ID_Counter0,
+                COUNTER_ID_SystemCounter,
                 GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm20ms),
                 ALARM_ACTION_ACTIVATETASK,
                 TASK_ID_Task20ms,
@@ -90,7 +90,7 @@ GEN_ALARM_HEAD = {
             ),
  	GEN_ALARM(  ALARM_ID_Alarm100ms,
                 "Alarm100ms",
-                COUNTER_ID_Counter0,
+                COUNTER_ID_SystemCounter,
                 GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm100ms),
                 ALARM_ACTION_ACTIVATETASK,
                 TASK_ID_Task100ms,
@@ -99,23 +99,23 @@ GEN_ALARM_HEAD = {
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
             ),
- 	GEN_ALARM(  ALARM_ID_Alarm1000ms,
-                "Alarm1000ms",
-                COUNTER_ID_Counter0,
-                GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm1000ms),
+ 	GEN_ALARM(  ALARM_ID_AlarmBswService,
+                "AlarmBswService",
+                COUNTER_ID_SystemCounter,
+                NULL,
                 ALARM_ACTION_ACTIVATETASK,
-                TASK_ID_Task1000ms,
+                TASK_ID_SchM_BswService,
                 0,
                 0,
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
             ),
- 	GEN_ALARM(  ALARM_ID_Alarm_BswService,
-                "Alarm_BswService",
-                COUNTER_ID_Counter0,
-                NULL,
+ 	GEN_ALARM(  ALARM_ID_Alarm1000ms,
+                "Alarm1000ms",
+                COUNTER_ID_SystemCounter,
+                GEN_ALARM_AUTOSTART_NAME(ALARM_ID_Alarm1000ms),
                 ALARM_ACTION_ACTIVATETASK,
-                TASK_ID_SchM_BswService,
+                TASK_ID_Task1000ms,
                 0,
                 0,
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
@@ -127,12 +127,12 @@ GEN_ALARM_HEAD = {
 
 // ##############################    STACKS (TASKS)     ############################
 DECLARE_STACK(OsIdle,OS_OSIDLE_STACK_SIZE);
-DECLARE_STACK(Task10ms,512);
-DECLARE_STACK(Task20ms,512);
 DECLARE_STACK(Task100ms,512);
 DECLARE_STACK(Task1000ms,512);
 DECLARE_STACK(SchM_Startup,512);
 DECLARE_STACK(SchM_BswService,512);
+DECLARE_STACK(Task10ms,512);
+DECLARE_STACK(Task20ms,512);
 // ##################################    TASKS     #################################
 GEN_TASK_HEAD = {
     GEN_BTASK(  /*                     */OsIdle,
@@ -145,30 +145,6 @@ GEN_TASK_HEAD = {
                 /* activation lim.     */1,
                 /* App owner        */0,
                 /* Accessing apps   */1 
-    ),
-	GEN_BTASK(
-        /*                     */Task10ms,
-        /* name                */"Task10ms",
-        /* priority            */5,
-        /* schedule            */FULL,
-        /* autostart           */True,
-        /* resource_int_p   */NULL,    // TODO
-        /* resource mask    */0,
-        /* activation lim.     */1,
-        /* App owner        */APPLICATION_ID_OsDefaultApplication,
-        /* Accessing apps   */1
-    ),
-	GEN_BTASK(
-        /*                     */Task20ms,
-        /* name                */"Task20ms",
-        /* priority            */5,
-        /* schedule            */FULL,
-        /* autostart           */True,
-        /* resource_int_p   */NULL,    // TODO
-        /* resource mask    */0,
-        /* activation lim.     */1,
-        /* App owner        */APPLICATION_ID_OsDefaultApplication,
-        /* Accessing apps   */1
     ),
 	GEN_BTASK(
         /*                     */Task100ms,
@@ -210,6 +186,30 @@ GEN_TASK_HEAD = {
         /*                     */SchM_BswService,
         /* name                */"SchM_BswService",
         /* priority            */5,
+        /* schedule            */FULL,
+        /* autostart           */True,
+        /* resource_int_p   */NULL,    // TODO
+        /* resource mask    */0,
+        /* activation lim.     */1,
+        /* App owner        */APPLICATION_ID_OsDefaultApplication,
+        /* Accessing apps   */1
+    ),
+	GEN_BTASK(
+        /*                     */Task10ms,
+        /* name                */"Task10ms",
+        /* priority            */10,
+        /* schedule            */FULL,
+        /* autostart           */True,
+        /* resource_int_p   */NULL,    // TODO
+        /* resource mask    */0,
+        /* activation lim.     */1,
+        /* App owner        */APPLICATION_ID_OsDefaultApplication,
+        /* Accessing apps   */1
+    ),
+	GEN_BTASK(
+        /*                     */Task20ms,
+        /* name                */"Task20ms",
+        /* priority            */10,
         /* schedule            */FULL,
         /* autostart           */True,
         /* resource_int_p   */NULL,    // TODO

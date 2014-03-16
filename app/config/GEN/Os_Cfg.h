@@ -26,11 +26,11 @@
 #define ALARM_ID_Alarm10ms 0
 #define ALARM_ID_Alarm20ms 1
 #define ALARM_ID_Alarm100ms 2
-#define ALARM_ID_Alarm1000ms 3
-#define ALARM_ID_Alarm_BswService 4
+#define ALARM_ID_AlarmBswService 3
+#define ALARM_ID_Alarm1000ms 4
 
 // Counter Id's
-#define COUNTER_ID_Counter0 0
+#define COUNTER_ID_SystemCounter 0
 
 // System counter TODO
 #define OSMAXALLOWEDVALUE        UINT_MAX// NOT CONFIGURABLE IN TOOLS
@@ -39,20 +39,20 @@
 #define OSTICKDURATION            1000000UL    // Time between ticks in nano seconds
 
 // Counter macros
-#define OSMAXALLOWEDVALUE__Counter0 OSMAXALLOWEDVALUE //TODO: I set the first counter configured by easySAR as system counter, sorry
-#define OSTICKSPERBASE_Counter0 1 // NOT CONFIGURABLE IN TOOLS,sorry
-#define OSMINCYCLE_Counter0 1
+#define OSMAXALLOWEDVALUE__SystemCounter OSMAXALLOWEDVALUE //TODO: I set the first counter configured by easySAR as system counter, sorry
+#define OSTICKSPERBASE_SystemCounter 1 // NOT CONFIGURABLE IN TOOLS,sorry
+#define OSMINCYCLE_SystemCounter 1
 
-#define OS_TICKS2SEC_Counter0(_ticks)       ( (OSTICKDURATION * _ticks)/1000000000UL )
-#define OS_TICKS2MS_Counter0(_ticks)        ( (OSTICKDURATION * _ticks)/1000000UL )
-#define OS_TICKS2US_Counter0(_ticks)        ( (OSTICKDURATION * _ticks)/1000UL )
-#define OS_TICKS2NS_Counter0(_ticks)        (OSTICKDURATION * _ticks)
+#define OS_TICKS2SEC_SystemCounter(_ticks)       ( (OSTICKDURATION * _ticks)/1000000000UL )
+#define OS_TICKS2MS_SystemCounter(_ticks)        ( (OSTICKDURATION * _ticks)/1000000UL )
+#define OS_TICKS2US_SystemCounter(_ticks)        ( (OSTICKDURATION * _ticks)/1000UL )
+#define OS_TICKS2NS_SystemCounter(_ticks)        (OSTICKDURATION * _ticks)
             
 // Event masks
-#define EVENT_MASK_Event1 0x1 // of Task1000ms
-#define EVENT_MASK_Event2 0x2 // of Task1000ms
-#define EVENT_MASK_Event3 0x4 // of Task1000ms
-#define EVENT_MASK_Event4 0x8 // of Task1000ms
+#define EVENT_MASK_Event1 0x01 // of Task1000ms
+#define EVENT_MASK_Event2 0x02 // of Task1000ms
+#define EVENT_MASK_Event3 0x04 // of Task1000ms
+#define EVENT_MASK_Event4 0x08 // of Task1000ms
 #define EVENT_MASK_Event5 0x10 // of Task1000ms
 #define EVENT_MASK_Event1000ms 0x20 // of Task1000ms
 
@@ -66,21 +66,21 @@
 
 // Task Id's
 #define TASK_ID_OsIdle    0 // TODO, generate it by default
-#define TASK_ID_Task10ms 1
-#define TASK_ID_Task20ms 2
-#define TASK_ID_Task100ms 3
-#define TASK_ID_Task1000ms 4
-#define TASK_ID_SchM_Startup 5
-#define TASK_ID_SchM_BswService 6
+#define TASK_ID_Task100ms 1
+#define TASK_ID_Task1000ms 2
+#define TASK_ID_SchM_Startup 3
+#define TASK_ID_SchM_BswService 4
+#define TASK_ID_Task10ms 5
+#define TASK_ID_Task20ms 6
 
 // Task entry points
 extern void OsIdle( void );
-extern void Task10ms( void );
-extern void Task20ms( void );
 extern void Task100ms( void );
 extern void Task1000ms( void );
 extern void SchM_Startup( void );
 extern void SchM_BswService( void );
+extern void Task10ms( void );
+extern void Task20ms( void );
 
 // Schedule table id's
 
