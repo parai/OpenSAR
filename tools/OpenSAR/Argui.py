@@ -8,20 +8,95 @@ from Arxml import *
 
 __all__ = ['ArgModule','ArgAction']
 
-class ArgTextEdit(QLineEdit):
-    def __init__(self,attrib,arxml,root):
+def Integer(cstr):
+    cstr = str(cstr)
+    try:
+        if(cstr.find('0x')!=-1 or cstr.find('0X')!=-1):
+            return int(cstr,16)
+        else:
+            return int(cstr,10)
+    except:
+        #print traceback.format_exc()
+        return None
+    
+class ArgInput(QLineEdit):
+    def __init__(self,key,arxml,root):
         assert(isinstance(root,ArgModule))
-        self.attrib = attrib
+        self.key = key
         self.arxml = arxml
         self.root  = root
         
-        super(QLineEdit,self).__init__(self.arxml.attrib(self.attrib))
+        super(QLineEdit,self).__init__(self.arxml.attrib(self.key))
         self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
     def onTextChanged(self,text):
-        self.arxml.attrib(self.attrib,text)
+        reInput = re.compile(r'^(Text|Integer)')
+        descriptor = self.arxml.getKeyDescriptor(self.key)
         
-        if(self.attrib == 'Name'):
+        type = reInput.search(descriptor).groups()[0]
+        
+        doUpdate = False
+        if(text == 'TBD' or text == 'TB' or text == 'T' or text == '' or
+           text == '0x' or text == '0X' or text == '0'):
+            doUpdate = True
+        elif(type == 'Text'):
+            doUpdate = True
+        elif(type == 'Integer'):
+            reRange = re.compile(r'Range=(\w*)~(\w*)')
+            if(reRange.search(descriptor)):
+                print '>>>'
+                min = Integer(reRange.search(descriptor).groups()[0])
+                max = Integer(reRange.search(descriptor).groups()[1])
+                var = Integer(text)
+                
+                if(var!=None and var>=min and var<=max):
+                    doUpdate = True
+            elif(Integer(text) != None):
+                doUpdate = True
+                
+        
+        if(doUpdate):
+            self.arxml.attrib(self.key,text)
+            if(self.key == 'Name'):
+                self.root.onObjectNameChanged(text)
+        else:
+            self.setText(self.arxml.attrib(self.key))
+
+class ArgSelect(QComboBox):
+    def __init__(self,key,arxml,root):
+        assert(isinstance(root,ArgModule))
+        self.key = key
+        self.arxml = arxml
+        self.root  = root
+        super(QComboBox,self).__init__()
+        self.initItems()
+        self.connect(self, SIGNAL('currentIndexChanged(QString)'),self.onTextChanged)
+    def initItems(self):
+        reSelect = re.compile(r'^(Enum|EnumRef|Boolean)')
+        descriptor = self.arxml.getKeyDescriptor(self.key)
+        type = reSelect.search(descriptor).groups()[0]
+        if(type == 'Enum'):
+            reList = re.compile(r'^Enum=\((.*)\)')
+            list = reList.search(descriptor).groups()[0].split(',')
+            self.addItems(QStringList(list))
+        elif(type == 'Boolean'):
+            self.addItems(QStringList(['True','False']))
+        
+        self.setCurrentIndex(self.findText(self.arxml.attrib(self.key)))
+    def onTextChanged(self,text):
+        self.arxml.attrib(self.key,text)        
+        if(self.key == 'Name'):
             self.root.onObjectNameChanged(text)
+
+def ArgWidget(key,arxml,root):
+    reInput = re.compile(r'^Text|Integer')
+    reSelect = re.compile(r'^Enum|EnumRef|Boolean')
+    descriptor = arxml.getKeyDescriptor(key)
+    if(reInput.search(descriptor)):
+        return ArgInput(key,arxml,root)
+    elif(reSelect.search(descriptor)):
+        return ArgSelect(key,arxml,root)
+    else:
+        return QLineEdit('Type Error for %s'%(arxml.tag))
 
 class ArgAction(QAction):
     def __init__(self,text,parent): 
@@ -196,21 +271,25 @@ class ArgModule(QMainWindow):
         return self.arobjTree.toArxml()
     
     def showConfig(self,arxml):
-        try:
-            print 'Show:',arxml
-        except:
-            pass
         self.grid = QGridLayout()
         self.frame = QFrame()
         self.frame.setLayout(self.grid)
         if(arxml != None and IsArxmlList(arxml)==False):
             Row = 0
             for [key,value] in arxml.configuration.items():
-                K = QLabel(key)
-                V = ArgTextEdit(key,arxml,self)
-                self.grid.addWidget(K,Row,0)
-                self.grid.addWidget(V,Row,1)
-                Row += 1
+                if(key == 'Name'): # put name as the first
+                    K = QLabel(key)
+                    V = ArgWidget(key,arxml,self)
+                    self.grid.addWidget(K,Row,0)
+                    self.grid.addWidget(V,Row,1)
+                    Row += 1
+            for [key,value] in arxml.configuration.items():
+                if(key != 'Name'):
+                    K = QLabel(key)
+                    V = ArgWidget(key,arxml,self)
+                    self.grid.addWidget(K,Row,0)
+                    self.grid.addWidget(V,Row,1)
+                    Row += 1
         self.wConfig.setCentralWidget(self.frame)
     def creActions(self):
         #  create 4 action

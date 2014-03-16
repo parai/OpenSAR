@@ -2,9 +2,17 @@
 <AUTOSAR>
 <OS>
 	<TaskList Max="255">
-		<Task  Name="Text" Priority="Integer" Schedule="Enum FULL NON MIXED" StackSize="Integer" Activation="Integer" Autostart="Boolean">
+		<Task  
+			Name="Text" 
+			Priority="Integer Range=0~255" 
+			Schedule="Enum=(FULL,NON,MIXED)" 
+			StackSize="Integer Range=0~65535" 
+			Activation="Integer Range=0~255" 
+			Autostart="Boolean">
 		<EventList Max="32">
-		<Event Name="Text" Mask="Text"/>
+		<Event 
+			Name="Text" 
+			Mask="Text"/>
 		</EventList>
 		</Task>
 	</TaskList>
@@ -19,9 +27,15 @@
 </OS>
 <COM>
 	<PduList Max="255">
-		<Pdu Name="Text" Identifier="Integer" Period="Interger">
-			<SignalList Max='64'>
-				<Signal Name="Text" Size="Integer" Format="Enum Motorola Intel"/>
+		<Pdu 
+			Name="Text" 
+			Identifier="Integer Range=0~0x1FFFFFFFF" 
+			Period="Interger Range=0~65535 Unit=ms">
+			<SignalList Max="64">
+				<Signal 
+					Name="Text" 
+					Size="Integer" 
+					Format="Enum Motorola Intel"/>
 			</SignalList>
 		</Pdu>
 	</PduList>

@@ -34,6 +34,8 @@ class easySARGui(QMainWindow):
         self.creStatusBar()
         self.systemDescriptor = ET.parse('./easySAR.arxml').getroot()
         self.creMenu()
+        
+        self.mOpen()
 
     def creMenu(self):
         # File

@@ -1,2 +1,2 @@
 <?xml version='1.0' encoding='utf-8'?>
-<ROOT><SignalList Max="TBD"><Signal Format="TBD" Name="Signal1" Size="TBD" /><Signal Format="TBD" Name="Signal2" Size="TBD" /><Signal Format="TBD" Name="Sig" Size="TBD" /><Signal Format="TBD" Name="Signal4" Size="TBD" /></SignalList></ROOT>
+<ROOT><Task Activation="TBD" Autostart="True" Name="Task2" Priority="TBD" Schedule="FULL" StackSize="TBD"><EventList Max="TBD"><Event Mask="TBD" Name="Event1" /><Event Mask="TBD" Name="Event2" /><Event Mask="TBD" Name="Event3" /><Event Mask="TBD" Name="Event4" /></EventList></Task></ROOT>

@@ -49,6 +49,11 @@ class Arxml():
         assert(IsArxmlList(self))
         
         return int(self.descriptor.attrib['Max'],10)
+    
+    def getKeyDescriptor(self,key):
+        for [key1,type1] in self.descriptor.items():
+            if(key == key1):
+                return type1
 
     def attrib(self,key,value=None):
         """ if value is none, return attrib, else set attrib"""
