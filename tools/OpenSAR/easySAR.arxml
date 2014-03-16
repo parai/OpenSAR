@@ -1,49 +1,74 @@
 <?xml version='1.0' encoding='utf-8'?>
 <AUTOSAR>
 <OS>
+	<General
+		StartupHook="Text Default=StartupHook Comment=(if NULL,no StartupHook) PosGUI=0"
+		ProtectionHook="Text Default=ProtectionHook Comment=(if NULL,no ProtectionHook) PosGUI=1"
+		ShutdownHook="Text Default=ShutdownHook Comment=(if NULL,no ShutdownHook) PosGUI=2"
+		ErrorHook="Text Default=ErrorHook Comment=(if NULL,no ErrorHook) PosGUI=3"
+		PreTaskHook="Text Default=PreTaskHook Comment=(if NULL,no PreTaskHook) PosGUI=4"
+		PostTaskHook="Text Default=PostTaskHook Comment=(if NULL,no PostTaskHook) PosGUI=5"
+	/>
 	<TaskList Max="255">
 		<Task  
-			Name="Text" 
-			Priority="Integer Range=0~255" 
-			Schedule="Enum=(FULL,NON,MIXED)" 
-			StackSize="Integer Range=0~65535" 
-			Activation="Integer Range=0~255" 
-			Autostart="Boolean">
+			Name="Text Comment=(Task Name) PosGUI=0" 
+			Priority="Integer Default=32 Range=0~255 PosGUI=1" 
+			Schedule="Enum=(FULL,NON,MIXED) Default=FULL PosGUI=2" 
+			StackSize="Integer Range=0~65535 Default=512 PosGUI=3" 
+			Activation="Integer Range=1~255 Default=1 PosGUI=4" 
+			Autostart="Boolean Default=True PosGUI=5" >
 		<EventList Max="32">
 		<Event 
-			Name="Text" 
-			Mask="Text"/>
+			Name="Text PosGUI=0" 
+			Mask="Text Comment=(if TBD, then a unique mask will be calculated out when generate OS) PosGUI=1">
+		</Event>
 		</EventList>
 		</Task>
 	</TaskList>
 	<AlarmList Max="255">
 		<Alarm 
-			Name="Text" 
-			Counter="EnumRef=OS.CounterList"
-			Action ="Enum=(ActivateTask,SetEvent,Callback)"
-			Task="EnumRef=OS.TaskList Enabled=(Self.Action==ActivateTask || Self.Action==SetEvent)"
-			Event="EnumRef=OS.TaskList.(Self.Task).EventList Enabled=(Self.Action==SetEvent)"
-			Callback="Text Enabled=(Self.Action==Callback)"
-			>
+			Name="Text PosGUI=0" 
+			Counter="EnumRef=OS.CounterList PosGUI=1"
+			Action="Enum=(ActivateTask,SetEvent,Callback) Default=ActivateTask PosGUI=2"
+			Task="EnumRef=OS.TaskList Enabled=(Self.Action==ActivateTask || Self.Action==SetEvent) PosGUI=3"
+			Event="EnumRef=OS.TaskList.(Self.Task).EventList Enabled=(Self.Action==SetEvent) PosGUI=4"
+			Callback="Text Enabled=(Self.Action==Callback) PosGUI=5"
+			Autostart="Enum=(False,Absolute,Relative) Default=False PosGUI=6"
+			StartTime="Integer Range=0~65525 Enabled=(Self.Autostart!=False) Default=0 PosGUI=7"
+			Period="Integer Range=0~65535 Enabled=(Self.Autostart!=False) Default=100 PosGUI=8">
 		</Alarm>
 	</AlarmList>
 	<CounterList Max="255">
-		<Counter Name="Text" >
+		<Counter 
+			Name="Text Comment=(The first counter is treated as system tick counter) PosGUI=0" 
+			MaxAllowed="Integer Range=0~0xFFFFFFFF Default=0xFFFF PosGUI=1"
+			TicksPerBase="Integer Range=0~0xFFFF Default=1 Enabled=(False) PosGUI=2"
+			MinCycle="Integer Range=0~0xFFFF Default=1 PosGUI=3">
 		</Counter>
 	</CounterList>
 </OS>
 <COM>
+	<BusList Max="8">
+		<Bus 
+			Name="Text PosGUI=0"
+			Baudrate="Integer Unit=Kbp PosGUI=1"
+			SyncSeg="Integer PosGUI=2"
+			Seg1="Integer PosGUI=3"
+			Seg2="Integer PosGUI=4">
+		</Bus>
+	</BusList>
 	<PduList Max="255">
 		<Pdu 
-			Name="Text" 
-			Identifier="Integer Range=0~0x1FFFFFFFF" 
-			Period="Interger Range=0~65535 Unit=ms">
+			Name="Text PosGUI=0" 
+			Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=1" 
+			Period="Integer Range=0~65535 Unit=ms PosGUI=2">
 			<SignalList Max="64">
 				<Signal 
-					Name="Text" 
-					Size="Integer Range=0~64" 
-					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n)"
-					Format="Enum=(Motorola,Intel)"/>
+					Name="Text PosGUI=0" 
+					Size="Integer Range=0~64 PosGUI=1" 
+					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) PosGUI=2"
+					Format="Enum=(Motorola,Intel) PosGUI=3">
+				</Signal>
 			</SignalList>
 		</Pdu>
 	</PduList>

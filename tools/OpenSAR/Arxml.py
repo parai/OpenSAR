@@ -1,5 +1,6 @@
 
 import xml.etree.ElementTree as ET
+import re
 
 __all__ = ['Arxml','IsArxmlList']
 
@@ -37,6 +38,7 @@ class Arxml():
         # Load configuration
         if(configuration != None):
             self.configuration = configuration
+            self.__checkConfiguration()
             isNewWithConfig = True
             #print('Arxml: new %s([%s])with validate configuration'%(self.tag,configuration.attrib))
         # New configuration according to descriptor
@@ -48,10 +50,26 @@ class Arxml():
         for [key,type] in self.descriptor.items():
             arxml.attrib[key] = self.attrib(key)
         return arxml
+    def __checkConfiguration(self):
+        reDeafult = re.compile(r'Default=([^\s]+)')
+        for [key,type] in self.descriptor.items():
+            try:
+                var = self.configuration.attrib[key]
+            except:
+                # no found attribute, maybe descriptor has been updated
+                var = 'TBD'
+                if(reDeafult.search(type)):
+                    var = reDeafult.search(type).groups()[0]
+                self.configuration.attrib[key] = var
+                
     def __newConfiguration(self): # private
+        reDeafult = re.compile(r'Default=([^\s]+)')
         self.configuration = ET.Element(self.descriptor.tag)
         for [key,type] in self.descriptor.items():
-            self.configuration.attrib[key] = 'TBD'
+            var = 'TBD'
+            if(reDeafult.search(type)):
+                var = reDeafult.search(type).groups()[0]
+            self.configuration.attrib[key] = var
     
     def getMaxChildAllowed(self):
         assert(IsArxmlList(self))
@@ -76,7 +94,9 @@ class Arxml():
             else:
                 self.configuration.attrib[key] = str(value)
         else:
-            if(IsArxmlList(self)==False):
+            if(self.tag=='General'):
+                pass # General Info, no sub, no name attribute
+            elif(IsArxmlList(self)==False):
                 print 'Arxml: Error (key,value)=(%s,%s) for %s'%(key,value,self.descriptor.tag)
             if(value==None):
                 return ''

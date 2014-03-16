@@ -46,13 +46,16 @@ def IsEnabled(key,arxml):
                         isEnabled = True
                     else:
                         isEnabled = False
-                        
-                    if(isAnd):
-                        Enabled = (Enabled and isEnabled)
-                    else:
-                        Enabled = (Enabled or isEnabled)
                 else:
-                    print 'Enabled: TBD'
+                    if(cond=='False'):
+                        isEnabled = False
+                    else:
+                        isEnabled = True
+                                        
+                if(isAnd):
+                    Enabled = (Enabled and isEnabled)
+                else:
+                    Enabled = (Enabled or isEnabled)
     return Enabled
     
     
@@ -65,6 +68,7 @@ class ArgInput(QLineEdit):
         self.root  = root
         super(QLineEdit,self).__init__(self.arxml.attrib(self.key))
         self.setEnabled(IsEnabled(key, arxml))
+        self.setToolTip(self.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
         self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
     def onTextChanged(self,text):
         reInput = re.compile(r'^(Text|Integer)')
@@ -92,7 +96,6 @@ class ArgInput(QLineEdit):
             self.arxml.attrib(self.key,text)
             if(self.key == 'Name'):
                 self.root.onObjectNameChanged(text)
-            self.root.showConfig(self.arxml)
         else:
             self.setText(self.arxml.attrib(self.key))
 
@@ -103,11 +106,14 @@ class ArgSelect(QComboBox):
         self.arxml = arxml
         self.root  = root
         super(QComboBox,self).__init__()
-        self.initItems()
         self.setEnabled(IsEnabled(key, arxml))
+        self.initItems()
+        self.setToolTip(self.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
         self.connect(self, SIGNAL('currentIndexChanged(QString)'),self.onTextChanged)
         
     def initItems(self):
+        if(self.isEnabled()==False):
+            return
         reSelect = re.compile(r'^(EnumRef|Enum|Boolean)')
         descriptor = self.arxml.getKeyDescriptor(self.key)
         type = reSelect.search(descriptor).groups()[0]
@@ -125,13 +131,13 @@ class ArgSelect(QComboBox):
                 key1 = reSelf.search(ref).groups()[0] 
                 ref = ref.replace('(Self.%s)'%(key1),self.arxml.attrib(key1))
             self.addItems(QStringList(self.root.getEnumRef(ref)))
-        
         self.setCurrentIndex(self.findText(self.arxml.attrib(self.key)))
     def onTextChanged(self,text):
         self.arxml.attrib(self.key,text)        
         if(self.key == 'Name'):
             self.root.onObjectNameChanged(text)
-        self.root.showConfig(self.arxml)
+        else:
+            self.root.showConfig(self.arxml)
 
 def ArgWidget(key,arxml,root):
     reInput = re.compile(r'^Text|Integer')
@@ -208,6 +214,7 @@ class ArgObject(QTreeWidgetItem):
             Index += 1
         for i in range(Index,4):
             self.root.actions[i].setDisabled(True)
+            self.root.actions[i].setText('')
             
         self.root.showConfig(self.arxml)
         
@@ -262,6 +269,14 @@ class ArgObjectTree(QTreeWidget):
         for arxml in self.arxml.childArxmls2():
             arobj =ArgObject(arxml,self.root) 
             self.addTopLevelItem(arobj)
+        # bug fix for arxml update
+        for arxml in self.arxml.childArxmls():
+            already = False
+            for arxml1 in self.arxml.childArxmls2():
+                if(arxml.tag==arxml1.tag):
+                    already=True
+            if(already == False):
+                self.addTopLevelItem(ArgObject(arxml,self.root))
 
     def toArxml(self):
         arxml = self.arxml.toArxml()
@@ -286,12 +301,14 @@ class ArgObjectTree(QTreeWidget):
                             break
                         else:
                             continue
+                    elif(arx.tag=='General'):
+                        continue
                     elif(arx.attrib['Name'] == L):
                         arxml = arx
                         break
-        assert(IsArxmlList(arxml))
-        for arx in arxml:
-            List.append(arx.attrib['Name'])
+        if(IsArxmlList(arxml) and arxml.tag==L):
+            for arx in arxml:
+                List.append(arx.attrib['Name'])
         return List
     def onAction(self,text):
         reAction = re.compile(r'(Add|Delete) (\w+)')
@@ -344,26 +361,20 @@ class ArgModule(QMainWindow):
         self.frame = QFrame()
         self.frame.setLayout(self.grid)
         if(arxml != None and IsArxmlList(arxml)==False):
-            Row = 0
-            for [key,value] in arxml.configuration.items():
-                if(key == 'Name'): # put name as the first
-                    K = QLabel(key)
-                    V = ArgWidget(key,arxml,self)
-                    self.grid.addWidget(K,Row,0)
-                    self.grid.addWidget(V,Row,1)
-                    Row += 1
-            for [key,value] in arxml.configuration.items():
-                if(key != 'Name'):
-                    K = QLabel(key)
-                    V = ArgWidget(key,arxml,self)
-                    self.grid.addWidget(K,Row,0)
-                    self.grid.addWidget(V,Row,1)
-                    Row += 1
+            for Row in range(0,len(arxml.descriptor.items())):
+                rePos = re.compile(r'PosGUI=(\d+)')
+                for [key,value] in arxml.descriptor.items():
+                    posGui = int(rePos.search(value).groups()[0],10)
+                    if(posGui == Row):
+                        K = QLabel(key)
+                        V = ArgWidget(key,arxml,self)
+                        self.grid.addWidget(K,Row,0)
+                        self.grid.addWidget(V,Row,1)
         self.wConfig.setCentralWidget(self.frame)
     def creActions(self):
         #  create 4 action
         for i in range(0,4):
-            qAction=ArgAction(self.tr('Action%s'%(i)),self) 
+            qAction=ArgAction(self.tr(''),self) 
             self.menuBar().addAction(qAction)
             qAction.setDisabled(True)
             self.actions.append(qAction)

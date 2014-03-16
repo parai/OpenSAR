@@ -24,7 +24,7 @@ class easySARGui(QMainWindow):
         self.modules = []
         self.docks   = []
         self.actions = []
-        self.pdir = '.'
+        self.pdir = ''
         
         QMainWindow.__init__(self, None)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^)');
@@ -35,7 +35,7 @@ class easySARGui(QMainWindow):
         self.systemDescriptor = ET.parse('./easySAR.arxml').getroot()
         self.creMenu()
         
-        self.mOpen()
+        self.mOpen(gDefault_GEN)
 
     def creMenu(self):
         # File
@@ -69,13 +69,28 @@ class easySARGui(QMainWindow):
             self.docks.append(None)
 
     def mOpen(self,default=None):
+        if(default == None):
+            self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
+            if(self.pdir == ''):
+                return
+        else:
+            self.pdir = default
         wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
+        if(os.path.exists(wfxml)==False):
+            return
         root = ET.parse(wfxml).getroot();
         for module in self.modules:
             if(root.find(module.tag) != None):
                 module.reloadArxml(Arxml(self.systemDescriptor.find(module.tag),
                                          root.find(module.tag)))
+        if(default == None):
+            QMessageBox(QMessageBox.Information, 'Info', 
+                        'Open OpenSAR Configuration arxml Successfully !').exec_();
     def mSave(self):
+        if(self.pdir == ''):
+            self.pdir = QFileDialog.getExistingDirectory(None,'Save OpenSAR Configuration',gDefault_GEN,QFileDialog.DontResolveSymlinks)
+        if(self.pdir == ''):
+            return
         wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
         ROOT = ET.Element('ROOT')
         for module in self.modules:
