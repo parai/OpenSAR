@@ -29,7 +29,7 @@ class easySARGui(QMainWindow):
         QMainWindow.__init__(self, None)
         self.setWindowTitle('easy OpenSAR Studio( parai@foxmail.com ^_^)');
         self.showMaximized()
-        self.setMinimumSize(300, 400)
+        self.setMinimumSize(800, 400)
         
         self.creStatusBar()
         self.systemDescriptor = ET.parse('./easySAR.arxml').getroot()

@@ -17,7 +17,14 @@
 		</Task>
 	</TaskList>
 	<AlarmList Max="255">
-		<Alarm Name="Text" >
+		<Alarm 
+			Name="Text" 
+			Counter="EnumRef=OS.CounterList"
+			Action ="Enum=(ActivateTask,SetEvent,Callback)"
+			Task="EnumRef=OS.TaskList Enabled=(Self.Action==ActivateTask || Self.Action==SetEvent)"
+			Event="EnumRef=OS.TaskList.(Self.Task).EventList Enabled=(Self.Action==SetEvent)"
+			Callback="Text Enabled=(Self.Action==Callback)"
+			>
 		</Alarm>
 	</AlarmList>
 	<CounterList Max="255">
@@ -34,8 +41,9 @@
 			<SignalList Max="64">
 				<Signal 
 					Name="Text" 
-					Size="Integer" 
-					Format="Enum Motorola Intel"/>
+					Size="Integer Range=0~64" 
+					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n)"
+					Format="Enum=(Motorola,Intel)"/>
 			</SignalList>
 		</Pdu>
 	</PduList>

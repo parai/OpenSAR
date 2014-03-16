@@ -4,12 +4,20 @@ import xml.etree.ElementTree as ET
 __all__ = ['Arxml','IsArxmlList']
 
 def IsArxmlList(arxml):
-    assert(isinstance(arxml, Arxml))
-    try:
-        max = arxml.descriptor.attrib['Max']
-        return True
-    except:
-        return False
+    if(isinstance(arxml, Arxml)):
+        try:
+            max = arxml.descriptor.attrib['Max']
+            return True
+        except:
+            return False
+    elif(isinstance(arxml, ET.Element)):
+        try:
+            max = arxml.attrib['Max']
+            return True
+        except:
+            return False
+    else:
+        print 'Arxml: IsArxmlList(%s) type Error'%(arxml)
     
 class Arxml():
     """

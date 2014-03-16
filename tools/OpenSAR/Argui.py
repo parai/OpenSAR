@@ -18,6 +18,44 @@ def Integer(cstr):
     except:
         #print traceback.format_exc()
         return None
+
+def IsEnabled(key,arxml):
+    reEnabled = re.compile(r'Enabled=\((.*)\)')
+    reSpilt  = re.compile(r'\s+')
+    reSelf   = re.compile(r'Self\.(\w+)(==|!=)(\w+)')
+    descriptor = arxml.getKeyDescriptor(key)
+    Enabled = True
+    if(reEnabled.search(descriptor)):
+        list = reEnabled.search(descriptor).groups()[0]
+        list = re.split(reSpilt, list)
+        isAnd = True # '&&"
+        isEnabled = True
+        for cond in list:
+            if(cond == '||'):
+                isAnd = False
+            elif(cond == '&&'):
+                isAnd = True
+            else:
+                if(reSelf.search(cond)):
+                    key1 = reSelf.search(cond).groups()[0]
+                    operater = reSelf.search(cond).groups()[1]
+                    value = reSelf.search(cond).groups()[2]
+                    if(operater=='==' and arxml.attrib(key1)==value):
+                        isEnabled = True
+                    elif(operater=='!=' and arxml.attrib(key1)!=value):
+                        isEnabled = True
+                    else:
+                        isEnabled = False
+                        
+                    if(isAnd):
+                        Enabled = (Enabled and isEnabled)
+                    else:
+                        Enabled = (Enabled or isEnabled)
+                else:
+                    print 'Enabled: TBD'
+    return Enabled
+    
+    
     
 class ArgInput(QLineEdit):
     def __init__(self,key,arxml,root):
@@ -25,8 +63,8 @@ class ArgInput(QLineEdit):
         self.key = key
         self.arxml = arxml
         self.root  = root
-        
         super(QLineEdit,self).__init__(self.arxml.attrib(self.key))
+        self.setEnabled(IsEnabled(key, arxml))
         self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
     def onTextChanged(self,text):
         reInput = re.compile(r'^(Text|Integer)')
@@ -43,21 +81,18 @@ class ArgInput(QLineEdit):
         elif(type == 'Integer'):
             reRange = re.compile(r'Range=(\w*)~(\w*)')
             if(reRange.search(descriptor)):
-                print '>>>'
                 min = Integer(reRange.search(descriptor).groups()[0])
                 max = Integer(reRange.search(descriptor).groups()[1])
                 var = Integer(text)
-                
                 if(var!=None and var>=min and var<=max):
                     doUpdate = True
             elif(Integer(text) != None):
-                doUpdate = True
-                
-        
+                doUpdate = True        
         if(doUpdate):
             self.arxml.attrib(self.key,text)
             if(self.key == 'Name'):
                 self.root.onObjectNameChanged(text)
+            self.root.showConfig(self.arxml)
         else:
             self.setText(self.arxml.attrib(self.key))
 
@@ -69,9 +104,11 @@ class ArgSelect(QComboBox):
         self.root  = root
         super(QComboBox,self).__init__()
         self.initItems()
+        self.setEnabled(IsEnabled(key, arxml))
         self.connect(self, SIGNAL('currentIndexChanged(QString)'),self.onTextChanged)
+        
     def initItems(self):
-        reSelect = re.compile(r'^(Enum|EnumRef|Boolean)')
+        reSelect = re.compile(r'^(EnumRef|Enum|Boolean)')
         descriptor = self.arxml.getKeyDescriptor(self.key)
         type = reSelect.search(descriptor).groups()[0]
         if(type == 'Enum'):
@@ -80,16 +117,25 @@ class ArgSelect(QComboBox):
             self.addItems(QStringList(list))
         elif(type == 'Boolean'):
             self.addItems(QStringList(['True','False']))
+        elif(type=='EnumRef'):
+            reRef = re.compile(r'^EnumRef=([^\s]+)\s*')
+            ref = reRef.search(descriptor).groups()[0]
+            reSelf = re.compile(r'\(Self\.(\w+)\)')
+            if(reSelf.search(ref)):
+                key1 = reSelf.search(ref).groups()[0] 
+                ref = ref.replace('(Self.%s)'%(key1),self.arxml.attrib(key1))
+            self.addItems(QStringList(self.root.getEnumRef(ref)))
         
         self.setCurrentIndex(self.findText(self.arxml.attrib(self.key)))
     def onTextChanged(self,text):
         self.arxml.attrib(self.key,text)        
         if(self.key == 'Name'):
             self.root.onObjectNameChanged(text)
+        self.root.showConfig(self.arxml)
 
 def ArgWidget(key,arxml,root):
     reInput = re.compile(r'^Text|Integer')
-    reSelect = re.compile(r'^Enum|EnumRef|Boolean')
+    reSelect = re.compile(r'^EnumRef|Enum|Boolean')
     descriptor = arxml.getKeyDescriptor(key)
     if(reInput.search(descriptor)):
         return ArgInput(key,arxml,root)
@@ -224,6 +270,29 @@ class ArgObjectTree(QTreeWidget):
             assert(isinstance(arobj, ArgObject))
             arxml.append(arobj.toArxml())
         return arxml
+    def getEnumRef(self,ref):
+        refL = ref.split('.')
+        List = []
+        arxml = None
+        ta = None
+        for L in refL:
+            if(arxml == None and L == self.arxml.tag):
+                arxml = self.toArxml()
+            else:
+                for arx in arxml:
+                    if(IsArxmlList(arx)):
+                        if(arx.tag == L):
+                            arxml = arx
+                            break
+                        else:
+                            continue
+                    elif(arx.attrib['Name'] == L):
+                        arxml = arx
+                        break
+        assert(IsArxmlList(arxml))
+        for arx in arxml:
+            List.append(arx.attrib['Name'])
+        return List
     def onAction(self,text):
         reAction = re.compile(r'(Add|Delete) (\w+)')
         action = reAction.search(text).groups()
@@ -301,6 +370,9 @@ class ArgModule(QMainWindow):
             
     def onAction(self,text):
         self.arobjTree.onAction(text)
+    
+    def getEnumRef(self,ref):
+        return self.arobjTree.getEnumRef(ref)
     
     def onObjectNameChanged(self,text):
         self.arobjTree.onObjectNameChanged(text)
