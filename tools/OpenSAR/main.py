@@ -149,9 +149,9 @@ class easySARGui(QMainWindow):
 def easySAR():
     qtApp = QtGui.QApplication(sys.argv)
     if(os.name == 'nt'):
-        qtApp.setFont(QFont('Consolas', 12)) 
+        qtApp.setFont(QFont('Consolas')) 
     elif(os.name == 'posix'):
-        qtApp.setFont(QFont('Monospace', 12))
+        qtApp.setFont(QFont('Monospace'))
     else:
         print('unKnown platform.')
     qtGui = easySARGui()

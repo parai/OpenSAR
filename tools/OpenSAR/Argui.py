@@ -68,11 +68,12 @@ def IsEnabled(key,trItem):
     
     
 class ArgInput(QLineEdit):
-    def __init__(self,key,trItem,root):
+    def __init__(self,key,trItem,root,updateOnChange):
         assert(isinstance(root,ArgModule))
         self.key = key
         self.trItem = trItem
         self.root  = root
+        self.updateOnChange=updateOnChange
         super(QLineEdit,self).__init__(self.trItem.arxml.attrib(self.key))
         self.setEnabled(IsEnabled(key, trItem))
         self.setToolTip(self.trItem.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
@@ -107,11 +108,12 @@ class ArgInput(QLineEdit):
             self.setText(self.trItem.arxml.attrib(self.key))
 
 class ArgSelect(QComboBox):
-    def __init__(self,key,trItem,root):
+    def __init__(self,key,trItem,root,updateOnChange):
         assert(isinstance(root,ArgModule))
         self.key = key
         self.trItem = trItem
         self.root  = root
+        self.updateOnChange=updateOnChange
         super(QComboBox,self).__init__()
         self.setEnabled(IsEnabled(key, trItem))
         self.initItems()
@@ -162,17 +164,17 @@ class ArgSelect(QComboBox):
         self.trItem.arxml.attrib(self.key,text)        
         if(self.key == 'Name'):
             self.root.onObjectNameChanged(text)
-        else:
+        elif(self.updateOnChange==True):
             self.root.showConfig(self.trItem)
 
-def ArgWidget(key,trItem,root):
+def ArgWidget(key,trItem,root,updateOnChange=True):
     reInput = re.compile(r'^Text|Integer')
     reSelect = re.compile(r'^EnumRef|Enum|Boolean')
     descriptor = trItem.arxml.getKeyDescriptor(key)
     if(reInput.search(descriptor)):
-        return ArgInput(key,trItem,root)
+        return ArgInput(key,trItem,root,updateOnChange)
     elif(reSelect.search(descriptor)):
-        return ArgSelect(key,trItem,root)
+        return ArgSelect(key,trItem,root,updateOnChange)
     else:
         return QLineEdit('Type Error for %s'%(trItem.arxml.tag))
 
@@ -417,9 +419,13 @@ class ArgModule(QMainWindow):
                     for [key,value] in ctr.arxml.descriptor.items():
                         posGui = int(rePos.search(value).groups()[0],10)
                         if(posGui == Row):
-                            item = QTableWidgetItem(self.tr(ctr.arxml.attrib(key)))
-                            item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
-                            self.table.setItem(index,Row,item)
+                            if(key=='Name'):
+                                item = QTableWidgetItem(self.tr(ctr.arxml.attrib(key)))
+                                item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+                                self.table.setItem(index,Row,item)
+                            else:
+                                V = ArgWidget(key,ctr,self,False)
+                                self.table.setCellWidget(index,Row,V)            
             self.wConfig.setCentralWidget(self.table)
     def creActions(self):
         #  create 4 action
