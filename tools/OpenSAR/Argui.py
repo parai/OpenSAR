@@ -32,9 +32,9 @@ def IsEnabled(key,trItem):
         isAnd = True # '&&"
         isEnabled = True
         for cond in list:
-            if(cond == '||'):
+            if(cond == '||' or cond == 'or'):
                 isAnd = False
-            elif(cond == '&&'):
+            elif(cond == '&&' or cond == 'and'):
                 isAnd = True
             else:
                 if(reSelf.search(cond)):
@@ -125,7 +125,7 @@ class ArgSelect(QComboBox):
         descriptor = self.trItem.arxml.getKeyDescriptor(self.key)
         type = reSelect.search(descriptor).groups()[0]
         if(type == 'Enum'):
-            reList = re.compile(r'^Enum=\((.*)\)')
+            reList = re.compile(r'^Enum=\(([^\s]+)\)')
             list = reList.search(descriptor).groups()[0].split(',')
             self.addItems(QStringList(list))
         elif(type == 'Boolean'):
@@ -196,6 +196,7 @@ class ArgObject(QTreeWidgetItem):
         for arx in self.arxml.childArxmls2():
             self.addChildArobj(ArgObject(arx,self.root,self))
             self.setExpanded(True)
+        #self.sortChildren(0,Qt.AscendingOrder)
         
     def toArxml(self):
         arxml = self.arxml.toArxml()
@@ -277,7 +278,8 @@ class ArgObjectTree(QTreeWidget):
         for arxml in self.arxml.childArxmls():
             self.addTopLevelItem(ArgObject(arxml,self.root))
         self.connect(self, SIGNAL('itemSelectionChanged()'),self.itemSelectionChanged)
-        self.setMaximumWidth(300)
+        self.setMaximumWidth(600)
+        
         
     def onAction_Delete(self,what):
         arobj = self.currentItem()
@@ -377,10 +379,10 @@ class ArgModule(QMainWindow):
     
     def showConfig(self,trItem):
         assert(isinstance(trItem, ArgObject))
-        self.grid = QGridLayout()
         self.frame = QFrame()
-        self.frame.setLayout(self.grid)
         if(IsArxmlList(trItem.arxml)==False):
+            self.grid = QGridLayout()
+            self.frame.setLayout(self.grid)
             for Row in range(0,len(trItem.arxml.descriptor.items())):
                 rePos = re.compile(r'PosGUI=(\d+)')
                 for [key,value] in trItem.arxml.descriptor.items():
@@ -390,7 +392,35 @@ class ArgModule(QMainWindow):
                         V = ArgWidget(key,trItem,self)
                         self.grid.addWidget(K,Row,0)
                         self.grid.addWidget(V,Row,1)
-        self.wConfig.setCentralWidget(self.frame)
+            self.wConfig.setCentralWidget(self.frame)
+        else:
+            self.table = QTableWidget()
+            headers = []
+            for i in range(0,trItem.childCount()):
+                ctr = trItem.child(i)
+                for Row in range(0,len(ctr.arxml.descriptor.items())):
+                    rePos = re.compile(r'PosGUI=(\d+)')
+                    for [key,value] in ctr.arxml.descriptor.items():
+                        posGui = int(rePos.search(value).groups()[0],10)
+                        if(posGui == Row):
+                            headers.append(key)
+                            break
+                break
+            self.table.setColumnCount(len(headers))  
+            self.table.setHorizontalHeaderLabels(QStringList(headers))
+            for i in range(0,trItem.childCount()):
+                ctr = trItem.child(i)
+                index = self.table.rowCount()
+                self.table.setRowCount(index+1)
+                for Row in range(0,len(ctr.arxml.descriptor.items())):
+                    rePos = re.compile(r'PosGUI=(\d+)')
+                    for [key,value] in ctr.arxml.descriptor.items():
+                        posGui = int(rePos.search(value).groups()[0],10)
+                        if(posGui == Row):
+                            item = QTableWidgetItem(self.tr(ctr.arxml.attrib(key)))
+                            item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
+                            self.table.setItem(index,Row,item)
+            self.wConfig.setCentralWidget(self.table)
     def creActions(self):
         #  create 4 action
         for i in range(0,4):

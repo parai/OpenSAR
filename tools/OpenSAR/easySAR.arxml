@@ -52,14 +52,14 @@
 		</Resource>
 	</ResourceList>
 </OS>
-<EucC>
+<EcuC>
 	<PduList Max="65535">
 		<Pdu
 			Name="Text PosGUI=0"
 			Size="Integer Default=64 Range=1~64 PosGUI=1 Unit=Bit"
 		/>
 	</PduList>
-</EucC>
+</EcuC>
 <Can>
 	<General
 		DevelopmentErrorDetection="Enum=(ON,OFF) Default=OFF PosGUI=0"
@@ -106,7 +106,7 @@
 				<PduList Max="65535">
 					<Pdu
 						Name="Text Comment=(Name must be unique) PosGUI=0"
-						EcuCPduRef="EnumRef=EucC.PduList PosGUI=1"
+						EcuCPduRef="EnumRef=EcuC.PduList PosGUI=1"
 						Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=2"
 						TransmitNotifier="Enum=(Nobody,PduR,CanTp,CanNm,J1939Tp,User) Default=PduR PosGUI=3"
 						UserNotification="Text Default=CanIf_UserTxConfirmation PosGUI=4 Enabled=(Self.TransmitNotifier==User)"
@@ -125,7 +125,7 @@
 				<PduList Max="65535">
 					<Pdu
 						Name="Text Comment=(Name must be unique) PosGUI=0"
-						EcuCPduRef="EnumRef=EucC.PduList PosGUI=1"
+						EcuCPduRef="EnumRef=EcuC.PduList PosGUI=1"
 						Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=2"
 						FilterMask="Integer Range=0~0x1FFFFFFFF PosGUI=3 \n Enabled=(Self.Parent.Parent.SoftwareFilterUsed==True) \n Comment=(If $FilterMask and `Identifier==$Identifier, then valid)"
 						ReceivedNotifier="Enum=(Nobody,PduR,CanTp,CanNm,J1939Tp,User) Default=PduR PosGUI=4"
@@ -139,62 +139,151 @@
 		</Channel>
 	</ChannelList>
 </CanIf>
-<COM>
-	<BusList Max="8">
-		<Bus 
+<CanTp>
+	<General
+		DevelopmentErrorDetection="Enum=(ON,OFF) Default=OFF PosGUI=0"
+		VersionInfoApi="Enum=(ON,OFF) Default=OFF PosGUI=1"
+		>
+	</General>	
+	<RxSduList Max="65535">
+		<Sdu
 			Name="Text PosGUI=0"
-			Baudrate="Integer Unit=Kbp PosGUI=1"
-			SyncSeg="Integer PosGUI=2"
-			Seg1="Integer PosGUI=3"
-			Seg2="Integer PosGUI=4">
-		</Bus>
-	</BusList>
-	<TxPduList Max="255">
-		<Pdu 
+			RxPduRef="EnumRef=EcuC.PduList PosGUI=1"
+			TxFcPduRef="EnumRef=EcuC.PduList PosGUI=2"
+			Padding="Enum=(ON,OFF) Default=ON Comment=(If ON,Padding value is 0x55) PosGUI=3"
+			CommunicationType="Enum=(PHYSICAL,FUNCTION) Default=PHYSICAL Enabled=False \n Comment=(Only Physical is supported) PosGUI=4"
+			BS="Integer Range=0~255 Default=8 PosGUI=5 \n Comment=(MaxReceiveBlockSize:If BS=0, no restrict.) "
+			STmin="Integer Range=0~255 Default=1 Unit=ms PosGUI=6 Comment=(minimum transmission delay)"
+			MaxBusyTransmission="Integer Range=0~255 Comment=(? ~_~ ?) PosGUI=7"
+			Nar="Integer Range=0~255 Default=1 PosGUI=8 \n Unit=ms \n Comment=(transmission time)"
+			Nbr="Integer Range=0~255 Default=100 PosGUI=9 \n Unit=ms \n Comment=(transmission time untill flow control)"
+			Ncr="Integer Range=0~255 Default=1 PosGUI=10 \n Unit=ms \n Comment=(transmission request delay)"
+			>
+		</Sdu>
+	</RxSduList>
+	<TxSduList Max="65535">
+		<Sdu
+			Name="Text PosGUI=0"
+			TxPduRef="EnumRef=EcuC.PduList PosGUI=1"
+			RxFcPduRef="EnumRef=EcuC.PduList PosGUI=2"
+			Padding="Enum=(ON,OFF) Default=ON Comment=(If ON,Padding value is 0x55) PosGUI=3"
+			CommunicationType="Enum=(PHYSICAL,FUNCTION) Default=PHYSICAL Enabled=False \n Comment=(Only Physical is supported) PosGUI=4"
+			Nas="Integer Range=0~255 Default=1 PosGUI=5 \n Unit=ms \n Comment=(transmission time)"
+			Nbs="Integer Range=0~255 Default=100 PosGUI=6 \n Unit=ms \n Comment=(transmission time untill flow control)"
+			Ncs="Integer Range=0~255 Default=1 PosGUI=7 \n Unit=ms \n Comment=(transmission request delay)"
+			>
+		</Sdu>
+	</TxSduList>
+</CanTp>
+<PduR>
+	<General
+		DevelopmentErrorDetection="Enum=(ON,OFF) Default=OFF PosGUI=0"
+		VersionInfoApi="Enum=(ON,OFF) Default=OFF PosGUI=1"
+		ZeroCostOperationMode="Enum=(ON,OFF) Default=OFF PosGUI=2"
+		ZeroCostIf="Enum=(CanIf,LinIf) Default=CanIf Enabled=(Self.ZeroCostOperationMode==ON) PosGUI=3"
+		ZeroCostTp="Enum=(CanTp,LinTp,J1939Tp) Default=CanTp Enabled=(Self.ZeroCostOperationMode==ON) PosGUI=4"
+		CanIfUsed="Boolean Default=True PosGUI=5"
+		CanTpUsed="Boolean Default=True PosGUI=6"
+		LinIfUsed="Boolean Default=False PosGUI=7"
+		LinTpUsed="Boolean Default=False PosGUI=8"
+		ComUsed="Boolean Default=True PosGUI=9"
+		DcmUsed="Boolean Default=True PosGUI=10"
+		J1939TpUsed="Boolean Default=False PosGUI=11"
+		>
+	</General>	
+	<RoutineList Max="65535">
+		<Source 
+			Name="Text PosGUI=0"
+			Module="Enum=(Com,Dcm,CanTp,CanIf,LinTp,LinIf,J1939Tp) Default=Com PosGUI=1"
+			PudRef="EnumRef=EcuC.PduList PosGUI=2"
+			>
+			<DestinationList Max="65535">
+				<Destination
+					Name="Text PosGUI=0"
+					Module="Enum=(Com,Dcm,CanTp,CanIf,LinTp,LinIf,J1939Tp) Default=Com PosGUI=1"
+					PudRef="EnumRef=EcuC.PduList PosGUI=2"
+					>
+				</Destination>
+			</DestinationList>
+		</Source>
+	</RoutineList>
+</PduR>
+<Com>
+	<General
+		DevelopmentErrorDetection="Enum=(ON,OFF) Default=OFF PosGUI=0"
+		VersionInfoApi="Enum=(ON,OFF) Default=OFF PosGUI=1"
+		>
+	</General>
+	<PduGroupList Max="255">
+		<PduGroup 
+			Name="Text PosGUI=0"
+			>
+		</PduGroup>
+	</PduGroupList>
+	<IPduList Max="255">
+		<IPdu 
 			Name="Text PosGUI=0" 
-			Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=1" 
-			TxMode="Enum=(DIRECT,PERIODIC,MIXED,NONE) Default=PERIODIC PosGUI=2"
-			Period="Integer Range=0~65535 Default=100 Unit=ms Enabled=(Self.TxMode==PERIODIC || Self.TxMode==MIXED) PosGUI=3"
-			Format="Enum=(Motorola,Intel) Default=Motorola PosGUI=4"
-			Bus="EnumRef=COM.BusList PosGUI=5">
+			PudRef="EnumRef=EcuC.PduList PosGUI=1"
+			Direction="Enum=(SEND,RECEIVE) Default=SEND PosGUI=2"
+			PduGroupRef="EnumRef=Com.PduGroupList PosGUI=3"
+			Callout="Text Default=NULL Comment=(Ask application permission) PosGUI=4" 
+			RxSignalProcessing="Enum=(DEFERRED,IMMEDIATE) Default=DEFERRED Enabled=(Self.Direction==RECEIVE) PosGUI=5"
+			TxMinimumDelayFactor="Integer Range=0~255 Default=1 Enabled=(Self.Direction==SEND) PosGUI=6"
+			DefaultValueForUnusedArea="Integer Range=0~255 Default=0x5A Enabled=(Self.Direction==SEND) PosGUI=7"
+			TxMode="Enum=(NONE,DIRECT,PERIODIC,MIXED) Default=PERIODIC Enabled=(Self.Direction==SEND) PosGUI=8"
+			NumberOfRepetions="Integer Range=0~255 Default=0 \n Enabled=(Self.TxMode==DIRECT || Self.TxMode==MIXED and Self.Direction==SEND) PosGUI=9"
+			RepetionsPeriodFactor="Integer Range=0~255 Default=10 \n Enabled=(Self.TxMode==DIRECT || Self.TxMode==MIXED and Self.Direction==SEND) PosGUI=10 \n Unit=ms"
+			TimeOffsetFactor="Integer Range=0~255 Default=0 \n Enabled=(Self.TxMode==PERIODIC || Self.TxMode==MIXED and Self.Direction==SEND) PosGUI=11 \n Unit=ms"
+			TimePeriodFactor="Integer Range=0~255 Default=10 \n Enabled=(Self.TxMode==PERIODIC || Self.TxMode==MIXED and Self.Direction==SEND) PosGUI=12 \n Unit=ms"
+			>
 			<SignalList Max="64">
 				<Signal 
 					Name="Text PosGUI=0"
 					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) Default=uint8 PosGUI=1"
-					StartBit="Integer Range=0~63 PosGUI=2"
-					Size="Integer Range=1~64 Default=8 PosGUI=3"
-					InitialValue="Text Default=0 PosGUI=4"
-					UpdateBitUsed="Boolean Default=False PosGUI=5"
-					UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=6"
-					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=7"
+					Endianess="Enum=(BIG_ENDIAN,LITTLE_ENDIAN,OPAQUE) Default=BIG_ENDIAN PosGUI=2"
+					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=3 \n Enabled=(Self.Parent.Parent.Direction==SEND)"
+					StartBit="Integer Range=0~63 PosGUI=4"
+					Size="Integer Range=1~64 Default=8 PosGUI=5"
+					InitialValue="Text Default=0 PosGUI=6"
+					UpdateBitUsed="Boolean Default=False PosGUI=7"
+					UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=8"
+					TimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=9"
+					FirstTimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=10"
+					TimeoutAction="Enum=(RESET,NONE) Default=NONE \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=11"
+					TimeoutNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=12"
+					ReceivedNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=13"
 					>
 				</Signal>
-			</SignalList>
-		</Pdu>
-	</TxPduList>
-	<RxPduList Max="255">
-		<Pdu 
-			Name="Text PosGUI=0" 
-			Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=1" 
-			RxMode="Enum=(DIRECT,PERIODIC,MIXED,NONE) Default=PERIODIC PosGUI=2"
-			Timeout="Integer Range=0~65535 Default=2000 Unit=ms Enabled=(Self.RxMode==PERIODIC || Self.RxMode==MIXED) PosGUI=3"
-			TimeoutNotification="Text \n Comment=(For AUTOSAR,Notifications are about signals.\nFor easy Notification, so the first signal of this PDU will have Notification mechanism when generate.) \n Enabled=(Self.RxMode==PERIODIC || Self.RxMode==MIXED) PosGUI=4"
-			Format="Enum=(Motorola,Intel) Default=Motorola PosGUI=5"
-			Bus="EnumRef=COM.BusList PosGUI=6">
-			<SignalList Max="64">
-				<Signal 
+				<GroupSignal
 					Name="Text PosGUI=0"
-					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) Default=uint8 PosGUI=1"
-					StartBit="Integer Range=0~63 PosGUI=2"
-					Size="Integer Range=1~64 Default=8 PosGUI=3"
-					InitialValue="Text Default=0 PosGUI=4"
+					Endianess="Enum=(BIG_ENDIAN,LITTLE_ENDIAN,OPAQUE) Default=BIG_ENDIAN PosGUI=1"
+					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=2 \n Enabled=(Self.Parent.Parent.Direction==SEND)"
+					StartBit="Integer Range=0~63 PosGUI=3"
+					Size="Integer Range=1~64 Default=8 PosGUI=4"
 					UpdateBitUsed="Boolean Default=False PosGUI=5"
 					UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=6"
-					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=7"
+					TimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=7"
+					FirstTimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Direction==RECEIVE) PosGUI=8"
+					TimeoutAction="Enum=(RESET,NONE) Default=NONE \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=9"
+					TimeoutNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=10"
+					ReceivedNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=11"
 					>
-				</Signal>
+					<SignalList Max="64">
+						<Signal 
+							Name="Text PosGUI=0"
+							Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) Default=uint8 PosGUI=1"
+							Endianess="Enum=(BIG_ENDIAN,LITTLE_ENDIAN,OPAQUE) Default=BIG_ENDIAN PosGUI=2"
+							StartBit="Integer Range=0~63 PosGUI=3"
+							Size="Integer Range=1~64 Default=8 PosGUI=4"
+							UpdateBitUsed="Boolean Default=False PosGUI=5"
+							UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=6"
+							InitialValue="Text Default=0 PosGUI=7"
+							>
+						</Signal>
+				</SignalList>
+				</GroupSignal>
 			</SignalList>
-		</Pdu>
-	</RxPduList>
-</COM>
+		</IPdu>
+	</IPduList>
+</Com>
 </AUTOSAR>
