@@ -52,6 +52,70 @@
 		</Resource>
 	</ResourceList>
 </OS>
+<EucC>
+	<PduList Max="65535">
+		<Pdu
+			Name="Text PosGUI=0"
+			Size="Integer Default=64 Range=1~64 PosGUI=1 Unit=Bit"
+		/>
+	</PduList>
+</EucC>
+<Can>
+	<General
+		DevelopmentErrorDetection="Enum=(ON,OFF) Default=OFF PosGUI=0"
+		VersionInfoApi="Enum=(ON,OFF) Default=OFF PosGUI=1"
+		>
+	</General>
+	<ControllerList Max="5">
+		<Controller
+			Name="Enum=(CAN_CTRL_0,CAN_CTRL_1,CAN_CTRL_2,CAN_CTRL_3,CAN_CTRL_4) PosGUI=0"
+			Baudrate="Integer Range=1~12000000 Default=500 Unit=kbps PosGUI=1"
+			Seg1="Integer Range=1~16 Default=13 PosGUI=2"
+			Seg2="Integer Range=1~8 Default=2 PosGUI=3"
+			>
+			<HohList Max="65535">
+				<Hoh
+					Name="Text Comment=(Name must be unique) PosGUI=0"
+					HohType="Enum=(BASIC,FULL) Default=BASIC PosGUI=1"
+					IdentifierType="Enum=(STANDARD,EXTENDED) Default=STANDARD PosGUI=2"
+					ObjectType="Enum=(TRANSMIT,RECEIVE) PosGUI=3"
+					/>
+			</HohList>
+		</Controller>
+	</ControllerList>
+</Can>
+<CanIf>
+	<General
+		DevelopmentErrorDetection="Enum=(ON,OFF) Default=OFF PosGUI=0"
+		VersionInfoApi="Enum=(ON,OFF) Default=OFF PosGUI=1"
+		BusOffNotification="Text Default=CanIf_User_BusoffNotification PosGUI=2"
+		ErrorNotification="Text Default=CanIf_User_ErrorNotification PosGUI=3"
+		DataLengthCodeCheck="Enum=(ON,OFF) Default=ON PosGUI=4"
+		>
+	</General>	
+	<ChannelList Max="65535">
+		<Channel
+			Name="Text PosGUI=0"
+			ControllerRef="EnumRef=Can.ControllerList PosGUI=1"
+			>
+		<HthList Max="65535">
+			<Hth
+				Name="Text Comment=(Name must be unique) PosGUI=0"
+				HthRef="EnumRef=Can.ControllerList.(CanIf->ChannelList->[Channel-ControllerRef]->HthList->(Self.Name)).HohList Filter=(ObjectType==TRANSMIT) PosGUI=1"
+				>
+			</Hth>
+		</HthList>
+		<HrhList Max="65535">
+			<Hrh
+				Name="Text Comment=(Name must be unique) PosGUI=0"
+				HrhRef="EnumRef=Can.ControllerList.(CanIf->ChannelList->[Channel-ControllerRef]->HrhList->(Self.Name)).HohList Filter=(ObjectType==RECEIVE) PosGUI=1"
+				SoftwareFilterUsed="Boolean Default=True PosGUI=2"
+				>
+			</Hrh>
+		</HrhList>		
+		</Channel>
+	</ChannelList>
+</CanIf>
 <COM>
 	<BusList Max="8">
 		<Bus 

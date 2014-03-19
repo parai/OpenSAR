@@ -125,12 +125,25 @@ class ArgSelect(QComboBox):
             self.addItems(QStringList(['True','False']))
         elif(type=='EnumRef'):
             reRef = re.compile(r'^EnumRef=([^\s]+)\s*')
+            reFilter = re.compile(r'Filter=\((\w+)(==|!=)(\w+)\)')
             ref = reRef.search(descriptor).groups()[0]
             reSelf = re.compile(r'\(Self\.(\w+)\)')
             if(reSelf.search(ref)):
                 key1 = reSelf.search(ref).groups()[0] 
                 ref = ref.replace('(Self.%s)'%(key1),self.arxml.attrib(key1))
-            self.addItems(QStringList(self.root.getEnumRef(ref)))
+            list = []
+            url=self.root.getURL(ref)
+            if(url!=None):
+                for uu in url:
+                    if(reFilter.search(descriptor)):
+                        grp = reFilter.search(descriptor).groups()
+                        if(grp[1]=='==' and uu.attrib[grp[0]]==grp[2]):
+                            list.append(uu.attrib['Name'])
+                        elif(grp[1]=='!=' and uu.attrib[grp[0]]!=grp[2]):
+                            list.append(uu.attrib['Name'])
+                    else:
+                        list.append(uu.attrib['Name'])
+            self.addItems(QStringList(list))
         self.setCurrentIndex(self.findText(self.arxml.attrib(self.key)))
     def onTextChanged(self,text):
         self.arxml.attrib(self.key,text)        
@@ -285,31 +298,7 @@ class ArgObjectTree(QTreeWidget):
             assert(isinstance(arobj, ArgObject))
             arxml.append(arobj.toArxml())
         return arxml
-    def getEnumRef(self,ref):
-        refL = ref.split('.')
-        List = []
-        arxml = None
-        ta = None
-        for L in refL:
-            if(arxml == None and L == self.arxml.tag):
-                arxml = self.toArxml()
-            else:
-                for arx in arxml:
-                    if(IsArxmlList(arx)):
-                        if(arx.tag == L):
-                            arxml = arx
-                            break
-                        else:
-                            continue
-                    elif(arx.tag=='General'):
-                        continue
-                    elif(arx.attrib['Name'] == L):
-                        arxml = arx
-                        break
-        if(IsArxmlList(arxml) and arxml.tag==L):
-            for arx in arxml:
-                List.append(arx.attrib['Name'])
-        return List
+    
     def onAction(self,text):
         reAction = re.compile(r'(Add|Delete) (\w+)')
         action = reAction.search(text).groups()
@@ -335,10 +324,11 @@ class ArgModule(QMainWindow):
     # members declare here seems to be static 
     # that is the members can be accessed by all instance of class ArgModule
     # SO BETTER TO DECALRE MEMEBERS in __init__()
-    def __init__(self,arxml,parent=None):
+    def __init__(self,arxml,main):
         self.actions = []
-        super(QMainWindow,self).__init__(parent)
+        super(QMainWindow,self).__init__()
         self.tag = arxml.tag
+        self.main=main
         
         self.qSplitter = QSplitter(Qt.Horizontal,self)
         
@@ -382,8 +372,8 @@ class ArgModule(QMainWindow):
     def onAction(self,text):
         self.arobjTree.onAction(text)
     
-    def getEnumRef(self,ref):
-        return self.arobjTree.getEnumRef(ref)
+    def getURL(self,ref):
+        return self.main.getURL(ref)
     
     def onObjectNameChanged(self,text):
         self.arobjTree.onObjectNameChanged(text)

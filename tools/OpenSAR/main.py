@@ -65,10 +65,15 @@ class easySARGui(QMainWindow):
             sItem=ArgAction(self.tr(desc.tag),self) 
             sItem.setStatusTip('Open easy%s console.'%(desc.tag)) 
             tMenu.addAction(sItem)
-            module = ArgModule(Arxml(desc))
+            module = ArgModule(Arxml(desc),self)
             self.modules.append(module)
             self.docks.append(None)
-
+        
+    def getURL(self,ref):
+        ar = ET.Element('AUTOSAR')
+        for module in self.modules:
+            ar.append(module.toArxml())
+        return ArxmlGetURL(ar,ref)
     def mOpen(self,default=None):
         if(default == None):
             self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
@@ -94,7 +99,7 @@ class easySARGui(QMainWindow):
         if(self.pdir == ''):
             return
         wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
-        ROOT = ET.Element('ROOT')
+        ROOT = ET.Element('AUTOSAR')
         for module in self.modules:
             ROOT.append(module.toArxml())
         tree = ET.ElementTree(ROOT)
@@ -121,15 +126,15 @@ class easySARGui(QMainWindow):
             return
         
         if(self.docks[I]==None):
-            self.docks[I] = easyDockWidget('easy%s'%(self.modules[I].tag), self)  
+            self.docks[I] = easyDockWidget(self.modules[I].tag, self)  
             self.docks[I].setWidget(self.modules[I])  
             self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.docks[I])
         elif(self.docks[I].isClosed==True):
-            self.docks[I] = easyDockWidget('easy%s'%(self.modules[I].tag), self)  
+            self.docks[I] = easyDockWidget(self.modules[I].tag, self)  
             self.docks[I].setWidget(self.modules[I])  
             self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.docks[I])
         else:
-            print('easy%s already started.'%(self.modules[I].tag))    
+            print('%s already started.'%(self.modules[I].tag))    
     def creStatusBar(self):
         self.statusBar = QStatusBar()
         self.setStatusBar(self.statusBar)

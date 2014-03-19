@@ -2,7 +2,7 @@
 import xml.etree.ElementTree as ET
 import re
 
-__all__ = ['Arxml','IsArxmlList']
+__all__ = ['Arxml','IsArxmlList','ArxmlGetURL']
 
 def IsArxmlList(arxml):
     if(isinstance(arxml, Arxml)):
@@ -142,3 +142,69 @@ class Arxml():
         for descriptor in self.descriptor:
             Descriptors.append(descriptor)
         return Descriptors
+    
+def ArxmlDynURL(ArxmlRoot,url):
+    reTarget=re.compile(r'\[([^\s]+)\]')
+    refL = url.split('->')
+    arxml = None
+    for L in refL:
+        if(refL.index(L)==0):
+            # Get Module
+            arxml = ArxmlRoot.find(L)
+            if(arxml==None):
+                break
+        elif(reTarget.search(L)):
+            for target in arxml:
+                url2   = url.replace('->','.').replace(L,target.attrib['Name'])
+                if(ArxmlGetURL(ArxmlRoot,url2) != None):
+                    return target.attrib[reTarget.search(L).groups()[0].split('-')[1]]
+        else:
+            for arx in arxml:
+                if(IsArxmlList(arx)):
+                    if(arx.tag == L):
+                        arxml = arx
+                        break
+                    else:
+                        continue
+                elif(arx.tag=='General'):
+                    continue
+                elif(arx.attrib['Name'] == L):
+                    arxml = arx
+                    break
+    return None  
+
+def ArxmlGetURL(ArxmlRoot,url):
+    reDyn=re.compile(r'\(([^\s]+)\)')
+    refL = url.split('.')
+    arxml = None
+    for L in refL:
+        if(refL.index(L)==0):
+            # Get Module
+            arxml = ArxmlRoot.find(L)
+            if(arxml==None):
+                break
+        elif(reDyn.search(L)):
+            L = ArxmlDynURL(ArxmlRoot,reDyn.search(L).groups()[0])
+            if(L==None):
+                break
+        # normal loop search
+        for arx in arxml:
+            if(IsArxmlList(arx)):
+                if(arx.tag == L):
+                    arxml = arx
+                    break
+                else:
+                    continue
+            elif(arx.tag=='General'):
+                continue
+            elif(arx.attrib['Name'] == L):
+                arxml = arx
+                break
+    if(arxml!=None and arxml.tag==L):
+        return arxml
+    else:
+        try:
+            if(arxml!=None and arxml.attrib['Name']==L):
+                return arxml
+        except:
+            return None
