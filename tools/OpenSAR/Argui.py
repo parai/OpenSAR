@@ -19,10 +19,11 @@ def Integer(cstr):
         #print traceback.format_exc()
         return None
 
-def IsEnabled(key,arxml):
+def IsEnabled(key,trItem):
+    arxml=trItem.arxml
     reEnabled = re.compile(r'Enabled=\((.*)\)')
     reSpilt  = re.compile(r'\s+')
-    reSelf   = re.compile(r'Self\.(\w+)(==|!=)(\w+)')
+    reSelf   = re.compile(r'Self\.([^\s]+)(==|!=)(\w+)')
     descriptor = arxml.getKeyDescriptor(key)
     Enabled = True
     if(reEnabled.search(descriptor)):
@@ -37,12 +38,18 @@ def IsEnabled(key,arxml):
                 isAnd = True
             else:
                 if(reSelf.search(cond)):
-                    key1 = reSelf.search(cond).groups()[0]
+                    keyL = reSelf.search(cond).groups()[0] 
+                    tarTrItem = trItem
+                    for key1 in keyL.split('.'):
+                        if(key1=='Parent'):
+                            tarTrItem = tarTrItem.parent()
+                        else:
+                            break
                     operater = reSelf.search(cond).groups()[1]
                     value = reSelf.search(cond).groups()[2]
-                    if(operater=='==' and arxml.attrib(key1)==value):
+                    if(operater=='==' and tarTrItem.arxml.attrib(key1)==value):
                         isEnabled = True
-                    elif(operater=='!=' and arxml.attrib(key1)!=value):
+                    elif(operater=='!=' and tarTrItem.arxml.attrib(key1)!=value):
                         isEnabled = True
                     else:
                         isEnabled = False
@@ -67,7 +74,7 @@ class ArgInput(QLineEdit):
         self.trItem = trItem
         self.root  = root
         super(QLineEdit,self).__init__(self.trItem.arxml.attrib(self.key))
-        self.setEnabled(IsEnabled(key, trItem.arxml))
+        self.setEnabled(IsEnabled(key, trItem))
         self.setToolTip(self.trItem.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
         self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
     def onTextChanged(self,text):
@@ -106,7 +113,7 @@ class ArgSelect(QComboBox):
         self.trItem = trItem
         self.root  = root
         super(QComboBox,self).__init__()
-        self.setEnabled(IsEnabled(key, trItem.arxml))
+        self.setEnabled(IsEnabled(key, trItem))
         self.initItems()
         self.setToolTip(self.trItem.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
         self.connect(self, SIGNAL('currentIndexChanged(QString)'),self.onTextChanged)
@@ -188,7 +195,7 @@ class ArgObject(QTreeWidgetItem):
         
         for arx in self.arxml.childArxmls2():
             self.addChildArobj(ArgObject(arx,self.root,self))
-        self.setExpanded(True)
+            self.setExpanded(True)
         
     def toArxml(self):
         arxml = self.arxml.toArxml()
@@ -296,6 +303,22 @@ class ArgObjectTree(QTreeWidget):
                     already=True
             if(already == False):
                 self.addTopLevelItem(ArgObject(arxml,self.root))
+        # expand it
+        for i in range(0,self.topLevelItemCount()):
+            trItem = self.topLevelItem(i)
+            trItem.setExpanded(True)
+            # expand it
+            for j in range(0,trItem.childCount()):
+                trItem2 = trItem.child(j)
+                trItem2.setExpanded(True)
+                # expand it
+                for k in range(0,trItem2.childCount()):
+                    trItem3 = trItem.child(k)
+                    trItem3.setExpanded(True)
+                    # expand it
+                    for n in range(0,trItem3.childCount()):
+                        trItem4 = trItem.child(n)
+                        trItem4.setExpanded(True)
 
     def toArxml(self):
         arxml = self.arxml.toArxml()

@@ -103,6 +103,17 @@
 				Name="Text Comment=(Name must be unique) PosGUI=0"
 				HthRef="EnumRef=Can.ControllerList.(Self.Parent.Parent.ControllerRef).HohList Filter=(ObjectType==TRANSMIT) PosGUI=1"
 				>
+				<PduList Max="65535">
+					<Pdu
+						Name="Text Comment=(Name must be unique) PosGUI=0"
+						EcuCPduRef="EnumRef=EucC.PduList PosGUI=1"
+						Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=2"
+						TransmitNotifier="Enum=(Nobody,PduR,CanTp,CanNm,J1939Tp,User) Default=PduR PosGUI=3"
+						UserNotification="Text Default=CanIf_UserTxConfirmation PosGUI=4 Enabled=(Self.TransmitNotifier==User)"
+						DataLengthCode="Integer Range=1~8 Default=8 PosGUI=5"
+						>
+					</Pdu>
+				</PduList>
 			</Hth>
 		</HthList>
 		<HrhList Max="65535">
@@ -111,6 +122,18 @@
 				HrhRef="EnumRef=Can.ControllerList.(Self.Parent.Parent.ControllerRef).HohList Filter=(ObjectType==RECEIVE) PosGUI=1"
 				SoftwareFilterUsed="Boolean Default=True PosGUI=2"
 				>
+				<PduList Max="65535">
+					<Pdu
+						Name="Text Comment=(Name must be unique) PosGUI=0"
+						EcuCPduRef="EnumRef=EucC.PduList PosGUI=1"
+						Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=2"
+						FilterMask="Integer Range=0~0x1FFFFFFFF PosGUI=3 \n Enabled=(Self.Parent.Parent.SoftwareFilterUsed==True) \n Comment=(If $FilterMask and `Identifier==$Identifier, then valid)"
+						ReceivedNotifier="Enum=(Nobody,PduR,CanTp,CanNm,J1939Tp,User) Default=PduR PosGUI=4"
+						UserNotification="Text Default=CanIf_UserRxIndication PosGUI=5 Enabled=(Self.ReceivedNotifier==User)"
+						DataLengthCode="Integer Range=1~8 Default=8 PosGUI=6"
+						>
+					</Pdu>
+				</PduList>
 			</Hrh>
 		</HrhList>		
 		</Channel>

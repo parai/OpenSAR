@@ -134,7 +134,13 @@ class easySARGui(QMainWindow):
             self.docks[I].setWidget(self.modules[I])  
             self.addDockWidget(QtCore.Qt.RightDockWidgetArea, self.docks[I])
         else:
-            print('%s already started.'%(self.modules[I].tag))    
+            print('%s already started.'%(self.modules[I].tag))
+             
+        J=I-1
+        if(I==0):
+            J=1
+        if(self.docks[J]!=None):
+            self.tabifyDockWidget(self.docks[J],self.docks[I]) 
     def creStatusBar(self):
         self.statusBar = QStatusBar()
         self.setStatusBar(self.statusBar)
