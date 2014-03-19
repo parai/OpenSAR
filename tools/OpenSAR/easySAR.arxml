@@ -101,14 +101,14 @@
 		<HthList Max="65535">
 			<Hth
 				Name="Text Comment=(Name must be unique) PosGUI=0"
-				HthRef="EnumRef=Can.ControllerList.(CanIf->ChannelList->[Channel-ControllerRef]->HthList->(Self.Name)).HohList Filter=(ObjectType==TRANSMIT) PosGUI=1"
+				HthRef="EnumRef=Can.ControllerList.(Self.Parent.Parent.ControllerRef).HohList Filter=(ObjectType==TRANSMIT) PosGUI=1"
 				>
 			</Hth>
 		</HthList>
 		<HrhList Max="65535">
 			<Hrh
 				Name="Text Comment=(Name must be unique) PosGUI=0"
-				HrhRef="EnumRef=Can.ControllerList.(CanIf->ChannelList->[Channel-ControllerRef]->HrhList->(Self.Name)).HohList Filter=(ObjectType==RECEIVE) PosGUI=1"
+				HrhRef="EnumRef=Can.ControllerList.(Self.Parent.Parent.ControllerRef).HohList Filter=(ObjectType==RECEIVE) PosGUI=1"
 				SoftwareFilterUsed="Boolean Default=True PosGUI=2"
 				>
 			</Hrh>

@@ -183,10 +183,11 @@ def ArxmlGetURL(ArxmlRoot,url):
             arxml = ArxmlRoot.find(L)
             if(arxml==None):
                 break
-        elif(reDyn.search(L)):
-            L = ArxmlDynURL(ArxmlRoot,reDyn.search(L).groups()[0])
-            if(L==None):
-                break
+#         elif(reDyn.search(L)):
+#             # USED: CanIf->ChannelList->[Channel-ControllerRef]->HrhList->(Self.Name)
+#             L = ArxmlDynURL(ArxmlRoot,reDyn.search(L).groups()[0])
+#             if(L==None):
+#                 break
         # normal loop search
         for arx in arxml:
             if(IsArxmlList(arx)):
