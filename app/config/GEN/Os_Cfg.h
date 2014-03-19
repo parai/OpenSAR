@@ -26,7 +26,7 @@
 #define ALARM_ID_Alarm10ms 0
 #define ALARM_ID_Alarm20ms 1
 #define ALARM_ID_Alarm100ms 2
-#define ALARM_ID_AlarmBswService 3
+#define ALARM_ID_Alarm_BswService 3
 #define ALARM_ID_Alarm1000ms 4
 
 // Counter Id's

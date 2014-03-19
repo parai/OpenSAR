@@ -46,6 +46,11 @@
 			MinCycle="Integer Range=0~0xFFFF Default=1 PosGUI=3">
 		</Counter>
 	</CounterList>
+	<ResourceList Max="255">
+		<Resource 
+			Name="Text PosGUI=0">
+		</Resource>
+	</ResourceList>
 </OS>
 <COM>
 	<BusList Max="8">
@@ -57,20 +62,52 @@
 			Seg2="Integer PosGUI=4">
 		</Bus>
 	</BusList>
-	<PduList Max="255">
+	<TxPduList Max="255">
 		<Pdu 
 			Name="Text PosGUI=0" 
 			Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=1" 
-			Period="Integer Range=0~65535 Unit=ms PosGUI=2">
+			TxMode="Enum=(DIRECT,PERIODIC,MIXED,NONE) Default=PERIODIC PosGUI=2"
+			Period="Integer Range=0~65535 Default=100 Unit=ms Enabled=(Self.TxMode==PERIODIC || Self.TxMode==MIXED) PosGUI=3"
+			Format="Enum=(Motorola,Intel) Default=Motorola PosGUI=4"
+			Bus="EnumRef=COM.BusList PosGUI=5">
 			<SignalList Max="64">
 				<Signal 
-					Name="Text PosGUI=0" 
-					Size="Integer Range=0~64 PosGUI=1" 
-					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) PosGUI=2"
-					Format="Enum=(Motorola,Intel) PosGUI=3">
+					Name="Text PosGUI=0"
+					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) Default=uint8 PosGUI=1"
+					StartBit="Integer Range=0~63 PosGUI=2"
+					Size="Integer Range=1~64 Default=8 PosGUI=3"
+					InitialValue="Text Default=0 PosGUI=4"
+					UpdateBitUsed="Boolean Default=False PosGUI=5"
+					UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=6"
+					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=7"
+					>
 				</Signal>
 			</SignalList>
 		</Pdu>
-	</PduList>
+	</TxPduList>
+	<RxPduList Max="255">
+		<Pdu 
+			Name="Text PosGUI=0" 
+			Identifier="Integer Range=0~0x1FFFFFFFF PosGUI=1" 
+			RxMode="Enum=(DIRECT,PERIODIC,MIXED,NONE) Default=PERIODIC PosGUI=2"
+			Timeout="Integer Range=0~65535 Default=2000 Unit=ms Enabled=(Self.RxMode==PERIODIC || Self.RxMode==MIXED) PosGUI=3"
+			TimeoutNotification="Text \n Comment=(For AUTOSAR,Notifications are about signals.\nFor easy Notification, so the first signal of this PDU will have Notification mechanism when generate.) \n Enabled=(Self.RxMode==PERIODIC || Self.RxMode==MIXED) PosGUI=4"
+			Format="Enum=(Motorola,Intel) Default=Motorola PosGUI=5"
+			Bus="EnumRef=COM.BusList PosGUI=6">
+			<SignalList Max="64">
+				<Signal 
+					Name="Text PosGUI=0"
+					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) Default=uint8 PosGUI=1"
+					StartBit="Integer Range=0~63 PosGUI=2"
+					Size="Integer Range=1~64 Default=8 PosGUI=3"
+					InitialValue="Text Default=0 PosGUI=4"
+					UpdateBitUsed="Boolean Default=False PosGUI=5"
+					UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=6"
+					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=7"
+					>
+				</Signal>
+			</SignalList>
+		</Pdu>
+	</RxPduList>
 </COM>
 </AUTOSAR>

@@ -99,8 +99,8 @@ GEN_ALARM_HEAD = {
                 APPLICATION_ID_OsDefaultApplication,    /* Application owner */
                 1    /* Accessing application mask */
             ),
- 	GEN_ALARM(  ALARM_ID_AlarmBswService,
-                "AlarmBswService",
+ 	GEN_ALARM(  ALARM_ID_Alarm_BswService,
+                "Alarm_BswService",
                 COUNTER_ID_SystemCounter,
                 NULL,
                 ALARM_ACTION_ACTIVATETASK,
