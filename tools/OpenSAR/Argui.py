@@ -19,8 +19,8 @@ def Integer(cstr):
         #print traceback.format_exc()
         return None
 
-def IsEnabled(key,trItem):
-    arxml=trItem.arxml
+def IsEnabled(key,arobj):
+    arxml=arobj.arxml
     reEnabled = re.compile(r'Enabled=\((.*)\)')
     reSpilt  = re.compile(r'\s+')
     reSelf   = re.compile(r'Self\.([^\s]+)(==|!=)(\w+)')
@@ -39,17 +39,17 @@ def IsEnabled(key,trItem):
             else:
                 if(reSelf.search(cond)):
                     keyL = reSelf.search(cond).groups()[0] 
-                    tarTrItem = trItem
+                    tarobj = arobj
                     for key1 in keyL.split('.'):
                         if(key1=='Parent'):
-                            tarTrItem = tarTrItem.parent()
+                            tarobj = tarobj.parent()
                         else:
                             break
                     operater = reSelf.search(cond).groups()[1]
                     value = reSelf.search(cond).groups()[2]
-                    if(operater=='==' and tarTrItem.arxml.attrib(key1)==value):
+                    if(operater=='==' and tarobj.arxml.attrib(key1)==value):
                         isEnabled = True
-                    elif(operater=='!=' and tarTrItem.arxml.attrib(key1)!=value):
+                    elif(operater=='!=' and tarobj.arxml.attrib(key1)!=value):
                         isEnabled = True
                     else:
                         isEnabled = False
@@ -68,19 +68,19 @@ def IsEnabled(key,trItem):
     
     
 class ArgInput(QLineEdit):
-    def __init__(self,key,trItem,root,updateOnChange):
+    def __init__(self,key,arobj,root,updateOnChange):
         assert(isinstance(root,ArgModule))
         self.key = key
-        self.trItem = trItem
+        self.arobj = arobj
         self.root  = root
         self.updateOnChange=updateOnChange
-        super(QLineEdit,self).__init__(self.trItem.arxml.attrib(self.key))
-        self.setEnabled(IsEnabled(key, trItem))
-        self.setToolTip(self.trItem.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
+        super(QLineEdit,self).__init__(self.arobj.arxml.attrib(self.key))
+        self.setEnabled(IsEnabled(key, arobj))
+        self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
         self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
     def onTextChanged(self,text):
         reInput = re.compile(r'^(Text|Integer)')
-        descriptor = self.trItem.arxml.getKeyDescriptor(self.key)
+        descriptor = self.arobj.arxml.getKeyDescriptor(self.key)
         
         type = reInput.search(descriptor).groups()[0]
         
@@ -101,30 +101,30 @@ class ArgInput(QLineEdit):
             elif(Integer(text) != None):
                 doUpdate = True        
         if(doUpdate):
-            self.trItem.arxml.attrib(self.key,text)
+            self.arobj.arxml.attrib(self.key,text)
             if(self.key == 'Name'):
-                self.root.onObjectNameChanged(text)
+                self.arobj.onObjectNameChanged(text)
         else:
-            self.setText(self.trItem.arxml.attrib(self.key))
+            self.setText(self.arobj.arxml.attrib(self.key))
 
 class ArgSelect(QComboBox):
-    def __init__(self,key,trItem,root,updateOnChange):
+    def __init__(self,key,arobj,root,updateOnChange):
         assert(isinstance(root,ArgModule))
         self.key = key
-        self.trItem = trItem
+        self.arobj = arobj
         self.root  = root
         self.updateOnChange=updateOnChange
         super(QComboBox,self).__init__()
-        self.setEnabled(IsEnabled(key, trItem))
+        self.setEnabled(IsEnabled(key, arobj))
         self.initItems()
-        self.setToolTip(self.trItem.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
+        self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
         self.connect(self, SIGNAL('currentIndexChanged(QString)'),self.onTextChanged)
         
     def initItems(self):
         if(self.isEnabled()==False):
             return
         reSelect = re.compile(r'^(EnumRef|Enum|Boolean)')
-        descriptor = self.trItem.arxml.getKeyDescriptor(self.key)
+        descriptor = self.arobj.arxml.getKeyDescriptor(self.key)
         type = reSelect.search(descriptor).groups()[0]
         if(type == 'Enum'):
             reList = re.compile(r'^Enum=\(([^\s]+)\)')
@@ -139,13 +139,13 @@ class ArgSelect(QComboBox):
             reSelf = re.compile(r'\(Self\.([^\s]+)\)')
             if(reSelf.search(ref)):
                 keyL = reSelf.search(ref).groups()[0] 
-                tarTrItem = self.trItem
+                tarobj = self.arobj
                 for key in keyL.split('.'):
                     if(key=='Parent'):
-                        tarTrItem = tarTrItem.parent()
+                        tarobj = tarobj.parent()
                     else:
                         break
-                ref = ref.replace('(Self.%s)'%(keyL),tarTrItem.arxml.attrib(key))
+                ref = ref.replace('(Self.%s)'%(keyL),tarobj.arxml.attrib(key))
             list = []
             url=self.root.getURL(ref)
             if(url!=None):
@@ -159,24 +159,24 @@ class ArgSelect(QComboBox):
                     else:
                         list.append(uu.attrib['Name'])
             self.addItems(QStringList(list))
-        self.setCurrentIndex(self.findText(self.trItem.arxml.attrib(self.key)))
+        self.setCurrentIndex(self.findText(self.arobj.arxml.attrib(self.key)))
     def onTextChanged(self,text):
-        self.trItem.arxml.attrib(self.key,text)        
+        self.arobj.arxml.attrib(self.key,text)        
         if(self.key == 'Name'):
-            self.root.onObjectNameChanged(text)
+            self.arobj.onObjectNameChanged(text)
         elif(self.updateOnChange==True):
-            self.root.showConfig(self.trItem)
+            self.root.showConfig(self.arobj)
 
-def ArgWidget(key,trItem,root,updateOnChange=True):
+def ArgWidget(key,arobj,root,updateOnChange=True):
     reInput = re.compile(r'^Text|Integer')
     reSelect = re.compile(r'^EnumRef|Enum|Boolean')
-    descriptor = trItem.arxml.getKeyDescriptor(key)
+    descriptor = arobj.arxml.getKeyDescriptor(key)
     if(reInput.search(descriptor)):
-        return ArgInput(key,trItem,root,updateOnChange)
+        return ArgInput(key,arobj,root,updateOnChange)
     elif(reSelect.search(descriptor)):
-        return ArgSelect(key,trItem,root,updateOnChange)
+        return ArgSelect(key,arobj,root,updateOnChange)
     else:
-        return QLineEdit('Type Error for %s'%(trItem.arxml.tag))
+        return QLineEdit('Type Error for %s'%(arobj.arxml.tag))
 
 class ArgAction(QAction):
     def __init__(self,text,parent): 
@@ -309,20 +309,20 @@ class ArgObjectTree(QTreeWidget):
                 self.addTopLevelItem(ArgObject(arxml,self.root))
         # expand it
         for i in range(0,self.topLevelItemCount()):
-            trItem = self.topLevelItem(i)
-            trItem.setExpanded(True)
+            arobj = self.topLevelItem(i)
+            arobj.setExpanded(True)
             # expand it
-            for j in range(0,trItem.childCount()):
-                trItem2 = trItem.child(j)
-                trItem2.setExpanded(True)
+            for j in range(0,arobj.childCount()):
+                arobj2 = arobj.child(j)
+                arobj2.setExpanded(True)
                 # expand it
-                for k in range(0,trItem2.childCount()):
-                    trItem3 = trItem.child(k)
-                    trItem3.setExpanded(True)
+                for k in range(0,arobj2.childCount()):
+                    arobj3 = arobj.child(k)
+                    arobj3.setExpanded(True)
                     # expand it
-                    for n in range(0,trItem3.childCount()):
-                        trItem4 = trItem.child(n)
-                        trItem4.setExpanded(True)
+                    for n in range(0,arobj3.childCount()):
+                        arobj4 = arobj.child(n)
+                        arobj4.setExpanded(True)
 
     def toArxml(self):
         arxml = self.arxml.toArxml()
@@ -346,11 +346,6 @@ class ArgObjectTree(QTreeWidget):
         arobj = self.currentItem()
         assert(isinstance(arobj,ArgObject))
         arobj.onItemSelectionChanged()
-    
-    def onObjectNameChanged(self,text):
-        arobj = self.currentItem()
-        assert(isinstance(arobj,ArgObject))
-        arobj.onObjectNameChanged(text)
 
 class ArgModule(QMainWindow):
     # TODO: actions = []
@@ -379,27 +374,27 @@ class ArgModule(QMainWindow):
     def toArxml(self):
         return self.arobjTree.toArxml()
     
-    def showConfig(self,trItem):
-        assert(isinstance(trItem, ArgObject))
+    def showConfig(self,arobj):
+        assert(isinstance(arobj, ArgObject))
         self.frame = QFrame()
-        if(IsArxmlList(trItem.arxml)==False):
+        if(IsArxmlList(arobj.arxml)==False):
             self.grid = QGridLayout()
             self.frame.setLayout(self.grid)
-            for Row in range(0,len(trItem.arxml.descriptor.items())):
+            for Row in range(0,len(arobj.arxml.descriptor.items())):
                 rePos = re.compile(r'PosGUI=(\d+)')
-                for [key,value] in trItem.arxml.descriptor.items():
+                for [key,value] in arobj.arxml.descriptor.items():
                     posGui = int(rePos.search(value).groups()[0],10)
                     if(posGui == Row):
                         K = QLabel(key)
-                        V = ArgWidget(key,trItem,self)
+                        V = ArgWidget(key,arobj,self)
                         self.grid.addWidget(K,Row,0)
                         self.grid.addWidget(V,Row,1)
             self.wConfig.setCentralWidget(self.frame)
         else:
             self.table = QTableWidget()
             headers = []
-            for i in range(0,trItem.childCount()):
-                ctr = trItem.child(i)
+            for i in range(0,arobj.childCount()):
+                ctr = arobj.child(i)
                 for Row in range(0,len(ctr.arxml.descriptor.items())):
                     rePos = re.compile(r'PosGUI=(\d+)')
                     for [key,value] in ctr.arxml.descriptor.items():
@@ -410,8 +405,8 @@ class ArgModule(QMainWindow):
                 break
             self.table.setColumnCount(len(headers))  
             self.table.setHorizontalHeaderLabels(QStringList(headers))
-            for i in range(0,trItem.childCount()):
-                ctr = trItem.child(i)
+            for i in range(0,arobj.childCount()):
+                ctr = arobj.child(i)
                 index = self.table.rowCount()
                 self.table.setRowCount(index+1)
                 for Row in range(0,len(ctr.arxml.descriptor.items())):
@@ -419,13 +414,8 @@ class ArgModule(QMainWindow):
                     for [key,value] in ctr.arxml.descriptor.items():
                         posGui = int(rePos.search(value).groups()[0],10)
                         if(posGui == Row):
-                            if(key=='Name'):
-                                item = QTableWidgetItem(self.tr(ctr.arxml.attrib(key)))
-                                item.setFlags(Qt.ItemIsSelectable|Qt.ItemIsEnabled)
-                                self.table.setItem(index,Row,item)
-                            else:
-                                V = ArgWidget(key,ctr,self,False)
-                                self.table.setCellWidget(index,Row,V)            
+                            V = ArgWidget(key,ctr,self,False)
+                            self.table.setCellWidget(index,Row,V)            
             self.wConfig.setCentralWidget(self.table)
     def creActions(self):
         #  create 4 action
@@ -440,9 +430,6 @@ class ArgModule(QMainWindow):
     
     def getURL(self,ref):
         return self.main.getURL(ref)
-    
-    def onObjectNameChanged(self,text):
-        self.arobjTree.onObjectNameChanged(text)
 
 if __name__ == '__main__':
     qtApp = QtGui.QApplication(sys.argv)
