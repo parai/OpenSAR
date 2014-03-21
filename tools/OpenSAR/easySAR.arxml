@@ -236,24 +236,7 @@
 			TimeOffsetFactor="Integer Range=0~255 Default=0 \n Enabled=(Self.TxMode==PERIODIC || Self.TxMode==MIXED and Self.Direction==SEND) PosGUI=11 \n Unit=ms"
 			TimePeriodFactor="Integer Range=0~255 Default=10 \n Enabled=(Self.TxMode==PERIODIC || Self.TxMode==MIXED and Self.Direction==SEND) PosGUI=12 \n Unit=ms"
 			>
-			<SignalList Max="64">
-				<Signal 
-					Name="Text PosGUI=0"
-					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) Default=uint8 PosGUI=1"
-					Endianess="Enum=(BIG_ENDIAN,LITTLE_ENDIAN,OPAQUE) Default=BIG_ENDIAN PosGUI=2"
-					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=3 \n Enabled=(Self.Parent.Parent.Direction==SEND)"
-					StartBit="Integer Range=0~63 PosGUI=4"
-					Size="Integer Range=1~64 Default=8 PosGUI=5"
-					InitialValue="Text Default=0 PosGUI=6"
-					UpdateBitUsed="Boolean Default=False PosGUI=7"
-					UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=8"
-					TimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=9"
-					FirstTimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=10"
-					TimeoutAction="Enum=(RESET,NONE) Default=NONE \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=11"
-					TimeoutNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=12"
-					ReceivedNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=13"
-					>
-				</Signal>
+			<GroupSignalList Max="1">
 				<GroupSignal
 					Name="Text PosGUI=0"
 					Endianess="Enum=(BIG_ENDIAN,LITTLE_ENDIAN,OPAQUE) Default=BIG_ENDIAN PosGUI=1"
@@ -282,8 +265,75 @@
 						</Signal>
 				</SignalList>
 				</GroupSignal>
+			</GroupSignalList>
+			<SignalList Max="64">
+				<Signal 
+					Name="Text PosGUI=0"
+					Type="Enum=(uint8,uint16,uint32,uint8_n,uint16_n,uint32_n) Default=uint8 PosGUI=1"
+					Endianess="Enum=(BIG_ENDIAN,LITTLE_ENDIAN,OPAQUE) Default=BIG_ENDIAN PosGUI=2"
+					TransferProperty="Enum=(TRIGGERED,PENDING) Default=PENDING PosGUI=3 \n Enabled=(Self.Parent.Parent.Direction==SEND)"
+					StartBit="Integer Range=0~63 PosGUI=4"
+					Size="Integer Range=1~64 Default=8 PosGUI=5"
+					InitialValue="Text Default=0 PosGUI=6"
+					UpdateBitUsed="Boolean Default=False PosGUI=7"
+					UpdateBitPosition="Integer Range=0~63 Enabled=(Self.UpdateBitUsed==True) PosGUI=8"
+					TimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=9"
+					FirstTimeoutFactor="Integer Unit=ms \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=10"
+					TimeoutAction="Enum=(RESET,NONE) Default=NONE \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=11"
+					TimeoutNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=12"
+					ReceivedNotification="Text Default=NULL \n Enabled=(Self.Parent.Parent.Direction==RECEIVE) PosGUI=13"
+					>
+				</Signal>
 			</SignalList>
 		</IPdu>
 	</IPduList>
 </Com>
+<Dcm>
+	<General
+		DevelopmentErrorDetection="Enum=(ON,OFF) Default=OFF PosGUI=0"
+		VersionInfoApi="Enum=(ON,OFF) Default=OFF PosGUI=1"
+		MaxPeriodDIDNumber="Integer Range=0~255 Default=8 PosGUI=2"
+		PeriodicDIDFastModeTime="Integer Default=50 Unit=ms PosGUI=3"
+		PeriodicDIDMediumModeTime="Integer Default=100 Unit=ms PosGUI=4"
+		PeriodicDIDSlowModeTime="Integer Default=200 Unit=ms PosGUI=5"
+		>
+	</General>
+	<BufferList Max="255">
+		<Buffer
+			Name="Text PosGUI=0"
+			Size="Integer Range=64~65535 PosGUI=1 Default=512"
+			>
+		</Buffer>
+	</BufferList>
+	<DIDControlRecordList Max="65535">
+		<DIDControlRecord
+			Name="Text PosGUI=0"
+			EnableMaskSize="Integer Range=0~65535 PosGUI=1 Default=0"
+			OptionSize="Integer Range=0~65535 PosGUI=2 Default=0"
+			StatusSize="Integer Range=0~65535 PosGUI=3 Default=0"
+			>
+		</DIDControlRecord>
+	</DIDControlRecordList>
+	<DIDInfoList Max="65535">
+		<DIDInfo
+			Name="Text PosGUI=0"
+			FixedLength="Boolean PosGUI=1 Default=True"
+			DynamicDefined="Boolean PosGUI=2 Default=False"
+			ScalingInfoSize="Integer Range=0~65535 PosGUI=3 Default=0"
+			>
+			<ControlAccess
+				Name="Text PosGUI=0"
+				EnableFreezeCurrentState="Boolean PosGUI=1 Default=False"
+				FreezeCurrentStateControlRef="EnumRef=Dcm.DIDControlRecordList PosGUI=2 Enabled=(Self.EnableFreezeCurrentState==True)"
+				EnableResetToDefault="Boolean PosGUI=3 Default=False"
+				ResetToDefaultRef="EnumRef=Dcm.DIDControlRecordList PosGUI=4 Enabled=(Self.EnableResetToDefault==True)"
+				EnableReturnControlToEcu="Boolean PosGUI=5 Default=False"
+				ReturnControlToEcuRef="EnumRef=Dcm.DIDControlRecordList PosGUI=6 Enabled=(Self.EnableReturnControlToEcu==True)"
+				EnableShortTermAdjustment="Boolean PosGUI=7 Default=False"
+				ShortTermAdjustmentRef="EnumRef=Dcm.DIDControlRecordList PosGUI=8 Enabled=(Self.EnableShortTermAdjustment==True)"
+				>
+			</ControlAccess>
+		</DIDInfo>
+	</DIDInfoList>
+</Dcm>
 </AUTOSAR>

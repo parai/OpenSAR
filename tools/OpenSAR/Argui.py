@@ -211,6 +211,7 @@ class ArgObject(QTreeWidgetItem):
     def addChildArobj(self,arobj):
         assert(isinstance(arobj, ArgObject))
         self.addChild(arobj)
+        self.onItemSelectionChanged() # trigger refresh
         if(IsArxmlList(arobj.arxml)):
             pass
         else:
@@ -226,11 +227,11 @@ class ArgObject(QTreeWidgetItem):
         Index = 0
         for Descriptor in self.arxml.childDescriptors():
             already = False
-            if(IsArxmlList(self.arxml)):
-                # ok, it is a list things
+            if(IsArxmlList(Descriptor) or IsArxmlList(self.arxml)==False):
+                # ok, it is a list things or its parent is not a list
                 for I in range(0,self.childCount()):
-                    tree = self.child(I)
-                    if(tree.text(0) == Descriptor.tag):
+                    arobj = self.child(I)
+                    if(arobj.arxml.tag==Descriptor.tag):
                         already = True
                         break
             if(already == False): 
@@ -255,9 +256,9 @@ class ArgObject(QTreeWidgetItem):
                     if(max > self.childCount()):
                         self.addChildArobj(ArgObject(Arxml(Descriptor),self.root,self))
                     else:
-                        print 'Error:Maximum %s for %s is %s!'%(what,self.arxml.tag,max)
+                        print 'Error:Maximum %s for %s is %s!'%(what,self.arxml.tag,max)  
                 else:
-                    # ok, by default this is list things
+                    # ok, by default this is list things or its parent is not a list
                     already = False
                     for I in range(0,self.childCount()):
                         arobj = self.child(I)
