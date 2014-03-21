@@ -65,7 +65,16 @@ def IsEnabled(key,arobj):
                     Enabled = (Enabled or isEnabled)
     return Enabled
     
-    
+class ArgInfoInput(QTextEdit):
+    def __init__(self,key,arobj,root,updateOnChange=None):
+        assert(isinstance(root,ArgModule))
+        self.key = key
+        self.arobj = arobj
+        super(QTextEdit,self).__init__(self.arobj.arxml.attrib(self.key))
+        self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
+        self.connect(self, SIGNAL('textChanged()'),self.onTextChanged)
+    def onTextChanged(self):
+        self.arobj.arxml.attrib(self.key,self.toPlainText())  
     
 class ArgInput(QLineEdit):
     def __init__(self,key,arobj,root,updateOnChange):
@@ -166,12 +175,19 @@ class ArgSelect(QComboBox):
             self.arobj.onObjectNameChanged(text)
         elif(self.updateOnChange==True):
             self.root.showConfig(self.arobj)
+        else:
+            # if updateOnChange == False, the in table show, update my parent
+            self.root.showConfig(self.arobj.parent())
+        
 
 def ArgWidget(key,arobj,root,updateOnChange=True):
+    reInfo  = re.compile(r'^TextArea')
     reInput = re.compile(r'^Text|Integer')
     reSelect = re.compile(r'^EnumRef|Enum|Boolean')
     descriptor = arobj.arxml.getKeyDescriptor(key)
-    if(reInput.search(descriptor)):
+    if(reInfo.search(descriptor)):
+        return ArgInfoInput(key,arobj,root,updateOnChange)
+    elif(reInput.search(descriptor)):
         return ArgInput(key,arobj,root,updateOnChange)
     elif(reSelect.search(descriptor)):
         return ArgSelect(key,arobj,root,updateOnChange)
