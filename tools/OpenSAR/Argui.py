@@ -8,6 +8,9 @@ from Arxml import *
 
 __all__ = ['ArgModule','ArgAction']
 
+cCharWidth=12
+cActionNumber=8
+
 def Integer(cstr):
     cstr = str(cstr)
     try:
@@ -66,7 +69,7 @@ def IsEnabled(key,arobj):
     return Enabled
     
 class ArgInfoInput(QTextEdit):
-    def __init__(self,key,arobj,root,updateOnChange=None):
+    def __init__(self,key,arobj,root,IsNotInTableWidget=True):
         assert(isinstance(root,ArgModule))
         self.key = key
         self.arobj = arobj
@@ -77,12 +80,12 @@ class ArgInfoInput(QTextEdit):
         self.arobj.arxml.attrib(self.key,self.toPlainText())  
     
 class ArgInput(QLineEdit):
-    def __init__(self,key,arobj,root,updateOnChange):
+    def __init__(self,key,arobj,root,IsNotInTableWidget):
         assert(isinstance(root,ArgModule))
         self.key = key
         self.arobj = arobj
         self.root  = root
-        self.updateOnChange=updateOnChange
+        self.IsNotInTableWidget=IsNotInTableWidget
         super(QLineEdit,self).__init__(self.arobj.arxml.attrib(self.key))
         self.setEnabled(IsEnabled(key, arobj))
         self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
@@ -117,12 +120,12 @@ class ArgInput(QLineEdit):
             self.setText(self.arobj.arxml.attrib(self.key))
 
 class ArgSelect(QComboBox):
-    def __init__(self,key,arobj,root,updateOnChange):
+    def __init__(self,key,arobj,root,IsNotInTableWidget):
         assert(isinstance(root,ArgModule))
         self.key = key
         self.arobj = arobj
         self.root  = root
-        self.updateOnChange=updateOnChange
+        self.IsNotInTableWidget=IsNotInTableWidget
         super(QComboBox,self).__init__()
         self.setEnabled(IsEnabled(key, arobj))
         self.initItems()
@@ -173,24 +176,24 @@ class ArgSelect(QComboBox):
         self.arobj.arxml.attrib(self.key,text)        
         if(self.key == 'Name'):
             self.arobj.onObjectNameChanged(text)
-        elif(self.updateOnChange==True):
+        elif(self.IsNotInTableWidget==True):
             self.root.showConfig(self.arobj)
         else:
-            # if updateOnChange == False, the in table show, update my parent
+            # if IsNotInTableWidget == False, the in table show, update my parent
             self.root.showConfig(self.arobj.parent())
         
 
-def ArgWidget(key,arobj,root,updateOnChange=True):
+def ArgWidget(key,arobj,root,IsNotInTableWidget=True):
     reInfo  = re.compile(r'^TextArea')
     reInput = re.compile(r'^Text|Integer')
     reSelect = re.compile(r'^EnumRef|Enum|Boolean')
     descriptor = arobj.arxml.getKeyDescriptor(key)
     if(reInfo.search(descriptor)):
-        return ArgInfoInput(key,arobj,root,updateOnChange)
+        return ArgInfoInput(key,arobj,root,IsNotInTableWidget)
     elif(reInput.search(descriptor)):
-        return ArgInput(key,arobj,root,updateOnChange)
+        return ArgInput(key,arobj,root,IsNotInTableWidget)
     elif(reSelect.search(descriptor)):
-        return ArgSelect(key,arobj,root,updateOnChange)
+        return ArgSelect(key,arobj,root,IsNotInTableWidget)
     else:
         return QLineEdit('Type Error for %s'%(arobj.arxml.tag))
 
@@ -258,7 +261,7 @@ class ArgObject(QTreeWidgetItem):
             self.root.actions[Index].setText('Delete %s'%(self.arxml.tag))
             self.root.actions[Index].setDisabled(False)
             Index += 1
-        for i in range(Index,4):
+        for i in range(Index,cActionNumber):
             self.root.actions[i].setDisabled(True)
             self.root.actions[i].setText('')
             
@@ -397,46 +400,53 @@ class ArgModule(QMainWindow):
         if(IsArxmlList(arobj.arxml)==False):
             self.grid = QGridLayout()
             self.frame.setLayout(self.grid)
-            for Row in range(0,len(arobj.arxml.descriptor.items())):
+            for Column in range(0,len(arobj.arxml.descriptor.items())):
                 rePos = re.compile(r'PosGUI=(\d+)')
                 for [key,value] in arobj.arxml.descriptor.items():
                     posGui = int(rePos.search(value).groups()[0],10)
-                    if(posGui == Row):
+                    if(posGui == Column):
                         K = QLabel(key)
                         V = ArgWidget(key,arobj,self)
-                        self.grid.addWidget(K,Row,0)
-                        self.grid.addWidget(V,Row,1)
+                        self.grid.addWidget(K,Column,0)
+                        self.grid.addWidget(V,Column,1)
             self.wConfig.setCentralWidget(self.frame)
         else:
             self.table = QTableWidget()
             headers = []
+            widths=[]
             for i in range(0,arobj.childCount()):
-                ctr = arobj.child(i)
-                for Row in range(0,len(ctr.arxml.descriptor.items())):
+                arobj1 = arobj.child(i)
+                for Column in range(0,len(arobj1.arxml.descriptor.items())):
                     rePos = re.compile(r'PosGUI=(\d+)')
-                    for [key,value] in ctr.arxml.descriptor.items():
+                    for [key,value] in arobj1.arxml.descriptor.items():
                         posGui = int(rePos.search(value).groups()[0],10)
-                        if(posGui == Row):
+                        if(posGui == Column):
                             headers.append(key)
+                            widths.append(len(key)*cCharWidth)
                             break
                 break
             self.table.setColumnCount(len(headers))  
             self.table.setHorizontalHeaderLabels(QStringList(headers))
             for i in range(0,arobj.childCount()):
-                ctr = arobj.child(i)
+                arobj1 = arobj.child(i)
                 index = self.table.rowCount()
                 self.table.setRowCount(index+1)
-                for Row in range(0,len(ctr.arxml.descriptor.items())):
+                for Column in range(0,len(arobj1.arxml.descriptor.items())):
                     rePos = re.compile(r'PosGUI=(\d+)')
-                    for [key,value] in ctr.arxml.descriptor.items():
+                    for [key,value] in arobj1.arxml.descriptor.items():
                         posGui = int(rePos.search(value).groups()[0],10)
-                        if(posGui == Row):
-                            V = ArgWidget(key,ctr,self,False)
-                            self.table.setCellWidget(index,Row,V)            
+                        if(posGui == Column):
+                            if(len(arobj1.arxml.attrib(key))*cCharWidth>widths[Column]):
+                                widths[Column] = len(arobj1.arxml.attrib(key))*cCharWidth
+                            V = ArgWidget(key,arobj1,self,False)
+                            self.table.setCellWidget(index,Column,V) 
+            for Column in range(0,len(arobj1.arxml.descriptor.items())):
+                self.table.setColumnWidth(Column,widths[Column])
+                                   
             self.wConfig.setCentralWidget(self.table)
     def creActions(self):
-        #  create 4 action
-        for i in range(0,4):
+        #  create cActionNumber action
+        for i in range(0,cActionNumber):
             qAction=ArgAction(self.tr(''),self) 
             self.menuBar().addAction(qAction)
             qAction.setDisabled(True)
