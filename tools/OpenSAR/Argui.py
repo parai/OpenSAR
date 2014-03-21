@@ -212,7 +212,10 @@ class ArgObject(QTreeWidgetItem):
         super(QTreeWidgetItem,self).__init__(parent)
         self.root =  root
         self.arxml = arxml
-        self.setText(0,'%s %s'%(self.arxml.tag,self.arxml.attrib('Name')))
+        if(IsArxmlList(self.arxml) or self.arxml.tag=='General'):
+            self.setText(0,'%s'%(self.arxml.tag))
+        else:
+            self.setText(0,'%s'%(self.arxml.attrib('Name')))
         
         for arx in self.arxml.childArxmls2():
             self.addChildArobj(ArgObject(arx,self.root,self))
@@ -240,7 +243,7 @@ class ArgObject(QTreeWidgetItem):
         
     def onObjectNameChanged(self,text):
         assert(text == self.arxml.attrib('Name'))
-        self.setText(0,'%s %s'%(self.arxml.tag,self.arxml.attrib('Name')))
+        self.setText(0,'%s'%(self.arxml.attrib('Name')))
 
     def onItemSelectionChanged(self):
         Index = 0
@@ -396,8 +399,9 @@ class ArgModule(QMainWindow):
     
     def showConfig(self,arobj):
         assert(isinstance(arobj, ArgObject))
-        self.frame = QFrame()
         if(IsArxmlList(arobj.arxml)==False):
+            self.frame = QFrame()
+            self.frame.setMinimumWidth(self.width()*3/4)
             self.grid = QGridLayout()
             self.frame.setLayout(self.grid)
             for Column in range(0,len(arobj.arxml.descriptor.items())):
@@ -442,7 +446,7 @@ class ArgModule(QMainWindow):
                             self.table.setCellWidget(index,Column,V) 
             for Column in range(0,len(arobj1.arxml.descriptor.items())):
                 self.table.setColumnWidth(Column,widths[Column])
-                                   
+            self.table.setMinimumWidth(self.width()*3/4)                  
             self.wConfig.setCentralWidget(self.table)
     def creActions(self):
         #  create cActionNumber action
