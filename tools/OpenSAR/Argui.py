@@ -8,7 +8,7 @@ from Arxml import *
 
 __all__ = ['ArgModule','ArgAction']
 
-cCharWidth=12
+cCharWidth=14
 cActionNumber=8
 
 def Integer(cstr):
@@ -436,8 +436,8 @@ class ArgModule(QMainWindow):
                     for [key,value] in arobj1.arxml.descriptor.items():
                         posGui = int(rePos.search(value).groups()[0],10)
                         if(posGui == Column):
-                            if(len(arobj1.arxml.attrib(key))*cCharWidth>widths[Column]):
-                                widths[Column] = len(arobj1.arxml.attrib(key))*cCharWidth
+                            if((len(arobj1.arxml.attrib(key))+1)*cCharWidth>widths[Column]):
+                                widths[Column] = (len(arobj1.arxml.attrib(key))+1)*cCharWidth
                             V = ArgWidget(key,arobj1,self,False)
                             self.table.setCellWidget(index,Column,V) 
             for Column in range(0,len(arobj1.arxml.descriptor.items())):
