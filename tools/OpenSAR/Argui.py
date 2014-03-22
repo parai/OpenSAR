@@ -26,7 +26,9 @@ def IsEnabled(key,arobj):
     arxml=arobj.arxml
     reEnabled = re.compile(r'Enabled=\((.*)\)')
     reSpilt  = re.compile(r'\s+')
-    reSelf   = re.compile(r'Self\.([^\s]+)(==|!=)(\w+)')
+    reSelf   = re.compile(r'Self\.([^\s\(\)]+)(==|!=)(\w+)')
+    reUrl    = re.compile(r'([^\s]+)(==|!=)(\w+)')
+    reUrlSelf= re.compile(r'Self\.([^\s\(\)]+)')
     descriptor = arxml.getKeyDescriptor(key)
     Enabled = True
     if(reEnabled.search(descriptor)):
@@ -56,6 +58,42 @@ def IsEnabled(key,arobj):
                         isEnabled = True
                     else:
                         isEnabled = False
+                elif(reUrlSelf.search(cond)):
+                    keyL = reUrlSelf.search(cond).groups()[0] 
+                    tarobj = arobj
+                    for key1 in keyL.split('.'):
+                        if(key1=='Parent'):
+                            tarobj = tarobj.parent()
+                        else:
+                            break
+                    selfV = tarobj.arxml.attrib(key1)
+                    url=reUrl.search(cond).groups()[0]
+                    url=url.replace('(Self.%s)'%(keyL),selfV)
+                    operater = reUrl.search(cond).groups()[1]
+                    value = reUrl.search(cond).groups()[2]
+                    if(value=='None'):
+                        rV=arobj.root.getURL(url)
+                        if(operater=='==' and rV==None):
+                            isEnabled = True
+                        elif(operater=='!=' and rV!=None):
+                            isEnabled = True
+                        else:
+                            isEnabled = False
+                    else:
+                        urlL=url.split('.')
+                        key1=urlL[len(urlL)-1]
+                        back=len(key1)+1
+                        url1=url[:-back]
+                        rV=arobj.root.getURL(url1)
+                        if(rV != None):
+                            if(operater=='==' and rV.attrib[key1]==value):
+                                isEnabled = True
+                            elif(operater=='!=' and rV.attrib[key1]!=value):
+                                isEnabled = True
+                            else:
+                                isEnabled = False
+                        else:
+                            isEnabled = False    
                 else:
                     if(cond=='False'):
                         isEnabled = False
@@ -331,21 +369,25 @@ class ArgObjectTree(QTreeWidget):
             if(already == False):
                 self.addTopLevelItem(ArgObject(arxml,self.root))
         # expand it
-        for i in range(0,self.topLevelItemCount()):
-            arobj = self.topLevelItem(i)
-            arobj.setExpanded(True)
-            # expand it
-            for j in range(0,arobj.childCount()):
-                arobj2 = arobj.child(j)
-                arobj2.setExpanded(True)
+        try:
+            for i in range(0,self.topLevelItemCount()):
+                arobj = self.topLevelItem(i)
+                arobj.setExpanded(True)
                 # expand it
-                for k in range(0,arobj2.childCount()):
-                    arobj3 = arobj.child(k)
-                    arobj3.setExpanded(True)
+                for j in range(0,arobj.childCount()):
+                    arobj2 = arobj.child(j)
+                    arobj2.setExpanded(True)
                     # expand it
-                    for n in range(0,arobj3.childCount()):
-                        arobj4 = arobj.child(n)
-                        arobj4.setExpanded(True)
+                    for k in range(0,arobj2.childCount()):
+                        arobj3 = arobj.child(k)
+                        arobj3.setExpanded(True)
+                        # expand it
+                        for n in range(0,arobj3.childCount()):
+                            arobj4 = arobj.child(n)
+                            arobj4.setExpanded(True)
+        except:
+            #print traceback.format_exc()
+            pass
 
     def toArxml(self):
         arxml = self.arxml.toArxml()
@@ -444,8 +486,11 @@ class ArgModule(QMainWindow):
                                 widths[Column] = (len(arobj1.arxml.attrib(key))+1)*cCharWidth
                             V = ArgWidget(key,arobj1,self,False)
                             self.table.setCellWidget(index,Column,V) 
-            for Column in range(0,len(arobj1.arxml.descriptor.items())):
-                self.table.setColumnWidth(Column,widths[Column])
+            try:
+                for Column in range(0,len(arobj1.arxml.descriptor.items())):
+                    self.table.setColumnWidth(Column,widths[Column])
+            except:
+                pass
             self.table.setMinimumWidth(self.width()*3/4)                  
             self.wConfig.setCentralWidget(self.table)
     def creActions(self):

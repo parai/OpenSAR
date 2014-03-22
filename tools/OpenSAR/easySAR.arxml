@@ -405,7 +405,49 @@
 						/>
 				</SecurityList>
 			</ControlAccess>
+			<ReadAccess 
+				Name="Text PosGUI=0"
+				>
+				<SessionList Max="65535">
+					<Session 
+						Name="EnumRef=Dcm.SessionList PosGUI=0"
+						Comment="TextArea Default=* PosGUI=1"
+						/>
+				</SessionList>
+				<SecurityList Max="65535">
+					<Security 
+						Name="EnumRef=Dcm.SecurityList PosGUI=0"
+						Comment="TextArea Default=* PosGUI=1"
+						/>
+				</SecurityList>
+			</ReadAccess>
+			<WriteAccess 
+				Name="Text PosGUI=0"
+				>
+				<SessionList Max="65535">
+					<Session 
+						Name="EnumRef=Dcm.SessionList PosGUI=0"
+						Comment="TextArea Default=* PosGUI=1"
+						/>
+				</SessionList>
+				<SecurityList Max="65535">
+					<Security 
+						Name="EnumRef=Dcm.SecurityList PosGUI=0"
+						Comment="TextArea Default=* PosGUI=1"
+						/>
+				</SecurityList>
+			</WriteAccess>			
 		</DIDInfo>
 	</DIDInfoList>
+	<DIDList Max="65535">
+		<DID
+			Name="Text PosGUI=0"
+			Identifier="Integer Range=0~65535 PosGUI=1 \n Comment=(Identifier is 16 bits long for Normal DataIdentifier. \n For PeriodDataIdentifier,Identifier is 8bits long, the high byte is fixed to 0xF2. \n P.S: For DDD, request Identifier is either 0xF2** or 0xF3**, so normally, Identifier shouldn\'t be 0xF3**.)"
+			DIDInfoRef="EnumRef=Dcm.DIDInfoList PosGUI=2"
+			Size="Integer Range=0~65535 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ReadAccess!=None || Dcm.DIDInfoList.(Self.DIDInfoRef).WriteAccess!=None) PosGUI=3"
+			DIDRef="EnumRef=Dcm.DIDList PosGUI=4"
+			>
+		</DID>
+	</DIDList>
 </Dcm>
 </AUTOSAR>

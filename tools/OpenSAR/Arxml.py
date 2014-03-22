@@ -190,7 +190,7 @@ def ArxmlGetURL(ArxmlRoot,url):
 #                 break
         # normal loop search
         for arx in arxml:
-            if(IsArxmlList(arx)):
+            if(IsArxmlList(arx) or IsArxmlList(arxml)==False):
                 if(arx.tag == L):
                     arxml = arx
                     break
