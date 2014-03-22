@@ -173,7 +173,7 @@
 			RxPduRef="EnumRef=EcuC.PduList PosGUI=1"
 			TxFcPduRef="EnumRef=EcuC.PduList PosGUI=2"
 			Padding="Enum=(ON,OFF) Default=ON Comment=(If ON,Padding value is 0x55) PosGUI=3"
-			CommunicationType="Enum=(PHYSICAL,FUNCTION) Default=PHYSICAL Enabled=False \n Comment=(Only Physical is supported) PosGUI=4"
+			CommunicationType="Enum=(PHYSICAL,FUNCTION) Default=PHYSICAL Enabled=(False) \n Comment=(Only Physical is supported) PosGUI=4"
 			BS="Integer Range=0~255 Default=8 PosGUI=5 \n Comment=(MaxReceiveBlockSize:If BS=0, no restrict.) "
 			STmin="Integer Range=0~255 Default=1 Unit=ms PosGUI=6 Comment=(minimum transmission delay)"
 			MaxBusyTransmission="Integer Range=0~255 Comment=(? ~_~ ?) PosGUI=7"
@@ -190,7 +190,7 @@
 			TxPduRef="EnumRef=EcuC.PduList PosGUI=1"
 			RxFcPduRef="EnumRef=EcuC.PduList PosGUI=2"
 			Padding="Enum=(ON,OFF) Default=ON Comment=(If ON,Padding value is 0x55) PosGUI=3"
-			CommunicationType="Enum=(PHYSICAL,FUNCTION) Default=PHYSICAL Enabled=False \n Comment=(Only Physical is supported) PosGUI=4"
+			CommunicationType="Enum=(PHYSICAL,FUNCTION) Default=PHYSICAL Enabled=(False) \n Comment=(Only Physical is supported) PosGUI=4"
 			Nas="Integer Range=0~255 Default=1 PosGUI=5 \n Unit=ms \n Comment=(transmission time)"
 			Nbs="Integer Range=0~255 Default=100 PosGUI=6 \n Unit=ms \n Comment=(transmission time untill flow control)"
 			Ncs="Integer Range=0~255 Default=1 PosGUI=7 \n Unit=ms \n Comment=(transmission request delay)"
@@ -377,11 +377,11 @@
 			Name="Text PosGUI=0"
 			FixedLength="Boolean PosGUI=1 Default=True"
 			DynamicDefined="Boolean PosGUI=2 Default=False"
-			ScalingInfoSize="Integer Range=0~65535 PosGUI=3 Default=0"
+			ScalingInfoSize="Integer Range=0~65535 PosGUI=3 Default=0 \n Comment=(If Zero, disabled)"
 			Comment="TextArea Default=* PosGUI=4"
 			>
 			<ControlAccess
-				Name="Text PosGUI=0"
+				Name="Text PosGUI=0 Enabled=(False) Default=ControlAccess"
 				EnableFreezeCurrentState="Boolean PosGUI=1 Default=False"
 				FreezeCurrentStateControlRef="EnumRef=Dcm.DIDControlRecordList PosGUI=2 Enabled=(Self.EnableFreezeCurrentState==True)"
 				EnableResetToDefault="Boolean PosGUI=3 Default=False"
@@ -406,7 +406,7 @@
 				</SecurityList>
 			</ControlAccess>
 			<ReadAccess 
-				Name="Text PosGUI=0"
+				Name="Text PosGUI=0 Enabled=(False) Default=ReadAccess"
 				>
 				<SessionList Max="65535">
 					<Session 
@@ -422,7 +422,7 @@
 				</SecurityList>
 			</ReadAccess>
 			<WriteAccess 
-				Name="Text PosGUI=0"
+				Name="Text PosGUI=0 Enabled=(False) Default=WriteAccess"
 				>
 				<SessionList Max="65535">
 					<Session 
@@ -445,9 +445,170 @@
 			Identifier="Integer Range=0~65535 PosGUI=1 \n Comment=(Identifier is 16 bits long for Normal DataIdentifier. \n For PeriodDataIdentifier,Identifier is 8bits long, the high byte is fixed to 0xF2. \n P.S: For DDD, request Identifier is either 0xF2** or 0xF3**, so normally, Identifier shouldn\'t be 0xF3**.)"
 			DIDInfoRef="EnumRef=Dcm.DIDInfoList PosGUI=2"
 			Size="Integer Range=0~65535 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ReadAccess!=None || Dcm.DIDInfoList.(Self.DIDInfoRef).WriteAccess!=None) PosGUI=3"
-			DIDRef="EnumRef=Dcm.DIDList PosGUI=4"
+			GetScalingInfoCbk="Text Default=NULL PosGUI=4 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ScalingInfoSize!=0)"
+			WriteConditionCheckCbk="Text Default=NULL PosGUI=5 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).WriteAccess!=None)"
+			WriteCbk="Text Default=NULL PosGUI=6 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).WriteAccess!=None)"
+			ReadConditionCheckCbk="Text Default=NULL PosGUI=7 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ReadAccess!=None)"
+			ReadCbk="Text Default=NULL PosGUI=8 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ReadAccess!=None)"
+			ReadDataLengthCbk="Text Default=NULL PosGUI=9 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).FixedLength==False)"
+			FreezeCurrentStateCbk="Text Default=NULL PosGUI=10 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ControlAccess.EnableFreezeCurrentState==True)"
+			ResetToDefaultCbk="Text Default=NULL PosGUI=11 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ControlAccess.EnableResetToDefault==True)"
+			ReturnControlToEcu="Text Default=NULL PosGUI=12 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ControlAccess.EnableReturnControlToEcu==True)"
+			ShortTermAdjustment="Text Default=NULL PosGUI=13 Enabled=(Dcm.DIDInfoList.(Self.DIDInfoRef).ControlAccess.EnableShortTermAdjustment==True)"
+			Comment="TextArea Default=* PosGUI=14"
 			>
 		</DID>
 	</DIDList>
+	<RoutineInfoList Max="65535">
+		<RoutineInfo
+			Name="Text PosGUI=0"
+			Comment="TextArea Default=* PosGUI=1"
+			>
+			<SecurityList Max="65535">
+				<Security 
+					Name="EnumRef=Dcm.SecurityList PosGUI=0"
+					Comment="TextArea Default=* PosGUI=1"
+					/>
+			</SecurityList>
+			<Start
+				RecordSizeOfRequest="Integer Range=0~255 PosGUI=0"
+				RecordSizeOfResponse="Integer Range=0~255 PosGUI=1"
+				Comment="TextArea Default=* PosGUI=2"
+				/>
+			<Stop
+				RecordSizeOfRequest="Integer Range=0~255 PosGUI=0"
+				RecordSizeOfResponse="Integer Range=0~255 PosGUI=1"
+				Comment="TextArea Default=* PosGUI=2"
+				/>
+			<Result
+				RecordSizeOfResponse="Integer Range=0~255 PosGUI=1"
+				Comment="TextArea Default=* PosGUI=2"
+				/>
+		</RoutineInfo>
+	</RoutineInfoList>
+	<RoutineList Max="65535">
+		<Routine
+			Name="Text PosGUI=0"
+			Identifier="Integer Range=0~65535 PosGUI=1 \n Comment=(Identifier is 16 bits long for Normal DataIdentifier. \n For PeriodDataIdentifier,Identifier is 8bits long, the high byte is fixed to 0xF2. \n P.S: For DDD, request Identifier is either 0xF2** or 0xF3**, so normally, Identifier shouldn\'t be 0xF3**.)"
+			RoutineInfoRef="EnumRef=Dcm.RoutineInfoList PosGUI=2"
+			StartRoutineCbk="Text Default=NULL PosGUI=3 Enabled=(Dcm.RoutineInfoList.(Self.RoutineInfoRef).Start!=None)"
+			StopRoutineCbk="Text Default=NULL PosGUI=4 Enabled=(Dcm.RoutineInfoList.(Self.RoutineInfoRef).Stop!=None)"
+			RoutineResultCbk="Text Default=NULL PosGUI=5 Enabled=(Dcm.RoutineInfoList.(Self.RoutineInfoRef).Result!=None)"
+			Comment="TextArea Default=* PosGUI=6"
+			>
+		</Routine>
+	</RoutineList>
+	<MemoryList Max="65535">
+		<Memory
+			Name="Text PosGUI=0"
+			Identifier="Integer Range=0~255 PosGUI=1"
+			Comment="TextArea Default=* PosGUI=2"
+			>
+		<MemoryInfoList Max="65535">
+			<MemoryInfo 
+				Name="Text PosGUI=0"
+				AddressHigh="Integer PosGUI=1"
+				AddressLow="Integer PosGUI=2"
+				Attribute="Enum=(ReadOnly,WriteOnly,ReadWrite) Default=ReadOnly PosGUI=3"
+				Comment="TextArea Default=* PosGUI=4"
+				>
+				<SecurityList Max="65535">
+					<Security 
+						Name="EnumRef=Dcm.SecurityList PosGUI=0"
+						Comment="TextArea Default=* PosGUI=1"
+						/>
+				</SecurityList>
+			</MemoryInfo>
+		</MemoryInfoList>
+		</Memory>
+	</MemoryList>
+	<ProtocolList Max="65535">
+		<Protocol
+			Name="Text PosGUI=0"
+			ProtocolID="Enum=(UDS_ON_CAN,OBD_ON_CAN,UDS_ON_FLEAXRAY,ROE_ON_CAN,ROE_ON_FLEXRAY,PERIODICTRANS_ON_CAN,PERIODICTRANS_ON_FLEXRAY) PosGUI=1 Default=UDS_ON_CAN"
+			TransmissionType="Enum=(TYPE1,TYPE2) PosGUI=2 Default=TYPE1"
+			RxBufferRef="EnumRef=Dcm.BufferList PosGUI=3"
+			TxBufferRef="EnumRef=Dcm.BufferList PosGUI=4"
+			TimingLimitRef="EnumRef=Dcm.TimingList PosGUI=5"
+			ServiceTableRef="EnumRef=Dcm.ServiceTableList PosGUI=6"
+			Comment="TextArea Default=* PosGUI=7"
+			>
+		<ConnectionList Max="65535">
+			<Connection
+				Name="Text PosGUI=0"
+				Comment="TextArea Default=* PosGUI=1"
+				>
+				<RxChannelList Max="65535">
+					<RxChannel
+						Name="Text PosGUI=0"
+						AddressingType="Enum=(PHYSICAL,FUNCTIONAL) Default=PHYSICAL PosGUI=1"
+						PduRef="EnumRef=EcuC.PduList PosGUI=2"
+						Comment="TextArea Default=* PosGUI=3"
+						>
+					</RxChannel>
+				</RxChannelList>
+				<TxChannel
+					Name="Text PosGUI=0"
+					PduRef="EnumRef=EcuC.PduList PosGUI=1"
+					Comment="TextArea Default=* PosGUI=2"
+					>
+				</TxChannel>
+			</Connection>
+		</ConnectionList>
+		</Protocol>
+	</ProtocolList>
+	<RequestServiceList Max="65535">
+		<RequestService
+			Name="Text PosGUI=0"
+			StartProtocolCbk="Text Default=Diag_StartProtocolCbk PosGUI=1"
+			StopProtocolCbk="Text Default=Diag_StopProtocolCbk PosGUI=2"
+			ProtocolIndicationCbk="Text Default=Diag_ProtocolIndicationCbk PosGUI=3"
+			Comment="TextArea Default=* PosGUI=4"
+			>
+		</RequestService>
+	</RequestServiceList>
+	<ServiceTableList Max="65535">
+		<ServiceTable 
+			Name="Text PosGUI=0"
+			Comment="TextArea Default=* PosGUI=1"
+			>
+			<ServiceList Max="65535">
+				<Service
+					Name="Enum=(DIAGNOSTIC_SESSION_CONTROL,SECURITY_ACCESS,ECU_RESET,CLEAR_DIAGNOSTIC_INFORMATION,READ_DTC_INFORMATION,READ_DATA_BY_IDENTIFIER,READ_MEMORY_BY_ADDRESS,READ_SCALING_DATA_BY_IDENTIFIER,COMMUNICATION_CONTROL,READ_DATA_BY_PERIODIC_IDENTIFIER,DYNAMICALLY_DEFINE_DATA_IDENTIFIER,WRITE_DATA_BY_IDENTIFIER,INPUT_OUTPUT_CONTROL_BY_IDENTIFIER,ROUTINE_CONTROL,REQUEST_DOWNLOAD,REQUEST_UPLOAD,TRANSFER_DATA,REQUEST_TRANSFER_EXIT,WRITE_MEMORY_BY_ADDRESS,TESTER_PRESENT,CONTROL_DTC_SETTING,REQUEST_CURRENT_POWERTRAIN_DIAGNOSTIC_DATA,REQUEST_POWERTRAIN_FREEZE_FRAME_DATA,CLEAR_EMISSION_RELATED_DIAGNOSTIC_INFORMATION,REQUEST_EMISSION_RELATED_DIAGNOSTIC_TROUBLE_CODES,REQUEST_EMISSION_RELATED_DIAGNOSTIC_TROUBLE_CODES_DETECTED_DURING_CURRENT_OR_LAST_COMPLETED_DRIVING_CYCLE,REQUEST_VEHICLE_INFORMATION) \n Default=TESTER_PRESENT PosGUI=0"
+					SubFunctionSupported="Boolean Default=False PosGUI=1 \n Comment=(Note: 0x80, supress positive response if sub function is supported)"
+					Comment="TextArea Default=* PosGUI=2"
+					>
+					<SecurityList Max="65535">
+						<Security 
+						Name="EnumRef=Dcm.SecurityList PosGUI=0"
+						Comment="TextArea Default=* PosGUI=1"
+						/>
+					</SecurityList>
+					<SessionList Max="65535">
+						<Session 
+						Name="EnumRef=Dcm.SessionList PosGUI=0"
+						Comment="TextArea Default=* PosGUI=1"
+						/>
+					</SessionList>
+				</Service>
+			</ServiceList>
+		</ServiceTable>
+	</ServiceTableList>
+	<SessionControlList Max="65535">
+		<SessionControl
+			Name="Text PosGUI=0"
+			GetSessionChangePermissionCbk="Text Default=Diag_GetSesChgPer PosGUI=1"
+			Comment="TextArea Default=* PosGUI=2"
+			/>
+	</SessionControlList>
+	<TimingList Max="65535">
+		<Timing
+			Name="Text PosGUI=0"
+			P2ServerMaxTimeMs="Integer Default=5000 PosGUI=1"
+			P2ServerMinTimeMs="Integer Default=3000 PosGUI=2"
+			S3ServerTimeMs="Integer Default=10000 PosGUI=3"
+			Comment="TextArea Default=* PosGUI=4"
+			/>
+	</TimingList>
 </Dcm>
 </AUTOSAR>

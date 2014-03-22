@@ -250,7 +250,8 @@ class ArgObject(QTreeWidgetItem):
         super(QTreeWidgetItem,self).__init__(parent)
         self.root =  root
         self.arxml = arxml
-        if(IsArxmlList(self.arxml) or self.arxml.tag=='General'):
+        if(IsArxmlList(self.arxml) or self.arxml.tag=='General' or
+           IsArxmlList(self.parent().arxml)==False):
             self.setText(0,'%s'%(self.arxml.tag))
         else:
             self.setText(0,'%s'%(self.arxml.attrib('Name')))
@@ -272,7 +273,7 @@ class ArgObject(QTreeWidgetItem):
         assert(isinstance(arobj, ArgObject))
         self.addChild(arobj)
         self.onItemSelectionChanged() # trigger refresh
-        if(IsArxmlList(arobj.arxml)):
+        if(IsArxmlList(arobj.arxml) or IsArxmlList(arobj.parent().arxml)==False):
             pass
         else:
             if('TBD' == arobj.arxml.attrib('Name')):
@@ -281,7 +282,11 @@ class ArgObject(QTreeWidgetItem):
         
     def onObjectNameChanged(self,text):
         assert(text == self.arxml.attrib('Name'))
-        self.setText(0,'%s'%(self.arxml.attrib('Name')))
+        if(IsArxmlList(self.arxml) or self.arxml.tag=='General' or
+           IsArxmlList(self.parent().arxml)==False):
+            self.setText(0,'%s'%(self.arxml.tag))
+        else:
+            self.setText(0,'%s'%(self.arxml.attrib('Name')))
 
     def onItemSelectionChanged(self):
         Index = 0
