@@ -14,62 +14,135 @@
 
 #include "Com.h"
 #include "Com_Internal.h"
-//#include <stdlib.h>
 #if defined(USE_PDUR)
 #include "PduR.h"
 #endif 
 
 //Signal init values.
-const uint16 VehicleSpeed_InitValue = 11;
-const uint16 TachoSpeed_InitValue = 22;
-const uint8 Led1Sts_InitValue = 1;
-const uint8 Led2Sts_InitValue = 2;
-const uint8 Led3Sts_InitValue = 3;
-const uint16 Year_InitValue = 2013;
-const uint8 Month_InitValue = 12;
-const uint8 Day_InitValue = 15;
-const uint8 Hour_InitValue = 19;
-const uint8 Minute_InitValue = 49;
-const uint8 Second_InitValue = 0;
+static const uint16 year_InitValue = 2013;
+static const uint8 month_InitValue = 12;
+static const uint8 day_InitValue = 15;
+static const uint8 hour_InitValue = 19;
+static const uint8 minute_InitValue = 49;
+static const uint8 second_InitValue = 0;
+static const uint16 VehicleSpeed_InitValue = 0;
+static const uint16 TachoSpeed_InitValue = 0;
+static const uint8 Led1Sts_InitValue = 0;
+static const uint8 Led2Sts_InitValue = 0;
+static const uint8 Led3Sts_InitValue = 0;
 
-#if 0    
-#if(COM_N_GROUP_SIGNALS > 0)
-// This is an example as Not supported by easyCom
-const ComGroupSignal_type ComGroupSignal[] = {
+static uint8 ShadowBuffer[8];
+static uint8 ShadowBufferMask[8];
+
+static const ComGroupSignal_type ComGroupSignal[] = {
+    
+    {
+        .ComBitPosition= 0,
+        .ComBitSize= 16,
+        .ComHandleId= COM_ID_TxMsgTime,
+        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalInitValue= &year_InitValue,
+        .ComSignalType= UINT16,
+        .Com_Arc_EOL= FALSE
+    },
+    
+    {
+        .ComBitPosition= 16,
+        .ComBitSize= 8,
+        .ComHandleId= COM_ID_TxMsgTime,
+        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalInitValue= &month_InitValue,
+        .ComSignalType= UINT8,
+        .Com_Arc_EOL= FALSE
+    },
+    
     {
         .ComBitPosition= 24,
         .ComBitSize= 8,
-        .ComHandleId= COM PDUID,
-        .ComSignalEndianess= cfgCPU_ENDIAN,
-        .ComSignalInitValue= &name_InitValue,
-        .ComSignalType= UINT8_N,
+        .ComHandleId= COM_ID_TxMsgTime,
+        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalInitValue= &day_InitValue,
+        .ComSignalType= UINT8,
         .Com_Arc_EOL= FALSE
     },
+    
     {
-       .ComBitPosition= 32,
-       .ComBitSize= 8,
-       .ComHandleId= COM PDUID,
-       .ComSignalEndianess= cfgCPU_ENDIAN,
-       .ComSignalInitValue= &name_InitValue,
-       .ComSignalType= UINT8_N,
-       .Com_Arc_EOL= FALSE
+        .ComBitPosition= 32,
+        .ComBitSize= 8,
+        .ComHandleId= COM_ID_TxMsgTime,
+        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalInitValue= &hour_InitValue,
+        .ComSignalType= UINT8,
+        .Com_Arc_EOL= FALSE
     },
+    
+    {
+        .ComBitPosition= 40,
+        .ComBitSize= 8,
+        .ComHandleId= COM_ID_TxMsgTime,
+        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalInitValue= &minute_InitValue,
+        .ComSignalType= UINT8,
+        .Com_Arc_EOL= FALSE
+    },
+    
+    {
+        .ComBitPosition= 48,
+        .ComBitSize= 8,
+        .ComHandleId= COM_ID_TxMsgTime,
+        .ComSignalEndianess= COM_BIG_ENDIAN,
+        .ComSignalInitValue= &second_InitValue,
+        .ComSignalType= UINT8,
+        .Com_Arc_EOL= FALSE
+    },
+
 };
 //SignalGroup GroupSignals lists.
-const ComGroupSignal_type * const COM PDUID_SignalRefs[] = {
-    &ComGroupSignal[ 0 ],
-    &ComGroupSignal[ 1 ],
-    NULL
+static const ComGroupSignal_type * const SystemTime_GrpSignalRefs[] =
+{
+	&ComGroupSignal[ COM_GSID_year ],
+	&ComGroupSignal[ COM_GSID_month ],
+	&ComGroupSignal[ COM_GSID_day ],
+	&ComGroupSignal[ COM_GSID_hour ],
+	&ComGroupSignal[ COM_GSID_minute ],
+	&ComGroupSignal[ COM_GSID_second ],
+	NULL
 };
-#endif
-#endif //0
+
 
 //IPdu buffers and signal group buffers
-uint8 MSG0_RX_IPduBuffer[8];
-uint8 MSG1_TX_IPduBuffer[8];
+static uint8 TxMsgTime_IPduBuffer[8];
+static uint8 RxMsgAbsInfo_IPduBuffer[8];
 
 //Signal definitions
-const ComSignal_type ComSignal[] = {
+static const ComSignal_type ComSignal[] = {
+
+    {
+        #if defined(__GTK__)
+        .name = "SystemTime",
+        #endif
+        .ComBitPosition =  0,
+        .ComBitSize =  64,
+        .ComErrorNotification =  NULL,
+        .ComFirstTimeoutFactor =  0xDB,
+        .ComHandleId =  COM_SID_SystemTime,
+        .ComNotification =  NULL,
+        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
+        .ComSignalEndianess =  COM_BIG_ENDIAN, 
+        .ComSignalInitValue =  NULL,
+        .ComSignalType =  UINT8, // For group signal, this means nothing
+        .ComTimeoutFactor =  0xDB,
+        .ComTimeoutNotification =  NULL,
+        .ComTransferProperty =  PENDING,    
+        .ComUpdateBitPosition =  0xDB,         
+        .ComSignalArcUseUpdateBit =  FALSE, 
+        .Com_Arc_IsSignalGroup =  TRUE,
+        .ComGroupSignal =  SystemTime_GrpSignalRefs,
+        .Com_Arc_ShadowBuffer =  ShadowBuffer,
+        .Com_Arc_ShadowBuffer_Mask =  ShadowBufferMask,
+        .ComIPduHandleId = COM_ID_TxMsgTime,
+        .Com_Arc_EOL =  FALSE
+    },
 
     {
         #if defined(__GTK__)
@@ -78,23 +151,23 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  0,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
+        .ComFirstTimeoutFactor =  100,
         .ComHandleId =  COM_SID_VehicleSpeed,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
+        .ComSignalEndianess =  COM_BIG_ENDIAN, 
         .ComSignalInitValue =  &VehicleSpeed_InitValue,
         .ComSignalType =  UINT16,
-        .ComTimeoutFactor =  10,
+        .ComTimeoutFactor =  100,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .ComTransferProperty =  PENDING,    
+        .ComUpdateBitPosition =  0xDB,         
+        .ComSignalArcUseUpdateBit =  FALSE, 
         .Com_Arc_IsSignalGroup =  FALSE,
         .ComGroupSignal =  NULL,
         .Com_Arc_ShadowBuffer =  NULL,
         .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG0_RX,
+        .ComIPduHandleId = COM_ID_RxMsgAbsInfo,
         .Com_Arc_EOL =  FALSE
     },
 
@@ -105,23 +178,23 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  16,
         .ComBitSize =  16,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
+        .ComFirstTimeoutFactor =  100,
         .ComHandleId =  COM_SID_TachoSpeed,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
+        .ComSignalEndianess =  COM_BIG_ENDIAN, 
         .ComSignalInitValue =  &TachoSpeed_InitValue,
         .ComSignalType =  UINT16,
-        .ComTimeoutFactor =  10,
+        .ComTimeoutFactor =  100,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .ComTransferProperty =  PENDING,    
+        .ComUpdateBitPosition =  0xDB,         
+        .ComSignalArcUseUpdateBit =  FALSE, 
         .Com_Arc_IsSignalGroup =  FALSE,
         .ComGroupSignal =  NULL,
         .Com_Arc_ShadowBuffer =  NULL,
         .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG0_RX,
+        .ComIPduHandleId = COM_ID_RxMsgAbsInfo,
         .Com_Arc_EOL =  FALSE
     },
 
@@ -132,23 +205,23 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  32,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
+        .ComFirstTimeoutFactor =  500,
         .ComHandleId =  COM_SID_Led1Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
+        .ComSignalEndianess =  COM_BIG_ENDIAN, 
         .ComSignalInitValue =  &Led1Sts_InitValue,
         .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
+        .ComTimeoutFactor =  500,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .ComTransferProperty =  PENDING,    
+        .ComUpdateBitPosition =  0xDB,         
+        .ComSignalArcUseUpdateBit =  FALSE, 
         .Com_Arc_IsSignalGroup =  FALSE,
         .ComGroupSignal =  NULL,
         .Com_Arc_ShadowBuffer =  NULL,
         .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG0_RX,
+        .ComIPduHandleId = COM_ID_RxMsgAbsInfo,
         .Com_Arc_EOL =  FALSE
     },
 
@@ -159,23 +232,23 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  34,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
+        .ComFirstTimeoutFactor =  500,
         .ComHandleId =  COM_SID_Led2Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
+        .ComSignalEndianess =  COM_BIG_ENDIAN, 
         .ComSignalInitValue =  &Led2Sts_InitValue,
         .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
+        .ComTimeoutFactor =  500,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .ComTransferProperty =  PENDING,    
+        .ComUpdateBitPosition =  0xDB,         
+        .ComSignalArcUseUpdateBit =  FALSE, 
         .Com_Arc_IsSignalGroup =  FALSE,
         .ComGroupSignal =  NULL,
         .Com_Arc_ShadowBuffer =  NULL,
         .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG0_RX,
+        .ComIPduHandleId = COM_ID_RxMsgAbsInfo,
         .Com_Arc_EOL =  FALSE
     },
 
@@ -186,185 +259,23 @@ const ComSignal_type ComSignal[] = {
         .ComBitPosition =  36,
         .ComBitSize =  2,
         .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
+        .ComFirstTimeoutFactor =  500,
         .ComHandleId =  COM_SID_Led3Sts,
         .ComNotification =  NULL,
         .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
+        .ComSignalEndianess =  COM_BIG_ENDIAN, 
         .ComSignalInitValue =  &Led3Sts_InitValue,
         .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
+        .ComTimeoutFactor =  500,
         .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
+        .ComTransferProperty =  PENDING,    
+        .ComUpdateBitPosition =  0xDB,         
+        .ComSignalArcUseUpdateBit =  FALSE, 
         .Com_Arc_IsSignalGroup =  FALSE,
         .ComGroupSignal =  NULL,
         .Com_Arc_ShadowBuffer =  NULL,
         .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG0_RX,
-        .Com_Arc_EOL =  FALSE
-    },
-
-    {
-        #if defined(__GTK__)
-        .name = "Year",
-        #endif
-        .ComBitPosition =  0,
-        .ComBitSize =  16,
-        .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
-        .ComHandleId =  COM_SID_Year,
-        .ComNotification =  NULL,
-        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
-        .ComSignalInitValue =  &Year_InitValue,
-        .ComSignalType =  UINT16,
-        .ComTimeoutFactor =  10,
-        .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
-        .Com_Arc_IsSignalGroup =  FALSE,
-        .ComGroupSignal =  NULL,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG1_TX,
-        .Com_Arc_EOL =  FALSE
-    },
-
-    {
-        #if defined(__GTK__)
-        .name = "Month",
-        #endif
-        .ComBitPosition =  16,
-        .ComBitSize =  8,
-        .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
-        .ComHandleId =  COM_SID_Month,
-        .ComNotification =  NULL,
-        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
-        .ComSignalInitValue =  &Month_InitValue,
-        .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
-        .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
-        .Com_Arc_IsSignalGroup =  FALSE,
-        .ComGroupSignal =  NULL,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG1_TX,
-        .Com_Arc_EOL =  FALSE
-    },
-
-    {
-        #if defined(__GTK__)
-        .name = "Day",
-        #endif
-        .ComBitPosition =  24,
-        .ComBitSize =  8,
-        .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
-        .ComHandleId =  COM_SID_Day,
-        .ComNotification =  NULL,
-        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
-        .ComSignalInitValue =  &Day_InitValue,
-        .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
-        .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
-        .Com_Arc_IsSignalGroup =  FALSE,
-        .ComGroupSignal =  NULL,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG1_TX,
-        .Com_Arc_EOL =  FALSE
-    },
-
-    {
-        #if defined(__GTK__)
-        .name = "Hour",
-        #endif
-        .ComBitPosition =  32,
-        .ComBitSize =  8,
-        .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
-        .ComHandleId =  COM_SID_Hour,
-        .ComNotification =  NULL,
-        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
-        .ComSignalInitValue =  &Hour_InitValue,
-        .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
-        .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
-        .Com_Arc_IsSignalGroup =  FALSE,
-        .ComGroupSignal =  NULL,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG1_TX,
-        .Com_Arc_EOL =  FALSE
-    },
-
-    {
-        #if defined(__GTK__)
-        .name = "Minute",
-        #endif
-        .ComBitPosition =  40,
-        .ComBitSize =  8,
-        .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
-        .ComHandleId =  COM_SID_Minute,
-        .ComNotification =  NULL,
-        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
-        .ComSignalInitValue =  &Minute_InitValue,
-        .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
-        .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
-        .Com_Arc_IsSignalGroup =  FALSE,
-        .ComGroupSignal =  NULL,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG1_TX,
-        .Com_Arc_EOL =  FALSE
-    },
-
-    {
-        #if defined(__GTK__)
-        .name = "Second",
-        #endif
-        .ComBitPosition =  48,
-        .ComBitSize =  8,
-        .ComErrorNotification =  NULL,
-        .ComFirstTimeoutFactor =  10, // TODO: In Tick
-        .ComHandleId =  COM_SID_Second,
-        .ComNotification =  NULL,
-        .ComRxDataTimeoutAction =  COM_TIMEOUT_DATA_ACTION_NONE,
-        .ComSignalEndianess =  cfgCPU_ENDIAN, 
-        .ComSignalInitValue =  &Second_InitValue,
-        .ComSignalType =  UINT8,
-        .ComTimeoutFactor =  10,
-        .ComTimeoutNotification =  NULL,
-        .ComTransferProperty =  PENDING,    // TODO: only useful when TX
-        .ComUpdateBitPosition =  0,         // TODO
-        .ComSignalArcUseUpdateBit =  FALSE, // TODO
-        .Com_Arc_IsSignalGroup =  FALSE,
-        .ComGroupSignal =  NULL,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
-        .ComIPduHandleId = COM_MSG1_TX,
+        .ComIPduHandleId = COM_ID_RxMsgAbsInfo,
         .Com_Arc_EOL =  FALSE
     },
 
@@ -375,15 +286,22 @@ const ComSignal_type ComSignal[] = {
 
     
 //I-PDU group definitions
-const ComIPduGroup_type ComIPduGroup[] = {
+static const ComIPduGroup_type ComIPduGroup[] = {
+
     {
-        .ComIPduGroupHandleId =  COM_DEFAULT_IPDU_GROUP, // -> default
-        .Com_Arc_EOL =  TRUE
+        .ComIPduGroupHandleId =  COM_IPDU_GROUP_PduGroup1, 
+        .Com_Arc_EOL =  FALSE
     },
-};    
-    
+
+};
+
+
 //IPdu signal lists.
-const ComSignal_type * const MSG0_RX_SignalRefs[] = {
+static const ComSignal_type * const TxMsgTime_SignalRefs[] = {
+	&ComSignal[ COM_SID_SystemTime ],
+	NULL
+};
+static const ComSignal_type * const RxMsgAbsInfo_SignalRefs[] = {
 	&ComSignal[ COM_SID_VehicleSpeed ],
 	&ComSignal[ COM_SID_TachoSpeed ],
 	&ComSignal[ COM_SID_Led1Sts ],
@@ -391,72 +309,63 @@ const ComSignal_type * const MSG0_RX_SignalRefs[] = {
 	&ComSignal[ COM_SID_Led3Sts ],
 	NULL
 };
-const ComSignal_type * const MSG1_TX_SignalRefs[] = {
-	&ComSignal[ COM_SID_Year ],
-	&ComSignal[ COM_SID_Month ],
-	&ComSignal[ COM_SID_Day ],
-	&ComSignal[ COM_SID_Hour ],
-	&ComSignal[ COM_SID_Minute ],
-	&ComSignal[ COM_SID_Second ],
-	NULL
-};
     
     
 //I-PDU definitions
-const ComIPdu_type ComIPdu[] = {
+static const ComIPdu_type ComIPdu[] = {
 
     {
         #if defined(__GTK__)
-        .name = "MSG0",
+        .name = "MsgTime",
         #endif
         .ComIPduCallout =  NULL,
-        .ArcIPduOutgoingId =  PDUR_MSG0_RX,
-        .ComIPduSignalProcessing =  IMMEDIATE,
+        .ArcIPduOutgoingId =  PDUR_ID_TxMsgTime,
+        .ComIPduSignalProcessing =  DEFERRED,
         .ComIPduSize =  8,
-        .ComIPduDirection =  RECEIVE,
-        .ComIPduGroupRef =  COM_DEFAULT_IPDU_GROUP, // -> default
+        .ComIPduDirection =  SEND,
+        .ComIPduGroupRef =  COM_IPDU_GROUP_PduGroup1,
         .ComTxIPdu ={
             .ComTxIPduMinimumDelayFactor =  1,
-            .ComTxIPduUnusedAreasDefault =  0,
+            .ComTxIPduUnusedAreasDefault =  0x5A,
             .ComTxModeTrue ={
-                .ComTxModeMode =   DIRECT,
+                .ComTxModeMode =   PERIODIC,
                 .ComTxModeNumberOfRepetitions =   0,
                 .ComTxModeRepetitionPeriodFactor =   10,
                 .ComTxModeTimeOffsetFactor =   0,
-                .ComTxModeTimePeriodFactor =   10, // Period: in Tick of MainFunction
+                .ComTxModeTimePeriodFactor =   100,
             },
         },
-        .ComIPduDataPtr =  MSG0_RX_IPduBuffer,
-        .ComIPduDeferredDataPtr =  NULL, // TODO: if Processing is DEFERRED, config this buffer, please
-        .ComIPduSignalRef =  MSG0_RX_SignalRefs,
+        .ComIPduDataPtr =  TxMsgTime_IPduBuffer,
+        .ComIPduDeferredDataPtr =  NULL, // TODO: 
+        .ComIPduSignalRef =  TxMsgTime_SignalRefs,
         .ComIPduDynSignalRef =  NULL,
         .Com_Arc_EOL =  FALSE,
     },
 
     {
         #if defined(__GTK__)
-        .name = "MSG1",
-        #endif    
+        .name = "AbsInfo",
+        #endif
         .ComIPduCallout =  NULL,
-        .ArcIPduOutgoingId =  PDUR_MSG1_TX,
-        .ComIPduSignalProcessing =  IMMEDIATE,
+        .ArcIPduOutgoingId =  PDUR_ID_RxMsgAbsInfo,
+        .ComIPduSignalProcessing =  DEFERRED,
         .ComIPduSize =  8,
-        .ComIPduDirection =  SEND,
-        .ComIPduGroupRef =  COM_DEFAULT_IPDU_GROUP, // -> default
+        .ComIPduDirection =  RECEIVE,
+        .ComIPduGroupRef =  COM_IPDU_GROUP_PduGroup1,
         .ComTxIPdu ={
             .ComTxIPduMinimumDelayFactor =  1,
-            .ComTxIPduUnusedAreasDefault =  0,
+            .ComTxIPduUnusedAreasDefault =  0x5A,
             .ComTxModeTrue ={
-                .ComTxModeMode =   PERIODIC,    // TODO:
+                .ComTxModeMode =   PERIODIC,
                 .ComTxModeNumberOfRepetitions =   0,
                 .ComTxModeRepetitionPeriodFactor =   10,
                 .ComTxModeTimeOffsetFactor =   0,
-                .ComTxModeTimePeriodFactor =   10, // Period: in Tick of MainFunction
+                .ComTxModeTimePeriodFactor =   10,
             },
         },
-        .ComIPduDataPtr =  MSG1_TX_IPduBuffer,
-        .ComIPduDeferredDataPtr =  NULL,    // TODO: if Processing is DEFERRED, config this buffer, please
-        .ComIPduSignalRef =  MSG1_TX_SignalRefs,
+        .ComIPduDataPtr =  RxMsgAbsInfo_IPduBuffer,
+        .ComIPduDeferredDataPtr =  NULL, // TODO: 
+        .ComIPduSignalRef =  RxMsgAbsInfo_SignalRefs,
         .ComIPduDynSignalRef =  NULL,
         .Com_Arc_EOL =  FALSE,
     },
@@ -478,9 +387,9 @@ const Com_ConfigType ComConfiguration = {
 #endif
 };
 
-Com_Arc_IPdu_type Com_Arc_IPdu[] = {
+static Com_Arc_IPdu_type Com_Arc_IPdu[] = {
 
-    { // MSG0
+    { // TxMsgTime
         .Com_Arc_TxIPduTimers ={
             .ComTxIPduNumberOfRepetitionsLeft =  0,
             .ComTxModeRepetitionPeriodTimer =  0,
@@ -490,7 +399,7 @@ Com_Arc_IPdu_type Com_Arc_IPdu[] = {
         .Com_Arc_IpduStarted =  0
     },
 
-    { // MSG1
+    { // RxMsgAbsInfo
         .Com_Arc_TxIPduTimers ={
             .ComTxIPduNumberOfRepetitionsLeft =  0,
             .ComTxModeRepetitionPeriodTimer =  0,
@@ -502,6 +411,11 @@ Com_Arc_IPdu_type Com_Arc_IPdu[] = {
 };
 
 Com_Arc_Signal_type Com_Arc_Signal[] = {
+
+    { // Led3Sts
+        .Com_Arc_DeadlineCounter =  0,
+        .ComSignalUpdated =  0,
+    },
 
     { // VehicleSpeed
         .Com_Arc_DeadlineCounter =  0,
@@ -527,44 +441,12 @@ Com_Arc_Signal_type Com_Arc_Signal[] = {
         .Com_Arc_DeadlineCounter =  0,
         .ComSignalUpdated =  0,
     },
-
-    { // Year
-        .Com_Arc_DeadlineCounter =  0,
-        .ComSignalUpdated =  0,
-    },
-
-    { // Month
-        .Com_Arc_DeadlineCounter =  0,
-        .ComSignalUpdated =  0,
-    },
-
-    { // Day
-        .Com_Arc_DeadlineCounter =  0,
-        .ComSignalUpdated =  0,
-    },
-
-    { // Hour
-        .Com_Arc_DeadlineCounter =  0,
-        .ComSignalUpdated =  0,
-    },
-
-    { // Minute
-        .Com_Arc_DeadlineCounter =  0,
-        .ComSignalUpdated =  0,
-    },
-
-    { // Second
-        .Com_Arc_DeadlineCounter =  0,
-        .ComSignalUpdated =  0,
-    },
 };
 
-
-#if 0    
+   
 #if(COM_N_GROUP_SIGNALS > 0)
-Com_Arc_GroupSignal_type Com_Arc_GroupSignal[COM_N_GROUP_SIGNALS];
+static Com_Arc_GroupSignal_type Com_Arc_GroupSignal[COM_N_GROUP_SIGNALS];
 #endif
-#endif // 0
 
 const Com_Arc_Config_type Com_Arc_Config = {
     .ComIPdu =  Com_Arc_IPdu,

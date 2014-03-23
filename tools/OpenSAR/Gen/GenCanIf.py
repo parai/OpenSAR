@@ -236,6 +236,8 @@ const CanIf_DispatchConfigType CanIfDispatchConfig =
             for pdu in GLGet(hth,'PduList'):
                 if(GAGet(pdu,'TransmitNotifier')=='CanTp'):
                     IdPrfix='CANTP_ID'
+                elif(GAGet(pdu,'TransmitNotifier')=='CanNm'):
+                    IdPrfix='CANNM_ID'
                 else:
                     IdPrfix='PDUR_ID2'
                 if(GAGet(pdu,'TransmitNotifier')=='Nobody'):

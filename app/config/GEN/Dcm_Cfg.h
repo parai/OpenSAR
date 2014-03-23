@@ -45,9 +45,20 @@
 #define DCM_DIAG_P2P_REQ        0
 #define DCM_DIAG_P2A_REQ        1
 
+#define DCM_ID_RxDiagP2P DCM_DIAG_P2P_REQ
+#define DCM_ID_RxDiagP2A DCM_DIAG_P2A_REQ
+
+#define PDUR_DIAG_P2P_REQ PDUR_ID_RxDiagP2P
+#define PDUR_DIAG_P2A_REQ PDUR_ID_RxDiagP2A
+
 #define DCM_DIAG_P2P_ACK        0
 #define DCM_DIAG_P2A_ACK        1
 
+#define DCM_ID_TxDiagP2P DCM_DIAG_P2P_ACK
+#define DCM_ID_TxDiagP2A DCM_DIAG_P2A_ACK
+
+#define PDUR_DIAG_P2P_ACK PDUR_ID_TxDiagP2P
+#define PDUR_DIAG_P2A_ACK PDUR_ID_TxDiagP2A
 
 
 //do add/subtract by hand.please

@@ -57,6 +57,7 @@ const CanTp_NSduType CanTpNSduConfigList[] =
         .configData.CanTpRxNSdu.CanTpNSa =  &CanTpNSaConfig,
         .configData.CanTpRxNSdu.CanTpNTa =  &CanTpNTaConfig,
     },
+
     {
         .direction =  ISO15765_RECEIVE,
         .listItemType =  CANTP_NOT_LAST_ENTRY,
@@ -77,6 +78,7 @@ const CanTp_NSduType CanTpNSduConfigList[] =
         .configData.CanTpRxNSdu.CanTpNSa =  &CanTpNSaConfig,
         .configData.CanTpRxNSdu.CanTpNTa =  &CanTpNTaConfig,
     },
+
     {
         .direction =  IS015765_TRANSMIT,
         .listItemType =  CANTP_NOT_LAST_ENTRY,
@@ -94,6 +96,7 @@ const CanTp_NSduType CanTpNSduConfigList[] =
         .configData.CanTpTxNSdu.CanTpNSa =  &CanTpNSaConfig,
         .configData.CanTpTxNSdu.CanTpNTa =  &CanTpNTaConfig,
     },
+
     {
         .direction =  IS015765_TRANSMIT,
         .listItemType =  CANTP_NOT_LAST_ENTRY,
@@ -110,7 +113,8 @@ const CanTp_NSduType CanTpNSduConfigList[] =
         .configData.CanTpTxNSdu.CanTpTxTaType =  CANTP_PHYSICAL,
         .configData.CanTpTxNSdu.CanTpNSa =  &CanTpNSaConfig,
         .configData.CanTpTxNSdu.CanTpNTa =  &CanTpNTaConfig,
-    },};
+    },
+};
 
 const CanTp_RxIdType CanTp_RxIdList[] = 
 {
@@ -120,21 +124,25 @@ const CanTp_RxIdType CanTp_RxIdList[] =
         .CanTpNSduIndex =  CANTP_ID_RxDiagP2P,
         .CanTpReferringTxIndex =  CANTP_ID_TxDiagP2P,
     },
+
     {
         .CanTpAddressingMode =  CANTP_STANDARD,
         .CanTpNSduIndex =  CANTP_ID_RxDiagP2A,
         .CanTpReferringTxIndex =  CANTP_ID_TxDiagP2A,
     },
+
     {
         .CanTpAddressingMode =  CANTP_STANDARD,
         .CanTpNSduIndex =  CANTP_ID_TxDiagP2P,
         .CanTpReferringTxIndex =  CANTP_ID_RxDiagP2P,
     },
+
     {
         .CanTpAddressingMode =  CANTP_STANDARD,
         .CanTpNSduIndex =  CANTP_ID_TxDiagP2A,
         .CanTpReferringTxIndex =  CANTP_ID_RxDiagP2A,
-    },};
+    },
+};
 
 const CanTp_ConfigType CanTpConfig =
 {

@@ -67,16 +67,14 @@ const CanIf_ControllerConfigType CanIfControllerConfig[] = {
 
 };
 
-extern void CanIf_User_BusoffNotification(uint8);
-extern void CanIf_User_ErrorNotification(uint8,Can_Arc_ErrorType);
 
 // Function callbacks for higher layers
 const CanIf_DispatchConfigType CanIfDispatchConfig =
 {
-    .CanIfBusOffNotification = CanIf_User_BusoffNotification,
+    .CanIfBusOffNotification = NULL,
     .CanIfWakeUpNotification = NULL,        // Not used
     .CanIfWakeupValidNotification = NULL,   // Not used
-    .CanIfErrorNotificaton = CanIf_User_ErrorNotification,
+    .CanIfErrorNotificaton = NULL,
 };
 const CanIf_HthConfigType CanIfHthConfigData_CANIF_CHL_LS[]=
 {
@@ -177,6 +175,20 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
     },
 
     {
+        .CanIfTxPduId = CANNM_ID_LS_NM_TX,
+        .CanIfCanTxPduIdCanId = 0x401, 
+        .CanIfCanTxPduIdDlc = 8,
+        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadTxPduNotifyStatus = TRUE,
+#endif
+        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfUserTxConfirmation = CanNm_TxConfirmation,
+        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
+        .PduIdRef = NULL
+    },
+
+    {
         .CanIfTxPduId = PDUR_ID2_TxMsgTime,
         .CanIfCanTxPduIdCanId = 0x101, 
         .CanIfCanTxPduIdDlc = 8,
@@ -186,6 +198,20 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
 #endif
         .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
         .CanIfUserTxConfirmation = PduR_CanIfTxConfirmation,
+        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_HS[0],
+        .PduIdRef = NULL
+    },
+
+    {
+        .CanIfTxPduId = CANNM_ID_HS_NM_TX,
+        .CanIfCanTxPduIdCanId = 0x402, 
+        .CanIfCanTxPduIdDlc = 8,
+        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadTxPduNotifyStatus = TRUE,
+#endif
+        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfUserTxConfirmation = CanNm_TxConfirmation,
         .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_HS[0],
         .PduIdRef = NULL
     },

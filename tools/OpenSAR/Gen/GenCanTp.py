@@ -117,7 +117,7 @@ const CanTp_NTaType CanTpNTaConfig =
         .configData.CanTpRxNSdu.CanTpSTmin  =  %s,
         .configData.CanTpRxNSdu.CanTpNSa =  &CanTpNSaConfig,
         .configData.CanTpRxNSdu.CanTpNTa =  &CanTpNTaConfig,
-    },"""%(GAGet(obj,'RxPduRef'),
+    },\n"""%(GAGet(obj,'RxPduRef'),
            GAGet(obj,'TxFcPduRef'),
            GAGet(obj,'RxPduRef'),
            GAGet(obj,'BS'),
@@ -152,7 +152,7 @@ const CanTp_NTaType CanTpNTaConfig =
         .configData.CanTpTxNSdu.CanTpTxTaType =  CANTP_PHYSICAL,
         .configData.CanTpTxNSdu.CanTpNSa =  &CanTpNSaConfig,
         .configData.CanTpTxNSdu.CanTpNTa =  &CanTpNTaConfig,
-    },"""%(isLast,
+    },\n"""%(isLast,
            GAGet(obj,'RxFcPduRef'),
            GAGet(obj,'TxPduRef'),
            GAGet(obj,'TxPduRef'),
@@ -170,7 +170,7 @@ const CanTp_NTaType CanTpNTaConfig =
         .CanTpAddressingMode =  CANTP_STANDARD,
         .CanTpNSduIndex =  CANTP_ID_%s,
         .CanTpReferringTxIndex =  CANTP_ID_%s,
-    },"""%(GAGet(obj,'RxPduRef'),
+    },\n"""%(GAGet(obj,'RxPduRef'),
            GAGet(obj,'TxFcPduRef'))
     for obj in GLGet('TxSduList'):
         cstr += """
@@ -178,7 +178,7 @@ const CanTp_NTaType CanTpNTaConfig =
         .CanTpAddressingMode =  CANTP_STANDARD,
         .CanTpNSduIndex =  CANTP_ID_%s,
         .CanTpReferringTxIndex =  CANTP_ID_%s,
-    },"""%(GAGet(obj,'TxPduRef'),
+    },\n"""%(GAGet(obj,'TxPduRef'),
            GAGet(obj,'RxFcPduRef'),)
     cstr += '};\n\n'
     fp.write(cstr)

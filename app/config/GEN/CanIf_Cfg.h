@@ -40,7 +40,9 @@
 /*CanIf Transmit */
 #define CANIF_ID_TxDiagP2P                        0
 #define CANIF_ID_TxDiagP2A                        1
-#define CANIF_ID_TxMsgTime                        2
+#define CANIF_ID_LS_NM_TX                         2
+#define CANIF_ID_TxMsgTime                        3
+#define CANIF_ID_HS_NM_TX                         4
 
 // Identifiers for the elements in CanIfControllerConfig[]
 // This is the ConfigurationIndex in CanIf_InitController()

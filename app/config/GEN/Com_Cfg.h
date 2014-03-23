@@ -31,13 +31,12 @@
 #define COM_E_TOO_MANY_IPDU 106
 #define COM_E_TOO_MANY_SIGNAL 107
 #define COM_E_TOO_MANY_GROUPSIGNAL 108
-#define CPU_ENDIANESS cfgCPU_ENDIAN
 
 #define COM_DEV_ERROR_DETECT STD_OFF
 
-#define COM_N_IPDUS 2
-#define COM_N_SIGNALS 11
-#define COM_N_GROUP_SIGNALS 0 // TODO: not support by easyCom studio
+#define COM_N_IPDUS          2
+#define COM_N_SIGNALS        6
+#define COM_N_GROUP_SIGNALS  6
 
 #define ComConfigurationTimeBase 0
 #define ComVersionInfoApi

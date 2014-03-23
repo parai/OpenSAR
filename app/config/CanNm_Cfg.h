@@ -33,10 +33,10 @@
 #define CANNM_CHANNEL_LS 0
 #define CANNM_CHANNEL_HS 1
 
-#define CANNM_CHL_LS_TX 0
+#define CANNM_ID_LS_NM_TX 0
 #define CANNM_CHL_LS_RX 0
 
-#define CANNM_CHL_HS_TX 1
+#define CANNM_ID_HS_NM_TX 1
 #define CANNM_CHL_HS_RX 1
 
 extern const CanNm_ConfigType CanNm_Cfg;

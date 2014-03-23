@@ -56,10 +56,11 @@ void app_time_1000ms_runnable(void)
 			}
 		}
 	}
-	Com_SendSignal(COM_SID_Year,&(SystemTime.year));
-	Com_SendSignal(COM_SID_Month,&(SystemTime.month));
-	Com_SendSignal(COM_SID_Day,&(SystemTime.day));
-	Com_SendSignal(COM_SID_Hour,&(SystemTime.hour));
-	Com_SendSignal(COM_SID_Minute,&(SystemTime.minute));
-	Com_SendSignal(COM_SID_Second,&(SystemTime.second));
+//	Com_SendSignal(COM_SID_year,&(SystemTime.year));
+//	Com_SendSignal(COM_SID_month,&(SystemTime.month));
+//	Com_SendSignal(COM_SID_day,&(SystemTime.day));
+//	Com_SendSignal(COM_SID_hour,&(SystemTime.hour));
+//	Com_SendSignal(COM_SID_minute,&(SystemTime.minute));
+//	Com_SendSignal(COM_SID_second,&(SystemTime.second));
+	Com_SendSignal(COM_SID_SystemTime,&(SystemTime));
 }
