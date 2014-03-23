@@ -151,7 +151,7 @@ GEN_TASK_HEAD = {
         /* name                */"Task100ms",
         /* priority            */5,
         /* schedule            */FULL,
-        /* autostart           */True,
+        /* autostart           */False,
         /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
         /* activation lim.     */1,
@@ -161,9 +161,9 @@ GEN_TASK_HEAD = {
 	GEN_ETASK(
         /*                     */Task1000ms,
         /* name                */"Task1000ms",
-        /* priority            */10,
+        /* priority            */5,
         /* schedule            */FULL,
-        /* autostart           */True,
+        /* autostart           */False,
         /* resource_int_p   */NULL, // TODO
         /* resource mask    */0,
         /* event mask        */0x3f,
@@ -173,7 +173,7 @@ GEN_TASK_HEAD = {
 	GEN_BTASK(
         /*                     */SchM_Startup,
         /* name                */"SchM_Startup",
-        /* priority            */16,
+        /* priority            */15,
         /* schedule            */NON,
         /* autostart           */True,
         /* resource_int_p   */NULL,    // TODO
@@ -185,9 +185,9 @@ GEN_TASK_HEAD = {
 	GEN_BTASK(
         /*                     */SchM_BswService,
         /* name                */"SchM_BswService",
-        /* priority            */5,
+        /* priority            */10,
         /* schedule            */FULL,
-        /* autostart           */True,
+        /* autostart           */False,
         /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
         /* activation lim.     */1,
@@ -197,9 +197,9 @@ GEN_TASK_HEAD = {
 	GEN_BTASK(
         /*                     */Task10ms,
         /* name                */"Task10ms",
-        /* priority            */10,
+        /* priority            */5,
         /* schedule            */FULL,
-        /* autostart           */True,
+        /* autostart           */False,
         /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
         /* activation lim.     */1,
@@ -209,9 +209,9 @@ GEN_TASK_HEAD = {
 	GEN_BTASK(
         /*                     */Task20ms,
         /* name                */"Task20ms",
-        /* priority            */10,
+        /* priority            */5,
         /* schedule            */FULL,
-        /* autostart           */True,
+        /* autostart           */False,
         /* resource_int_p   */NULL,    // TODO
         /* resource mask    */0,
         /* activation lim.     */1,

@@ -56,9 +56,6 @@
 //#include "MemMap.h"
 #include <string.h>
 
-#if defined(USE_DEBUG_PRINTF)
-#undef USE_DEBUG_PRINTF
-#endif
 #include "debug.h"
 
 #if  ( CANTP_DEV_ERROR_DETECT == STD_ON ) /** @req CANTP006 *//** @req CANTP134 */

@@ -20,7 +20,6 @@ VPATH += $(ROOTDIR)/system/Gui
 inc-y += $(ROOTDIR)/app/inc
 inc-y += $(ROOTDIR)/diagnostic/Dcm
 
-def-y += cfgCPU_ENDIAN=COM_LITTLE_ENDIAN
 ldcmdfile-y=
 
 build-exe-y = $(ROOTDIR)/out/OpenSAR.exe

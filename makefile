@@ -44,6 +44,8 @@ export BDIR
 
 # show compile detailed information
 #VERBOSE = y
+SELECT_OS_CONSOLE=default
+USE_DEBUG_PRINTF=y
 
 # ==========================================================
 
