@@ -19,6 +19,8 @@
 #endif 
 
 //Signal init values.
+/* TODO */static uint8 SystemTime_ShadowBuffer[8];
+/* TODO */static const uint8 SystemTime_ShadowBufferMask[8]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};
 static const uint16 year_InitValue = 2013;
 static const uint8 month_InitValue = 12;
 static const uint8 day_InitValue = 15;
@@ -30,9 +32,6 @@ static const uint16 TachoSpeed_InitValue = 0;
 static const uint8 Led1Sts_InitValue = 0;
 static const uint8 Led2Sts_InitValue = 0;
 static const uint8 Led3Sts_InitValue = 0;
-
-static uint8 ShadowBuffer[8];
-static uint8 ShadowBufferMask[8];
 
 static const ComGroupSignal_type ComGroupSignal[] = {
     
@@ -113,6 +112,7 @@ static const ComGroupSignal_type * const SystemTime_GrpSignalRefs[] =
 //IPdu buffers and signal group buffers
 static uint8 TxMsgTime_IPduBuffer[8];
 static uint8 RxMsgAbsInfo_IPduBuffer[8];
+static uint8 RxMsgAbsInfo_IPduDefferredBuffer[8];
 
 //Signal definitions
 static const ComSignal_type ComSignal[] = {
@@ -138,8 +138,8 @@ static const ComSignal_type ComSignal[] = {
         .ComSignalArcUseUpdateBit =  FALSE, 
         .Com_Arc_IsSignalGroup =  TRUE,
         .ComGroupSignal =  SystemTime_GrpSignalRefs,
-        .Com_Arc_ShadowBuffer =  ShadowBuffer,
-        .Com_Arc_ShadowBuffer_Mask =  ShadowBufferMask,
+        .Com_Arc_ShadowBuffer =  SystemTime_ShadowBuffer,
+        .Com_Arc_ShadowBuffer_Mask =  SystemTime_ShadowBufferMask,
         .ComIPduHandleId = COM_ID_TxMsgTime,
         .Com_Arc_EOL =  FALSE
     },
@@ -336,7 +336,7 @@ static const ComIPdu_type ComIPdu[] = {
             },
         },
         .ComIPduDataPtr =  TxMsgTime_IPduBuffer,
-        .ComIPduDeferredDataPtr =  NULL, // TODO: 
+        .ComIPduDeferredDataPtr =  NULL,
         .ComIPduSignalRef =  TxMsgTime_SignalRefs,
         .ComIPduDynSignalRef =  NULL,
         .Com_Arc_EOL =  FALSE,
@@ -364,7 +364,7 @@ static const ComIPdu_type ComIPdu[] = {
             },
         },
         .ComIPduDataPtr =  RxMsgAbsInfo_IPduBuffer,
-        .ComIPduDeferredDataPtr =  NULL, // TODO: 
+        .ComIPduDeferredDataPtr =  RxMsgAbsInfo_IPduDefferredBuffer,
         .ComIPduSignalRef =  RxMsgAbsInfo_SignalRefs,
         .ComIPduDynSignalRef =  NULL,
         .Com_Arc_EOL =  FALSE,

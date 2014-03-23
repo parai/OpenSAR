@@ -167,6 +167,8 @@ def GenC():
                                                                  (Interger(GAGet(sig,'Size'))+7)/8,
                                                                  GAGet(sig,'InitialValue')))
         for gsig in GLGet(pdu,'GroupSignalList'):
+            fp.write('/* TODO */static uint8 %s_ShadowBuffer[8];\n'%(GAGet(gsig,'Name')))
+            fp.write('/* TODO */static const uint8 %s_ShadowBufferMask[8]={0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF};\n'%(GAGet(gsig,'Name')))
             for sig in GLGet(gsig,'SignalList'):
                 if(GAGet(sig,'Type')=='uint8' or GAGet(sig,'Type')=='uint16' or GAGet(sig,'Type')=='uint32'):
                     fp.write('static const %s %s_InitValue = %s;\n'%(GAGet(sig,'Type'),GAGet(sig,'Name'),
@@ -222,7 +224,9 @@ static const ComGroupSignal_type ComGroupSignal[] = {
 
 //IPdu buffers and signal group buffers\n"""%(cstr1,cstr2)) 
     for pdu in GLGet('IPduList'): 
-        fp.write('static uint8 %s_IPduBuffer[8];\n'%(GAGet(pdu,'PduRef')))  
+        fp.write('static uint8 %s_IPduBuffer[8];\n'%(GAGet(pdu,'PduRef'))) 
+        if(GAGet(pdu,'RxSignalProcessing')=='DEFERRED' and GAGet(pdu,'Direction')=='RECEIVE'):
+            fp.write('static uint8 %s_IPduDefferredBuffer[8];\n'%(GAGet(pdu,'PduRef'))) 
     cstr = ''
     id = 0
     for pdu in GLGet('IPduList'):
@@ -293,8 +297,8 @@ static const ComGroupSignal_type ComGroupSignal[] = {
         .ComSignalArcUseUpdateBit =  %s, 
         .Com_Arc_IsSignalGroup =  TRUE,
         .ComGroupSignal =  %s_GrpSignalRefs,
-        .Com_Arc_ShadowBuffer =  NULL,
-        .Com_Arc_ShadowBuffer_Mask =  NULL,
+        .Com_Arc_ShadowBuffer =  %s_ShadowBuffer,
+        .Com_Arc_ShadowBuffer_Mask =  %s_ShadowBufferMask,
         .ComIPduHandleId = COM_ID_%s,
         .Com_Arc_EOL =  FALSE
     },\n"""%(GAGet(sig,'Name'),
@@ -310,6 +314,8 @@ static const ComGroupSignal_type ComGroupSignal[] = {
              GAGet(sig,'TransferProperty'),
              GAGet(sig,'UpdateBitPosition').replace('TBD','0xDB'),
              GAGet(sig,'UpdateBitUsed').upper(),
+             GAGet(sig,'Name'),
+             GAGet(sig,'Name'),
              GAGet(sig,'Name'),
              GAGet(pdu,'PduRef'),
              )
@@ -353,6 +359,10 @@ static const ComIPduGroup_type ComIPduGroup[] = {
     """%(cstr))
     cstr = ''
     for pdu in GLGet('IPduList'):
+        if(GAGet(pdu,'RxSignalProcessing')=='DEFERRED' and GAGet(pdu,'Direction')=='RECEIVE'):
+            dbf='%s_IPduDefferredBuffer'%(GAGet(pdu,'PduRef'))
+        else:
+            dbf='NULL'
         cstr += """
     {
         #if defined(__GTK__)
@@ -376,7 +386,7 @@ static const ComIPduGroup_type ComIPduGroup[] = {
             },
         },
         .ComIPduDataPtr =  %s_IPduBuffer,
-        .ComIPduDeferredDataPtr =  NULL, // TODO: 
+        .ComIPduDeferredDataPtr =  %s,
         .ComIPduSignalRef =  %s_SignalRefs,
         .ComIPduDynSignalRef =  NULL,
         .Com_Arc_EOL =  FALSE,
@@ -394,6 +404,7 @@ static const ComIPduGroup_type ComIPduGroup[] = {
              GAGet(pdu,'TimeOffsetFactor'),
              GAGet(pdu,'TimePeriodFactor'),
              GAGet(pdu,'PduRef'),
+             dbf,
              GAGet(pdu,'PduRef'))
     
     fp.write("""
