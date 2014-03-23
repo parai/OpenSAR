@@ -36,129 +36,136 @@
 #if(PDUR_ZERO_COST_OPERATION == STD_OFF)
 const PduRDestPdu_type PduR_PduRDestination[] = {
 
-    { // DIAG_P2P_REQ
+    {
         .DataProvision =  PDUR_NO_PROVISION,
-        .DestPduId =  DCM_DIAG_P2P_REQ,
-        .TxBufferRef =  NULL,
-        .DestModule =  ARC_PDUR_DCM
-    },
-    { // DIAG_P2P_ACK
-        .DataProvision =  PDUR_NO_PROVISION,
-        .DestPduId =  CANTP_DIAG_P2P_ACK,
+        .DestPduId =  CANTP_ID_TxDiagP2P,
         .TxBufferRef =  NULL,
         .DestModule =  ARC_PDUR_CANTP
-    },
-    { // DIAG_P2A_REQ
-        .DataProvision =  PDUR_NO_PROVISION,
-        .DestPduId =  DCM_DIAG_P2A_REQ,
-        .TxBufferRef =  NULL,
-        .DestModule =  ARC_PDUR_DCM
-    },
-    { // DIAG_P2A_ACK
-        .DataProvision =  PDUR_NO_PROVISION,
-        .DestPduId =  CANTP_DIAG_P2A_ACK,
-        .TxBufferRef =  NULL,
-        .DestModule =  ARC_PDUR_CANTP
-    },
-    
-    { // MSG0
-        .DataProvision =  PDUR_NO_PROVISION,
-        .DestPduId =  COM_MSG0_RX,
-        .TxBufferRef =  NULL,
-        .DestModule =  ARC_PDUR_COM
     },
 
-    { // MSG1
+    {
         .DataProvision =  PDUR_NO_PROVISION,
-        .DestPduId =  CANIF_MSG1_TX,
+        .DestPduId =  DCM_ID_RxDiagP2P,
+        .TxBufferRef =  NULL,
+        .DestModule =  ARC_PDUR_DCM
+    },
+
+    {
+        .DataProvision =  PDUR_NO_PROVISION,
+        .DestPduId =  CANTP_ID_TxDiagP2A,
+        .TxBufferRef =  NULL,
+        .DestModule =  ARC_PDUR_CANTP
+    },
+
+    {
+        .DataProvision =  PDUR_NO_PROVISION,
+        .DestPduId =  DCM_ID_RxDiagP2A,
+        .TxBufferRef =  NULL,
+        .DestModule =  ARC_PDUR_DCM
+    },
+
+    {
+        .DataProvision =  PDUR_NO_PROVISION,
+        .DestPduId =  CANIF_ID_TxMsgTime,
         .TxBufferRef =  NULL,
         .DestModule =  ARC_PDUR_CANIF
     },
 
+    {
+        .DataProvision =  PDUR_NO_PROVISION,
+        .DestPduId =  COM_ID_RxMsgAbsInfo,
+        .TxBufferRef =  NULL,
+        .DestModule =  ARC_PDUR_COM
+    },
+
 };
-const PduRDestPdu_type * const DIAG_P2P_REQ_PduRDestinations[] = {
-    &PduR_PduRDestination[0],
-    NULL
+    const PduRDestPdu_type * const TxDiagP2P_PduRDestinations[] = 
+{
+	&PduR_PduRDestination[0],
+	NULL,
 };
-const PduRDestPdu_type * const DIAG_P2P_ACK_PduRDestinations[] = {
-    &PduR_PduRDestination[1],
-    NULL
+const PduRDestPdu_type * const RxDiagP2P_PduRDestinations[] = 
+{
+	&PduR_PduRDestination[1],
+	NULL,
 };
-const PduRDestPdu_type * const DIAG_P2A_REQ_PduRDestinations[] = {
-    &PduR_PduRDestination[2],
-    NULL
+const PduRDestPdu_type * const TxDiagP2A_PduRDestinations[] = 
+{
+	&PduR_PduRDestination[2],
+	NULL,
 };
-const PduRDestPdu_type * const DIAG_P2A_ACK_PduRDestinations[] = {
-    &PduR_PduRDestination[3],
-    NULL
+const PduRDestPdu_type * const RxDiagP2A_PduRDestinations[] = 
+{
+	&PduR_PduRDestination[3],
+	NULL,
 };
-    
-const PduRDestPdu_type * const PDUR_MSG0_RX_PduRDestinations[] = {
-    &PduR_PduRDestination[PDUR_MSG0_RX],
-    NULL
+const PduRDestPdu_type * const TxMsgTime_PduRDestinations[] = 
+{
+	&PduR_PduRDestination[4],
+	NULL,
+};
+const PduRDestPdu_type * const RxMsgAbsInfo_PduRDestinations[] = 
+{
+	&PduR_PduRDestination[5],
+	NULL,
 };
 
-const PduRDestPdu_type * const PDUR_MSG1_TX_PduRDestinations[] = {
-    &PduR_PduRDestination[PDUR_MSG1_TX],
-    NULL
-};
-
-const PduRRoutingPath_type DIAG_P2P_REQ_PduRRoutingPath = {
+const PduRRoutingPath_type TxDiagP2P_PduRRoutingPath = {
     .SduLength =  8,
-    .SrcPduId =  CANTP_DIAG_P2P_REQ,
-    .SrcModule =  ARC_PDUR_CANTP,
-    .PduRDestPdus =  DIAG_P2P_REQ_PduRDestinations
-};
-const PduRRoutingPath_type DIAG_P2P_ACK_PduRRoutingPath = {
-    .SduLength =  8,
-    .SrcPduId =  DCM_DIAG_P2P_ACK,
+    .SrcPduId =  DCM_ID_TxDiagP2P,
     .SrcModule =  ARC_PDUR_DCM,
-    .PduRDestPdus =  DIAG_P2P_ACK_PduRDestinations
+    .PduRDestPdus =  TxDiagP2P_PduRDestinations
 };
 
-const PduRRoutingPath_type DIAG_P2A_REQ_PduRRoutingPath = {
+const PduRRoutingPath_type RxDiagP2P_PduRRoutingPath = {
     .SduLength =  8,
-    .SrcPduId =  CANTP_DIAG_P2A_REQ,
+    .SrcPduId =  CANTP_ID_RxDiagP2P,
     .SrcModule =  ARC_PDUR_CANTP,
-    .PduRDestPdus =  DIAG_P2A_REQ_PduRDestinations
+    .PduRDestPdus =  RxDiagP2P_PduRDestinations
 };
-const PduRRoutingPath_type DIAG_P2A_ACK_PduRRoutingPath = {
+
+const PduRRoutingPath_type TxDiagP2A_PduRRoutingPath = {
     .SduLength =  8,
-    .SrcPduId =  DCM_DIAG_P2A_ACK,
+    .SrcPduId =  DCM_ID_TxDiagP2A,
     .SrcModule =  ARC_PDUR_DCM,
-    .PduRDestPdus =  DIAG_P2A_ACK_PduRDestinations
+    .PduRDestPdus =  TxDiagP2A_PduRDestinations
 };
 
-const PduRRoutingPath_type PDUR_MSG0_RX_PduRRoutingPath = {
+const PduRRoutingPath_type RxDiagP2A_PduRRoutingPath = {
     .SduLength =  8,
-    .SrcPduId =  CANIF_MSG0_RX,
-    .SrcModule =  ARC_PDUR_CANIF,
-    .PduRDestPdus =  PDUR_MSG0_RX_PduRDestinations
+    .SrcPduId =  CANTP_ID_RxDiagP2A,
+    .SrcModule =  ARC_PDUR_CANTP,
+    .PduRDestPdus =  RxDiagP2A_PduRDestinations
 };
 
-const PduRRoutingPath_type PDUR_MSG1_TX_PduRRoutingPath = {
+const PduRRoutingPath_type TxMsgTime_PduRRoutingPath = {
     .SduLength =  8,
-    .SrcPduId =  COM_MSG1_TX,
+    .SrcPduId =  COM_ID_TxMsgTime,
     .SrcModule =  ARC_PDUR_COM,
-    .PduRDestPdus =  PDUR_MSG1_TX_PduRDestinations
+    .PduRDestPdus =  TxMsgTime_PduRDestinations
 };
 
-
+const PduRRoutingPath_type RxMsgAbsInfo_PduRRoutingPath = {
+    .SduLength =  8,
+    .SrcPduId =  CANIF_ID_RxMsgAbsInfo,
+    .SrcModule =  ARC_PDUR_CANIF,
+    .PduRDestPdus =  RxMsgAbsInfo_PduRDestinations
+};
 
 const PduRRoutingPath_type * const PduRRoutingPaths[] = { 
-    &DIAG_P2P_REQ_PduRRoutingPath,
-    &DIAG_P2P_ACK_PduRRoutingPath,
-    &DIAG_P2A_REQ_PduRRoutingPath,
-    &DIAG_P2A_ACK_PduRRoutingPath,
-	&PDUR_MSG0_RX_PduRRoutingPath,
-	&PDUR_MSG1_TX_PduRRoutingPath,
+	&TxDiagP2P_PduRRoutingPath,
+	&RxDiagP2P_PduRRoutingPath,
+	&TxDiagP2A_PduRRoutingPath,
+	&RxDiagP2A_PduRRoutingPath,
+	&TxMsgTime_PduRRoutingPath,
+	&RxMsgAbsInfo_PduRRoutingPath,
 
     NULL
 };  
 
 const PduR_PBConfigType PduR_Config = {
     .PduRConfigurationId =  0,
-    .NRoutingPaths =  GenPduRId(2),        // helper
+    .NRoutingPaths =  6,       
     .RoutingPaths =  PduRRoutingPaths,
     .TpBuffers =  NULL,
     .TpRouteBuffers =  NULL

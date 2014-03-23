@@ -220,14 +220,14 @@
 		<Source 
 			Name="Text PosGUI=0"
 			Module="Enum=(Com,Dcm,CanTp,CanIf,LinTp,LinIf,J1939Tp) Default=Com PosGUI=1"
-			PudRef="EnumRef=EcuC.PduList PosGUI=2"
+			PduRef="EnumRef=EcuC.PduList PosGUI=2"
 			Comment="TextArea Default=* PosGUI=3"
 			>
 			<DestinationList Max="65535">
 				<Destination
-					Name="Text PosGUI=0"
+					Name="Text PosGUI=0 Comment=(If ZeroCost, then only 1 Destination is allowed)"
 					Module="Enum=(Com,Dcm,CanTp,CanIf,LinTp,LinIf,J1939Tp) Default=Com PosGUI=1"
-					PudRef="EnumRef=EcuC.PduList PosGUI=2"
+					PduRef="EnumRef=EcuC.PduList PosGUI=2"
 					Comment="TextArea Default=* PosGUI=3"
 					>
 				</Destination>
@@ -252,7 +252,7 @@
 	<IPduList Max="255">
 		<IPdu 
 			Name="Text PosGUI=0" 
-			PudRef="EnumRef=EcuC.PduList PosGUI=1"
+			PduRef="EnumRef=EcuC.PduList PosGUI=1"
 			Direction="Enum=(SEND,RECEIVE) Default=SEND PosGUI=2"
 			PduGroupRef="EnumRef=Com.PduGroupList PosGUI=3"
 			Callout="Text Default=NULL Comment=(Ask application permission) PosGUI=4" 

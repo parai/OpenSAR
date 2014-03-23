@@ -24,12 +24,18 @@ import os
 __all__=['ArGen']
 from Gen.GenOS import GenOS
 from Gen.GenCan import GenCan
+from Gen.GenCanIf import GenCanIf
+from Gen.GenPduR import GenPduR
 
 def ArGen(arxml,dir):
     if(arxml.tag == 'OS'):
         GenOS(arxml,dir)
     elif(arxml.tag == 'Can'):
         GenCan(arxml,dir)
+    elif(arxml.tag == 'CanIf'):
+        GenCanIf(arxml,dir)
+    elif(arxml.tag == 'PduR'):
+        GenPduR(arxml,dir)
         
 gDefault_GEN = '../../app/config/GEN'
 if __name__ == '__main__':

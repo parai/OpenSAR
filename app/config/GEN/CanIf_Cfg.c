@@ -35,84 +35,92 @@ extern const Can_ConfigSetType Can_ConfigSetData;
 
 // Contains the mapping from CanIf-specific Channels to Can Controllers
 const CanControllerIdType CanIf_Arc_ChannelToControllerMap[CANIF_CHANNEL_CNT] = {
-    CAN_CTRL_0,    //CANIF_CHL_LS
-    CAN_CTRL_1,    //CANIF_CHL_HS
+	CAN_CTRL_0                      ,/* CANIF_CHL_LS                     */
+	CAN_CTRL_2                      ,/* CANIF_CHL_HS                     */
+
 };
 
 const uint8 CanIf_Arc_ChannelDefaultConfIndex[CANIF_CHANNEL_CNT] = {
-    CANIF_CHL_LS_CONFIG_0,
-    CANIF_CHL_HS_CONFIG_0,
+	CANIF_CHL_LS_CONFIG_0,
+	CANIF_CHL_HS_CONFIG_0,
+
 };
 
 // Container that gets slamed into CanIf_InitController()
 // Inits ALL controllers
 // Multiplicity 1..*
 const CanIf_ControllerConfigType CanIfControllerConfig[] = {
-    // This is the ConfigurationIndex in CanIf_InitController()
+
     {
         .WakeupSupport = CANIF_WAKEUP_SUPPORT_NO_WAKEUP,
         .CanIfControllerIdRef = CANIF_CHL_LS,
         .CanIfDriverNameRef = "FLEXCAN",  // Not used
         .CanIfInitControllerRef = &Can_ControllerCfgData[INDEX_OF_CAN_CTRL_0],
     },
+
     {
         .WakeupSupport = CANIF_WAKEUP_SUPPORT_NO_WAKEUP,
         .CanIfControllerIdRef = CANIF_CHL_HS,
         .CanIfDriverNameRef = "FLEXCAN",  // Not used
-        .CanIfInitControllerRef = &Can_ControllerCfgData[INDEX_OF_CAN_CTRL_1],
+        .CanIfInitControllerRef = &Can_ControllerCfgData[INDEX_OF_CAN_CTRL_2],
     },
+
 };
+
+extern void CanIf_User_BusoffNotification(uint8);
+extern void CanIf_User_ErrorNotification(uint8,Can_Arc_ErrorType);
 
 // Function callbacks for higher layers
 const CanIf_DispatchConfigType CanIfDispatchConfig =
 {
-    .CanIfBusOffNotification = NULL,
+    .CanIfBusOffNotification = CanIf_User_BusoffNotification,
     .CanIfWakeUpNotification = NULL,        // Not used
     .CanIfWakeupValidNotification = NULL,   // Not used
-    .CanIfErrorNotificaton = NULL,
+    .CanIfErrorNotificaton = CanIf_User_ErrorNotification,
 };
-
-// Data for init configuration CanIfInitConfiguration
-
 const CanIf_HthConfigType CanIfHthConfigData_CANIF_CHL_LS[]=
 {
-    {
-        .CanIfHthType = CAN_ARC_HANDLE_TYPE_BASIC,
-        .CanIfCanControllerIdRef = CANIF_CHL_LS,
-        .CanIfHthIdSymRef = CAN_CTRL_0_HTH,
-        .CanIf_Arc_EOL = TRUE
-    },
-};
 
-const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_LS[]=
-{
     {
-        .CanIfHrhType = CAN_ARC_HANDLE_TYPE_BASIC,
-        .CanIfSoftwareFilterHrh = TRUE, // Must Be True
-        .CanIfCanControllerHrhIdRef = CANIF_CHL_LS,
-        .CanIfHrhIdSymRef = CAN_CTRL_0_HRH,
-        .CanIfHrhRangeConfig = NULL,
+        .CanIfHthType = CAN_ARC_HANDLE_TYPE_BASIC, // TODO
+        .CanIfCanControllerIdRef = CANIF_CHL_LS,
+        .CanIfHthIdSymRef = Can0Hth,
         .CanIf_Arc_EOL = TRUE
     },
 };
 
 const CanIf_HthConfigType CanIfHthConfigData_CANIF_CHL_HS[]=
 {
+
     {
-        .CanIfHthType = CAN_ARC_HANDLE_TYPE_BASIC,
+        .CanIfHthType = CAN_ARC_HANDLE_TYPE_BASIC, // TODO
         .CanIfCanControllerIdRef = CANIF_CHL_HS,
-        .CanIfHthIdSymRef = CAN_CTRL_1_HTH,
+        .CanIfHthIdSymRef = Can2Hth,
+        .CanIf_Arc_EOL = TRUE
+    },
+};
+
+const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_LS[]=
+{
+
+    {
+        .CanIfHrhType = CAN_ARC_HANDLE_TYPE_BASIC, // TODO: not used by CanIf now.
+        .CanIfSoftwareFilterHrh = TRUE, // Must Be True
+        .CanIfCanControllerHrhIdRef = CANIF_CHL_LS,
+        .CanIfHrhIdSymRef = Can0Hrh,
+        .CanIfHrhRangeConfig = NULL,
         .CanIf_Arc_EOL = TRUE
     },
 };
 
 const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_HS[]=
 {
+
     {
-        .CanIfHrhType = CAN_ARC_HANDLE_TYPE_BASIC,
-        .CanIfSoftwareFilterHrh = TRUE,    // Must Be True
+        .CanIfHrhType = CAN_ARC_HANDLE_TYPE_BASIC, // TODO: not used by CanIf now.
+        .CanIfSoftwareFilterHrh = TRUE, // Must Be True
         .CanIfCanControllerHrhIdRef = CANIF_CHL_HS,
-        .CanIfHrhIdSymRef = CAN_CTRL_1_HRH,
+        .CanIfHrhIdSymRef = Can2Hrh,
         .CanIfHrhRangeConfig = NULL,
         .CanIf_Arc_EOL = TRUE
     },
@@ -120,12 +128,14 @@ const CanIf_HrhConfigType CanIfHrhConfigData_CANIF_CHL_HS[]=
 
 const CanIf_InitHohConfigType CanIfHohConfigData[] =
 {
+
     {
         .CanConfigSet = &Can_ConfigSetData,
         .CanIfHrhConfig = CanIfHrhConfigData_CANIF_CHL_LS,
         .CanIfHthConfig = CanIfHthConfigData_CANIF_CHL_LS,
         .CanIf_Arc_EOL = FALSE
     },
+
     {
         .CanConfigSet = &Can_ConfigSetData,
         .CanIfHrhConfig = CanIfHrhConfigData_CANIF_CHL_HS,
@@ -133,74 +143,50 @@ const CanIf_InitHohConfigType CanIfHohConfigData[] =
         .CanIf_Arc_EOL = TRUE
     },
 };
-    
+
 
 const CanIf_TxPduConfigType CanIfTxPduConfigData[] = 
 {
-    {
-        .CanIfTxPduId = CANTP_DIAG_P2P_ACK,
-        .CanIfCanTxPduIdCanId = 0x732, // DiagP2P
-        .CanIfCanTxPduIdDlc = 8,
-        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadTxPduNotifyStatus = FALSE,
-#endif
-        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfUserTxConfirmation = CanTp_TxConfirmation,
-        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
-        .PduIdRef = NULL
-    },
-    {
-        .CanIfTxPduId = CANTP_DIAG_P2A_ACK,
-        .CanIfCanTxPduIdCanId = 0x742, // DiagP2A
-        .CanIfCanTxPduIdDlc = 8,
-        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadTxPduNotifyStatus = FALSE,
-#endif
-        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfUserTxConfirmation = CanTp_TxConfirmation,
-        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
-        .PduIdRef = NULL
-    },
-    {
-        .CanIfTxPduId = CANNM_CHL_LS_TX,
-        .CanIfCanTxPduIdCanId = 0x450, // Network
-        .CanIfCanTxPduIdDlc = 8,
-        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadTxPduNotifyStatus = FALSE,
-#endif
-        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfUserTxConfirmation = CanNm_TxConfirmation,
-        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
-        .PduIdRef = NULL
-    },  
-    {
-        .CanIfTxPduId = CANNM_CHL_HS_TX,
-        .CanIfCanTxPduIdCanId = 0x451, // Network
-        .CanIfCanTxPduIdDlc = 8,
-        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadTxPduNotifyStatus = FALSE,
-#endif
-        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfUserTxConfirmation = CanNm_TxConfirmation,
-        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_HS[0],
-        .PduIdRef = NULL
-    },       
     
     {
-        .CanIfTxPduId = PDUR_MSG1_TX,
-        .CanIfCanTxPduIdCanId = 0x1ef, 
+        .CanIfTxPduId = CANTP_ID_TxDiagP2P,
+        .CanIfCanTxPduIdCanId = 0x732, 
         .CanIfCanTxPduIdDlc = 8,
         .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
 #if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadTxPduNotifyStatus = FALSE,
+        .CanIfReadTxPduNotifyStatus = TRUE,
+#endif
+        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfUserTxConfirmation = CanTp_TxConfirmation,
+        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
+        .PduIdRef = NULL
+    },
+
+    {
+        .CanIfTxPduId = CANTP_ID_TxDiagP2A,
+        .CanIfCanTxPduIdCanId = 0x742, 
+        .CanIfCanTxPduIdDlc = 8,
+        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadTxPduNotifyStatus = TRUE,
+#endif
+        .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfUserTxConfirmation = CanTp_TxConfirmation,
+        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
+        .PduIdRef = NULL
+    },
+
+    {
+        .CanIfTxPduId = PDUR_ID2_TxMsgTime,
+        .CanIfCanTxPduIdCanId = 0x101, 
+        .CanIfCanTxPduIdDlc = 8,
+        .CanIfCanTxPduType = CANIF_PDU_TYPE_STATIC,
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadTxPduNotifyStatus = TRUE,
 #endif
         .CanIfTxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
         .CanIfUserTxConfirmation = PduR_CanIfTxConfirmation,
-        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_LS[0],
+        .CanIfCanTxPduHthRef = &CanIfHthConfigData_CANIF_CHL_HS[0],
         .PduIdRef = NULL
     },
 
@@ -209,82 +195,48 @@ const CanIf_TxPduConfigType CanIfTxPduConfigData[] =
 
 const CanIf_RxPduConfigType CanIfRxPduConfigData[] = 
 {
-    {
-        .CanIfCanRxPduId = CANTP_DIAG_P2P_REQ,
-        .CanIfCanRxPduCanId = 0x731, // DiagP2P
-        .CanIfCanRxPduDlc = 8,
-#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
-        .CanIfReadRxPduData = TRUE,
-#endif
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadRxPduNotifyStatus = TRUE,
-#endif
-        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfRxUserType = CANIF_USER_TYPE_CAN_TP,
-        .CanIfUserRxIndication = NULL,
-        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_LS[0],
-        .PduIdRef = NULL,
-        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
-        .CanIfCanRxPduCanIdMask = 0x7FF
-    },
-    {
-        .CanIfCanRxPduId = CANTP_DIAG_P2A_REQ,
-        .CanIfCanRxPduCanId = 0x741, // DiagP2A
-        .CanIfCanRxPduDlc = 8,
-#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
-        .CanIfReadRxPduData = TRUE,
-#endif
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadRxPduNotifyStatus = TRUE,
-#endif
-        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfRxUserType = CANIF_USER_TYPE_CAN_TP,
-        .CanIfUserRxIndication = NULL,
-        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_LS[0],
-        .PduIdRef = NULL,
-        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
-        .CanIfCanRxPduCanIdMask = 0x7FF
-    },
-    {
-        .CanIfCanRxPduId = CANNM_CHL_LS_RX,
-        .CanIfCanRxPduCanId = 0x4FF, // DiagP2A
-        .CanIfCanRxPduDlc = 8,
-#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
-        .CanIfReadRxPduData = TRUE,
-#endif
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadRxPduNotifyStatus = TRUE,
-#endif
-        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfRxUserType = CANIF_USER_TYPE_CAN_NM,
-        .CanIfUserRxIndication = NULL,
-        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_LS[0],
-        .PduIdRef = NULL,
-        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
-        .CanIfCanRxPduCanIdMask = 0x700  // Mask the range 0x400 ~ 0x4ff as Network Range
-    },
-    {
-        .CanIfCanRxPduId = CANNM_CHL_HS_RX,
-        .CanIfCanRxPduCanId = 0x4FF, // DiagP2A
-        .CanIfCanRxPduDlc = 8,
-#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
-        .CanIfReadRxPduData = TRUE,
-#endif
-#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
-        .CanIfReadRxPduNotifyStatus = TRUE,
-#endif
-        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
-        .CanIfRxUserType = CANIF_USER_TYPE_CAN_NM,
-        .CanIfUserRxIndication = NULL,
-        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_HS[0],
-        .PduIdRef = NULL,
-        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
-        .CanIfCanRxPduCanIdMask = 0x700  // Mask the range 0x400 ~ 0x4ff as Network Range
-    },         
     
     {
-        .CanIfCanRxPduId = PDUR_MSG0_RX,
-        .CanIfCanRxPduCanId = 0x1ab,
+        .CanIfCanRxPduId = CANTP_ID_RxDiagP2P,
+        .CanIfCanRxPduCanId = 0x731,
+        .CanIfCanRxPduDlc = 8,
+#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
+        .CanIfReadRxPduData = TRUE,
+#endif
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadRxPduNotifyStatus = TRUE,
+#endif
+        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfRxUserType = CANIF_USER_TYPE_CAN_TP,
+        .CanIfUserRxIndication = NULL,
+        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_LS[0],
+        .PduIdRef = NULL,
+        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
+        .CanIfCanRxPduCanIdMask = 0xFFF
+    },
+
+    {
+        .CanIfCanRxPduId = CANTP_ID_RxDiagP2A,
+        .CanIfCanRxPduCanId = 0x741,
+        .CanIfCanRxPduDlc = 8,
+#if ( CANIF_CANPDUID_READDATA_API == STD_ON )
+        .CanIfReadRxPduData = TRUE,
+#endif
+#if ( CANIF_READTXPDU_NOTIFY_STATUS_API == STD_ON )
+        .CanIfReadRxPduNotifyStatus = TRUE,
+#endif
+        .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
+        .CanIfRxUserType = CANIF_USER_TYPE_CAN_TP,
+        .CanIfUserRxIndication = NULL,
+        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_LS[0],
+        .PduIdRef = NULL,
+        .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
+        .CanIfCanRxPduCanIdMask = 0xFFF
+    },
+
+    {
+        .CanIfCanRxPduId = PDUR_ID_RxMsgAbsInfo,
+        .CanIfCanRxPduCanId = 0x102,
         .CanIfCanRxPduDlc = 8,
 #if ( CANIF_CANPDUID_READDATA_API == STD_ON )
         .CanIfReadRxPduData = TRUE,
@@ -295,10 +247,10 @@ const CanIf_RxPduConfigType CanIfRxPduConfigData[] =
         .CanIfRxPduIdCanIdType = CANIF_CAN_ID_TYPE_11,
         .CanIfRxUserType = CANIF_USER_TYPE_CAN_PDUR,
         .CanIfUserRxIndication = NULL,
-        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_LS[0],
+        .CanIfCanRxPduHrhRef = &CanIfHrhConfigData_CANIF_CHL_HS[0],
         .PduIdRef = NULL,
         .CanIfSoftwareFilterType = CANIF_SOFTFILTER_TYPE_MASK,
-        .CanIfCanRxPduCanIdMask = 0x7FF
+        .CanIfCanRxPduCanIdMask = 0xFFFF
     },
 
 };

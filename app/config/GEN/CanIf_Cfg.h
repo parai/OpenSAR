@@ -18,13 +18,9 @@
 #include "Can.h"
 
 #define CANIF_VERSION_INFO_API   STD_OFF
-
-#if defined(USE_DET)
-#define CANIF_DEV_ERROR_DETECT   STD_ON
-#else
 #define CANIF_DEV_ERROR_DETECT   STD_OFF
-#endif
-#define CANIF_DLC_CHECK          STD_OFF
+#define CANIF_DLC_CHECK          STD_ON
+
 #define CANIF_MULITPLE_DRIVER_SUPPORT       STD_OFF   // Not supported
 #define CANIF_READRXPDU_DATA_API             STD_OFF   // Not supported
 #define CANIF_READRXPDU_NOTIFY_STATUS_API     STD_OFF   // Not supported
@@ -36,36 +32,29 @@
 #define CANIF_ARC_RUNTIME_PDU_CONFIGURATION STD_OFF   // Not supported
 #define CANIF_CANPDUID_READDATA_API         STD_OFF   // Not supported
 #define CANIF_READRXPDU_NOTIF_STATUS_API    STD_OFF   // Not supported
-    
-/* Tx PduId For CanIF */
-#define CANIF_DIAG_P2P_ACK        0
-#define CANIF_DIAG_P2A_ACK        1
-#define CANIF_LS_NM_TX            2
-#define CANIF_HS_NM_TX            3
-/* Rx PduId For CanIF */
-#define CANIF_DIAG_P2P_REQ        0
-#define CANIF_DIAG_P2A_REQ        1
-#define CANIF_LS_NM_RX            2
-#define CANIF_HS_NM_RX            3
-    
-// ---- Gen Helper ----
-#define GenCanIfRxId(id) (id+4)
-#define GenCanIfTxId(id) (id+4)
 
-#define CANIF_MSG0_RX GenCanIfRxId(0)
-#define CANIF_MSG1_TX GenCanIfTxId(0)
+/*CanIf Receive */
+#define CANIF_ID_RxDiagP2P                        0
+#define CANIF_ID_RxDiagP2A                        1
+#define CANIF_ID_RxMsgAbsInfo                     2
+/*CanIf Transmit */
+#define CANIF_ID_TxDiagP2P                        0
+#define CANIF_ID_TxDiagP2A                        1
+#define CANIF_ID_TxMsgTime                        2
 
 // Identifiers for the elements in CanIfControllerConfig[]
 // This is the ConfigurationIndex in CanIf_InitController()
 typedef enum {
-    CANIF_CHL_LS_CONFIG_0,
-    CANIF_CHL_HS_CONFIG_0,
+	CANIF_CHL_LS_CONFIG_0,
+	CANIF_CHL_HS_CONFIG_0,
+
     CANIF_CHANNEL_CONFIGURATION_CNT
 }CanIf_Arc_ConfigurationIndexType;
 
 typedef enum {
-    CANIF_CHL_LS,  // Low  Speed CanIf Channel map to CAN_CTRL_0
-    CANIF_CHL_HS,  // High Speed CanIf Channel map to CAN_CTRL_1
+	CANIF_CHL_LS                    ,/* CAN_CTRL_0                       */
+	CANIF_CHL_HS                    ,/* CAN_CTRL_2                       */
+
     CANIF_CHANNEL_CNT
 }CanIf_Arc_ChannelIdType;
 
@@ -73,5 +62,5 @@ typedef enum {
 
 extern const CanIf_ConfigType CanIf_Config; 
 
-#endif   
-    
+#endif
+

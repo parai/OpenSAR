@@ -24,17 +24,30 @@
 #include "CanTp.h"
 
 extern const PduR_PBConfigType PduR_Config;
-//  PduR Polite Defines.
-#define PDUR_DIAG_P2P_REQ        0
-#define PDUR_DIAG_P2P_ACK        1
-#define PDUR_DIAG_P2A_REQ        2
-#define PDUR_DIAG_P2A_ACK        3
 
-// ---- Gen Helper ----
-#define GenPduRId(id) (id+4)
-#define PDUR_MSG0_RX GenPduRId(0)
-#define PDUR_MSG1_TX GenPduRId(1)
+#if(PDUR_ZERO_COST_OPERATION == STD_OFF)
+#define PDUR_ID_TxDiagP2P                        0
+#define PDUR_ID2_TxDiagP2P                       0
+#define PDUR_ID_RxDiagP2P                        1
+#define PDUR_ID_TxDiagP2A                        2
+#define PDUR_ID2_TxDiagP2A                       2
+#define PDUR_ID_RxDiagP2A                        3
+#define PDUR_ID_TxMsgTime                        4
+#define PDUR_ID2_TxMsgTime                       4
+#define PDUR_ID_RxMsgAbsInfo                     5
 
+#else
+#define PDUR_ID_TxDiagP2P                        CANTP_ID_TxDiagP2P
+#define PDUR_ID2_TxDiagP2P                       DCM_ID_TxDiagP2P
+#define PDUR_ID2_RxDiagP2P                       CANTP_ID_RxDiagP2P
+#define PDUR_ID_TxDiagP2A                        CANTP_ID_TxDiagP2A
+#define PDUR_ID2_TxDiagP2A                       DCM_ID_TxDiagP2A
+#define PDUR_ID2_RxDiagP2A                       CANTP_ID_RxDiagP2A
+#define PDUR_ID_TxMsgTime                        CANIF_ID_TxMsgTime
+#define PDUR_ID2_TxMsgTime                       COM_ID_TxMsgTime
+#define PDUR_ID2_RxMsgAbsInfo                    CANIF_ID_RxMsgAbsInfo
+
+#endif
 
 #endif /* PDUR_PB_CFG_H_H */
 

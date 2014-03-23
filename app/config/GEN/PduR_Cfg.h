@@ -32,18 +32,15 @@
 #define PDUR_J1939TP_SUPPORT STD_OFF
 #define PDUR_SOAD_SUPPORT STD_OFF  /* Not supported */
 
-#if defined(USE_DET)
-#define PDUR_DEV_ERROR_DETECT STD_ON
-#else
-#define PDUR_DEV_ERROR_DETECT STD_OFF
-#endif
-
-#define PDUR_VERSION_INFO_API        STD_ON
+#define PDUR_DEV_ERROR_DETECT         STD_OFF
+#define PDUR_VERSION_INFO_API         STD_OFF
 
 // Zero cost operation mode
 #define PDUR_ZERO_COST_OPERATION STD_OFF
 #define PDUR_SINGLE_IF CAN_IF
 #define PDUR_SINGLE_TP CAN_TP
+
+
 // Gateway operation
 #define PDUR_GATEWAY_OPERATION                STD_OFF
 #define PDUR_MEMORY_SIZE                    10 /* Not used */

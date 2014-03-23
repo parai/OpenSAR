@@ -64,9 +64,9 @@ def GenH():
     for ctrl in List:
         for hoh in GLGet(ctrl,'HohList'):
             if(GAGet(hoh,'ObjectType')=='RECEIVE'):
-                cstrR+='\t%s_%s,\n'%(GAGet(ctrl,'Name'),GAGet(hoh,'Name'))
+                cstrR+='\t%-32s,/* %-32s */ \n'%(GAGet(hoh,'Name'),GAGet(ctrl,'Name'))
             elif(GAGet(hoh,'ObjectType')=='TRANSMIT'):
-                cstrT+='\t%s_%s,\n'%(GAGet(ctrl,'Name'),GAGet(hoh,'Name'))
+                cstrT+='\t%-32s,/* %-32s */ \n'%(GAGet(hoh,'Name'),GAGet(ctrl,'Name'))
     fp.write("""
 
 typedef enum {
@@ -259,7 +259,7 @@ static const Can_FilterMaskType vCanFilterMask0=
         .CanHandleType=CAN_ARC_HANDLE_TYPE_%s,
         .CanIdType=CAN_ID_TYPE_%s,
         .CanIdValue=0x00,/*TODO*/
-        .CanObjectId=%s_%s,
+        .CanObjectId=%s,
         .CanObjectType=CAN_OBJECT_TYPE_%s,
         .CanFilterMaskRef=&vCanFilterMask0,/*TODO*/
         .Can_MbMask=0x00000000,/*TODO*/
@@ -267,7 +267,7 @@ static const Can_FilterMaskType vCanFilterMask0=
     },\n"""%(GAGet(hoh,'Name'),
              GAGet(hoh,'HohType'),
              GAGet(hoh,'IdentifierType'),
-             GAGet(ctrl,'Name'),GAGet(hoh,'Name'),
+             GAGet(hoh,'Name'),
              GAGet(hoh,'ObjectType')
              )
         cstr += """
