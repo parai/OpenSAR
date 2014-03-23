@@ -26,7 +26,7 @@ from Gen.GenOS import GenOS
 from Gen.GenCan import GenCan
 from Gen.GenCanIf import GenCanIf
 from Gen.GenPduR import GenPduR
-
+from Gen.GenCanTp import GenCanTp
 def ArGen(arxml,dir):
     if(arxml.tag == 'OS'):
         GenOS(arxml,dir)
@@ -36,6 +36,8 @@ def ArGen(arxml,dir):
         GenCanIf(arxml,dir)
     elif(arxml.tag == 'PduR'):
         GenPduR(arxml,dir)
+    elif(arxml.tag == 'CanTp'):
+        GenCanTp(arxml,dir)
         
 gDefault_GEN = '../../app/config/GEN'
 if __name__ == '__main__':
