@@ -147,8 +147,17 @@ class ArgInput(QLineEdit):
         self.IsNotInTableWidget=IsNotInTableWidget
         super(QLineEdit,self).__init__(self.arobj.arxml.attrib(self.key))
         self.setEnabled(IsEnabled(key, arobj))
+        if(IsEnabled(key, arobj)==False):
+            # if disabled set it to default
+            reDeafult = re.compile(r'\s+Default=([^\s=\(\)]+)')
+            var = 'TBD'
+            descriptor = self.arobj.arxml.getKeyDescriptor(self.key)
+            if(reDeafult.search(descriptor)):
+                var = reDeafult.search(descriptor).groups()[0]
+            self.arobj.arxml.attrib(self.key,var) 
         self.setToolTip(self.arobj.arxml.getKeyDescriptor(self.key).replace('\\n','\n'))
         self.connect(self, SIGNAL('textChanged(QString)'),self.onTextChanged)
+        
     def onTextChanged(self,text):
         reInput = re.compile(r'^(Text|Integer)')
         descriptor = self.arobj.arxml.getKeyDescriptor(self.key)
@@ -193,6 +202,13 @@ class ArgSelect(QComboBox):
         
     def initItems(self):
         if(self.isEnabled()==False):
+            # if disabled set it to default
+            reDeafult = re.compile(r'\s+Default=([^\s=\(\)]+)')
+            var = 'TBD'
+            descriptor = self.arobj.arxml.getKeyDescriptor(self.key)
+            if(reDeafult.search(descriptor)):
+                var = reDeafult.search(descriptor).groups()[0]
+            self.arobj.arxml.attrib(self.key,var)  
             return
         reSelect = re.compile(r'^(EnumRef|Enum|Boolean)')
         descriptor = self.arobj.arxml.getKeyDescriptor(self.key)

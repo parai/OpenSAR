@@ -71,7 +71,7 @@ class Arxml():
             arxml.attrib[key] = self.attrib(key)
         return arxml
     def __checkConfiguration(self):
-        reDeafult = re.compile(r'Default=([^\s]+)')
+        reDeafult = re.compile(r'\s+Default=([^\s=\(\)]+)')
         for [key,type] in self.descriptor.items():
             try:
                 var = self.configuration.attrib[key]
@@ -83,7 +83,7 @@ class Arxml():
                 self.configuration.attrib[key] = var
                 
     def __newConfiguration(self): # private
-        reDeafult = re.compile(r'Default=([^\s]+)')
+        reDeafult = re.compile(r'\s+Default=([^\s=\(\)]+)')
         self.configuration = ET.Element(self.descriptor.tag)
         for [key,type] in self.descriptor.items():
             var = 'TBD'

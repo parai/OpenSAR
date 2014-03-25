@@ -28,6 +28,7 @@ from Gen.GenCanIf import GenCanIf
 from Gen.GenPduR import GenPduR
 from Gen.GenCanTp import GenCanTp
 from Gen.GenCom import GenCom
+from Gen.GenDcm import GenDcm
 def ArGen(arxml,dir):
     if(arxml.tag == 'OS'):
         GenOS(arxml,dir)
@@ -41,6 +42,8 @@ def ArGen(arxml,dir):
         GenCanTp(arxml,dir)
     elif(arxml.tag == 'Com'):
         GenCom(arxml,dir)
+    elif(arxml.tag == 'Dcm'):
+        GenDcm(arxml,dir)
         
 gDefault_GEN = '../../app/config/GEN'
 if __name__ == '__main__':
