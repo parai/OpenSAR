@@ -526,7 +526,7 @@
 		<Protocol
 			Name="Text PosGUI=0"
 			ProtocolID="Enum=(UDS_ON_CAN,OBD_ON_CAN,UDS_ON_FLEAXRAY,ROE_ON_CAN,ROE_ON_FLEXRAY,PERIODICTRANS_ON_CAN,PERIODICTRANS_ON_FLEXRAY) PosGUI=1 Default=UDS_ON_CAN"
-			TransmissionType="Enum=(TYPE1,TYPE2) PosGUI=2 Default=TYPE1"
+			TransmissionType="Enum=(TYPE_1,TYPE_2) PosGUI=2 Default=TYPE1"
 			RxBufferRef="EnumRef=Dcm.BufferList PosGUI=3"
 			TxBufferRef="EnumRef=Dcm.BufferList PosGUI=4"
 			TimingLimitRef="EnumRef=Dcm.TimingList PosGUI=5"

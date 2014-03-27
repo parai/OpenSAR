@@ -39,12 +39,15 @@ extern const PduR_PBConfigType PduR_Config;
 #else
 #define PDUR_ID_TxDiagP2P                        CANTP_ID_TxDiagP2P
 #define PDUR_ID2_TxDiagP2P                       DCM_ID_TxDiagP2P
+#define PDUR_ID_RxDiagP2P                        DCM_ID_RxDiagP2P
 #define PDUR_ID2_RxDiagP2P                       CANTP_ID_RxDiagP2P
 #define PDUR_ID_TxDiagP2A                        CANTP_ID_TxDiagP2A
 #define PDUR_ID2_TxDiagP2A                       DCM_ID_TxDiagP2A
+#define PDUR_ID_RxDiagP2A                        DCM_ID_RxDiagP2A
 #define PDUR_ID2_RxDiagP2A                       CANTP_ID_RxDiagP2A
 #define PDUR_ID_TxMsgTime                        CANIF_ID_TxMsgTime
 #define PDUR_ID2_TxMsgTime                       COM_ID_TxMsgTime
+#define PDUR_ID_RxMsgAbsInfo                     COM_ID_RxMsgAbsInfo
 #define PDUR_ID2_RxMsgAbsInfo                    CANIF_ID_RxMsgAbsInfo
 
 #endif

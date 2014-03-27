@@ -32,7 +32,7 @@ def GenDcm(root,dir):
     GLInit(root)
     AlreadySecurityRef = []
     AlreadySessionRef = []
-    __dir = '%s/test'%(dir)
+    __dir = '%s'%(dir)
     GenH()
     GenC()
     print '>>> Gen Dcm DONE <<<'
@@ -78,7 +78,6 @@ def GenH():
             if(tx != None):
                 fp.write('#define DCM_ID_%s %s\n'%(GAGet(tx,'PduRef'),id));
                 id += 1;
-    fp.write('\n\n#define USE_PDUR\n\n')
     fp.write("""//do add/subtract by hand.please
 //#define USE_DEM
 #define DCM_USE_SERVICE_DIAGNOSTICSESSIONCONTROL
@@ -126,6 +125,26 @@ def GenC():
         fp.write('#define INDEX_OF_DIDINFO_%-32s %s\n'%(GAGet(didInfo,'Name'),Index))
         Index += 1
     fp.write('#define DCM_DID_LIST_EOL_INDEX %s\n\n'%(len(GLGet('DIDList'))));
+    Index = 0
+    for rtninfo in GLGet('RoutineInfoList'):
+        fp.write('#define INDEX_OF_RCINFO_%-32s %s\n'%(GAGet(rtninfo,'Name'),Index))
+        Index += 1
+    fp.write('\n')
+    Index = 0
+    for ll in GLGet('BufferList'):
+        fp.write('#define INDEX_OF_BUF_%-32s %s\n'%(GAGet(ll,'Name'),Index))
+        Index += 1
+    fp.write('\n')
+    Index = 0
+    for ll in GLGet('TimingList'):
+        fp.write('#define INDEX_OF_TL_%-32s %s\n'%(GAGet(ll,'Name'),Index))
+        Index += 1
+    fp.write('\n')    
+    Index = 0
+    for ll in GLGet('ServiceTableList'):
+        fp.write('#define INDEX_OF_ST_%-32s %s\n'%(GAGet(ll,'Name'),Index))
+        Index += 1
+    fp.write('\n')     
     for did in GLGet('DIDList'):
         if(GAGet(did,'ReadDataLengthCbk') != 'NULL'):
             fp.write('extern Std_ReturnType %s(uint16 *didLength);\n'%(GAGet(did,'ReadDataLengthCbk')))
@@ -223,16 +242,10 @@ def GenC():
     #----------------- Service Table ---------------
     for sertbl in GLGet('ServiceTableList'):
         for ser in GLGet(sertbl,'ServiceList'):
-            SecurityRef = []
-            for sec in GLGet(ser,'SecurityList'):
-                SecurityRef.append(GAGet(sec,'Name'))
-            GenSecurityRef(fp,SecurityRef)
+            GenSecurityRef(fp,GLGet(ser,'SecurityList'))
     for sertbl in GLGet('ServiceTableList'):
         for ser in GLGet(sertbl,'ServiceList'):
-            SessionRef = []
-            for ses in GLGet(ser,'SessionList'):
-                SessionRef.append(GAGet(ses,'Name'))
-            GenSessionRef(fp,SessionRef)
+            GenSessionRef(fp,GLGet(ser,'SessionList'))
     fp.write('\n')
     #------------------DID Control Record
     if(len(GLGet('DIDControlRecordList'))>0):
@@ -249,18 +262,12 @@ def GenC():
             ReadAccess = GLGet(didInfo,'ReadAccess')
             str1 = str2 = 'NULL';
             if(len(GLGet(ReadAccess,'SessionList'))):
-                SessionRef = []
-                for ses in GLGet(ReadAccess,'SessionList'):
-                    SessionRef.append(GAGet(ses,'Name'))
-                GenSessionRef(fp,SessionRef)
-                str1 = GetSessionRefName(SessionRef)
+                GenSessionRef(fp,GLGet(ReadAccess,'SessionList'))
+                str1 = GetSessionRefName(GLGet(ReadAccess,'SessionList'))
             #----
             if(len(GLGet(ReadAccess,'SecurityList'))):
-                SecurityRef = []
-                for sec in GLGet(ReadAccess,'SecurityList'):
-                    SecurityRef.append(GAGet(sec,'Name'))
-                GenSecurityRef(fp,SecurityRef)
-                str2 = GetSecurityRefName(SecurityRef)
+                GenSecurityRef(fp,GLGet(ReadAccess,'SecurityList'))
+                str2 = GetSecurityRefName(GLGet(ReadAccess,'SecurityList'))
             fp.write("""const Dcm_DspDidReadType %s_didRead = {
     .DspDidReadSessionRef =  %s,
     .DspDidReadSecurityLevelRef =  %s
@@ -270,18 +277,12 @@ def GenC():
             WriteAccess = GLGet(didInfo,'WriteAccess')
             str1 = str2 = 'NULL';
             if(len(GLGet(WriteAccess,'SessionList'))):
-                SessionRef = []
-                for ses in GLGet(WriteAccess,'SessionList'):
-                    SessionRef.append(GAGet(ses,'Name'))
-                GenSessionRef(fp,SessionRef)
-                str1 = GetSessionRefName(SessionRef)
+                GenSessionRef(fp,GLGet(WriteAccess,'SessionList'))
+                str1 = GetSessionRefName(GLGet(WriteAccess,'SessionList'))
             #----
             if(len(GLGet(WriteAccess,'SecurityList'))):
-                SecurityRef = []
-                for sec in GLGet(WriteAccess,'SecurityList'):
-                    SecurityRef.append(GAGet(sec,'Name'))
-                GenSecurityRef(fp,SecurityRef)
-                str2 = GetSecurityRefName(SecurityRef)
+                GenSecurityRef(fp,GLGet(WriteAccess,'SecurityList'))
+                str2 = GetSecurityRefName(GLGet(WriteAccess,'SecurityList'))
             fp.write("""const Dcm_DspDidWriteType %s_didWrite = {
     .DspDidWriteSessionRef =  %s,
     .DspDidWriteSecurityLevelRef =  %s
@@ -291,18 +292,12 @@ def GenC():
             ControlAccess = GLGet(didInfo,'ControlAccess')
             str1 = str2 = 'NULL';
             if(len(GLGet(ControlAccess,'SessionList'))):
-                SessionRef = []
-                for ses in GLGet(ControlAccess,'SessionList'):
-                    SessionRef.append(GAGet(ses,'Name'))
-                GenSessionRef(fp,SessionRef)
-                str1 = GetSessionRefName(SessionRef)
+                GenSessionRef(fp,GLGet(ControlAccess,'SessionList'))
+                str1 = GetSessionRefName(GLGet(ControlAccess,'SessionList'))
             #----
             if(len(GLGet(ControlAccess,'SecurityList'))):
-                SecurityRef = []
-                for sec in GLGet(ControlAccess,'SecurityList'):
-                    SecurityRef.append(GAGet(sec,'Name'))
-                GenSecurityRef(fp,SecurityRef)
-                str2 = GetSecurityRefName(SecurityRef)
+                GenSecurityRef(fp,GLGet(ControlAccess,'SecurityList'))
+                str2 = GetSecurityRefName(GLGet(ControlAccess,'SecurityList'))
             str3 = GAGet(ControlAccess,'FreezeCurrentStateControlRef');
             if(str3 != 'TBD'):
                 str3 = '&%s_SizeInfo'%(str3);
@@ -324,8 +319,8 @@ def GenC():
             else:
                 str6 = 'NULL'
             fp.write("""const Dcm_DspDidControlType %s_didControl = {
-    .DspDidReadSessionRef =  %s,
-    .DspDidReadSecurityLevelRef =  %s,
+    .DspDidControlSessionRef =  %s,
+    .DspDidControlSecurityLevelRef =  %s,
     .DspDidFreezeCurrentState =  %s,
     .DspDidResetToDefault =  %s,
     .DspDidReturnControlToEcu =  %s,
@@ -411,25 +406,13 @@ def GenC():
     .DspReqResRtnCtrlOptRecSize = %s
 };\n"""%(GAGet(rtninfo,'Name'), GAGet(rsl,'RecordSizeOfResponse')))
         # sss 
-        SessionRef = []
-        for ses in GLGet(rtninfo,'SessionList'):
-            SessionRef.append(GAGet(ses,'Name'))
-        GenSessionRef(fp,SessionRef)
-        SecurityRef = []
-        for sec in GLGet(rtninfo,'SecurityList'):
-            SecurityRef.append(GAGet(sec,'Name'))
-        GenSecurityRef(fp,SecurityRef)
+        GenSessionRef(fp,GLGet(rtninfo,'SessionList'))
+        GenSecurityRef(fp,GLGet(rtninfo,'SecurityList'))
         
     cstr = 'const Dcm_DspRoutineInfoType DspRoutineInfoList[] = {\n'
     for rtninfo in GLGet('RoutineInfoList'):
-        SessionRef = []
-        for ses in GLGet(rtninfo,'SessionList'):
-            SessionRef.append(GAGet(ses,'Name'))
-        str1= GetSessionRefName(SessionRef)
-        SecurityRef = []
-        for sec in GLGet(rtninfo,'SecurityList'):
-            SecurityRef.append(GAGet(sec,'Name'))
-        str2=GetSecurityRefName(SecurityRef)
+        str1= GetSessionRefName(GLGet(rtninfo,'SessionList'))
+        str2= GetSecurityRefName(GLGet(rtninfo,'SecurityList'))
         
         cstr += '\t{//%s\n'%(GAGet(rtninfo,'Name'));
         cstr += '\t\t.DspRoutineAuthorization={\n'
@@ -449,24 +432,18 @@ def GenC():
     cstr += '};\n\n'
     fp.write(cstr);
     cstr = 'const Dcm_DspRoutineType  DspRoutineList[] = {\n'
-    for rtn in self.cfg.routineList:
-        cstr += '\t{//%s\n'%(GAGet(rtninfo,'Name'));
-        cstr += '\t\t /* DspRoutineUsePort = */ %s,\n'%(TRUE(rtn.DspRoutineUsePort))
-        cstr += '\t\t /* DspRoutineIdentifier = */ %s,\n'%(rtn.DspRoutineIdentifier)
-        cstr += '\t\t /* DspRoutineInfoRef = */ &DspRoutineInfoList[%s],//%s\n'%(gcfindIndex(self.cfg.routineInfoList, rtn.DspRoutineInfoRef), rtn.DspRoutineInfoRef)
-        cstr += '\t\t /* DspStartRoutineFnc = */ %s,\n'%(rtn.DspStartRoutineFnc)
-        cstr += '\t\t /* DspStopRoutineFnc = */ %s,\n'%(rtn.DspStopRoutineFnc)
-        cstr += '\t\t /* DspRequestResultRoutineFnc = */ %s,\n'%(rtn.DspRequestResultRoutineFnc)
-        cstr += '\t\t /* Arc_EOL */ FALSE\n'
+    for rtn in GLGet('RoutineList'):
+        cstr += '\t{//%s\n'%(GAGet(rtn,'Name'));
+        cstr += '\t\t.DspRoutineUsePort = %s,\n'%('FALSE')
+        cstr += '\t\t.DspRoutineIdentifier = %s,\n'%(GAGet(rtn,'Identifier'))
+        cstr += '\t\t.DspRoutineInfoRef = &DspRoutineInfoList[INDEX_OF_RCINFO_%s],\n'%(GAGet(rtn,'RoutineInfoRef'))
+        cstr += '\t\t.DspStartRoutineFnc = %s,\n'%(GAGet(rtn,'StartRoutineCbk'))
+        cstr += '\t\t.DspStopRoutineFnc =  %s,\n'%(GAGet(rtn,'StopRoutineCbk'))
+        cstr += '\t\t.DspRequestResultRoutineFnc =  %s,\n'%(GAGet(rtn,'RoutineResultCbk'))
+        cstr += '\t\t.Arc_EOL = FALSE\n'
         cstr += '\t},\n'
-    cstr += '\t{//%s\n'%('Dummy For EOL');
-    cstr += '\t\t /* DspRoutineUsePort = */ %s,\n'%('FALSE')
-    cstr += '\t\t /* DspRoutineIdentifier = */ %s,\n'%('0xDB')
-    cstr += '\t\t /* DspRoutineInfoRef = */ %s,\n'%('NULL')
-    cstr += '\t\t /* DspStartRoutineFnc = */ %s,\n'%('NULL')
-    cstr += '\t\t /* DspStopRoutineFnc = */ %s,\n'%('NULL')
-    cstr += '\t\t /* DspRequestResultRoutineFnc = */ %s,\n'%('NULL')
-    cstr += '\t\t /* Arc_EOL */ TRUE\n'
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL = TRUE\n'
     cstr += '\t}\n'
     cstr += '};\n\n'
     fp.write(cstr);
@@ -476,61 +453,59 @@ def GenC():
 ************************************************************************/\n\n""")
     #---------------------- DSP
     fp.write("""const Dcm_DspType Dsp = {
-/* DspMaxDidToRead = */ 0x99,//????
-/* DspDid = */ DspDidList,
-/* DspDidInfo = */ DspDidInfoList,
-/* DspEcuReset = */ NULL,
-/* DspPid = */ NULL,
-/* DspReadDTC = */ NULL,
-/* DspRequestControl = */ NULL,
-/* DspRoutine = */ DspRoutineList,
-/* DspRoutineInfo = */ DspRoutineInfoList,
-/* DspSecurity = */ &DspSecurity,
-/* DspSession = */ &DspSession,
-/* DspTestResultByObdmid = */ NULL,
-/* DspVehInfo = */ NULL
+    .DspMaxDidToRead =  0xDB, // TODO
+    .DspDid =  DspDidList,
+    .DspDidInfo = DspDidInfoList,
+    .DspEcuReset = NULL,
+    .DspPid =  NULL,
+    .DspReadDTC =  NULL,
+    .DspRequestControl =  NULL,
+    .DspRoutine = DspRoutineList,
+    .DspRoutineInfo = DspRoutineInfoList,
+    .DspSecurity =  &DspSecurity,
+    .DspSession =  &DspSession,
+    .DspTestResultByObdmid =  NULL,
+    .DspVehInfo = NULL
 };\n\n""");
     # ------------------------------- DSD
     fp.write("""/************************************************************************
 *                                    DSD                                    *
 ************************************************************************/\n\n""");
-    for sertbl in self.cfg.serviceTableList:
-        cstr = 'const Dcm_DsdServiceType %s_serviceList[] = {\n'%(sertbl.name);
-        for ser in sertbl.serviceList:
-            cstr += '\t{ // %s\n'%(ser.name);
-            cstr += '\t\t /* DsdSidTabServiceId =*/ %s,\n'%(ser.serviceId);
-            cstr += '\t\t /* DsdSidTabSubfuncAvail =*/ %s,\n'%(TRUE(ser.subfuncAvail));
-            cstr += '\t\t /* DsdSidTabSecurityLevelRef =*/ %s_%s_SecurityList,\n'%(sertbl.name, ser.name);
-            cstr += '\t\t /* DsdSidTabSessionLevelRef =*/ %s_%s_SessionList,\n'%(sertbl.name, ser.name);
-            cstr += '\t\t /* Arc_EOL = */ FALSE\n'
+    for sertbl in GLGet('ServiceTableList'):
+        for ser in GLGet(sertbl,'ServiceList'):
+            GenSecurityRef(fp,GLGet(ser,'SecurityList'))
+            GenSessionRef(fp,GLGet(ser,'SessionList'))
+    for sertbl in GLGet('ServiceTableList'):
+        cstr = 'const Dcm_DsdServiceType %s_serviceList[] = {\n'%(GAGet(sertbl,'Name'));
+        for ser in GLGet(sertbl,'ServiceList'):
+            cstr += '\t{ \n'
+            cstr += '\t\t.DsdSidTabServiceId = SID_%s,\n'%(GAGet(ser,'Name'));
+            cstr += '\t\t.DsdSidTabSubfuncAvail = %s,\n'%(GAGet(ser,'SubFunctionSupported').upper());
+            cstr += '\t\t.DsdSidTabSecurityLevelRef = %s,\n'%(GetSecurityRefName(GLGet(ser,'SecurityList')));
+            cstr += '\t\t.DsdSidTabSessionLevelRef = %s,\n'%(GetSessionRefName(GLGet(ser,'SessionList')));
+            cstr += '\t\t.Arc_EOL = FALSE\n'
             cstr += '\t},\n';
-        cstr += '\t{ // %s\n'%('Dummy For EOL');
-        cstr += '\t\t /* DsdSidTabServiceId =*/ %s,\n'%('0xDB');
-        cstr += '\t\t /* DsdSidTabSubfuncAvail =*/ %s,\n'%('FALSE');
-        cstr += '\t\t /* DsdSidTabSecurityLevelRef =*/ NULL,\n';
-        cstr += '\t\t /* DsdSidTabSessionLevelRef =*/ NULL,\n';
-        cstr += '\t\t /* Arc_EOL = */ TRUE\n'
+        cstr += '\t{ \n'
+        cstr += '\t\t.Arc_EOL = TRUE\n'
         cstr += '\t}\n';
         cstr += '};\n\n'
         fp.write(cstr);
     cstr = 'const Dcm_DsdServiceTableType DsdServiceTable[] = {    \n';
     id = 0;
-    for sertbl in self.cfg.serviceTableList:
-        cstr += '\t{ // %s\n'%(sertbl.name);
-        cstr += '\t\t /* DsdSidTabId = */ %s,\n'%(id);
-        cstr += '\t\t /* DsdService = */ %s_serviceList,\n'%(sertbl.name);
-        cstr += '\t\t /* Arc_EOL = */ FALSE\n'
+    for sertbl in GLGet('ServiceTableList'):
+        cstr += '\t{ // %s\n'%(GAGet(sertbl,'Name'));
+        cstr += '\t\t.DsdSidTabId = %s,\n'%(id);
+        cstr += '\t\t.DsdService = %s_serviceList,\n'%(GAGet(sertbl,'Name'));
+        cstr += '\t\t.Arc_EOL = FALSE\n'
         cstr += '\t},\n'
         id += 1;
-    cstr += '\t{ // %s\n'%('Dummy For EOL ');
-    cstr += '\t\t /* DsdSidTabId = */ %s,\n'%('0xDB');
-    cstr += '\t\t /* DsdService = */ NULL,\n'
-    cstr += '\t\t /* Arc_EOL = */ TRUE\n'
+    cstr += '\t{ \n'
+    cstr += '\t\t.Arc_EOL = TRUE\n'
     cstr += '\t}\n'
     cstr += '};\n\n'
     fp.write(cstr);
     fp.write("""const Dcm_DsdType Dsd = {
-/* DsdServiceTable = */ DsdServiceTable
+    .DsdServiceTable = DsdServiceTable
 };\n\n""");
     #----------------------- DSL
     fp.write("""/************************************************************************
@@ -539,49 +514,46 @@ def GenC():
     #--------------- buffer 
     cstr = 'const Dcm_DslBufferType DcmDslBufferList[DCM_DSL_BUFFER_LIST_LENGTH] = {\n'
     id = 0;
-    for buf in self.cfg.bufferList:
+    for buf in GLGet('BufferList'):
         fp.write("""uint8 %s[%s];
 Dcm_DslBufferRuntimeType rxBufferParams_%s =
 {
-/* status = */ NOT_IN_USE
-};\n"""%(buf.name, buf.size, buf.name));
-        cstr += '\t{ // %s\n'%(buf.name);
-        cstr += '\t\t/* DslBufferID = */ %s,//? I am not that clear.\n'%(id);
-        cstr += '\t\t/* DslBufferSize = */ %s,/* ?Value is not configurable */\n'%(buf.size);
-        cstr += '\t\t{ /* pduInfo */\n';
-        cstr += '\t\t\t/* SduDataPtr = */ %s,\n'%(buf.name);
-        cstr += '\t\t\t/* SduLength = */ %s,\n'%(buf.size);
+    .status =  NOT_IN_USE
+};\n"""%(GAGet(buf,'Name'), GAGet(buf,'Size'), GAGet(buf,'Name')));
+        cstr += '\t{\n'
+        cstr += '\t\t.DslBufferID =  %s,// TODO\n'%(id);
+        cstr += '\t\t.DslBufferSize = %s,/* ?Value is not configurable */\n'%(GAGet(buf,'Size'));
+        cstr += '\t\t.pduInfo={\n';
+        cstr += '\t\t\t.SduDataPtr = %s,\n'%(GAGet(buf,'Name'));
+        cstr += '\t\t\t.SduLength =  %s,\n'%(GAGet(buf,'Size'));
         cstr += '\t\t},\n'
-        cstr += '\t\t/* externalBufferRuntimeData = */ &rxBufferParams_%s\n'%(buf.name);
+        cstr += '\t\t.externalBufferRuntimeData = &rxBufferParams_%s\n'%(GAGet(buf,'Name'));
         cstr += '\t},\n';
         id += 1;
     cstr += '};\n\n'
     fp.write(cstr);
     #----------------- Request Service
     cstr = 'const Dcm_DslCallbackDCMRequestServiceType DCMRequestServiceList[] = {\n'
-    for reqser in self.cfg.requestServiceList:
-        cstr += '\t{ // %s\n'%(reqser.name);
-        cstr += '\t\t/* StartProtocol = */ %s,\n'%(reqser.start);
-        cstr += '\t\t/* StopProtocol = */ %s,\n'%(reqser.stop);
-        cstr += '\t\t/* Arc_EOL = */ FALSE\n'
+    for reqser in GLGet('RequestServiceList'):
+        cstr += '\t{ // %s\n'%(GAGet(reqser,'Name'));
+        cstr += '\t\t.StartProtocol = %s,\n'%(GAGet(reqser,'StartProtocolCbk'));
+        cstr += '\t\t.StopProtocol = %s,\n'%(GAGet(reqser,'StopProtocolCbk'));
+        cstr += '\t\t.Arc_EOL = FALSE\n'
         cstr += '\t},\n'
-    cstr += '\t{ // %s\n'%('Dummy For EOL');
-    cstr += '\t\t/* StartProtocol = */ %s,\n'%('NULL');
-    cstr += '\t\t/* StopProtocol = */ %s,\n'%('NULL');
-    cstr += '\t\t/* Arc_EOL = */ TRUE\n'
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL = TRUE\n'
     cstr += '\t}\n'
     cstr += '};\n\n';
     fp.write(cstr);
     cstr = 'const Dcm_DslServiceRequestIndicationType DCMServiceRequestIndicationList[] = {\n'
-    for reqser in self.cfg.requestServiceList:
-        if(reqser.indication != 'NULL'):
-            cstr += '\t{ // %s\n'%(reqser.name);
-            cstr += '\t\t/* Indication = */ %s,\n'%(reqser.indication);
-            cstr += '\t\t/* Arc_EOL = */ FALSE\n'
+    for reqser in  GLGet('RequestServiceList'):
+        if(GAGet(reqser,'ProtocolIndicationCbk') != 'NULL'):
+            cstr += '\t{ // %s\n'%(GAGet(reqser,'Name'));
+            cstr += '\t\t.Indication =  %s,\n'%(GAGet(reqser,'ProtocolIndicationCbk'));
+            cstr += '\t\t.Arc_EOL =  FALSE\n'
             cstr += '\t},\n'
-    cstr += '\t{ // %s\n'%('Dummy For EOL');
-    cstr += '\t\t/* Indication = */ NULL,\n'
-    cstr += '\t\t/* Arc_EOL = */ TRUE\n'
+    cstr += '\t{ \n'
+    cstr += '\t\t.Arc_EOL = TRUE\n'
     cstr += '\t}\n'
     cstr += '};\n\n';
     fp.write(cstr);
@@ -591,44 +563,38 @@ Dcm_DslBufferRuntimeType rxBufferParams_%s =
     #So I assume the first configured one was main connection.
     cstr = 'const Dcm_DslProtocolRxType DcmDslProtocolRxList[] = {\n';
     cid = 0;
-    for pro in self.cfg.protocolList:
-        for con in pro.ConnectionList:
-            for rx in con.RxChannelList:
-                cstr += '\t{// %s->%s->%s\n'%(pro.name, con.name, rx.name);
-                cstr += '\t\t/* DslMainConnectionParent = */ &DslMainConnectionList[%s],\n'%(cid);
-                cstr += '\t\t/* DslProtocolAddrType = */ %s,\n'%(rx.RxAddrType);
-                cstr += '\t\t/* DcmDslProtocolRxPduId = */ PDUR_%s,\n'%(rx.RxPdu);
-                cstr += '\t\t/* DcmDslProtocolRxTesterSourceAddr_v4 = */ 0,        /* Value is not configurable */\n'
-                cstr += '\t\t/* DcmDslProtocolRxChannelId_v4 = */ 0,                /* Value is not configurable */\n'
-                cstr += '\t\t/* Arc_EOL = */ FALSE\n'
+    for pro in GLGet('ProtocolList'):
+        for con in GLGet(pro,'ConnectionList'):
+            for rx in GLGet(con,'RxChannelList'):
+                cstr += '\t{// %s->%s->%s\n'%(GAGet(pro,'Name'), GAGet(con,'Name'), GAGet(rx,'Name'));
+                cstr += '\t\t.DslMainConnectionParent =  &DslMainConnectionList[%s],\n'%(cid);
+                cstr += '\t\t.DslProtocolAddrType = DCM_PROTOCOL_%s_ADDR_TYPE,\n'%(GAGet(rx,'AddressingType'));
+                cstr += '\t\t.DcmDslProtocolRxPduId = PDUR_ID_%s,\n'%(GAGet(rx,'PduRef'));
+                cstr += '\t\t.DcmDslProtocolRxTesterSourceAddr_v4 =  0,       /* Value is not configurable */\n'
+                cstr += '\t\t.DcmDslProtocolRxChannelId_v4 =  0,                /* Value is not configurable */\n'
+                cstr += '\t\t.Arc_EOL =  FALSE\n'
                 cstr += '\t},\n'
         cid += 1;
-    cstr += '\t{// Dummy for EOL\n'
-    cstr += '\t\t/* DslMainConnectionParent = */ NULL,\n';
-    cstr += '\t\t/* DslProtocolAddrType = */ 0xDB,\n';
-    cstr += '\t\t/* DcmDslProtocolRxPduId = */ 0xDB,\n';
-    cstr += '\t\t/* DcmDslProtocolRxTesterSourceAddr_v4 = */ 0,        /* Value is not configurable */\n'
-    cstr += '\t\t/* DcmDslProtocolRxChannelId_v4 = */ 0,                /* Value is not configurable */\n'
-    cstr += '\t\t/* Arc_EOL = */ TRUE\n'
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL = TRUE\n'
     cstr += '\t}\n'
     cstr += '};\n\n'
     fp.write(cstr);
     #---tx
     cstr = 'const Dcm_DslProtocolTxType DcmDslProtocolTxList[] = {\n';
     cid = 0;
-    for pro in self.cfg.protocolList:
-        for con in pro.ConnectionList:
-            for tx in con.TxChannelList:
-                cstr += '\t{// %s->%s->%s\n'%(pro.name, con.name, tx.name);
-                cstr += '\t\t/* DslMainConnectionParent = */ &DslMainConnectionList[%s],\n'%(cid);
-                cstr += '\t\t/* DcmDslProtocolTxPduId = */ PDUR_%s,\n'%(tx.TxPdu);
-                cstr += '\t\t/* Arc_EOL = */ FALSE\n'
+    for pro in GLGet('ProtocolList'):
+        for con in GLGet(pro,'ConnectionList'):
+            tx = GLGet(con,'TxChannel')
+            if(tx != []):
+                cstr += '\t{// %s->%s->%s\n'%(GAGet(pro,'Name'), GAGet(con,'Name'), GAGet(tx,'Name'));
+                cstr += '\t\t.DslMainConnectionParent =  &DslMainConnectionList[%s],\n'%(cid);
+                cstr += '\t\t.DcmDslProtocolTxPduId =  PDUR_ID_%s,\n'%(GAGet(tx,'PduRef'));
+                cstr += '\t\t.Arc_EOL =  FALSE\n'
                 cstr += '\t},\n'
-        cid += 1;
-    cstr += '\t{// Dummy for EOL\n'
-    cstr += '\t\t/* DslMainConnectionParent = */ NULL,\n';
-    cstr += '\t\t/* DcmDslProtocolTxPduId = */ 0xDB,\n';
-    cstr += '\t\t/* Arc_EOL = */ TRUE\n'
+        cid += len(GLGet(con,'RxChannelList'));
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL = TRUE\n'
     cstr += '\t}\n'
     cstr += '};\n\n'
     fp.write(cstr);
@@ -636,15 +602,15 @@ Dcm_DslBufferRuntimeType rxBufferParams_%s =
     fp.write('extern const Dcm_DslConnectionType DslConnectionList[];\n\n');
     cstr = 'const Dcm_DslMainConnectionType DslMainConnectionList[] = {\n'
     cid = tid =0; # help me to record the index for connection and transmit Pdu ID
-    for pro in self.cfg.protocolList:
-        for con in pro.ConnectionList:
-            cstr += '\t{//%s->%s\n'%(pro.name, con.name);
-            cstr += '\t\t/* DslConnectionParent = */ &DslConnectionList[%s],\n'%(cid);
-            cstr += '\t\t/* DslPeriodicTransmissionConRef = */ NULL,        /* Value is not configurable */\n'
-            cstr += '\t\t/* DslROEConnectionRef = */ NULL,                /* Value is not configurable */\n'
-            cstr += '\t\t/* DslProtocolRx = */ NULL,                        /* Value is not configurable */\n'
-            cstr += '\t\t/* DslProtocolTx = */ &DcmDslProtocolTxList[%s],\n'%(tid);
-            tid += len(con.TxChannelList) #calculate the next tid
+    for pro in GLGet('ProtocolList'):
+        for con in GLGet(pro,'ConnectionList'):
+            cstr += '\t{//%s->%s\n'%(GAGet(pro,'Name'), GAGet(con,'Name'));
+            cstr += '\t\t.DslConnectionParent =  &DslConnectionList[%s],\n'%(cid);
+            cstr += '\t\t.DslPeriodicTransmissionConRef =  NULL,        /* Value is not configurable */\n'
+            cstr += '\t\t.DslROEConnectionRef =  NULL,                /* Value is not configurable */\n'
+            cstr += '\t\t.DslProtocolRx =  NULL,                        /* Value is not configurable */\n'
+            cstr += '\t\t.DslProtocolTx =  &DcmDslProtocolTxList[%s],\n'%(tid);
+            tid += 1 
             cstr += '\t},\n'
             cid += 1;
     cstr += '};\n\n'
@@ -653,87 +619,66 @@ Dcm_DslBufferRuntimeType rxBufferParams_%s =
     fp.write('extern const Dcm_DslProtocolRowType DslProtocolRowList[];\n\n')
     pid = cid =0;
     cstr = 'const Dcm_DslConnectionType DslConnectionList[] = {\n'
-    for pro in self.cfg.protocolList:
-        for con in pro.ConnectionList:
-            cstr += '\t{//%s->%s\n'%(pro.name, con.name);
-            cstr += '\t\t/* DslProtocolRow = */ &DslProtocolRowList[%s],\n'%(pid);
-            cstr += '\t\t/* DslMainConnection = */ &DslMainConnectionList[%s],\n'%(cid);
-            cstr += '\t\t/* DslPeriodicTransmission = */ NULL,    /* Value is not configurable */\n'
-            cstr += '\t\t/* DslResponseOnEvent = */ NULL,    /* Value is not configurable */\n'
-            cstr += '\t\t/* Arc_EOL = */ %s\n'%('FALSE');
+    for pro in GLGet('ProtocolList'):
+        for con in GLGet(pro,'ConnectionList'):
+            cstr += '\t{//%s->%s\n'%(GAGet(pro,'Name'), GAGet(con,'Name'));
+            cstr += '\t\t.DslProtocolRow = &DslProtocolRowList[%s],\n'%(pid);
+            cstr += '\t\t.DslMainConnection = &DslMainConnectionList[%s],\n'%(cid);
+            cstr += '\t\t.DslPeriodicTransmission = NULL,    /* Value is not configurable */\n'
+            cstr += '\t\t.DslResponseOnEvent = NULL,    /* Value is not configurable */\n'
+            cstr += '\t\t.Arc_EOL =  %s\n'%('FALSE');
             cstr += '\t},\n'
             cid += 1;
-        pid += 1;
-        
-    cstr += '\t{//Dummy For EOL\n'
-    cstr += '\t\t/* DslProtocolRow = */ NULL,\n'
-    cstr += '\t\t/* DslMainConnection = */ NULL,\n'
-    cstr += '\t\t/* DslPeriodicTransmission = */ NULL,\n'
-    cstr += '\t\t/* DslResponseOnEvent = */ NULL,\n'
-    cstr += '\t\t/* Arc_EOL = */ %s\n'%('TRUE');
+        pid += 1;  
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL = %s\n'%('TRUE');
     cstr += '\t}\n'
     cstr += '};\n\n'
     fp.write(cstr);
     # now I am really very confused by the relation between Connection and Main Connection, ???
     #----------------
     fp.write('extern const Dcm_DslProtocolTimingRowType ProtocolTimingList[];\n\n');
-    fp.write('Dcm_DslRunTimeProtocolParametersType dcmDslRuntimeVariables[%s];\n'%(len(self.cfg.protocolList)))
+    fp.write('Dcm_DslRunTimeProtocolParametersType dcmDslRuntimeVariables[%s];\n'%(len(GLGet('ProtocolList'))))
     cstr = 'const Dcm_DslProtocolRowType DslProtocolRowList[]= {\n'
     id = 0;
-    for pro in self.cfg.protocolList:
-        cstr += '\t{//%s\n'%(pro.name)
-        cstr += '\t\t/* DslProtocolID = */ %s,\n'%(pro.ProtocolId)
-        cstr += '\t\t/* DslProtocolIsParallelExecutab = */ FALSE, // not supported\n'
-        cstr += '\t\t/* DslProtocolPreemptTimeout = */ 0,    // not supported\n'
-        cstr += '\t\t/* DslProtocolPriority = */ 0,    // not supported\n'
-        cstr += '\t\t/* DslProtocolTransType = */ %s,\n'%(pro.TransType)
-        cstr += '\t\t/* DslProtocolRxBufferID = */ &DcmDslBufferList[%s],//%s\n'%(gcfindIndex(self.cfg.bufferList, pro.RxBufferID), pro.RxBufferID)
-        cstr += '\t\t/* DslProtocolTxBufferID = */ &DcmDslBufferList[%s],//%s\n'%(gcfindIndex(self.cfg.bufferList, pro.TxBufferID), pro.TxBufferID)
-        cstr += '\t\t/* DslProtocolSIDTable = */ &DsdServiceTable[%s],//%s\n'%(gcfindIndex(self.cfg.serviceTableList, pro.ServiceTable), pro.ServiceTable)
-        cstr += '\t\t/* DslProtocolTimeLimit = */ &ProtocolTimingList[%s],//%s\n'%(gcfindIndex(self.cfg.timingList, pro.TimeLimit), pro.TimeLimit)
-        cstr += '\t\t/* DslConnection = */ %s,\n'%('DslConnectionList')
-        cstr += '\t\t/* DslRunTimeProtocolParameters = */ &dcmDslRuntimeVariables[%s],\n'%(id)
-        cstr += '\t\t/* Arc_EOL = */ %s\n'%('FALSE')
+    for pro in GLGet('ProtocolList'):
+        cstr += '\t{//%s\n'%(GAGet(pro,'Name'))
+        cstr += '\t\t.DslProtocolID = DCM_%s,\n'%((GAGet(pro,'ProtocolID')))
+        cstr += '\t\t.DslProtocolIsParallelExecutab = FALSE, // not supported\n'
+        cstr += '\t\t.DslProtocolPreemptTimeout = 0,    // not supported\n'
+        cstr += '\t\t.DslProtocolPriority = 0,    // not supported\n'
+        cstr += '\t\t.DslProtocolTransType = DCM_PROTOCOL_TRANS_%s,\n'%((GAGet(pro,'TransmissionType')))
+        cstr += '\t\t.DslProtocolRxBufferID = &DcmDslBufferList[INDEX_OF_BUF_%s],\n'%(GAGet(pro,'RxBufferRef'))
+        cstr += '\t\t.DslProtocolTxBufferID = &DcmDslBufferList[INDEX_OF_BUF_%s],\n'%(GAGet(pro,'TxBufferRef'))
+        cstr += '\t\t.DslProtocolSIDTable = &DsdServiceTable[INDEX_OF_ST_%s],\n'%(GAGet(pro,'ServiceTableRef'))
+        cstr += '\t\t.DslProtocolTimeLimit = &ProtocolTimingList[INDEX_OF_TL_%s],\n'%(GAGet(pro,'TimingLimitRef'))
+        cstr += '\t\t.DslConnection =  %s,\n'%('DslConnectionList')
+        cstr += '\t\t.DslRunTimeProtocolParameters = &dcmDslRuntimeVariables[%s],\n'%(id)
+        cstr += '\t\t.Arc_EOL = %s\n'%('FALSE')
         cstr += '\t},\n'
         id += 1;
-    cstr += '\t{//%s\n'%('Dummy for EOL')
-    cstr += '\t\t/* DslProtocolID = */ %s,\n'%('0xDB')
-    cstr += '\t\t/* DslProtocolIsParallelExecutab = */ FALSE, // not supported\n'
-    cstr += '\t\t/* DslProtocolPreemptTimeout = */ 0,    // not supported\n'
-    cstr += '\t\t/* DslProtocolPriority = */ 0,    // not supported\n'
-    cstr += '\t\t/* DslProtocolTransType = */ %s,\n'%('0xDB')
-    cstr += '\t\t/* DslProtocolRxBufferID = */ NULL,\n'
-    cstr += '\t\t/* DslProtocolTxBufferID = */ NULL,\n'
-    cstr += '\t\t/* DslProtocolSIDTable = */ NULL,\n'
-    cstr += '\t\t/* DslProtocolTimeLimit = */ NULL,\n'
-    cstr += '\t\t/* DslConnection = */ %s,\n'%('NULL')
-    cstr += '\t\t/* DslRunTimeProtocolParameters = */ NULL,\n'
-    cstr += '\t\t/* Arc_EOL = */ %s\n'%('TRUE')
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL = %s\n'%('TRUE')
     cstr += '\t}\n'
     cstr += '};\n\n'
     fp.write(cstr);
     fp.write("""const Dcm_DslProtocolType DslProtocol = {
-/* DslProtocolRxGlobalList = */ DcmDslProtocolRxList,
-/* DslProtocolTxGlobalList = */ DcmDslProtocolTxList,
-/* DslProtocolRowList = */ DslProtocolRowList
+    .DslProtocolRxGlobalList = DcmDslProtocolRxList,
+    .DslProtocolTxGlobalList = DcmDslProtocolTxList,
+    .DslProtocolRowList = DslProtocolRowList
 };\n\n""")
     cstr = 'const Dcm_DslProtocolTimingRowType ProtocolTimingList[] = {\n'
-    for tim in self.cfg.timingList:
-        cstr += '\t{//%s\n'%(tim.name);
-        cstr += '\t\t/* TimStrP2ServerMax = */ %s,\n'%(tim.P2ServerMax)
-        cstr += '\t\t/* TimStrP2ServerMin = */ %s,\n'%(tim.P2ServerMin)
-        cstr += '\t\t/* TimStrP2StarServerMax = */ 0,        /* Value is not configurable */\n'
-        cstr += '\t\t/* TimStrP2StarServerMin = */ 0,        /* Value is not configurable */\n'
-        cstr += '\t\t/* TimStrS3Server = */ %s,\n'%(tim.S3Server)
-        cstr += '\t\t/* Arc_EOL = */ FALSE\n'
+    for tim in GLGet('TimingList'):
+        cstr += '\t{//%s\n'%(GAGet(tim,'Name'));
+        cstr += '\t\t.TimStrP2ServerMax = %s,\n'%(GAGet(tim,'P2ServerMaxTimeMs'))
+        cstr += '\t\t.TimStrP2ServerMin = %s,\n'%(GAGet(tim,'P2ServerMinTimeMs'))
+        cstr += '\t\t.TimStrP2StarServerMax = 0,        /* Value is not configurable */\n'
+        cstr += '\t\t.TimStrP2StarServerMin = 0,        /* Value is not configurable */\n'
+        cstr += '\t\t.TimStrS3Server = %s,\n'%(GAGet(tim,'S3ServerTimeMs'))
+        cstr += '\t\t.Arc_EOL = FALSE\n'
         cstr +='\t},\n'
-    cstr += '\t{//%s\n'%('Dummy For EOL');
-    cstr += '\t\t/* TimStrP2ServerMax = */ %s,\n'%('0')
-    cstr += '\t\t/* TimStrP2ServerMin = */ %s,\n'%('0')
-    cstr += '\t\t/* TimStrP2StarServerMax = */ 0,        /* Value is not configurable */\n'
-    cstr += '\t\t/* TimStrP2StarServerMin = */ 0,        /* Value is not configurable */\n'
-    cstr += '\t\t/* TimStrS3Server = */ %s,\n'%('0')
-    cstr += '\t\t/* Arc_EOL = */ TRUE\n'
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL =  TRUE\n'
     cstr +='\t},\n'
     cstr += '};\n\n'
     fp.write(cstr);
@@ -742,58 +687,67 @@ Dcm_DslBufferRuntimeType rxBufferParams_%s =
 };\n\n""")
     #--------------
     cstr = 'const Dcm_DslSessionControlType SessionControlList[] = {\n'
-    for ses in self.cfg.sessionControlList:
-        cstr += '\t{//%s\n'%(ses.name)
-        cstr += '\t\t /* GetSesChgPermission = */ %s,\n'%(ses.GetSesChgPermission)
-        cstr += '\t\t /* ChangeIndication = */ NULL,\n'
-        cstr += '\t\t /* ConfirmationRespPend = */ NULL,\n'
-        cstr += '\t\t /* Arc_EOL = */ FALSE\n'
+    for ses in GLGet('SessionControlList'):
+        cstr += '\t{//%s\n'%(GAGet(ses,'Name'))
+        cstr += '\t\t.GetSesChgPermission = %s,\n'%(GAGet(ses,'GetSessionChangePermissionCbk'))
+        cstr += '\t\t.ChangeIndication = NULL,\n'
+        cstr += '\t\t.ConfirmationRespPend = NULL,\n'
+        cstr += '\t\t.Arc_EOL = FALSE\n'
         cstr += '\t},\n'
-    cstr += '\t{//%s\n'%('Dummy For EOL')
-    cstr += '\t\t /* GetSesChgPermission = */ %s,\n'%('NULL')
-    cstr += '\t\t /* ChangeIndication = */ NULL,\n'
-    cstr += '\t\t /* ConfirmationRespPend = */ NULL,\n'
-    cstr += '\t\t /* Arc_EOL = */ TRUE\n'
+    cstr += '\t{\n'
+    cstr += '\t\t.Arc_EOL = TRUE\n'
     cstr += '\t}\n'
     cstr += '};\n\n'
     fp.write(cstr);
     # also I am not sure, so ... ??????
     fp.write("""const Dcm_DslDiagRespType DiagResp = {
-/* DslDiagRespForceRespPendEn = */ %s,
-/* DslDiagRespMaxNumRespPend = */ %s
-};\n"""%(TRUE(self.cfg.general.ResponsePending), self.cfg.general.MaxNegativeResponse));
+    .DslDiagRespForceRespPendEn = TRUE,
+    .DslDiagRespMaxNumRespPend =  8    // TODO
+};\n""")
 
     fp.write("""
 const Dcm_DslType Dsl = {
-/* DslBuffer = */ DcmDslBufferList,
-/* DslCallbackDCMRequestService = */ DCMRequestServiceList,
-/* DslDiagResp = */ &DiagResp,
-/* DslProtocol = */ &DslProtocol,
-/* DslProtocolTiming = */ &ProtocolTiming,
-/* DslServiceRequestIndication = */ DCMServiceRequestIndicationList,
-/* DslSessionControl = */ SessionControlList
+    .DslBuffer =  DcmDslBufferList,
+    .DslCallbackDCMRequestService = DCMRequestServiceList,
+    .DslDiagResp = &DiagResp,
+    .DslProtocol =  &DslProtocol,
+    .DslProtocolTiming = &ProtocolTiming,
+    .DslServiceRequestIndication = DCMServiceRequestIndicationList,
+    .DslSessionControl = SessionControlList
 };
 
 const Dcm_ConfigType DCM_Config = {
-/* Dsp = */ &Dsp,
-/* Dsd = */ &Dsd,
-/* Dsl = */ &Dsl
+    .Dsp = &Dsp,
+    .Dsd = &Dsd,
+    .Dsl = &Dsl
 };
 """);
     #------------------------------------------------------------------
     fp.close();
 
-def GetSecurityRefName(SecurityRef):
+def GetSecurityRefName(SecurityList):
+    SecurityRef = []
+    for sec in SecurityList:
+        SecurityRef.append(GAGet(sec,'Name'))
+    SecurityRef.sort()
     SecurityRef.sort()
     cstr = 'SecurityList'
     for ss in SecurityRef:
         cstr += '_%s'%(ss)
-    return cstr
-def GenSecurityRef(fp,SecurityRef):
+    if(len(SecurityRef)>0):
+        return cstr
+    else:
+        return 'NULL'
+def GenSecurityRef(fp,SecurityList):
     global AlreadySecurityRef
-    Name = GetSecurityRefName(SecurityRef)
+    SecurityRef = []
+    for sec in SecurityList:
+        SecurityRef.append(GAGet(sec,'Name'))
+    SecurityRef.sort()
+    Name = GetSecurityRefName(SecurityList)
     try:
-        index = AlreadySecurityRef.index(Name)
+        if(len(SecurityRef)>0):
+            index = AlreadySecurityRef.index(Name)
     except:
         AlreadySecurityRef.append(Name)
         cstr = 'const Dcm_DspSecurityRowType *%s[] = {\n'%(Name);
@@ -803,17 +757,29 @@ def GenSecurityRef(fp,SecurityRef):
         fp.write(cstr)
         
 
-def GetSessionRefName(SessionRef):
+def GetSessionRefName(SessionList):
+    SessionRef = []
+    for ses in SessionList:
+        SessionRef.append(GAGet(ses,'Name'))
     SessionRef.sort()
     cstr = 'SessionList'
     for ss in SessionRef:
         cstr += '_%s'%(ss)
-    return cstr
-def GenSessionRef(fp,SessionRef):
+    if(len(SessionRef)>0):
+        return cstr
+    else:
+        return 'NULL'
+
+def GenSessionRef(fp,SessionList):
     global AlreadySessionRef
-    Name = GetSessionRefName(SessionRef)
+    SessionRef = []
+    for ses in SessionList:
+        SessionRef.append(GAGet(ses,'Name'))
+    SessionRef.sort()
+    Name = GetSessionRefName(SessionList)
     try:
-        index = AlreadySessionRef.index(Name)
+        if(len(SessionRef)>0):
+            index = AlreadySessionRef.index(Name)
     except:
         AlreadySessionRef.append(Name)
         cstr = 'const Dcm_DspSessionRowType *%s[] = {\n'%(Name);

@@ -190,10 +190,10 @@ def GenH():
         id += 1
     cstr2 = ''
     for path in GLGet('RoutineList'):
-        if(isUpperLayer(GAGet(path,'Module'))):
-            for dest in GLGet(path,'DestinationList'):
-                cstr2 += '#define PDUR_ID_%-32s %s_ID_%s\n'%(GAGet(path,'PduRef'),GAGet(dest,'Module').upper(),GAGet(path,'PduRef'))
-                break # in ZeroCost Mode, only 1 destination is allowed
+        #if(isUpperLayer(GAGet(path,'Module'))):
+        for dest in GLGet(path,'DestinationList'):
+            cstr2 += '#define PDUR_ID_%-32s %s_ID_%s\n'%(GAGet(path,'PduRef'),GAGet(dest,'Module').upper(),GAGet(path,'PduRef'))
+            break # in ZeroCost Mode, only 1 destination is allowed
         cstr2 += '#define PDUR_ID2_%-31s %s_ID_%s\n'%(GAGet(path,'PduRef'),GAGet(path,'Module').upper(),GAGet(path,'PduRef'))
 
     fp.write("""
