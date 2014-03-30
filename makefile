@@ -221,12 +221,20 @@ studio:
 
 gen:
 	@(cd ./tools/studio;python Gen.py)
+
+binaries/gtk/Flash.img:
+	dd if=/dev/zero of=binaries/gtk/Flash.img bs=1M count=1
 	
-run:
-	@(cd ./arch/generic/gtk;make run)
+binaries/gtk/Eeprom.img:
+	dd if=/dev/zero of=binaries/gtk/Eeprom.img bs=16K count=1
+
+run: binaries/gtk/Flash.img binaries/gtk/Eeprom.img
+	
+	
 	
 tool:
-	@(cd ./arch/generic/gtk;make tool)	
+	@(cd ./arch/generic/gtk;make tool)
+	
 
 		
 	

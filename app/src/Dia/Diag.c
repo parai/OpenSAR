@@ -123,3 +123,42 @@ Std_ReturnType Diag_RequestResultRoutineFLCheckProgrmIntegrity(uint8 *outBuffer,
 	return E_OK;
 }
 
+
+Std_ReturnType Diag_GetSeed (uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode)
+{
+	return E_OK;
+}
+Std_ReturnType Diag_CompareSeed (uint8 *key)
+{
+	return E_OK;
+}
+Std_ReturnType Diag_StartProtocolCbk (Dcm_ProtocolType protocolID)
+{
+	return E_OK;
+}
+Std_ReturnType Diag_StopProtocolCbk (Dcm_ProtocolType protocolID)
+{
+	return E_OK;
+}
+Std_ReturnType Diag_ProtocolIndicationCbk(uint8 *requestData, uint16 dataSize)
+{
+	return E_OK;
+}
+
+Std_ReturnType Diag_EraseFlashStart(uint8 *inBuffer, uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode)
+{
+	return E_OK;
+}
+Std_ReturnType Diag_EraseFlashResult(uint8 *outBuffer, Dcm_NegativeResponseCodeType *errorCode)
+{
+	return E_OK;
+}
+
+Std_ReturnType Diag_DID1_ShortTermAdjustment(uint8 *controlOptionRecord, uint8 *controlEnableMaskRecord,
+	uint8 *controlStatusRecord, Dcm_NegativeResponseCodeType *errorCode)
+{
+	return E_OK;
+}
+
+
+

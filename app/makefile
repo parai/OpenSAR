@@ -22,7 +22,7 @@ inc-y += $(ROOTDIR)/diagnostic/Dcm
 
 ldcmdfile-y=
 
-build-exe-y = $(ROOTDIR)/out/OpenSAR.exe
+build-exe-y = opensar
 
 
 

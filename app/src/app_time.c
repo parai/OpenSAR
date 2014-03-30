@@ -62,5 +62,5 @@ void app_time_1000ms_runnable(void)
 //	Com_SendSignal(COM_SID_hour,&(SystemTime.hour));
 //	Com_SendSignal(COM_SID_minute,&(SystemTime.minute));
 //	Com_SendSignal(COM_SID_second,&(SystemTime.second));
-	Com_SendSignal(COM_SID_SystemTime,&(SystemTime));
+//	Com_SendSignal(COM_SID_SystemTime,&(SystemTime));
 }

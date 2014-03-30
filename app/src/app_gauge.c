@@ -15,8 +15,8 @@ static void Refresh(void)
 	}
 #endif    
 
-	Com_ReceiveSignal(COM_SID_TachoSpeed,&TachoSpeed);
-	Com_ReceiveSignal(COM_SID_VehicleSpeed,&VehicleSpeed);
+//	Com_ReceiveSignal(COM_SID_TachoSpeed,&TachoSpeed);
+//	Com_ReceiveSignal(COM_SID_VehicleSpeed,&VehicleSpeed);
 #if defined(WIN32)
 	// Range of Signal[0, 28000]km, unit in 0.01 km
 	//Degree = ((uint32)VehicleSpeed*(uint32)285/(uint32)280);

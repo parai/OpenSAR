@@ -2,14 +2,14 @@
 # Hope better quality of true-time 
 # >>>>>>>> Config <<<<<<<<<<<<<<<<<
 # System: Linux Windows
-SYSTEM=Windows
+SYSTEM=Linux
 
 ifeq ($(SYSTEM),Linux)
 
 cflags-y += `pkg-config --cflags gtk+-3.0`
 ldflags-y += `pkg-config --cflags gtk+-3.0` \
 			 `pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` \
-			 -lpthread
+			 -lpthread -lm
 	
 	 
 else
