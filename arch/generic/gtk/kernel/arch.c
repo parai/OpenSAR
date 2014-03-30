@@ -21,7 +21,7 @@ extern GtkWidget* Com(void);
 
 // ====================================== TYPEs ====================================
 static GTimer* pSysTimer;
-static gboolean isPaused = FALSE;
+static gboolean isPaused = TRUE;
 static GtkWidget* pStatusbar = NULL;
 
 // ====================================== DATAs ====================================
@@ -139,7 +139,7 @@ static GtkWidget* Toolbar(void)
 
 	//-- New Pause Start
 	pToolItem=gtk_tool_button_new (NULL,NULL);
-	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(pToolItem),GTK_STOCK_MEDIA_PAUSE);
+	gtk_tool_button_set_stock_id(GTK_TOOL_BUTTON(pToolItem),GTK_STOCK_MEDIA_PLAY);
 	gtk_toolbar_insert(GTK_TOOLBAR(pToolbar),pToolItem,0);
 	g_signal_connect(G_OBJECT (pToolItem), "clicked", G_CALLBACK(on_start_stop_clicked) , NULL);
 

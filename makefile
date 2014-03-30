@@ -139,7 +139,7 @@ libs:
 
 .PHONY all:
 
-all: libs $(dir_cmd_goals)
+all: libs $(dir_cmd_goals) run-support
 
 .PHONY: clean
 .PHONY: release
@@ -213,6 +213,7 @@ clean: $(dir_cmd_goals)
 #	$(Q)find . -type f -name *.a | xargs rm -rf
 #	$(Q)rm   -rf libs/*
 	@echo
+	@(cd ./tools/arvfb;make clean)
 	@echo "  >>>>>>>>>  DONE  <<<<<<<<<"
 	@echo
 
@@ -228,12 +229,12 @@ binaries/gtk/Flash.img:
 binaries/gtk/Eeprom.img:
 	dd if=/dev/zero of=binaries/gtk/Eeprom.img bs=16K count=1
 
-run: binaries/gtk/Flash.img binaries/gtk/Eeprom.img
+run-support: tool binaries/gtk/Flash.img binaries/gtk/Eeprom.img
 	
-	
+run:
 	
 tool:
-	@(cd ./arch/generic/gtk;make tool)
+	@(cd ./tools/arvfb;make all)
 	
 
 		
