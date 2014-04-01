@@ -34,7 +34,7 @@ dir-y = $(BD)/tools/arvfb/cmp			\
 		$(BD)/tools/arvfb/cmp/can		\
 		$(BD)/tools/arvfb/cmp/lin
 		
-#vpath = $(dir-y)
+VPATH += $(dir-y)
 		
 obj-dir = $(BD)/tools/arvfb/objs
 		
@@ -43,7 +43,7 @@ obj-y = $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $
 #common rules
 .SUFFIXES: .c
 
-$(obj-dir)/*.o:*.c
+$(obj-dir)/%.o:%.c
 	@echo
 	@echo "  >> CC $(notdir $<)"
 	@$(CC) $(cflags-y) $(inc-y) $(def-y) -MM -MF $(patsubst %.o,%.d,$@) -MT $@ $<
@@ -64,5 +64,5 @@ all:$(obj-dir) $(obj-y) $(OUT)
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET) DONE   <<<<<<<<<<<<<<<<<<<<<<"	
 
 clean:
-	@rm -fv $(obj-y)
+	@rm -fv $(obj-dir)/*
 
