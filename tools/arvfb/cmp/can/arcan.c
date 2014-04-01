@@ -2,35 +2,16 @@
 #include "arvfb.h"
 // ========================== [ LOCAL MACROS    ] ===============================
 #define MAX_SUPPORT_NODE  512
-// Commands
-#define CMD_POLL      ((guchar)0x00)
-#define CMD_FORWARD   ((guchar)0x01)
-
-#define CMD_POLL_ACK    ((guchar)0x80)
-#define CMD_FORWARD_ACK ((guchar)0x81)
-
 
 // ========================== [ LOCAL TYPES    ] ===============================
-typedef struct
-{
-	uint8      cmd;
-	uint8      dlc;
-	uint32 	   id;
-	uint8      data[8];
-	uint8      bus;      // Identifier of this CAN NODE on the bus
-	uint16     reserved;
-}ArCanMessage_Type;
 
 // ========================== [ LOCAL VARIANTS  ] ===============================
 static GtkTextBuffer *pTextBuffer = NULL;
 static GtkWidget     *pEntery     = NULL;
-static uint16         NodeIdentifiers[MAX_SUPPORT_NODE] = {8000,};
-static uint16         NodeNumber  = 1;
+static ArPortType     Ports[MAX_SUPPORT_NODE] = {8000,};
+static uint16         PortNumber  = 1;
 
 static GTimer*        pTimer;
-
-
-static const guchar   cmdPoll = CMD_POLL;
 
 // ========================== [ LOCAL FUNCTIONS ] ===============================
 static void Trace(const gchar* format,...)
@@ -47,14 +28,14 @@ static void Trace(const gchar* format,...)
 	gtk_text_buffer_insert(pTextBuffer,&Iter,log_buf,length);
 }
 
-static void TraceLog(uint16 port,ArCanMessage_Type* pMsg)
+static void TraceLog(uint16 port,ArCanMsgType* pMsg)
 {
 	static boolean is1stReceived=FALSE;
 	static gchar log_buffer[512];
-	int len = sprintf(log_buffer,"CANID=0x%-3x,DLC=%x, [",pMsg->id,(guint)pMsg->dlc);
+	int len = sprintf(log_buffer,"CANID=0x%-3x,DLC=%x, [",pMsg->Msg.Identifier,(guint)pMsg->Msg.DataLengthCode);
 	for(int i=0;i<8;i++)
 	{
-		len += sprintf(&log_buffer[len],"%-2x,",(guint)pMsg->data[i]);
+		len += sprintf(&log_buffer[len],"%-2x,",(guint)pMsg->Msg.Data[i]);
 	}
 	gdouble elapsed = g_timer_elapsed(pTimer,NULL);
 	if(FALSE == is1stReceived)
@@ -88,114 +69,37 @@ static void Init(void)
 	pTimer = g_timer_new();
 }
 // poll if there is a can message on port needed to be transimited.
-static gboolean Poll(uint16 port,ArCanMessage_Type* pMsg)
+static boolean Poll(ArPortType port,ArMsgType* pMsg)
 {
-	gboolean rv= FALSE;
-	GError * error = NULL;
+	boolean rv;
+	pMsg->Type    = MSG_ON_CAN;
+	pMsg->Command = MSG_CMD_POLL;
+	pMsg->Length  = 0;
 
-	/* create a new connection */
-	GSocketConnection * connection = NULL;
-	GSocketClient * client = g_socket_client_new();
+	rv = ArvfbPoll(port,pMsg);
 
-	/* connect to the host */
-	connection = g_socket_client_connect_to_host (client,
-										   (gchar*)"localhost",
-										    port, /* your port goes here */
-											NULL,
-											&error);
-
-	/* don't forget to check for errors */
-	if (error != NULL)
-	{
-		g_print("SERVER: <%s>!\n",error->message);
-		g_object_unref(client);
-		return FALSE;
-	}
-
-	/* use the connection */
-	GOutputStream * ostream = g_io_stream_get_output_stream (G_IO_STREAM (connection));
-	g_output_stream_write  (ostream,
-						  &cmdPoll, /* your message goes here */
-						  1, /* length of your message */
-						  NULL,
-						  &error);
-	GInputStream * istream = g_io_stream_get_input_stream (G_IO_STREAM (connection));
-	ArCanMessage_Type Msg;
-	gssize size = g_input_stream_read(istream,&Msg,sizeof(ArCanMessage_Type),NULL,&error);
-	if(size == sizeof(ArCanMessage_Type))
-	{
-		g_assert(pMsg != NULL);
-		TraceLog(port,&Msg);
-		memcpy(pMsg,&Msg,sizeof(ArCanMessage_Type));
-		rv = TRUE;
-	}
-	else
-	{
-		rv = FALSE;
-	}
-	/* don't forget to check for errors */
-	if (error != NULL)
-	{
-		g_print("SERVER: <%s>!\n",error->message);
-	}
-	g_object_unref(connection);
-	g_object_unref(client);
 	return rv;
 }
 
 // forward the message to the port
-static void Forward(uint16 port,ArCanMessage_Type* pMsg)
+static void Forward(ArPortType port,ArMsgType* pMsg)
 {
-	GError * error = NULL;
-
-	/* create a new connection */
-	GSocketConnection * connection = NULL;
-	GSocketClient * client = g_socket_client_new();
-
-	/* connect to the host */
-	connection = g_socket_client_connect_to_host (client,
-										   (gchar*)"localhost",
-										    port, /* your port goes here */
-											NULL,
-											&error);
-
-	/* don't forget to check for errors */
-	if (error != NULL)
-	{
-		g_print("SERVER: <%s>!\n",error->message);
-		g_object_unref(client);
-		return;
-	}
-
-	pMsg->cmd = CMD_FORWARD;
-	/* use the connection */
-	GOutputStream * ostream = g_io_stream_get_output_stream (G_IO_STREAM (connection));
-	g_output_stream_write  (ostream,
-						  pMsg, /* your message goes here */
-						  sizeof(ArCanMessage_Type), /* length of your message */
-						  NULL,
-						  &error);
-	/* don't forget to check for errors */
-	if (error != NULL)
-	{
-		g_print("SERVER: <%s>!\n",error->message);
-	}
-	g_object_unref(connection);
-	g_object_unref(client);
+	ArvfbSend(port,pMsg);
 }
 
 static gboolean Idle(gpointer data)
 {
-	ArCanMessage_Type      Message;
-	for(int i=0;i<NodeNumber;i++)
+	ArMsgType      Message;
+	for(int i=0;i<PortNumber;i++)
 	{
-		if(Poll(NodeIdentifiers[i],&Message))
+		if(Poll(Ports[i],&Message))
 		{
-			for(int j=0;j<NodeNumber;j++)
+			TraceLog(Ports[i],(ArCanMsgType*)&Message);
+			for(int j=0;j<PortNumber;j++)
 			{
 				if(i!=j)
 				{
-					Forward(NodeIdentifiers[j],&Message);
+					Forward(Ports[j],&Message);
 				}
 			}
 		}
