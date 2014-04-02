@@ -38,8 +38,9 @@
 #include "Os.h"
 #include "isr.h"
 #include "arc.h"
+#include "CanHw.h"
 
-#include "CanSocket.h"
+#include "arvfb.h"
 
 #define USE_CAN_STATISTICS      STD_OFF
 
@@ -530,7 +531,6 @@ void Can_DeInit()
     Can_DisableControllerInterrupts(ctlrId);
 
     canUnit->lock_cnt = 0;
-    Can_SocketDeInit(ctlrId);
     // Clear stats
 #if (USE_CAN_STATISTICS == STD_ON)
     memset(&canUnit->stats, 0, sizeof(Can_Arc_StatisticsType));
@@ -581,7 +581,6 @@ void Can_InitController( uint8 controller, const Can_ControllerConfigType *confi
      }
    }while( !hohObj->Can_Arc_EOL );
 
-   Can_SocketInit(controller);
   // Clock calucation
   // -------------------------------------------------------------------
   //
@@ -612,7 +611,12 @@ void Can_InitController( uint8 controller, const Can_ControllerConfigType *confi
   return;
 }
 
+CanIf_ControllerModeType Can_GetUnitState(uint8 ctrl)
+{
+	Can_UnitType *canUnit = GET_PRIVATE_DATA(ctrl);
 
+	return canUnit->state;
+}
 Can_ReturnType Can_SetControllerMode( uint8 controller, Can_StateTransitionType transition ) {
   imask_t state;
   CAN_HW_t *canHw;
@@ -654,8 +658,6 @@ Can_ReturnType Can_SetControllerMode( uint8 controller, Can_StateTransitionType 
     VALIDATE(canUnit->state == CANIF_CS_STOPPED, 0x3, CAN_E_TRANSITION);
     break;
   }
-
-  Can_SocketSetMode(controller,transition);
 
   return rv;
 }
@@ -762,7 +764,7 @@ Can_ReturnType Can_Write( Can_Arc_HTHType hth, Can_PduType *pduInfo ) {
 
     canHwConfig = GET_CONTROLLER_CONFIG(Can_Global.channelMap[controller]);
 
-    Can_SocketEnterCritical(controller);
+    //Can_SocketEnterCritical(controller);
     // ============= Copy data to Msg Box Start
     pMsgBox->id = pduInfo->id;
     pMsgBox->dlc = pduInfo->length;
@@ -773,7 +775,7 @@ Can_ReturnType Can_Write( Can_Arc_HTHType hth, Can_PduType *pduInfo ) {
         (canUnit->lock_cnt == 0) ) {
   	  /* Turn on the tx interrupt mailboxes */
     	canHw->TIER = BM_TX0; // We only use TX0
-    	Can_SocketTriggerTx(controller);
+    	//Can_SocketTriggerTx(controller);
     }
     // Increment statistics
 #if (USE_CAN_STATISTICS == STD_ON)
@@ -783,7 +785,7 @@ Can_ReturnType Can_Write( Can_Arc_HTHType hth, Can_PduType *pduInfo ) {
     // Store pdu handle in unit to be used by TxConfirmation
     pMsgBox->swPduHandle = pduInfo->swPduHandle;
 
-    Can_SocketExitCritical(controller);
+    //Can_SocketExitCritical(controller);
   } else {
     rv = CAN_BUSY;
   }

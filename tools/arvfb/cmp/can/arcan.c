@@ -44,7 +44,7 @@ static void TraceLog(uint16 port,ArCanMsgType* pMsg)
 		g_timer_start(pTimer);
 		elapsed = 0;
 	}
-	len += sprintf(&log_buffer[len],"] %8.4fs from %-5d\n",elapsed,port);
+	len += sprintf(&log_buffer[len],"] %16.4fs from %-5d on bus %d\n",elapsed,port,pMsg->Msg.BusID);
 
 	Trace(log_buffer);
 }

@@ -9,6 +9,7 @@
 #include "internal.h"
 #include "sys.h"
 #include "irq_types.h"
+#include "arvfb.h"
 
 // ====================================== MACROs ====================================
 
@@ -66,6 +67,9 @@ static gboolean arch_daemon(gpointer data)
 static void arch_init_daemon(void)
 {
 	g_type_init ();	// for glib socket
+
+	ArvfbInit();
+
 	start_main();
 
 	g_print(">>>> Start-up Done! <<<<\n");

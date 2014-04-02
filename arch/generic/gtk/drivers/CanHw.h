@@ -1,8 +1,13 @@
+/*
+ * CanHw.h
+ *
+ *  Created on: 2014年4月2日
+ *      Author: parai
+ */
 
+#ifndef CANHW_H_
+#define CANHW_H_
 
-#ifndef CANSOCKET_H_
-#define CANSOCKET_H_
-#include <gio/gio.h>
 // Bit maps in isrFlags
 #define cCanIsrTx   (1u<<0)
 #define cCanIsrRx   (1u<<1)
@@ -47,11 +52,9 @@ typedef struct
 }CanHwMsgBox_t;
 typedef struct
 {
-	guchar      cmd;
-	guchar      dlc;
-	guint 		id;
-	guchar      data[8];
-	guchar      bus;  // Identifier of this CAN NODE on the bus
+	uint8       dlc;
+	uint32 		id;
+	uint8       data[8];
 	PduIdType   swPduHandle;
 }GtkCanMsgBox_Type;
 
@@ -67,16 +70,16 @@ typedef struct{
 	GtkCanQueue_Type txQ;
 	CanHwMsgBox_t 	rxMsg[cCanMsgBoxSz];
 	CanHwMsgBox_t 	txMsg[cCanMsgBoxSz];
-	// GTK simulate param
-	GSocketService * pGSocketService;
 
 	// Simulate MSCAN registers
 	vuint8_t      RIER;
 	vuint8_t      TIER;
 	vuint8_t      IRQF;  // IRQ Flags
+
+	boolean       isInit;
 }CAN_HW_t;
 
-extern CAN_HW_t Can_HwUnit[CAN_ARC_CTRL_CONFIG_CNT];
+extern CAN_HW_t Can_HwUnit[CAN_CONTROLLER_CNT];
 
 static inline GtkCanMsgBox_Type* GtkCanGetBusyMsgBox(GtkCanQueue_Type* Q)
 {
@@ -135,16 +138,6 @@ void Can_2_IsrEntry(void);
 void Can_3_IsrEntry(void);
 void Can_4_IsrEntry(void);
 
-void Can_SocketInit(uint8_t controller);
-void Can_SocketDeInit(uint8_t controller);
-
-void Can_SocketEnterCritical(uint8_t ctrl);
-void Can_SocketExitCritical(uint8_t ctrl);
-void Can_SocketTriggerTx(uint8_t ctrl);
-
-void Can_SocketSetMode(uint8_t controller,Can_StateTransitionType transition);
-
-
 void Can_0_RxIsr( void  );
 void Can_1_RxIsr( void  );
 void Can_2_RxIsr( void  );
@@ -169,4 +162,4 @@ void Can_2_WakeIsr( void  );
 void Can_3_WakeIsr( void  );
 void Can_4_WakeIsr( void  );
 
-#endif /* CANSOCKET_H_ */
+#endif /* CANHW_H_ */

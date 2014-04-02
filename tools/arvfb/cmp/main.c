@@ -101,7 +101,7 @@ int main (int argc, char *argv[])
 	window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	g_signal_connect (window, "destroy", G_CALLBACK (gtk_main_quit), NULL);
 
-	gtk_window_set_title(window,(const gchar*)"arvfb (parai@foxmail.com)\n");
+	gtk_window_set_title(GTK_WINDOW(window),(const gchar*)"arvfb (parai@foxmail.com)\n");
 
 
 	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);

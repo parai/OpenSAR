@@ -42,13 +42,14 @@ boolean ArvfbPoll(ArPortType port,ArMsgType* pMsg)
 	/* use the connection */
 	GOutputStream * ostream = g_io_stream_get_output_stream (G_IO_STREAM (connection));
 	g_output_stream_write  (ostream,
-						  &pMsg,
+						  pMsg,
 						  pMsg->Length+MSG_MIN_LENGTH,
 						  NULL,
 						  &error);
 	GInputStream * istream = g_io_stream_get_input_stream (G_IO_STREAM (connection));
 	gssize size = g_input_stream_read(istream,pMsg,sizeof(ArMsgType),NULL,&error);
 	if( (size > MSG_MIN_LENGTH) &&
+		((MSG_MIN_LENGTH+pMsg->Length)==size) &&
 		((command|MSG_CMD_ACK) == pMsg->Command) )
 	{
 		rv = TRUE;

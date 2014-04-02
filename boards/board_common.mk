@@ -101,7 +101,8 @@ obj-$(USE_CAN)-$(CFG_PPC) += Can_PBcfg.o
 obj-$(USE_CAN)-$(CFG_ARM_CM3) += Can_Lcfg.o
 obj-$(USE_CAN)-$(CFG_ARM_CR4) += Can_Lcfg.o
 obj-$(USE_CAN)-$(CFG_HC1X) += Can_Lcfg.o
-obj-$(USE_CAN)-$(CFG_GTK) += CanSocket.o
+obj-$(USE_CAN)-$(CFG_GTK) += CanHw.o
+obj-$(USE_CAN)-$(CFG_GTK) += arvfb.o
 obj-$(USE_CAN)-$(CFG_GTK) += Can_PBcfg.o
 
 # CanIf
