@@ -20,10 +20,13 @@ extern GtkWidget* Lcd(void);
 extern GtkWidget* Dio(void);
 extern GtkWidget* Com(void);
 
+extern void Arch_Trace(const char* format,...);
+
 // ====================================== TYPEs ====================================
 static GTimer* pSysTimer;
 static gboolean isPaused = TRUE;
 static GtkWidget* pStatusbar = NULL;
+static GtkTextBuffer *pTextBuffer = NULL;
 
 // ====================================== DATAs ====================================
 
@@ -153,6 +156,32 @@ static GtkWidget* Toolbar(void)
 
 	return pToolbar;
 }
+GtkWidget* Console(void)
+{
+	GtkWidget* pBox;
+
+	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+
+	{
+		GtkWidget *swindow;
+		GtkWidget *textview;
+		GtkTextIter Iter;
+		swindow = gtk_scrolled_window_new (NULL, NULL);
+		gtk_widget_set_size_request(swindow,800,500);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swindow),
+									  GTK_POLICY_AUTOMATIC,
+									  GTK_POLICY_AUTOMATIC);
+		gtk_box_pack_start (GTK_BOX (pBox), swindow, TRUE, TRUE, 0);
+		textview = gtk_text_view_new ();
+		//gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (textview), GTK_WRAP_WORD);
+		gtk_text_view_set_editable(GTK_TEXT_VIEW (textview),FALSE);
+		gtk_container_add (GTK_CONTAINER (swindow), textview);
+		pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+		gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+		Arch_Trace("OpenSAR Console:\n");
+	}
+	return pBox;
+}
 static GtkWidget*  Notebook(void)
 {
 	GtkWidget* pNotebook;
@@ -164,6 +193,7 @@ static GtkWidget*  Notebook(void)
 #ifdef USE_COM
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Com(),gtk_label_new("Com"));
 #endif
+	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Console(),gtk_label_new("Console"));
 	return pNotebook;
 }
 
@@ -180,7 +210,7 @@ static GtkWidget* LcdBoard(void)
 	gtk_window_set_title(GTK_WINDOW(pWindow),"LCD\n");
 
 	gtk_window_set_modal(GTK_WINDOW(pWindow),FALSE);
-	gtk_window_set_deletable(GTK_CONTAINER (pWindow),FALSE);
+	gtk_window_set_deletable(GTK_WINDOW (pWindow),FALSE);
 
 	gtk_container_add(GTK_CONTAINER (pWindow), Lcd());
 
@@ -188,6 +218,20 @@ static GtkWidget* LcdBoard(void)
 	return pWindow;
 }
 // ====================================== FUNCTIONs ====================================
+void Arch_Trace(const char* format,...)
+{
+	va_list args;
+	unsigned long length;
+	static char log_buf[1024];
+	va_start(args, format);
+	length = vsprintf(log_buf,format,args);
+	va_end(args);
+
+	GtkTextIter Iter;
+	gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+	gtk_text_buffer_insert(pTextBuffer,&Iter,log_buf,length);
+}
+
 void OsIdle(void)
 {
 }
@@ -199,7 +243,7 @@ void arch_update_statusbar(guchar* text)
 										    * underflow is allowed
 										    */
 
-		gtk_statusbar_push (GTK_STATUSBAR(pStatusbar), 0, text);
+		gtk_statusbar_push (GTK_STATUSBAR(pStatusbar), 0, (const gchar*)text);
 
 	}
 }

@@ -32,7 +32,10 @@ def-y +=
 dir-y = $(BD)/tools/arvfb/cmp			\
 		$(BD)/tools/arvfb/cmp/vfb		\
 		$(BD)/tools/arvfb/cmp/can		\
-		$(BD)/tools/arvfb/cmp/lin
+		$(BD)/tools/arvfb/cmp/lin		\
+		$(BD)/tools/arvfb/cmp/dl		\
+		$(BD)/tools/arvfb/cmp/tp		\
+		$(BD)/tools/arvfb/cmp/fl
 		
 VPATH += $(dir-y)
 		

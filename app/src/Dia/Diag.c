@@ -126,7 +126,7 @@ Std_ReturnType Diag_RequestResultRoutineFLCheckProgrmIntegrity(uint8 *outBuffer,
 
 Std_ReturnType Diag_GetSeed (uint8 *securityAccessDataRecord, uint8 *seed, Dcm_NegativeResponseCodeType *errorCode)
 {
-	return E_OK;
+	return GetSeed(securityAccessDataRecord,seed,errorCode);
 }
 Std_ReturnType Diag_CompareSeed (uint8 *key)
 {

@@ -62,6 +62,28 @@
 #define CH_ISR		0
 #define CH_PROC		1
 
+#if defined(__GTK__)
+extern void Arch_Trace(const char* format,...);
+#if defined(USE_DEBUG_PRINTF)
+#define DEBUG(_level,...) \
+	do { \
+		if(_level>=DEBUG_LVL) { \
+			Arch_Trace (__VA_ARGS__); \
+		}; \
+	} while(0);
+
+#else
+#define DEBUG(_level,...)
+#endif
+
+#if defined(USE_LDEBUG_PRINTF)
+#define LDEBUG_PRINTF(format,...) 	Arch_Trace(format,## __VA_ARGS__ )
+#define LDEBUG_FPUTS(_str) 			fputs((_str),stdout)
+#else
+#define LDEBUG_PRINTF(format,...)
+#define LDEBUG_FPUTS(_str)
+#endif
+#else
 
 #if defined(USE_DEBUG_PRINTF)
 #define DEBUG(_level,...) \
@@ -82,6 +104,7 @@
 #define LDEBUG_PRINTF(format,...)
 #define LDEBUG_FPUTS(_str)
 #endif
+#endif // __GTK__
 
 
 #endif /*DEBUG_H_*/

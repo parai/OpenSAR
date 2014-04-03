@@ -218,7 +218,7 @@ clean: $(dir_cmd_goals)
 	@echo
 
 studio:
-	@(cd ./tools/studio;python main.py)
+	@(cd ./tools/OpenSAR;python main.py)
 
 gen:
 	@(cd ./tools/studio;python Gen.py)

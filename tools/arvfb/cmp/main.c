@@ -85,8 +85,11 @@ static GtkWidget* CreateNotebook(void)
 	GtkWidget* pNotebook;
 	pNotebook = gtk_notebook_new ();
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),
-			ArCan(),
-			gtk_label_new("arcan"));
+							ArCan(),
+							gtk_label_new("arcan"));
+	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),
+							ArFlashLoader(),
+							gtk_label_new("FlashLoader"));
 	return pNotebook;
 }
 

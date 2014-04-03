@@ -23,7 +23,7 @@ static void CanSocket_Rx(const ArCanMsgType *ArMsgIn)
 	uint8 ctrl=ArMsgIn->Msg.BusID;
 	canHw = &Can_HwUnit[ctrl];
 
-	if( (CANIF_CS_STARTED==Can_GetUnitState(ctrl)) &&
+	if( (CANIF_CS_STARTED==Can_GetUnitState(ctrl)) ||
 		(CANIF_CS_SLEEP==Can_GetUnitState(ctrl)))
 	{
 		if( BM_WUPI == (canHw->RIER & BM_WUPI))
@@ -101,7 +101,6 @@ static void CanSocket_Tx(ArCanMsgType *ArMsgOut)
 
 			Can_SetPduHandle(ctrl,pMsgBox->swPduHandle);
 			// Request System Isr
-			g_print("$$$$ CAN_CTRL_%d TX ISR\n",ctrl);
 			arch_generate_irqn(SysCan_0_IRQn+ctrl);
 			break;
 		}

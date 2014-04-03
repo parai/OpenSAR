@@ -67,6 +67,9 @@ text_changed_cb (GtkEntry   *entry,
 static void Init(void)
 {
 	pTimer = g_timer_new();
+	CanTp_Init();
+
+	FL_Init();
 }
 // poll if there is a can message on port needed to be transimited.
 static boolean Poll(ArPortType port,ArMsgType* pMsg)
@@ -82,12 +85,15 @@ static boolean Poll(ArPortType port,ArMsgType* pMsg)
 }
 
 // forward the message to the port
-static void Forward(ArPortType port,ArMsgType* pMsg)
+static void Forward(ArPortType port,const ArMsgType* pMsg)
 {
-	ArvfbSend(port,pMsg);
+	ArMsgType armsg;
+	memcpy(&armsg,pMsg,sizeof(ArMsgType));
+	armsg.Command = MSG_CMD_SEND;
+	ArvfbSend(port,&armsg);
 }
 
-static gboolean Idle(gpointer data)
+static gboolean Schedule(gpointer data)
 {
 	ArMsgType      Message;
 	for(int i=0;i<PortNumber;i++)
@@ -102,10 +108,23 @@ static gboolean Idle(gpointer data)
 					Forward(Ports[j],&Message);
 				}
 			}
+			// Tester may do something
+			Ardl_RxIndication(&Message);
 		}
 	}
 	return TRUE;
 }
+
+void Can_Transmit(const ArMsgType *armsg)
+{
+	for(int i=0;i<PortNumber;i++)
+	{
+		Forward(Ports[i],armsg);
+	}
+
+	TraceLog(2013,(ArCanMsgType*)armsg);
+}
+
 GtkWidget* ArCan(void)
 {
 	GtkWidget* pBox;
@@ -130,7 +149,7 @@ GtkWidget* ArCan(void)
 		GtkWidget *textview;
 		GtkTextIter Iter;
 		swindow = gtk_scrolled_window_new (NULL, NULL);
-		gtk_widget_set_size_request(swindow,800,600);
+		gtk_widget_set_size_request(swindow,800,500);
 		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swindow),
 									  GTK_POLICY_AUTOMATIC,
 									  GTK_POLICY_AUTOMATIC);
@@ -145,7 +164,7 @@ GtkWidget* ArCan(void)
 
 	// TaskInit
 	Init();
-	g_timeout_add(1,Idle,NULL);
+	g_timeout_add(1,Schedule,NULL);
 
 	return pBox;
 }

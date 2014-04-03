@@ -69,7 +69,7 @@ boolean ArvfbPoll(ArPortType port,ArMsgType* pMsg)
 }
 
 // forward the message to the port
-void ArvfbSend(ArPortType port,ArMsgType* pMsg)
+void ArvfbSend(ArPortType port,const ArMsgType* pMsg)
 {
 	GError * error = NULL;
 

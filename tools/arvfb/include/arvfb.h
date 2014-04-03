@@ -40,10 +40,13 @@ typedef struct
 
 // =============================== [ ARVFB INCLUDE ] ================================
 #include "arcan.h"
+#include "ardl.h"
+#include "artp.h"
+#include "arfl.h"
 
 
 // =============================== [ ARVFB FUNCTIONS ] ==============================
 extern boolean ArvfbPoll(ArPortType port,ArMsgType* pMsg);
-extern void    ArvfbSend(ArPortType port,ArMsgType* pMsg);
+extern void    ArvfbSend(ArPortType port,const ArMsgType* pMsg);
 
 #endif /* ARVFB_H_ */
