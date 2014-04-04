@@ -25,7 +25,6 @@ static void     FL_SecurityRequestSeed(void);
 static void     FL_SecuritySendKey(void);
 static void     FL_ReadFingerPrint(void);
 static void     FL_WriteFingerPrint(void);
-static gboolean FlashLoader(gpointer data);
 
 static void Trace(gchar* Log,...)
 {
@@ -41,6 +40,32 @@ static void Trace(gchar* Log,...)
 	gtk_text_buffer_insert(pFL_TextBuffer,&Iter,log_buf,length);
 }
 
+static void Stop(void)
+{
+	sFL_Step = FL_STEP_STOP;
+}
+
+static void Start(void)
+{
+	isFL_Busy = FALSE;
+	sFL_Step = FL_STEP_SESSION;
+}
+
+static void on_fl_button_clicked(GtkButton *button,gpointer data)
+{
+	if(0==strcmp(data,"Start"))
+	{
+		Start();
+	}
+	else if(0==strcmp(data,"Stop"))
+	{
+		Stop();
+	}
+	else
+	{
+
+	}
+}
 
 static void FL_Session(void)
 {
@@ -173,7 +198,7 @@ static void FL_Response(uint8* data,uint16 size)
 		sFL_Step = FL_STEP_STOP;
 	}
 }
-gboolean FlashLoader(gpointer data)
+void ArFl_Schedule(void)
 {
 	if(!isFL_Busy)
 	{
@@ -198,23 +223,11 @@ gboolean FlashLoader(gpointer data)
 				break;
 		}
 	}
-	return TRUE;
 }
 
-void FL_Stop(void)
+void ArFl_Init(void)
 {
-	sFL_Step = FL_STEP_STOP;
-}
-
-void FL_Start(void)
-{
-	isFL_Busy = FALSE;
-	sFL_Step = FL_STEP_SESSION;
-}
-void FL_Init(void)
-{
-	g_idle_add(FlashLoader,NULL);
-	FL_Stop();
+	Stop();
 }
 
 
@@ -222,23 +235,6 @@ void FL_Init(void)
 void CanTp_RxIndication(uint8* data,uint16 length)
 {
 	FL_Response(data,length);
-}
-
-
-static void on_fl_button_clicked(GtkButton *button,gpointer data)
-{
-	if(0==strcmp(data,"Start"))
-	{
-		FL_Start();
-	}
-	else if(0==strcmp(data,"Stop"))
-	{
-		FL_Stop();
-	}
-	else
-	{
-
-	}
 }
 
 GtkWidget* ArFlashLoader(void)

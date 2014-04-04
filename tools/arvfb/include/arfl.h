@@ -2,10 +2,10 @@
 #ifndef ARFL_H_
 #define ARFL_H_
 
-void FL_Init(void);
-void FL_Start(void);
-void FL_Stop(void);
+void ArFl_Init(void);
 
 GtkWidget* ArFlashLoader(void);
+
+void ArFl_Schedule(void);
 
 #endif /* ARFL_H_ */

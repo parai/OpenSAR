@@ -20,5 +20,7 @@ GtkWidget* ArCan(void);
 void Can_RxIndication(const ArCanMsgType* armsg);
 void Can_Transmit(const ArMsgType *armsg);
 
+void ArCan_Init(void);
+void ArCan_Schedule(void);
 #endif
 

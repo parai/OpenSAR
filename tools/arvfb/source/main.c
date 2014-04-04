@@ -2,7 +2,7 @@
 
 
 // ======================== [ LOCAL VARIANTS  ] ==============================================
-static boolean isPaused = FALSE;
+static boolean isPaused = TRUE;
 
 // ======================== [ LOCAL FUNCTIONS ] ==============================================
 static void on_menu_activate  (GtkMenuItem* item,gpointer data)
@@ -93,6 +93,25 @@ static GtkWidget* CreateNotebook(void)
 	return pNotebook;
 }
 
+static void Initialize(void)
+{
+	ArCan_Init();
+	ArTp_Init();
+	ArFl_Init();
+}
+
+static gboolean Schedule(gpointer data)
+{
+	if(!isPaused)
+	{
+		ArCan_Schedule();
+		ArTp_Schedule();
+		ArFl_Schedule();
+	}
+
+	return TRUE;
+}
+
 int main (int argc, char *argv[])
 {
 	g_type_init ();
@@ -120,6 +139,10 @@ int main (int argc, char *argv[])
 	gtk_box_pack_start(GTK_BOX(pBox),CreateNotebook(),FALSE,FALSE,0);
 
 	gtk_widget_show_all (window);
+
+	Initialize();
+	g_idle_add(Schedule,NULL);
+
 
 	gtk_main ();
 	return 0;

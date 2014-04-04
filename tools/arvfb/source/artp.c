@@ -54,8 +54,6 @@ static GTimer* pSysTimer;
 static gboolean isSysTimerStarted;
 
 // ======================== FUNCTION =============================
-static gboolean CanTp_MainFunction(gpointer data);
-
 static void     StartTimer(void);
 static void     StopTimer(void);
 static gboolean IsTimerElapsed(gulong microseconds);
@@ -105,53 +103,6 @@ void ArTp_RxIndication(const ArCanMsgType* armsg)
 				break;
 		}
 	}
-}
-
-static gboolean CanTp_MainFunction(gpointer data)
-{
-	switch(sArchTp.state)
-	{
-		case CANTP_ST_START_TO_SEND:
-			SendStart();
-			break;
-		case CANTP_ST_SEND_FC:
-			if(IsTimerElapsed(10))
-			{
-				SendFC();
-				StartTimer();
-			}
-			break;
-		case CANTP_ST_SEND_CF:
-			if(IsTimerElapsed(10))
-			{
-				SendCF();
-				StartTimer();
-			}
-			break;
-		default:
-			break;
-	}
-
-	switch(sArchTp.state)
-	{
-		case CANTP_ST_IDLE:
-			break;
-		case CANTP_ST_START_TO_SEND:
-		case CANTP_ST_SENDING:
-		case CANTP_ST_WAIT_FC:
-		case CANTP_ST_WAIT_CF:
-		case CANTP_ST_SEND_CF:
-		case CANTP_ST_SEND_FC:
-			if(IsTimerElapsed(5000))
-			{
-				sArchTp.state = CANTP_ST_IDLE;
-				StopTimer();
-			}
-			break;
-		default:
-			break;
-	}
-	return TRUE;
 }
 
 
@@ -409,15 +360,13 @@ static void HandleFC(const uint8* data,uint16 size)
 	}
 }
 
-void CanTp_Init(void)
+void ArTp_Init(void)
 {
 	memset(&sArchTp,0,sizeof(sArchTp));
 
 	// Config
 	sArchTp.rxId = 0x732;
 	sArchTp.txId = 0x731;
-
-	g_idle_add(CanTp_MainFunction,NULL);
 
 	isSysTimerStarted = FALSE;
 	pSysTimer = g_timer_new();
@@ -445,3 +394,48 @@ Std_ReturnType CanTp_Transmit(uint8* data,uint16 size)
 	return ercd;
 }
 
+void ArTp_Schedule(void)
+{
+	switch(sArchTp.state)
+	{
+		case CANTP_ST_START_TO_SEND:
+			SendStart();
+			break;
+		case CANTP_ST_SEND_FC:
+			if(IsTimerElapsed(10))
+			{
+				SendFC();
+				StartTimer();
+			}
+			break;
+		case CANTP_ST_SEND_CF:
+			if(IsTimerElapsed(10))
+			{
+				SendCF();
+				StartTimer();
+			}
+			break;
+		default:
+			break;
+	}
+
+	switch(sArchTp.state)
+	{
+		case CANTP_ST_IDLE:
+			break;
+		case CANTP_ST_START_TO_SEND:
+		case CANTP_ST_SENDING:
+		case CANTP_ST_WAIT_FC:
+		case CANTP_ST_WAIT_CF:
+		case CANTP_ST_SEND_CF:
+		case CANTP_ST_SEND_FC:
+			if(IsTimerElapsed(5000))
+			{
+				sArchTp.state = CANTP_ST_IDLE;
+				StopTimer();
+			}
+			break;
+		default:
+			break;
+	}
+}

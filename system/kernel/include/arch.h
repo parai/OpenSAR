@@ -122,4 +122,6 @@ void Os_ArchSetTaskEntry(OsTaskVarType *pcbPtr );
 
 void Os_ArchPanic( uint32_t err, void *errFramePtr , void *excFramePtr);
 
+extern void Arch_Trace(const char* format,...);
+
 #endif /*ARCH_H_*/

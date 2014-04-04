@@ -20,8 +20,6 @@ extern GtkWidget* Lcd(void);
 extern GtkWidget* Dio(void);
 extern GtkWidget* Com(void);
 
-extern void Arch_Trace(const char* format,...);
-
 // ====================================== TYPEs ====================================
 static GTimer* pSysTimer;
 static gboolean isPaused = TRUE;
@@ -186,6 +184,8 @@ static GtkWidget*  Notebook(void)
 {
 	GtkWidget* pNotebook;
 	pNotebook = gtk_notebook_new ();
+
+	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Console(),gtk_label_new("Console"));
 	// gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Lcd(),gtk_label_new("Lcd"));
 #ifdef USE_DIO
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Dio(),gtk_label_new("Dio"));
@@ -193,7 +193,7 @@ static GtkWidget*  Notebook(void)
 #ifdef USE_COM
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Com(),gtk_label_new("Com"));
 #endif
-	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Console(),gtk_label_new("Console"));
+
 	return pNotebook;
 }
 

@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <Std_Types.h>
+
 // =============================== [ ARVFB MACROS  ] ================================
 // -- MACROS FOR ArMsg Type
 #define MSG_ON_CAN   ((uint32)0)
@@ -56,4 +57,6 @@ typedef 	struct
 // =============================== [ ARVFB FUNCTIONS ] ==============================
 extern void ArvfbInit(void);
 extern boolean ArvfbCanProcess(const ArCanMsgType *ArMsgIn,ArCanMsgType *ArMsgOut);
+
+void Arch_Trace(const char* format,...); // Import from Arch
 #endif /* ARVFB_H_ */

@@ -55,7 +55,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="arch/generic/mingw|arch/generic/Qt|boards|arch/arm|arch/generic/linux|examples|arch/hc1x|arch/ppc|boot" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
+						<entry excluding="arch/generic/mingw|arch/generic/Qt|boards|arch/arm|arch/generic/linux|examples|arch/ppc|arch/hc1x|boot" flags="VALUE_WORKSPACE_PATH" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

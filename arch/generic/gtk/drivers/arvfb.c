@@ -66,12 +66,12 @@ void ArvfbInit(void)
 	/* don't forget to check for errors */
 	if (error != NULL)
 	{
-		g_print("VFB: Init Error <%s>\n!",error->message);
+		Arch_Trace("VFB: Init Error <%s>\n!",error->message);
 		//g_error (error->message);
 	}
 	else
 	{
-		g_print("VFB: Listener on localhost:%d\n",port);
+		Arch_Trace("VFB: Listener on localhost:%d\n",port);
 	}
 
 	/* listen to the 'incoming' signal */

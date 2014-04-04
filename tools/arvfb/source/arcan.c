@@ -28,6 +28,20 @@ static void Trace(const gchar* format,...)
 	gtk_text_buffer_insert(pTextBuffer,&Iter,log_buf,length);
 }
 
+static char* FormatTime(gdouble time)
+{
+	int hour,minute,second;
+
+	static char strTime[512];
+	hour = (int)(time/3600);
+	time = time - 3600*hour;
+	minute = (int)(time/60);
+	time = time - 60*minute;
+	second = (int)time;
+	time = time - second;
+	sprintf(strTime,"%4dH:%2dM:%2dS:%5.3fMS",hour,minute,second,time*10);
+	return strTime;
+}
 static void TraceLog(uint16 port,ArCanMsgType* pMsg)
 {
 	static boolean is1stReceived=FALSE;
@@ -44,7 +58,7 @@ static void TraceLog(uint16 port,ArCanMsgType* pMsg)
 		g_timer_start(pTimer);
 		elapsed = 0;
 	}
-	len += sprintf(&log_buffer[len],"] %16.4fs from %-5d on bus %d\n",elapsed,port,pMsg->Msg.BusID);
+	len += sprintf(&log_buffer[len],"] %s from %-5d on bus %d\n",FormatTime(elapsed),port,pMsg->Msg.BusID);
 
 	Trace(log_buffer);
 }
@@ -64,13 +78,6 @@ text_changed_cb (GtkEntry   *entry,
   }
 }
 
-static void Init(void)
-{
-	pTimer = g_timer_new();
-	CanTp_Init();
-
-	FL_Init();
-}
 // poll if there is a can message on port needed to be transimited.
 static boolean Poll(ArPortType port,ArMsgType* pMsg)
 {
@@ -93,7 +100,7 @@ static void Forward(ArPortType port,const ArMsgType* pMsg)
 	ArvfbSend(port,&armsg);
 }
 
-static gboolean Schedule(gpointer data)
+void ArCan_Schedule(void)
 {
 	ArMsgType      Message;
 	for(int i=0;i<PortNumber;i++)
@@ -112,7 +119,6 @@ static gboolean Schedule(gpointer data)
 			Ardl_RxIndication(&Message);
 		}
 	}
-	return TRUE;
 }
 
 void Can_Transmit(const ArMsgType *armsg)
@@ -123,6 +129,11 @@ void Can_Transmit(const ArMsgType *armsg)
 	}
 
 	TraceLog(2013,(ArCanMsgType*)armsg);
+}
+
+void ArCan_Init(void)
+{
+	pTimer = g_timer_new();
 }
 
 GtkWidget* ArCan(void)
@@ -161,10 +172,6 @@ GtkWidget* ArCan(void)
 		pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
 		gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
 	}
-
-	// TaskInit
-	Init();
-	g_timeout_add(1,Schedule,NULL);
 
 	return pBox;
 }
