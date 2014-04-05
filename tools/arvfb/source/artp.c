@@ -1,6 +1,6 @@
 #include "arvfb.h"
 
-// ======================== TYPE     =============================
+// ======================== [ LOCAL TYPES  ] ==============================================
 typedef enum
 {
 	CANTP_ST_IDLE = 0,
@@ -31,14 +31,14 @@ typedef struct
 	CanTpState_Type state;
 
 }CanTpArch_Type;
-// ======================== MACRO    =============================
+// ======================== [ LOCAL MACROS  ] ==============================================
 #define ISO15765_TPCI_MASK      0x30
 #define ISO15765_TPCI_SF        0x00  /* Single Frame */
 #define ISO15765_TPCI_FF        0x10  /* First Frame */
 #define ISO15765_TPCI_CF        0x20  /* Consecutive Frame */
 #define ISO15765_TPCI_FC        0x30  /* Flow Control */
 #define ISO15765_TPCI_DL        0x7   /* Single frame data length mask */
-#define ISO15765_TPCI_FS_MASK   0x0F  /* Flowcontrol status mask */
+#define ISO15765_TPCI_FS_MASK   0x0F  /* Flow control status mask */
 
 
 #define ISO15765_FLOW_CONTROL_STATUS_CTS        0
@@ -48,12 +48,12 @@ typedef struct
 #define cfgSTmin  10
 #define cfgBS     8
 
-// ======================== DATA     =============================
+// ======================== [ LOCAL VARIANTS  ] ==============================================
 static CanTpArch_Type sArchTp;
 static GTimer* pSysTimer;
 static gboolean isSysTimerStarted;
 
-// ======================== FUNCTION =============================
+// ======================== [ LOCAL FUNCTIONS  ] ==============================================
 static void     StartTimer(void);
 static void     StopTimer(void);
 static gboolean IsTimerElapsed(gulong microseconds);
@@ -67,44 +67,6 @@ static void HandleSF(const uint8* data,uint16 size);
 static void HandleFF(const uint8* data,uint16 size);
 static void HandleCF(const uint8* data,uint16 size);
 static void HandleFC(const uint8* data,uint16 size);
-
-// ======================== FUNCTION =============================
-void ArTp_RxIndication(const ArCanMsgType* armsg)
-{
-	if((sArchTp.rxId == armsg->Msg.Identifier) && (0==armsg->Msg.BusID))
-	{
-		switch((armsg->Msg.Data[0]&ISO15765_TPCI_MASK))
-		{
-			case (ISO15765_TPCI_SF):
-				HandleSF(armsg->Msg.Data,armsg->Msg.DataLengthCode);
-				break;
-			case (ISO15765_TPCI_FF):
-				HandleFF(armsg->Msg.Data,armsg->Msg.DataLengthCode);
-				break;
-			case (ISO15765_TPCI_CF):
-				HandleCF(armsg->Msg.Data,armsg->Msg.DataLengthCode);
-				break;
-			case (ISO15765_TPCI_FC):
-				HandleFC(armsg->Msg.Data,armsg->Msg.DataLengthCode);
-				break;
-			default:
-				break;
-		}
-		// Timer process
-		switch((armsg->Msg.Data[0]&ISO15765_TPCI_MASK))
-		{
-			case (ISO15765_TPCI_SF):
-			case (ISO15765_TPCI_FF):
-			case (ISO15765_TPCI_CF):
-			case (ISO15765_TPCI_FC):
-				StartTimer();
-				break;
-			default:
-				break;
-		}
-	}
-}
-
 
 static void StartTimer(void)
 {
@@ -357,6 +319,43 @@ static void HandleFC(const uint8* data,uint16 size)
 			break;
 		default:
 			break;
+	}
+}
+
+// ======================== [    FUNCTIONS    ] ==============================================
+void ArTp_RxIndication(const ArCanMsgType* armsg)
+{
+	if((sArchTp.rxId == armsg->Msg.Identifier) && (0==armsg->Msg.BusID))
+	{
+		switch((armsg->Msg.Data[0]&ISO15765_TPCI_MASK))
+		{
+			case (ISO15765_TPCI_SF):
+				HandleSF(armsg->Msg.Data,armsg->Msg.DataLengthCode);
+				break;
+			case (ISO15765_TPCI_FF):
+				HandleFF(armsg->Msg.Data,armsg->Msg.DataLengthCode);
+				break;
+			case (ISO15765_TPCI_CF):
+				HandleCF(armsg->Msg.Data,armsg->Msg.DataLengthCode);
+				break;
+			case (ISO15765_TPCI_FC):
+				HandleFC(armsg->Msg.Data,armsg->Msg.DataLengthCode);
+				break;
+			default:
+				break;
+		}
+		// Timer process
+		switch((armsg->Msg.Data[0]&ISO15765_TPCI_MASK))
+		{
+			case (ISO15765_TPCI_SF):
+			case (ISO15765_TPCI_FF):
+			case (ISO15765_TPCI_CF):
+			case (ISO15765_TPCI_FC):
+				StartTimer();
+				break;
+			default:
+				break;
+		}
 	}
 }
 

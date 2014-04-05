@@ -344,8 +344,8 @@ const CanIf_RxPduConfigType CanIfRxPduConfigData[] =
 const CanIf_InitConfigType CanIfInitConfig =
 {
     .CanIfConfigSet = 0, // Not used
-    .CanIfNumberOfCanRxPduIds = sizeof(CanIfTxPduConfigData)/sizeof(CanIf_TxPduConfigType),
-    .CanIfNumberOfCanTXPduIds = sizeof(CanIfRxPduConfigData)/sizeof(CanIf_RxPduConfigType),
+    .CanIfNumberOfCanRxPduIds = sizeof(CanIfRxPduConfigData)/sizeof(CanIf_RxPduConfigType),
+    .CanIfNumberOfCanTXPduIds = sizeof(CanIfTxPduConfigData)/sizeof(CanIf_TxPduConfigType),
     .CanIfNumberOfDynamicCanTXPduIds = 0, // Not used
     // Containers
     .CanIfHohConfigPtr = CanIfHohConfigData,

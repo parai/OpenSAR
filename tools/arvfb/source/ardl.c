@@ -4,6 +4,7 @@
 void Can_RxIndication(const ArCanMsgType* armsg)
 {
 	ArTp_RxIndication(armsg);
+	ArCom_RxIndication(armsg);
 }
 
 void Ardl_RxIndication(const ArMsgType *armsg)

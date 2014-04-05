@@ -1,5 +1,5 @@
 #include "arvfb.h"
-// ======================== TYPES    =============================
+// ======================== [ LOCAL TYPES  ] ==============================================
 
 enum
 {
@@ -10,7 +10,7 @@ enum
 	FL_STEP_WRITE_FINGER_PRINT,
 	FL_STEP_STOP
 };
-// ======================== DATA     =============================
+// ======================== [ LOCAL VARIANTS  ] ==============================================
 static guint    sFL_Step = 0;
 static gboolean isFL_Busy = FALSE;
 static uint32   FL_Seed = 0;
@@ -18,7 +18,7 @@ static uint8    FL_Level = 6;
 
 static GtkTextBuffer *pFL_TextBuffer = NULL;
 
-// ======================== FUNCTION =============================
+// ======================== [ LOCAL FUNCTIONS  ] ==============================================
 static void     FL_Response(uint8* data,uint16 size);
 static void     FL_Session(void);
 static void     FL_SecurityRequestSeed(void);
@@ -225,6 +225,7 @@ void ArFl_Schedule(void)
 	}
 }
 
+// ======================== [ FUNCTIONS ] ==============================================
 void ArFl_Init(void)
 {
 	Stop();

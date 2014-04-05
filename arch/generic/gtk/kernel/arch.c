@@ -18,7 +18,6 @@ extern void start_main(void);
 
 extern GtkWidget* Lcd(void);
 extern GtkWidget* Dio(void);
-extern GtkWidget* Com(void);
 
 // ====================================== TYPEs ====================================
 static GTimer* pSysTimer;
@@ -189,9 +188,6 @@ static GtkWidget*  Notebook(void)
 	// gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Lcd(),gtk_label_new("Lcd"));
 #ifdef USE_DIO
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Dio(),gtk_label_new("Dio"));
-#endif
-#ifdef USE_COM
-	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),Com(),gtk_label_new("Com"));
 #endif
 
 	return pNotebook;

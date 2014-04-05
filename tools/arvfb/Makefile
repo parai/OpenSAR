@@ -26,7 +26,7 @@ ldflags-y += `pkg-config --cflags gtk+-3.0` \
 inc-y += -I$(BD)/tools/arvfb/include
 inc-y += -I$(BD)/include
 
-def-y += 
+def-y += -D__GTK__
 
 #objects
 dir-y = $(BD)/tools/arvfb/source

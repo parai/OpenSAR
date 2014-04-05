@@ -86,10 +86,13 @@ static GtkWidget* CreateNotebook(void)
 	pNotebook = gtk_notebook_new ();
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),
 							ArCan(),
-							gtk_label_new("arcan"));
+							gtk_label_new("Can"));
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),
 							ArFlashLoader(),
 							gtk_label_new("FlashLoader"));
+	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),
+							ArCom(),
+							gtk_label_new("Com"));
 	return pNotebook;
 }
 
@@ -98,6 +101,7 @@ static void Initialize(void)
 	ArCan_Init();
 	ArTp_Init();
 	ArFl_Init();
+	ArCom_Init();
 }
 
 static gboolean Schedule(gpointer data)
@@ -107,6 +111,7 @@ static gboolean Schedule(gpointer data)
 		ArCan_Schedule();
 		ArTp_Schedule();
 		ArFl_Schedule();
+		ArCom_Schedule();
 	}
 
 	return TRUE;
@@ -130,9 +135,12 @@ int main (int argc, char *argv[])
 	gtk_box_set_homogeneous(GTK_BOX(pBox),FALSE);
 
 	gtk_container_add(GTK_CONTAINER (window), pBox);
+	gtk_container_set_border_width (GTK_CONTAINER (window), 0);
 
 	// Initialize
-	gtk_container_set_border_width (GTK_CONTAINER (window), 0);
+	Initialize();
+
+
 
 	gtk_box_pack_start(GTK_BOX(pBox),CreateMenubar(),FALSE,FALSE,0);
 	gtk_box_pack_start(GTK_BOX(pBox),CreateToolbar(),FALSE,FALSE,0);
@@ -140,7 +148,7 @@ int main (int argc, char *argv[])
 
 	gtk_widget_show_all (window);
 
-	Initialize();
+
 	g_idle_add(Schedule,NULL);
 
 

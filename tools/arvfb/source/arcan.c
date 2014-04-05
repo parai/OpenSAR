@@ -39,7 +39,7 @@ static char* FormatTime(gdouble time)
 	time = time - 60*minute;
 	second = (int)time;
 	time = time - second;
-	sprintf(strTime,"%4dH:%2dM:%2dS:%5.3fMS",hour,minute,second,time*10);
+	sprintf(strTime,"%4dH:%2dM:%2dS:%7.3fMS",hour,minute,second,time*1000);
 	return strTime;
 }
 static void TraceLog(uint16 port,ArCanMsgType* pMsg)
@@ -100,6 +100,7 @@ static void Forward(ArPortType port,const ArMsgType* pMsg)
 	ArvfbSend(port,&armsg);
 }
 
+// ======================== [    FUNCTIONS    ] ==============================================
 void ArCan_Schedule(void)
 {
 	ArMsgType      Message;

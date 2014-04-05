@@ -158,21 +158,97 @@ void Can_0_IsrEntry(void)
 
 void Can_1_IsrEntry(void)
 {
-
+	CAN_HW_t *canHw = &Can_HwUnit[CAN_CTRL_1];
+	//Can_SocketEnterCritical(CAN_CTRL_1);
+	if(cCanIsrTx == (canHw->IRQF&cCanIsrTx))
+	{
+		Can_1_TxIsr();
+	}
+	if(cCanIsrRx == (canHw->IRQF&cCanIsrRx))
+	{
+		Can_1_RxIsr();
+	}
+	if(cCanIsrWak == (canHw->IRQF&cCanIsrWak))
+	{
+		Can_1_WakeIsr();
+	}
+	if(cCanIsrErr == (canHw->IRQF&cCanIsrErr))
+	{
+		Can_1_ErrIsr();
+	}
+	canHw->IRQF = 0; // clear all
+	//Can_SocketExitCritical(CAN_CTRL_1);
 }
 
 void Can_2_IsrEntry(void)
 {
-
+	CAN_HW_t *canHw = &Can_HwUnit[CAN_CTRL_2];
+	//Can_SocketEnterCritical(CAN_CTRL_2);
+	if(cCanIsrTx == (canHw->IRQF&cCanIsrTx))
+	{
+		Can_2_TxIsr();
+	}
+	if(cCanIsrRx == (canHw->IRQF&cCanIsrRx))
+	{
+		Can_2_RxIsr();
+	}
+	if(cCanIsrWak == (canHw->IRQF&cCanIsrWak))
+	{
+		Can_2_WakeIsr();
+	}
+	if(cCanIsrErr == (canHw->IRQF&cCanIsrErr))
+	{
+		Can_2_ErrIsr();
+	}
+	canHw->IRQF = 0; // clear all
+	//Can_SocketExitCritical(CAN_CTRL_2);
 }
 
 void Can_3_IsrEntry(void)
 {
-
+	CAN_HW_t *canHw = &Can_HwUnit[CAN_CTRL_3];
+	//Can_SocketEnterCritical(CAN_CTRL_3);
+	if(cCanIsrTx == (canHw->IRQF&cCanIsrTx))
+	{
+		Can_3_TxIsr();
+	}
+	if(cCanIsrRx == (canHw->IRQF&cCanIsrRx))
+	{
+		Can_3_RxIsr();
+	}
+	if(cCanIsrWak == (canHw->IRQF&cCanIsrWak))
+	{
+		Can_3_WakeIsr();
+	}
+	if(cCanIsrErr == (canHw->IRQF&cCanIsrErr))
+	{
+		Can_3_ErrIsr();
+	}
+	canHw->IRQF = 0; // clear all
+	//Can_SocketExitCritical(CAN_CTRL_3);
 }
 
 void Can_4_IsrEntry(void)
 {
-
+	CAN_HW_t *canHw = &Can_HwUnit[CAN_CTRL_4];
+	//Can_SocketEnterCritical(CAN_CTRL_4);
+	if(cCanIsrTx == (canHw->IRQF&cCanIsrTx))
+	{
+		Can_4_TxIsr();
+	}
+	if(cCanIsrRx == (canHw->IRQF&cCanIsrRx))
+	{
+		Can_4_RxIsr();
+	}
+	if(cCanIsrWak == (canHw->IRQF&cCanIsrWak))
+	{
+		Can_4_WakeIsr();
+	}
+	if(cCanIsrErr == (canHw->IRQF&cCanIsrErr))
+	{
+		Can_4_ErrIsr();
+	}
+	canHw->IRQF = 0; // clear all
+	//Can_SocketExitCritical(CAN_CTRL_4);
 }
 

@@ -43,6 +43,7 @@ typedef struct
 #include "ardl.h"
 #include "artp.h"
 #include "arfl.h"
+#include "arcom.h"
 
 
 // =============================== [ ARVFB FUNCTIONS ] ==============================
