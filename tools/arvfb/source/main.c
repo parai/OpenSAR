@@ -4,6 +4,8 @@
 // ======================== [ LOCAL VARIANTS  ] ==============================================
 static boolean isPaused = TRUE;
 
+static GtkTextBuffer *pTextBuffer = NULL;
+
 // ======================== [ LOCAL FUNCTIONS ] ==============================================
 static void on_menu_activate  (GtkMenuItem* item,gpointer data)
 {
@@ -80,6 +82,33 @@ static GtkWidget* CreateToolbar(void)
 	return pToolbar;
 }
 
+GtkWidget* Console(void)
+{
+	GtkWidget* pBox;
+
+	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+
+	{
+		GtkWidget *swindow;
+		GtkWidget *textview;
+		GtkTextIter Iter;
+		swindow = gtk_scrolled_window_new (NULL, NULL);
+		gtk_widget_set_size_request(swindow,800,500);
+		gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swindow),
+									  GTK_POLICY_AUTOMATIC,
+									  GTK_POLICY_AUTOMATIC);
+		gtk_box_pack_start (GTK_BOX (pBox), swindow, TRUE, TRUE, 0);
+		textview = gtk_text_view_new ();
+		//gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (textview), GTK_WRAP_WORD);
+		gtk_text_view_set_editable(GTK_TEXT_VIEW (textview),FALSE);
+		gtk_container_add (GTK_CONTAINER (swindow), textview);
+		pTextBuffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(textview));
+		gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+		Arch_Trace("Arvfb Console:\n");
+	}
+	return pBox;
+}
+
 static GtkWidget* CreateNotebook(void)
 {
 	GtkWidget* pNotebook;
@@ -93,6 +122,9 @@ static GtkWidget* CreateNotebook(void)
 	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),
 							ArCom(),
 							gtk_label_new("Com"));
+	gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),
+								Console(),
+								gtk_label_new("Console"));
 	return pNotebook;
 }
 
@@ -115,6 +147,21 @@ static gboolean Schedule(gpointer data)
 	}
 
 	return TRUE;
+}
+
+
+void Arch_Trace(const char* format,...)
+{
+	va_list args;
+	unsigned long length;
+	static char log_buf[1024];
+	va_start(args, format);
+	length = vsprintf(log_buf,format,args);
+	va_end(args);
+
+	GtkTextIter Iter;
+	gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+	gtk_text_buffer_insert(pTextBuffer,&Iter,log_buf,length);
 }
 
 int main (int argc, char *argv[])
@@ -152,6 +199,7 @@ int main (int argc, char *argv[])
 
 
 	g_idle_add(Schedule,NULL);
+	g_timeout_add(1,Schedule,NULL);
 
 
 	gtk_main ();

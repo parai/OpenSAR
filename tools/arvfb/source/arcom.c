@@ -247,7 +247,7 @@ static void DefineSignal( char* Name,uint8 StartBit,uint8 BitSize,uint32 Default
 	}
 }
 
-static void on_entry_activate(GtkEntry *entry,gpointer data)
+static void on_entry_signal_activate(GtkEntry *entry,gpointer data)
 {
 	const gchar* pValue = gtk_entry_get_text(entry);
 
@@ -270,19 +270,72 @@ static void on_entry_activate(GtkEntry *entry,gpointer data)
 	}
 }
 
+static void on_entry_period_activate(GtkEntry *entry,gpointer data)
+{
+	const gchar* pValue = gtk_entry_get_text(entry);
+
+	ArComPduType* Pdu = (ArComPduType*)data;
+
+
+	uint32 value = atoi(pValue);
+
+	Pdu->Period = value;
+
+	Arch_Trace("Change %s\'s period to %d\n",Pdu->Name,Pdu->Period);
+
+	if(0u==Pdu->Period)
+	{
+		Arch_Trace("\t as Period is zero, transmission is disabled.\n");
+	}
+
+}
+
+static void on_button_trigger_transmit_clicked(GtkEntry *entry,gpointer data)
+{
+	ArComPduType* Pdu = (ArComPduType*)data;
+
+	Arch_Trace("Trigger %s\'s transmission\n",Pdu->Name);
+	Transmit(Pdu);
+
+}
+
 static GtkWidget* ComPage(ArComPduType* Pdu)
 {
 	GtkWidget* pGrid;
 
 	pGrid = gtk_grid_new();
 
+	{
+		GtkWidget* pEntry = gtk_entry_new();
+		gtk_grid_attach(GTK_GRID(pGrid),gtk_label_new("Period"),0,0,1,1);
+		gtk_grid_attach(GTK_GRID(pGrid),pEntry,1,0,1,1);
+		gtk_entry_set_width_chars(GTK_ENTRY(pEntry),32);
+		gchar value[32];
+		sprintf(value,"%d",Pdu->Period);
+		gtk_entry_set_text(GTK_ENTRY(pEntry),value);
+		gtk_widget_set_sensitive(GTK_WIDGET(pEntry),Pdu->IsTxEnabled);
+		if(Pdu->IsTxEnabled)
+		{
+			g_signal_connect(G_OBJECT (pEntry), "activate",
+				G_CALLBACK(on_entry_period_activate) , (gpointer)(Pdu));
+
+			GtkWidget* pButton = gtk_button_new_with_label("Trigger Transmit");
+			g_signal_connect(G_OBJECT (pButton), "clicked",
+					G_CALLBACK(on_button_trigger_transmit_clicked) , (gpointer)(Pdu));
+
+			gtk_grid_attach(GTK_GRID(pGrid),pButton,2,0,1,1);
+		}
+
+
+	}
 	for (int j = 0; j<Pdu->SignalNbr ; j++) {
 		ArComSignalType * Signal = &(Pdu->Signals[j]);
 		ArComPduType* Pdu = (ArComPduType*)Signal->Pdu;
 		GtkWidget* pEntry = gtk_entry_new();
 		Signal->Entry = pEntry;
-		gtk_grid_attach(GTK_GRID(pGrid),gtk_label_new(Signal->Name),(j%2)*2,j/2,1,1);
-		gtk_grid_attach(GTK_GRID(pGrid),pEntry,(j%2)*2+1,j/2,1,1);
+		int J = j+2;
+		gtk_grid_attach(GTK_GRID(pGrid),gtk_label_new(Signal->Name),(J%2)*2,J/2,1,1);
+		gtk_grid_attach(GTK_GRID(pGrid),pEntry,(J%2)*2+1,J/2,1,1);
 		gtk_entry_set_width_chars(GTK_ENTRY(pEntry),32);
 		gchar value[32];
 		if(TRUE)
@@ -299,7 +352,7 @@ static GtkWidget* ComPage(ArComPduType* Pdu)
 		if(Pdu->IsTxEnabled)
 		{
 			g_signal_connect(G_OBJECT (pEntry), "activate",
-				G_CALLBACK(on_entry_activate) , (gpointer)(Signal));
+				G_CALLBACK(on_entry_signal_activate) , (gpointer)(Signal));
 		}
 	}
 
@@ -346,6 +399,7 @@ void ArCom_Schedule(void)
 		{
 			ArComPduType* Pdu = &(sArch.Pdu[i]);
 			if( (Pdu->IsTxEnabled) &&
+				(Pdu->Period != 0) &&
 				(Pdu->Timer < Pdu->Period))
 			{
 				Pdu->Timer += elapsed;
@@ -358,6 +412,7 @@ void ArCom_Schedule(void)
 	{
 		ArComPduType* Pdu = &(sArch.Pdu[I]);
 		if( (Pdu->IsTxEnabled) &&
+			(Pdu->Period != 0) &&
 			(Pdu->Timer >= Pdu->Period)) // Elapsed Timer
 		{
 			Transmit(Pdu);

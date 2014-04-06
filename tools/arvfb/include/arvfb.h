@@ -51,4 +51,6 @@ typedef struct
 extern boolean ArvfbPoll(ArPortType port,ArMsgType* pMsg);
 extern void    ArvfbSend(ArPortType port,const ArMsgType* pMsg);
 
+void Arch_Trace(const char* format,...);
+
 #endif /* ARVFB_H_ */

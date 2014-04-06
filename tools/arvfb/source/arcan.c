@@ -40,7 +40,7 @@ static char* FormatTime(gdouble time)
 	time = time - 60*minute;
 	second = (int)time;
 	time = time - second;
-	sprintf(strTime,"%4dH:%2dM:%2dS:%7.3fMS",hour,minute,second,time*1000);
+	sprintf(strTime,"%4d H:%2d M:%2d S:%7.3f MS",hour,minute,second,time*1000);
 	return strTime;
 }
 static void TraceLog(uint16 port,ArCanMsgType* pMsg)
