@@ -221,7 +221,7 @@ studio:
 	@(cd ./tools/OpenSAR;python main.py)
 
 gen:
-	@(cd ./tools/studio;python Gen.py)
+	@(cd ./tools/OpenSAR;python ArGen.py)
 
 binaries/gtk/Flash.img:
 	dd if=/dev/zero of=binaries/gtk/Flash.img bs=1M count=1

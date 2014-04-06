@@ -5,12 +5,15 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <ctype.h>
 #include <assert.h>
 
 
 // ============================== [ MACROS ] ======================================
 #define ARPVAR_PDU_TYPE      0
 #define ARPVAR_SIGNAL_TYPE   1
+
+#define ARP_VAR(var)  (*((ArpVarType**) &var))
 
 // ============================== [ TYPES  ] ======================================
 typedef enum
@@ -19,37 +22,30 @@ typedef enum
 	ARP_E_NOT_OK
 }ArpResultType;
 
-typedef struct
-{	// see arcom.c ArComPduType
-	uint32_t Identifier;
-	uint8_t  BusID;
-	uint8_t  IsTxEnabled;
-	uint32_t Period;
-}ArpPduType;
-
-typedef struct
+typedef enum
 {
-	uint8_t  StartBit;
-	uint8_t  BitSize;
-}ArpSignalType;
+	VAR_TYPE_STRING,
+	VAR_TYPE_DOUBLE,
+	VAR_TYPE_INTEGER
+}ArpVarTypeType;
 
-typedef struct
+typedef struct ArpVarType
 {
-	uint32_t type;
-	char*    Name;		      // use malloc/free to process it
+	ArpVarTypeType Type;
 	union
 	{
-		ArpPduType    Pdu;
-		ArpSignalType Signal;
+		char*    String;   // use malloc/free to process it
+		double   Double;
+		int      Integer;
 	}Var;
+	struct ArpVarType* Next;
 }ArpVarType;
 
 
 // ============================== [ FUNCTIONS ] ===================================
 int  yylex    (void);
 void yyerror  (char const *);
-ArpResultType ArpProcess(ArpVarType* Var);
-const char*  ArpErrorMsg(void);
+
 
 void ArParser(int argc, char* argv[]);
 

@@ -15,5 +15,8 @@ void ArCom_Schedule(void);
 
 void ArCom_RxIndication(const ArCanMsgType* armsg);
 
+void ArCom_DefinePdu( char* Name,uint32 Identifier,uint8 BusID,boolean IsTxEnabled,uint32 Period);
+
+void ArCom_DefineSignal( char* Name,uint8 StartBit,uint8 BitSize,uint32 DefaultValue);
 
 #endif /* ARCOM_H_ */

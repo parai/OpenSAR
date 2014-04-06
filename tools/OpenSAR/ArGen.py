@@ -45,6 +45,55 @@ def ArGen(arxml,dir):
     elif(arxml.tag == 'Dcm'):
         GenDcm(arxml,dir)
         
+
+from Gen.GCF import *
+from Arxml  import *
+
+def ArvfbGetCanIf(arxml,pdu):
+    url = 'CanIf.ChannelList'
+    for chl in ArxmlGetURL(arxml,url):
+        for hth in GLGet(chl,'HthList'):
+            for pdu2 in GLGet(hth,'PduList'):
+                if(GAGet(pdu2,'EcuCPduRef') == GAGet(pdu,'Name')):
+                    return [pdu2,GAGet(chl,'ControllerRef')]
+        for hrh in GLGet(chl,'HrhList'):
+            for pdu2 in GLGet(hrh,'PduList'):
+                if(GAGet(pdu2,'EcuCPduRef') == GAGet(pdu,'Name')):
+                    return [pdu2,GAGet(chl,'ControllerRef')]
+    return None
+
+def ArvfbGetCom(arxml,pdu):
+    url = 'Com.IPduList'
+    for pdu2 in ArxmlGetURL(arxml,url):
+        if(GAGet(pdu2,'PduRef') == GAGet(pdu,'Name')):
+                return pdu2
+    return None
+def ArvfbGen(arxml,dir):
+    fp = open('%s/arvfb.config'%(dir),'w')
+    url = 'EcuC.PduList'
+    for pdu in ArxmlGetURL(arxml,url):
+        pduIf = ArvfbGetCanIf(arxml,pdu)
+        pduCom = ArvfbGetCom(arxml,pdu)
+        if(pduIf != None and pduCom!=None):
+            Name = GAGet(pdu,'Name')
+            Id   = GAGet(pduIf[0],'Identifier')
+            BusId = pduIf[1][-1:]
+            isTxE = (GAGet(pduCom,'Direction')=='RECEIVE')
+            Period = GAGet(pduCom,'TimePeriodFactor')
+            fp.write('\n//  %-16s %-12s %-4s %-8s %-8s\n'%('Name','Id','BusId','isTxE','Period'))
+            fp.write('Pdu %-16s %-12s %-4s %-8s %-8s\n'%(Name,Id,BusId,isTxE,Period))
+            fp.write('//     %-16s %-8s %-8s %-8s\n'%('Name','StartBit','Size','InitialValue'))
+            for gsig in GLGet(pduCom,'GroupSignalList'):
+                for sig in GLGet(gsig,'SignalList'):
+                    fp.write('Signal %-16s %-8s %-8s %-8s\n'%(GAGet(sig,'Name'),GAGet(sig,'StartBit'),
+                                                              GAGet(sig,'Size'),GAGet(sig,'InitialValue')))
+            for sig in GLGet(pduCom,'SignalList'):
+                fp.write('Signal %-16s %-8s %-8s %-8s\n'%(GAGet(sig,'Name'),GAGet(sig,'StartBit'),
+                                                          GAGet(sig,'Size'),GAGet(sig,'InitialValue')))
+    fp.write('\n\nexit\n\n')
+    fp.close()
+    print '>>> Gen Arvfb <<<'
+           
 gDefault_GEN = '../../app/config/GEN'
 if __name__ == '__main__':
     import xml.etree.ElementTree as ET
@@ -53,3 +102,4 @@ if __name__ == '__main__':
         root = ET.parse(wfxml).getroot();
         for arxml in root:
             ArGen(arxml,gDefault_GEN)
+        ArvfbGen(root,gDefault_GEN)

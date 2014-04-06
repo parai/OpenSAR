@@ -39,12 +39,12 @@ obj-dir = $(BD)/tools/arvfb/objs
 		
 obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.c)))))	
 
-bison-y = $(patsubst %.y,%.c, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.y))))
+bison-y = $(patsubst %.y,%.yc, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.y))))
 
-flex-y  = $(patsubst %.f,%.c, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.f))))
+flex-y  = $(patsubst %.f,%.yc, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.f))))
 
 #common rules
-.SUFFIXES: .c .y
+.SUFFIXES: .c .y .f
 
 $(obj-dir)/%.o:%.c
 	@echo
@@ -52,13 +52,13 @@ $(obj-dir)/%.o:%.c
 	@$(CC) $(cflags-y) $(inc-y) $(def-y) -MM -MF $(patsubst %.o,%.d,$@) -MT $@ $<
 	@$(CC) $(cflags-y) $(inc-y) $(def-y) -o $@ $<
 	
-%.c:%.y
+%.yc:%.y
 	@echo
 	@echo "  >> bison $(notdir $<)"
 	@bison $< -o $@
-	@rm -v $(patsubst %.c,%.output,$@)
+	@rm -v $(patsubst %.yc,%.output,$@)
 	
-%.c:%.f
+%.yc:%.f
 	@echo
 	@echo "  >> flex $(notdir $<)"
 	@flex $<

@@ -317,21 +317,21 @@ void ArCom_Init(void)
 	StopTimer();
 
 	// ABS Define
-	DefinePdu("ABS_0x102",0x102,2,TRUE,100);
-	DefineSignal("SpeedKmph",0 ,16,18000); // 180 Kmph
-	DefineSignal("TachoRpm" ,16,16,5000);  // 5000rpm
-	DefineSignal("Led1Sts"  ,32,2 ,0);
-	DefineSignal("Led2Sts"  ,34,2 ,1);
-	DefineSignal("Led3Sts"  ,36,2 ,2);
-
-	// Time Define
-	DefinePdu("Time_0x101",0x101,2,FALSE,100);
-	DefineSignal("Year"   , 0   , 16 ,2014 );
-	DefineSignal("Month"  , 16  , 8  ,4    );
-	DefineSignal("Day"    , 24  , 8  ,4    );
-	DefineSignal("Hour"   , 32  , 8  ,23   );
-	DefineSignal("Minute" , 32  , 8  ,37   );
-	DefineSignal("Second" , 32  , 8  ,00   );
+//	DefinePdu("ABS_0x102",0x102,2,TRUE,100);
+//	DefineSignal("SpeedKmph",0 ,16,18000); // 180 Kmph
+//	DefineSignal("TachoRpm" ,16,16,5000);  // 5000rpm
+//	DefineSignal("Led1Sts"  ,32,2 ,0);
+//	DefineSignal("Led2Sts"  ,34,2 ,1);
+//	DefineSignal("Led3Sts"  ,36,2 ,2);
+//
+//	// Time Define
+//	DefinePdu("Time_0x101",0x101,2,FALSE,100);
+//	DefineSignal("Year"   , 0   , 16 ,2014 );
+//	DefineSignal("Month"  , 16  , 8  ,4    );
+//	DefineSignal("Day"    , 24  , 8  ,4    );
+//	DefineSignal("Hour"   , 32  , 8  ,23   );
+//	DefineSignal("Minute" , 32  , 8  ,37   );
+//	DefineSignal("Second" , 32  , 8  ,00   );
 
 }
 
@@ -402,4 +402,15 @@ GtkWidget* ArCom(void)
 	return pNotebook;
 }
 
+
+void ArCom_DefinePdu( char* Name,uint32 Identifier,uint8 BusID,boolean IsTxEnabled,
+						uint32 Period)
+{
+	DefinePdu(Name,Identifier,BusID,IsTxEnabled,Period);
+}
+
+void ArCom_DefineSignal( char* Name,uint8 StartBit,uint8 BitSize,uint32 DefaultValue)
+{
+	DefineSignal(Name,StartBit,BitSize,DefaultValue);
+}
 

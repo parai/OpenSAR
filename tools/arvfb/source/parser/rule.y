@@ -1,15 +1,18 @@
 /* require bison 3.0.2 */
 
 %{
-  #include <stdio.h>  /* For printf, etc. */
+  #include <stdio.h>  /* For DEBUG_BISON, etc. */
   #include <math.h>   /* For pow, used in the grammar.  */
   #include "arparser.h"
 %}
 
 
-%define api.value.type union /* Generate YYSTYPE from these types:  */
-%token <double>  NUM         /* Simple double precision number.  */
-%token <ArpVarType*> VAR FNCT/* Symbol table pointer: variable and function.  */
+%define api.value.type union  
+%token <double>      yDouble
+%token <int>         yInteger
+%token <ArpVarType*> yExit
+%token <ArpVarType*> yVar
+%token <ArpVarType*> yPdu ySignal
 %type  <double>  exp
 
 
@@ -25,8 +28,10 @@
 %define parse.trace
 
 /* Formatting semantic values.  */
-%printer { fprintf (yyoutput, "%s", $$->Name); } VAR;
-%printer { fprintf (yyoutput, "%s()", $$->Name); } FNCT;
+%printer { fprintf (yyoutput, "%s", $$->Var.String); } yExit;
+%printer { fprintf (yyoutput, "%s", $$->Var.String); } yVar;
+%printer { fprintf (yyoutput, "%s", $$->Var.String); } yPdu;
+%printer { fprintf (yyoutput, "%s", $$->Var.String); } ySignal;
 %printer { fprintf (yyoutput, "%g", $$); } <double>;
 
 %% /* The grammar follows.  */
@@ -41,18 +46,26 @@ input:
 line:
   '\n'
 | exp '\n'
-| error '\n' { yyerrok;                }
+| error '\n' { puts("##:"); yyerrok;   }
 ;
 
 
 
 exp:
-  VAR                
-	{ 
-		if(ARP_E_NOT_OK==ArpProcess($1))
-		{	
-			yyerror(ArpErrorMsg());
-		}              
+  	/*  Name Identifier BusID  IsTxEnabled Period */
+	yPdu yVar yInteger yInteger yInteger yInteger         { 
+		DEBUG_BISON("Pdu:Name=%s,Identifier=0x%x,BusId=%d,IsTxEnabled=%s,Period=%d\n",
+				$2->Var.String,$3,$4,$5?"TRUE":"FALSE",$6);
+		ArCom_DefinePdu($2->Var.String,$3,$4,$5,$6);          
+	}
+	/*      Name StartBit BitSize DefaultValue */
+|	ySignal yVar yInteger yInteger yInteger      { 
+		DEBUG_BISON("Signal:Name=%s,StartBit=%d,BitSize=%d,DefaultValue=%d\n",
+				$2->Var.String,$3,$4,$5);
+		ArCom_DefineSignal($2->Var.String,$3,$4,$5);          
+	}
+|	yExit	{
+		return 0;
 	}
 ;
 
