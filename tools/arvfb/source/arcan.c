@@ -24,7 +24,8 @@ static void Trace(const gchar* format,...)
 	va_end(args);
 
 	GtkTextIter Iter;
-	gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+	//gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+	gtk_text_buffer_get_start_iter(pTextBuffer,&Iter);
 	gtk_text_buffer_insert(pTextBuffer,&Iter,log_buf,length);
 }
 

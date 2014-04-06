@@ -24,42 +24,64 @@ ldflags-y += `pkg-config --cflags gtk+-3.0` \
 			 -lpthread -lm
 
 inc-y += -I$(BD)/tools/arvfb/include
+inc-y += -I$(BD)/tools/arvfb/source/parser
 inc-y += -I$(BD)/include
 
 def-y += -D__GTK__
 
 #objects
-dir-y = $(BD)/tools/arvfb/source
+dir-y = $(BD)/tools/arvfb/source	\
+		$(BD)/tools/arvfb/source/parser
 		
 VPATH += $(dir-y)
 		
 obj-dir = $(BD)/tools/arvfb/objs
 		
-obj-y = $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.c)))))	
+obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.c)))))	
+
+bison-y = $(patsubst %.y,%.c, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.y))))
+
+flex-y  = $(patsubst %.f,%.c, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.f))))
 
 #common rules
-.SUFFIXES: .c
+.SUFFIXES: .c .y
 
 $(obj-dir)/%.o:%.c
 	@echo
 	@echo "  >> CC $(notdir $<)"
 	@$(CC) $(cflags-y) $(inc-y) $(def-y) -MM -MF $(patsubst %.o,%.d,$@) -MT $@ $<
 	@$(CC) $(cflags-y) $(inc-y) $(def-y) -o $@ $<
-
+	
+%.c:%.y
+	@echo
+	@echo "  >> bison $(notdir $<)"
+	@bison $< -o $@
+	@rm -v $(patsubst %.c,%.output,$@)
+	
+%.c:%.f
+	@echo
+	@echo "  >> flex $(notdir $<)"
+	@flex $<
+	@mv -v lex.yy.c $@
+	
 .PHONY:all clean
 
 $(obj-dir):
-	@mkdir -p $(obj-dir)
+	@mkdir -p $(obj-dir) $(flex-y)
 
 $(OUT):
 	@mkdir -p $(OUT)
 
 include $(wildcard $(obj-dir)/*.d)
 
-all:$(obj-dir) $(obj-y) $(OUT)
+cly:
+	@rm -fv $(bison-y) $(flex-y)
+
+all:$(obj-dir) cly $(bison-y) $(flex-y) $(obj-y) $(OUT)
+	@echo $(obj-y)
+	@echo ">> LD $(TARGET)"
 	@$(LD) $(obj-y) $(ldflags-y) -o $(OUT)/$(TARGET) 
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET) DONE   <<<<<<<<<<<<<<<<<<<<<<"	
 
-clean:
+clean:cly
 	@rm -fv $(obj-dir)/*
-

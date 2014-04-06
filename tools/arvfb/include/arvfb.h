@@ -44,6 +44,7 @@ typedef struct
 #include "artp.h"
 #include "arfl.h"
 #include "arcom.h"
+#include "arparser.h"
 
 
 // =============================== [ ARVFB FUNCTIONS ] ==============================

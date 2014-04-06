@@ -12,6 +12,7 @@ arch/generic/gtk/drivers/Lcd_Res/*.bmp
 arch/generic/gtk/drivers/Lcd_Res/*.jpg
 app/config/GEN/test
 app/obj_gtk
+#tools/arvfb/source/parser
 system/uTOS
 out
 tools/pls

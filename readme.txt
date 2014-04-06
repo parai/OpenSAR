@@ -22,5 +22,13 @@ Since 2013-11-23 17:17 base on arc-stable-a45528fee37b.zip AUTOSAR 3.1
 	Now, Gui Tool for OS,COM,NvM is ready.
 	Simulation runnable on gtk3.0.
 	DCM Gui Tool is on the way.
+	
+	[2014-04-05]
+	Most of the Module is OK, but I think the ArcCore is not that good, start to make it better.
+	No care of drivers related to hardware, I will use GTK to simulate most of the drivers.
+	Start from OS firstly..., all According to AUTOSAR 4.0
+	By reading ArcCore OS, I think it is not that perfect, So what to do
+	
+	
 
 	
