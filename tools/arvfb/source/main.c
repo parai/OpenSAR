@@ -188,6 +188,7 @@ int main (int argc, char *argv[])
 	Initialize();
 
 	ArParser(argc,argv);
+	ArScript(argc,argv);
 
 
 

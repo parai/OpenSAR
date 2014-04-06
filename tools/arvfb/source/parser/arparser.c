@@ -55,14 +55,51 @@ static int htoi(char* string)
 }
 
 // ================================ [     IMPORTS    ] ==================================
+// do import name redefinition for the future add script interpret
+#define yyparse 					ar_yyparse
+#define yylex   					ar_yylex
+#define yyin    					ar_yyin
+#define yyout   					ar_yyout
+#define yychar  					ar_yychar
+#define yylval  					ar_yylval
+#define yynerrs 					ar_yynerrs
+#define yy_switch_to_buffer			ar_yy_switch_to_buffer
+#define yy_delete_buffer			ar_yy_delete_buffer
+#define yy_flush_buffer				ar_yy_flush_buffer
+#define yy_create_buffer			ar_yy_create_buffer
+#define yyrestart					ar_yyrestart
+#define yypush_buffer_state			ar_yypush_buffer_state
+#define yypop_buffer_state			ar_yypop_buffer_state
+#define yy_scan_buffer				ar_yy_scan_buffer
+#define yy_scan_bytes				ar_yy_scan_bytes
+#define yy_scan_string				ar_yy_scan_string
+#define yyget_lineno				ar_yyget_lineno
+#define yyget_in					ar_yyget_in
+#define yyget_out					ar_yyget_out
+#define yyget_leng					ar_yyget_leng
+#define yyget_text					ar_yyget_text
+#define yyset_lineno				ar_yyset_lineno
+#define yyset_in					ar_yyset_in
+#define yyset_out					ar_yyset_out
+#define yyget_debug					ar_yyget_debug
+#define yyset_debug					ar_yyset_debug
+#define yylex_destroy				ar_yylex_destroy
+#define yyalloc						ar_yyalloc
+#define yyrealloc					ar_yyrealloc
+#define yyfree						ar_yyfree
+#define yyerror						ar_yyerror
+#define yywrap						ar_yywrap
+#define yylineno					ar_yylineno
+#define yy_flex_debug				ar_yy_flex_debug
+
 
 #define YYERROR_VERBOSE
-
 #define DEBUG_FLEX(...)  //printf(__VA_ARGS__)
 #define DEBUG_BISON(...) printf(__VA_ARGS__)
-
+int  yylex    (void);
+void yyerror  (char const *);
 #include "rule.yc"
-#include "grammar.yc"
+#include "grammar.fc"
 
 // ================================ [ FUNCTIONS ] ========================================
 void yyerror  (char const * errMsg)

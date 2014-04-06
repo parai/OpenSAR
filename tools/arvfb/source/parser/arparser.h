@@ -10,18 +10,9 @@
 
 
 // ============================== [ MACROS ] ======================================
-#define ARPVAR_PDU_TYPE      0
-#define ARPVAR_SIGNAL_TYPE   1
 
-#define ARP_VAR(var)  (*((ArpVarType**) &var))
 
 // ============================== [ TYPES  ] ======================================
-typedef enum
-{
-	ARP_E_OK,
-	ARP_E_NOT_OK
-}ArpResultType;
-
 typedef enum
 {
 	VAR_TYPE_STRING,
@@ -41,12 +32,7 @@ typedef struct ArpVarType
 	struct ArpVarType* Next;
 }ArpVarType;
 
-
 // ============================== [ FUNCTIONS ] ===================================
-int  yylex    (void);
-void yyerror  (char const *);
-
-
 void ArParser(int argc, char* argv[]);
 
 #endif /* ARPARSER_H_ */
