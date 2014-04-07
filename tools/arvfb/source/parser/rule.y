@@ -8,12 +8,12 @@
 
 
 %define api.value.type union  
-%token <double>      yDouble
-%token <int>         yInteger
-%token <ArpVarType*> yExit
-%token <ArpVarType*> yVar
-%token <ArpVarType*> yPdu ySignal
-%type  <double>  exp
+%token <double> 	yDouble
+%token <int>      	yInteger
+%token <int> 		yExit
+%token <char*> 		yString
+%token <int> 		yPdu ySignal	/* value is not cared */
+%type  <double>  	exp
 
 
 %precedence '='
@@ -28,10 +28,8 @@
 %define parse.trace
 
 /* Formatting semantic values.  */
-%printer { fprintf (yyoutput, "%s", $$->Var.String); } yExit;
-%printer { fprintf (yyoutput, "%s", $$->Var.String); } yVar;
-%printer { fprintf (yyoutput, "%s", $$->Var.String); } yPdu;
-%printer { fprintf (yyoutput, "%s", $$->Var.String); } ySignal;
+%printer { fprintf (yyoutput, "%s", $$); } <char*>;
+%printer { fprintf (yyoutput, "%d", $$); } <int>;
 %printer { fprintf (yyoutput, "%g", $$); } <double>;
 
 %% /* The grammar follows.  */
@@ -53,16 +51,18 @@ line:
 
 exp:
   	/*  Name Identifier BusID  IsTxEnabled Period */
-	yPdu yVar yInteger yInteger yInteger yInteger         { 
+	yPdu yString yInteger yInteger yInteger yInteger         { 
 		DEBUG_BISON("Pdu:Name=%s,Identifier=0x%x,BusId=%d,IsTxEnabled=%s,Period=%d\n",
-				$2->Var.String,$3,$4,$5?"TRUE":"FALSE",$6);
-		ArCom_DefinePdu($2->Var.String,$3,$4,$5,$6);          
+				$2,$3,$4,$5?"TRUE":"FALSE",$6);
+		ArCom_DefinePdu($2,$3,$4,$5,$6); 
+		free($2);  // in couple with strdup
 	}
 	/*      Name StartBit BitSize DefaultValue */
-|	ySignal yVar yInteger yInteger yInteger      { 
+|	ySignal yString yInteger yInteger yInteger      { 
 		DEBUG_BISON("Signal:Name=%s,StartBit=%d,BitSize=%d,DefaultValue=%d\n",
-				$2->Var.String,$3,$4,$5);
-		ArCom_DefineSignal($2->Var.String,$3,$4,$5);          
+				$2,$3,$4,$5);
+		ArCom_DefineSignal($2,$3,$4,$5);
+		free($2);
 	}
 |	yExit	{
 		return 0;

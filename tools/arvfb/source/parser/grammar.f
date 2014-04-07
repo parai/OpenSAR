@@ -52,25 +52,25 @@ FALSE|false|False	{
 
 ^Pdu 	{
 			DEBUG_FLEX("Pdu:%s\n",yytext);
-			yylval.yPdu = putVarString(yytext);
+			yylval.yPdu = 0;	// value is ignored
 			return yPdu;
 		}
 
 ^Signal  {
 			DEBUG_FLEX("Signal:%s\n",yytext);
-			yylval.ySignal = putVarString(yytext);
+			yylval.ySignal = 0;	// value is ignored
 			return ySignal;
 		}
 
 exit	{
-			yylval.yExit = putVarString(yytext);
+			yylval.yExit = 0;
 			return yExit;	// exit
 		}
 
 {STRING}	{
 			DEBUG_FLEX("Var:%s\n",yytext);
-			yylval.yVar = putVarString(yytext);
-			return yVar;
+			yylval.yString = strdup(yytext);
+			return yString;
 		}
 
 "\n"	{return '\n';}

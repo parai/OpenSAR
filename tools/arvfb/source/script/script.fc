@@ -395,14 +395,14 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    2,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    4,    5,    1,    6,    7,    8,    9,   10,   10,
        10,   10,   10,   10,   10,   10,   10,    1,    1,    1,
-        1,    1,    1,    1,   11,   12,   12,   12,   13,   14,
-       15,   15,   15,   15,   15,   16,   15,   15,   15,   15,
-       15,   17,   18,   19,   20,   15,   15,   21,   15,   15,
-        1,    1,    1,   22,   15,    1,   23,   12,   12,   12,
+       11,    1,    1,    1,   12,   13,   13,   13,   14,   15,
+       16,   16,   16,   16,   16,   17,   16,   16,   16,   16,
+       16,   18,   19,   20,   21,   16,   16,   22,   16,   16,
+        1,    1,    1,   23,   16,    1,   24,   13,   13,   13,
 
-       24,   25,   15,   15,   26,   15,   15,   27,   15,   15,
-       15,   15,   15,   28,   29,   30,   31,   15,   15,   32,
-       15,   15,   33,    1,   34,    1,    1,    1,    1,    1,
+       25,   26,   16,   16,   27,   16,   16,   28,   16,   16,
+       16,   16,   16,   29,   30,   31,   32,   16,   16,   33,
+       16,   16,   34,    1,   35,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -419,23 +419,23 @@ static yyconst flex_int32_t yy_ec[256] =
         1,    1,    1,    1,    1
     } ;
 
-static yyconst flex_int32_t yy_meta[35] =
+static yyconst flex_int32_t yy_meta[36] =
     {   0,
         1,    1,    2,    1,    1,    1,    1,    1,    3,    3,
-        3,    3,    3,    3,    4,    4,    4,    4,    4,    4,
-        4,    1,    3,    3,    3,    4,    4,    4,    4,    4,
-        4,    4,    1,    1
+        1,    3,    3,    3,    3,    4,    4,    4,    4,    4,
+        4,    4,    1,    3,    3,    3,    4,    4,    4,    4,
+        4,    4,    4,    1,    1
     } ;
 
 static yyconst flex_int16_t yy_base[63] =
     {   0,
-        0,    0,  109,  110,  106,  110,  110,   31,   31,   35,
-        0,   25,   26,   75,   83,   77,   24,  102,   43,   95,
-       40,   46,    0,    0,   86,   74,   80,   68,   72,   70,
-       65,   37,   39,   91,   56,   90,    0,   85,   56,    0,
-       74,   62,   77,   65,   56,   53,   53,   72,   70,   67,
-       56,   44,    0,    0,   43,   58,    0,  110,   76,   80,
-       84,   34
+        0,    0,  110,  111,  107,  111,  111,   32,   32,   36,
+        0,   25,   26,   75,   83,   77,   24,  103,   44,   96,
+       41,   53,    0,    0,   86,   74,   80,   68,   72,   70,
+       65,   33,   38,   92,   49,   91,    0,   86,   60,    0,
+       74,   62,   77,   65,   58,   58,   62,   82,   67,   75,
+       65,   49,    0,    0,   41,   60,    0,  111,   73,   77,
+       81,   35
     } ;
 
 static yyconst flex_int16_t yy_def[63] =
@@ -449,44 +449,44 @@ static yyconst flex_int16_t yy_def[63] =
        58,   58
     } ;
 
-static yyconst flex_int16_t yy_nxt[145] =
+static yyconst flex_int16_t yy_nxt[147] =
     {   0,
         4,    5,    6,    7,    7,    7,    4,    8,    9,   10,
-       11,   11,   11,   12,   11,   11,   11,   11,   13,   11,
-       11,    4,   11,   14,   15,   11,   11,   11,   11,   16,
-       11,   11,   17,    4,   19,   25,   40,   21,   20,   22,
-       22,   21,   27,   22,   22,   32,   35,   26,   39,   39,
-       36,   23,   21,   28,   22,   22,   32,   33,   32,   35,
-       32,   49,   23,   48,   39,   39,   57,   57,   57,   32,
-       33,   32,   33,   35,   38,   35,   53,   56,   24,   24,
-       34,   55,   34,   34,   37,   54,   37,   37,   53,   53,
-       52,   51,   50,   49,   35,   47,   46,   45,   44,   43,
+        7,   11,   11,   11,   12,   11,   11,   11,   11,   13,
+       11,   11,    4,   11,   14,   15,   11,   11,   11,   11,
+       16,   11,   11,   17,    4,   19,   25,   40,   21,   20,
+       22,   22,   21,   27,   22,   22,   32,   35,   26,   39,
+       39,   36,   35,   23,   28,   32,   48,   32,   33,   21,
+       32,   22,   22,   49,   23,   57,   32,   33,   39,   39,
+       35,   32,   33,   57,   56,   24,   24,   34,   57,   34,
+       34,   37,   38,   37,   37,   35,   53,   55,   54,   53,
+       53,   52,   51,   50,   49,   35,   47,   46,   45,   44,
 
-       42,   41,   38,   18,   31,   30,   29,   18,   58,    3,
+       43,   42,   41,   38,   18,   31,   30,   29,   18,   58,
+        3,   58,   58,   58,   58,   58,   58,   58,   58,   58,
        58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
        58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58
+       58,   58,   58,   58,   58,   58
     } ;
 
-static yyconst flex_int16_t yy_chk[145] =
+static yyconst flex_int16_t yy_chk[147] =
     {   0,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
         1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
-        1,    1,    1,    1,    8,   12,   62,    9,    8,    9,
-        9,   10,   13,   10,   10,   17,   19,   12,   21,   21,
-       19,    9,   22,   13,   22,   22,   17,   17,   32,   35,
-       33,   56,    9,   35,   39,   39,   55,   52,   51,   32,
-       32,   33,   33,   49,   50,   48,   47,   49,   59,   59,
-       60,   46,   60,   60,   61,   45,   61,   61,   44,   43,
-       42,   41,   38,   36,   34,   31,   30,   29,   28,   27,
+        1,    1,    1,    1,    1,    8,   12,   62,    9,    8,
+        9,    9,   10,   13,   10,   10,   17,   19,   12,   21,
+       21,   19,   35,    9,   13,   32,   35,   17,   17,   22,
+       33,   22,   22,   56,    9,   55,   32,   32,   39,   39,
+       49,   33,   33,   52,   49,   59,   59,   60,   51,   60,
+       60,   61,   50,   61,   61,   48,   47,   46,   45,   44,
+       43,   42,   41,   38,   36,   34,   31,   30,   29,   28,
 
-       26,   25,   20,   18,   16,   15,   14,    5,    3,   58,
+       27,   26,   25,   20,   18,   16,   15,   14,    5,    3,
        58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
        58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
        58,   58,   58,   58,   58,   58,   58,   58,   58,   58,
-       58,   58,   58,   58
+       58,   58,   58,   58,   58,   58
     } ;
 
 static yy_state_type yy_last_accepting_state;
@@ -761,7 +761,7 @@ yy_match:
 			yy_current_state = yy_nxt[yy_base[yy_current_state] + (unsigned int) yy_c];
 			++yy_cp;
 			}
-		while ( yy_base[yy_current_state] != 110 );
+		while ( yy_base[yy_current_state] != 111 );
 
 yy_find_action:
 		yy_act = yy_accept[yy_current_state];
@@ -800,67 +800,73 @@ YY_RULE_SETUP
 #line 22 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("True:%s\n",yytext);
-			yylval.yInteger = 1;
+			yylval.yInteger.Type = ARS_INTEGER;
+			yylval.yInteger.Var.Integer = 1;
 			return yInteger;
 		}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "../../tools/arvfb/source/script/script.f"
+#line 29 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("False:%s\n",yytext);
-			yylval.yInteger = 0;
+			yylval.yInteger.Type = ARS_INTEGER;
+			yylval.yInteger.Var.Integer = 0;
 			return yInteger;
 		}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 34 "../../tools/arvfb/source/script/script.f"
+#line 36 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Integer:%s\n",yytext);
-			yylval.yInteger = atoi(yytext);
+			yylval.yInteger.Type = ARS_INTEGER;
+			yylval.yInteger.Var.Integer = atoi(yytext);
 			return yInteger;
 		}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 40 "../../tools/arvfb/source/script/script.f"
+#line 43 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Hex:%s\n",yytext);
-			yylval.yInteger = htoi(yytext);
+			yylval.yInteger.Type = ARS_INTEGER;
+			yylval.yInteger.Var.Integer = htoi(yytext);
 			return yInteger;
 	
 		}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 47 "../../tools/arvfb/source/script/script.f"
+#line 51 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Double:%s\n",yytext);
-			yylval.yDouble = atof(yytext);
+			yylval.yDouble.Type = ARS_DOUBLE;
+			yylval.yDouble.Var.Double = atof(yytext);
 			return yDouble;
 		}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 53 "../../tools/arvfb/source/script/script.f"
+#line 58 "../../tools/arvfb/source/script/script.f"
 {
-			yylval.yExit = putVarString(yytext);
+			// value is not cared.
 			return yExit;	// exit
 		}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 58 "../../tools/arvfb/source/script/script.f"
+#line 63 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Var:%s\n",yytext);
-			yylval.yVar = putVarString(yytext);
-			return yVar;
+			yylval.yString.Type = ARS_STRING;
+			yylval.yString.Var.String = strdup(yytext);
+			return yString;
 		}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 64 "../../tools/arvfb/source/script/script.f"
+#line 70 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Operator:%s\n",yytext);
 			return yytext[0];
@@ -869,30 +875,30 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 69 "../../tools/arvfb/source/script/script.f"
+#line 75 "../../tools/arvfb/source/script/script.f"
 return '\n';
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 71 "../../tools/arvfb/source/script/script.f"
+#line 77 "../../tools/arvfb/source/script/script.f"
 /* eat up one-line comments */
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 73 "../../tools/arvfb/source/script/script.f"
+#line 79 "../../tools/arvfb/source/script/script.f"
 /* eat up whitespace */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 76 "../../tools/arvfb/source/script/script.f"
+#line 82 "../../tools/arvfb/source/script/script.f"
 return yytext[0];
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 80 "../../tools/arvfb/source/script/script.f"
+#line 86 "../../tools/arvfb/source/script/script.f"
 ECHO;
 	YY_BREAK
-#line 896 "lex.yy.c"
+#line 902 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1890,7 +1896,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 80 "../../tools/arvfb/source/script/script.f"
+#line 86 "../../tools/arvfb/source/script/script.f"
 
 
 

@@ -134,6 +134,8 @@ static void Initialize(void)
 	ArTp_Init();
 	ArFl_Init();
 	ArCom_Init();
+
+	ArScript_Init();
 }
 
 static gboolean Schedule(gpointer data)

@@ -857,7 +857,7 @@ YY_RULE_SETUP
 #line 53 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Pdu:%s\n",yytext);
-			yylval.yPdu = putVarString(yytext);
+			yylval.yPdu = 0;	// value is ignored
 			return yPdu;
 		}
 	YY_BREAK
@@ -866,7 +866,7 @@ YY_RULE_SETUP
 #line 59 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Signal:%s\n",yytext);
-			yylval.ySignal = putVarString(yytext);
+			yylval.ySignal = 0;	// value is ignored
 			return ySignal;
 		}
 	YY_BREAK
@@ -874,7 +874,7 @@ case 10:
 YY_RULE_SETUP
 #line 65 "../../tools/arvfb/source/parser/grammar.f"
 {
-			yylval.yExit = putVarString(yytext);
+			yylval.yExit = 0;
 			return yExit;	// exit
 		}
 	YY_BREAK
@@ -883,8 +883,8 @@ YY_RULE_SETUP
 #line 70 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Var:%s\n",yytext);
-			yylval.yVar = putVarString(yytext);
-			return yVar;
+			yylval.yString = strdup(yytext);
+			return yString;
 		}
 	YY_BREAK
 case 12:

@@ -103,7 +103,7 @@ extern int yydebug;
     yDouble = 258,
     yInteger = 259,
     yExit = 260,
-    yVar = 261,
+    yString = 261,
     yPdu = 262,
     ySignal = 263,
     NEG = 264
@@ -117,20 +117,20 @@ union YYSTYPE
 {
 
 #line 120 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:355  */
-  /* yExit  */
-  ArpVarType* yExit;
-  /* yVar  */
-  ArpVarType* yVar;
-  /* yPdu  */
-  ArpVarType* yPdu;
-  /* ySignal  */
-  ArpVarType* ySignal;
+  /* yString  */
+  char* yString;
   /* yDouble  */
   double yDouble;
   /* exp  */
   double exp;
   /* yInteger  */
   int yInteger;
+  /* yExit  */
+  int yExit;
+  /* yPdu  */
+  int yPdu;
+  /* ySignal  */
+  int ySignal;
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -443,7 +443,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    40,    40,    41,    47,    48,    49,    56,    62,    67
+       0,    38,    38,    39,    45,    46,    47,    54,    61,    67
 };
 #endif
 
@@ -452,9 +452,9 @@ static const yytype_uint8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "yDouble", "yInteger", "yExit", "yVar",
-  "yPdu", "ySignal", "'='", "'-'", "'+'", "'*'", "'/'", "NEG", "'^'",
-  "'\\n'", "$accept", "input", "line", "exp", YY_NULLPTR
+  "$end", "error", "$undefined", "yDouble", "yInteger", "yExit",
+  "yString", "yPdu", "ySignal", "'='", "'-'", "'+'", "'*'", "'/'", "NEG",
+  "'^'", "'\\n'", "$accept", "input", "line", "exp", YY_NULLPTR
 };
 #endif
 
@@ -631,39 +631,45 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
   switch (yytype)
     {
           case 3: /* yDouble  */
-#line 35 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 33 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%g", (*(double*)(&(*yyvaluep)))); }
 #line 637 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
-    case 5: /* yExit  */
-#line 31 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
-      { fprintf (yyoutput, "%s", (*(ArpVarType**)(&(*yyvaluep)))->Var.String); }
+    case 4: /* yInteger  */
+#line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+      { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 643 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
-    case 6: /* yVar  */
+    case 5: /* yExit  */
 #line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
-      { fprintf (yyoutput, "%s", (*(ArpVarType**)(&(*yyvaluep)))->Var.String); }
+      { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 649 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
-    case 7: /* yPdu  */
-#line 33 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
-      { fprintf (yyoutput, "%s", (*(ArpVarType**)(&(*yyvaluep)))->Var.String); }
+    case 6: /* yString  */
+#line 31 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+      { fprintf (yyoutput, "%s", (*(char**)(&(*yyvaluep)))); }
 #line 655 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
-    case 8: /* ySignal  */
-#line 34 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
-      { fprintf (yyoutput, "%s", (*(ArpVarType**)(&(*yyvaluep)))->Var.String); }
+    case 7: /* yPdu  */
+#line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+      { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 661 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
-    case 20: /* exp  */
-#line 35 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
-      { fprintf (yyoutput, "%g", (*(double*)(&(*yyvaluep)))); }
+    case 8: /* ySignal  */
+#line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+      { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 667 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
+        break;
+
+    case 20: /* exp  */
+#line 33 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+      { fprintf (yyoutput, "%g", (*(double*)(&(*yyvaluep)))); }
+#line 673 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
 
@@ -1260,29 +1266,31 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 49 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
+#line 47 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
     { puts("##:"); yyerrok;   }
-#line 1266 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
+#line 1272 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 56 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
+#line 54 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
     { 
 		DEBUG_BISON("Pdu:Name=%s,Identifier=0x%x,BusId=%d,IsTxEnabled=%s,Period=%d\n",
-				(*(ArpVarType**)(&yyvsp[-4]))->Var.String,(*(int*)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1]))?"TRUE":"FALSE",(*(int*)(&yyvsp[0])));
-		ArCom_DefinePdu((*(ArpVarType**)(&yyvsp[-4]))->Var.String,(*(int*)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1])),(*(int*)(&yyvsp[0])));          
+				(*(char**)(&yyvsp[-4])),(*(int*)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1]))?"TRUE":"FALSE",(*(int*)(&yyvsp[0])));
+		ArCom_DefinePdu((*(char**)(&yyvsp[-4])),(*(int*)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1])),(*(int*)(&yyvsp[0]))); 
+		free((*(char**)(&yyvsp[-4])));  // in couple with strdup
 	}
-#line 1276 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
+#line 1283 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 62 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
+#line 61 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
     { 
 		DEBUG_BISON("Signal:Name=%s,StartBit=%d,BitSize=%d,DefaultValue=%d\n",
-				(*(ArpVarType**)(&yyvsp[-3]))->Var.String,(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1])),(*(int*)(&yyvsp[0])));
-		ArCom_DefineSignal((*(ArpVarType**)(&yyvsp[-3]))->Var.String,(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1])),(*(int*)(&yyvsp[0])));          
+				(*(char**)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1])),(*(int*)(&yyvsp[0])));
+		ArCom_DefineSignal((*(char**)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1])),(*(int*)(&yyvsp[0])));
+		free((*(char**)(&yyvsp[-3])));
 	}
-#line 1286 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
+#line 1294 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
     break;
 
   case 9:
@@ -1290,11 +1298,11 @@ yyreduce:
     {
 		return 0;
 	}
-#line 1294 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
+#line 1302 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
     break;
 
 
-#line 1298 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
+#line 1306 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

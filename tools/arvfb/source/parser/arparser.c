@@ -2,24 +2,9 @@
 #include "arvfb.h"
 
 // ================================ [ LOCAL VARIANTS ] ==================================
-static ArpVarType* arVarTable=NULL;  // storing the var parse from yylex
+
 
 // ================================ [ LOCAL FUNCTIONS ] =================================
-
-// Now, for type String only
-static ArpVarType* putVarString (char* string)
-{
-	ArpVarType *ptr = (ArpVarType*) malloc (sizeof (ArpVarType));
-
-	ptr->Var.String=(char*) malloc (strlen(string) + 1);
-	strcpy (ptr->Var.String,string);
-
-	ptr->Type = VAR_TYPE_STRING;
-	ptr->Next = (ArpVarType*)arVarTable;
-	arVarTable = ptr;
-	return ptr;
-}
-
 // change hex ascii to integer
 static int htoi(char* string)
 {
