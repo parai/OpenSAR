@@ -1,4 +1,23 @@
-#line 2407 "./doc/bison.texi"
+/* Copyright(C) 2013, OpenSAR by Fan Wang(parai). All rights reserved.
+ *
+ * This file is part of OpenSAR.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Email: parai@foxmail.com
+ * Sourrce Open At: https://github.com/parai/OpenSAR/
+ */
 
 %{
 	#include <stdio.h>  /* For printf, etc. */
@@ -34,7 +53,7 @@
 %printer {  switch($$->Value.Type)
 			{
 				case ARS_STRING:
-					fprintf (yyoutput, "%s = %s", $$->Name, $$->Value.Var.String); 
+					fprintf (yyoutput, "%s%s", $$->Name, $$->Value.Var.String); 
 					break;
 				case ARS_INTEGER:
 					fprintf (yyoutput, "%s = %d", $$->Name, $$->Value.Var.Integer); 
@@ -84,17 +103,17 @@ line:
 | exp '\n'   { switch($1.Type)
 				{
 					case ARS_STRING:
-						printf ("\tStr = %s\n", $1.Var.String); 
+						printf ("\t(String)%s\n", $1.Var.String); 
 						free($1.Var.String);
 						break;
 					case ARS_INTEGER:
-						printf ("\tInteger = %d\n", $1.Var.Integer); 
+						printf ("\t(Integer)%d\n", $1.Var.Integer); 
 						break;
 					case ARS_DOUBLE:
-						printf ("\tDouble = %g\n", $1.Var.Double); 
+						printf ("\t(Double)%g\n", $1.Var.Double); 
 						break;
 					case ARS_FUNCTION:
-						printf ("\tFunction = %p\n", $1.Var.Function); 
+						printf ("\t(Function)%p\n", $1.Var.Function); 
 						break;
 					default:
 						assert(0);
@@ -106,80 +125,40 @@ line:
 
 
 exp:
-   yString           { ArsObjType* obj = GetObject($1.Var.String);
+   yString           { ArsObjType* obj = arso_get($1.Var.String);
    	   	   	   	   	   if(NULL != obj)
    	   	   	   	   	   {
-   	   	   	   	   		   $$.Type = obj->Value.Type;
-   	   	   	   	   		   switch($$.Type)
-						   {
-								case ARS_STRING:
-									$$.Var.String = strdup(obj->Value.Var.String);
-									break;
-								case ARS_INTEGER:
-									$$.Var.Integer = obj->Value.Var.Integer; 
-									break;
-								case ARS_DOUBLE:
-									$$.Var.Double = obj->Value.Var.Double; 
-									break;
-								case ARS_FUNCTION:
-									$$.Var.Function = obj->Value.Var.Function; 
-									break;
-								default:
-									puts("##: unknown type.\n");
-									break;
-						   }
+   	   	   	   	   		   arso_read(obj,&$$);
    	   	   	   	   	   }
    	   	   	   	   	   else
    	   	   	   	   	   {
-   	   	   	   	   		   $$.Type = ARS_STRING;
-   	   	   	   	   	   	   $$.Var.String = $1.Var.String;
+   	   	   	   	   		   arsc_copy(&$$,&$1);
    	   	   	   	   	   }
-	   	   	   	   	   
    	   	   	   	   	 }
-|  yDouble			 { $$.Type = ARS_DOUBLE;
-					   $$.Var.Double = $1.Var.Double;           			
+|  yDouble			 { arsc_copy(&$$,&$1);        			
 					 }
-|  yInteger			 { $$.Type = ARS_INTEGER;
-					   $$.Var.Integer = $1.Var.Integer;           			
+|  yInteger			 { arsc_copy(&$$,&$1);        			
 					 }
-|  yString '=' exp	 {  ArsObjType* obj = GetObject($1.Var.String);
+|  yString '=' exp	 {  ArsObjType* obj = arso_get($1.Var.String);
 					    if(NULL == obj)
-					    {
-					    	obj = AddObject($1.Var.String,&$3);
+					    {	// New it, 
+					    	obj = arso_add($1.Var.String,&$3);
 					    }
 					    else
 					    {
-					    	SetObjectValue(obj,&$3);  
+					    	arso_write(obj,&$3);  
 					    }
-					    $$.Type = obj->Value.Type;
-					    switch($$.Type)
-					    {
-							case ARS_STRING:
-								$$.Var.String = strdup(obj->Value.Var.String);
-								break;
-							case ARS_INTEGER:
-								$$.Var.Integer = obj->Value.Var.Integer; 
-								break;
-							case ARS_DOUBLE:
-								$$.Var.Double = obj->Value.Var.Double; 
-								break;
-							case ARS_FUNCTION:
-								$$.Var.Function = obj->Value.Var.Function; 
-								break;
-							default:
-								puts("##: unknown type.\n");
-								break;
-					   }
+					    arso_read(obj,&$$);
 					 }
-| yString '(' exp ')'{	 Execute(&$$,&$1,&$3);           }
-| exp '+' exp        {   Calc_Add(&$$,&$1,&$3);          }
-| exp '-' exp        {   Calc_Sub(&$$,&$1,&$3);          }
-| exp '*' exp        {   Calc_Plus(&$$,&$1,&$3);         }
-| exp '/' exp        {   Calc_Div(&$$,&$1,&$3);          }
-| '-' exp  %prec NEG {   Calc_Neg(&$$,&$2);              }
-| exp '^' exp        {   Calc_Pow(&$$,&$1,&$3);          }
-| '(' exp ')'        {   memcpy(&$$,&$2,sizeof(ArsValueType));           }
-| yExit              { return 0;                         }
+| yString '(' exp ')'{	 arsc_eval(&$$,&$1,&$3);         }
+| exp '+' exp        {   arsc_add(&$$,&$1,&$3);          }
+| exp '-' exp        {   arsc_sub(&$$,&$1,&$3);          }
+| exp '*' exp        {   arsc_plus(&$$,&$1,&$3);         }
+| exp '/' exp        {   arsc_div(&$$,&$1,&$3);          }
+| '-' exp  %prec NEG {   arsc_neg(&$$,&$2);              }
+| exp '^' exp        {   arsc_pow(&$$,&$1,&$3);          }
+| '(' exp ')'        {   arsc_copy(&$$,&$2);             }
+| yExit              { return 0;                        }
 ;
 
 /* End of grammar.  */

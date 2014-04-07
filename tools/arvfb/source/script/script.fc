@@ -505,14 +505,34 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "../../tools/arvfb/source/script/script.f"
 /* require flex 2.5 */
+/* Copyright(C) 2013, OpenSAR by Fan Wang(parai). All rights reserved.
+ *
+ * This file is part of OpenSAR.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Email: parai@foxmail.com
+ * Sourrce Open At: https://github.com/parai/OpenSAR/
+ */
 /* I feel happy, flex is really very powerful,  
  * Compare it with python.re, it is some how just that
  * I like this things, start for fun
  */
-#line 9 "../../tools/arvfb/source/script/script.f"
+#line 30 "../../tools/arvfb/source/script/script.f"
 	/* need this for the call to atof() below */
 	#include <math.h>
-#line 516 "lex.yy.c"
+#line 536 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -699,10 +719,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 17 "../../tools/arvfb/source/script/script.f"
+#line 38 "../../tools/arvfb/source/script/script.f"
 
 
-#line 706 "lex.yy.c"
+#line 726 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -787,17 +807,17 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 19 "../../tools/arvfb/source/script/script.f"
+#line 40 "../../tools/arvfb/source/script/script.f"
 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 20 "../../tools/arvfb/source/script/script.f"
+#line 41 "../../tools/arvfb/source/script/script.f"
 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "../../tools/arvfb/source/script/script.f"
+#line 43 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("True:%s\n",yytext);
 			yylval.yInteger.Type = ARS_INTEGER;
@@ -807,7 +827,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 29 "../../tools/arvfb/source/script/script.f"
+#line 50 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("False:%s\n",yytext);
 			yylval.yInteger.Type = ARS_INTEGER;
@@ -817,7 +837,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 36 "../../tools/arvfb/source/script/script.f"
+#line 57 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Integer:%s\n",yytext);
 			yylval.yInteger.Type = ARS_INTEGER;
@@ -827,7 +847,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 43 "../../tools/arvfb/source/script/script.f"
+#line 64 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Hex:%s\n",yytext);
 			yylval.yInteger.Type = ARS_INTEGER;
@@ -838,7 +858,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 51 "../../tools/arvfb/source/script/script.f"
+#line 72 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Double:%s\n",yytext);
 			yylval.yDouble.Type = ARS_DOUBLE;
@@ -848,7 +868,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 58 "../../tools/arvfb/source/script/script.f"
+#line 79 "../../tools/arvfb/source/script/script.f"
 {
 			// value is not cared.
 			return yExit;	// exit
@@ -856,7 +876,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 63 "../../tools/arvfb/source/script/script.f"
+#line 84 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Var:%s\n",yytext);
 			yylval.yString.Type = ARS_STRING;
@@ -866,7 +886,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 70 "../../tools/arvfb/source/script/script.f"
+#line 91 "../../tools/arvfb/source/script/script.f"
 {
 			DEBUG_FLEX("Operator:%s\n",yytext);
 			return yytext[0];
@@ -875,30 +895,30 @@ YY_RULE_SETUP
 case 11:
 /* rule 11 can match eol */
 YY_RULE_SETUP
-#line 75 "../../tools/arvfb/source/script/script.f"
+#line 96 "../../tools/arvfb/source/script/script.f"
 return '\n';
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 77 "../../tools/arvfb/source/script/script.f"
+#line 98 "../../tools/arvfb/source/script/script.f"
 /* eat up one-line comments */
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 79 "../../tools/arvfb/source/script/script.f"
+#line 100 "../../tools/arvfb/source/script/script.f"
 /* eat up whitespace */
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 82 "../../tools/arvfb/source/script/script.f"
+#line 103 "../../tools/arvfb/source/script/script.f"
 return yytext[0];
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 86 "../../tools/arvfb/source/script/script.f"
+#line 107 "../../tools/arvfb/source/script/script.f"
 ECHO;
 	YY_BREAK
-#line 902 "lex.yy.c"
+#line 922 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1896,7 +1916,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 86 "../../tools/arvfb/source/script/script.f"
+#line 107 "../../tools/arvfb/source/script/script.f"
 
 
 

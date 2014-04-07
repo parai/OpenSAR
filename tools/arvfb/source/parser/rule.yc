@@ -62,7 +62,7 @@
 
 
 /* Copy the first part of user declarations.  */
-#line 3 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:339  */
+#line 24 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:339  */
 
   #include <stdio.h>  /* For DEBUG_BISON, etc. */
   #include <math.h>   /* For pow, used in the grammar.  */
@@ -443,7 +443,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    38,    38,    39,    45,    46,    47,    54,    61,    67
+       0,    59,    59,    60,    66,    67,    68,    75,    82,    88
 };
 #endif
 
@@ -631,43 +631,43 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
   switch (yytype)
     {
           case 3: /* yDouble  */
-#line 33 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 54 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%g", (*(double*)(&(*yyvaluep)))); }
 #line 637 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
     case 4: /* yInteger  */
-#line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 53 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 643 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
     case 5: /* yExit  */
-#line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 53 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 649 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
     case 6: /* yString  */
-#line 31 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 52 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%s", (*(char**)(&(*yyvaluep)))); }
 #line 655 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
     case 7: /* yPdu  */
-#line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 53 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 661 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
     case 8: /* ySignal  */
-#line 32 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 53 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%d", (*(int*)(&(*yyvaluep)))); }
 #line 667 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
 
     case 20: /* exp  */
-#line 33 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
+#line 54 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:684  */
       { fprintf (yyoutput, "%g", (*(double*)(&(*yyvaluep)))); }
 #line 673 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:684  */
         break;
@@ -1266,13 +1266,13 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 47 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
+#line 68 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
     { puts("##:"); yyerrok;   }
 #line 1272 "../../tools/arvfb/source/parser/rule.yc" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 54 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
+#line 75 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
     { 
 		DEBUG_BISON("Pdu:Name=%s,Identifier=0x%x,BusId=%d,IsTxEnabled=%s,Period=%d\n",
 				(*(char**)(&yyvsp[-4])),(*(int*)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1]))?"TRUE":"FALSE",(*(int*)(&yyvsp[0])));
@@ -1283,7 +1283,7 @@ yyreduce:
     break;
 
   case 8:
-#line 61 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
+#line 82 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
     { 
 		DEBUG_BISON("Signal:Name=%s,StartBit=%d,BitSize=%d,DefaultValue=%d\n",
 				(*(char**)(&yyvsp[-3])),(*(int*)(&yyvsp[-2])),(*(int*)(&yyvsp[-1])),(*(int*)(&yyvsp[0])));
@@ -1294,7 +1294,7 @@ yyreduce:
     break;
 
   case 9:
-#line 67 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
+#line 88 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1646  */
     {
 		return 0;
 	}
@@ -1530,4 +1530,4 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 73 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1906  */
+#line 94 "../../tools/arvfb/source/parser/rule.y" /* yacc.c:1906  */

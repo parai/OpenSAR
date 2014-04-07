@@ -512,14 +512,34 @@ int yy_flex_debug = 0;
 char *yytext;
 #line 1 "../../tools/arvfb/source/parser/grammar.f"
 /* require flex 2.5 */
+/* Copyright(C) 2013, OpenSAR by Fan Wang(parai). All rights reserved.
+ *
+ * This file is part of OpenSAR.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Email: parai@foxmail.com
+ * Sourrce Open At: https://github.com/parai/OpenSAR/
+ */
 /* I feel happy, flex is really very powerful,  
  * Compare it with python.re, it is some how just that
  * I like this things, start for fun
  */
-#line 9 "../../tools/arvfb/source/parser/grammar.f"
+#line 30 "../../tools/arvfb/source/parser/grammar.f"
 	/* need this for the call to atof() below */
 	#include <math.h>
-#line 523 "lex.yy.c"
+#line 543 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -709,10 +729,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 17 "../../tools/arvfb/source/parser/grammar.f"
+#line 38 "../../tools/arvfb/source/parser/grammar.f"
 
 
-#line 716 "lex.yy.c"
+#line 736 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -798,17 +818,17 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 19 "../../tools/arvfb/source/parser/grammar.f"
+#line 40 "../../tools/arvfb/source/parser/grammar.f"
 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 20 "../../tools/arvfb/source/parser/grammar.f"
+#line 41 "../../tools/arvfb/source/parser/grammar.f"
 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 22 "../../tools/arvfb/source/parser/grammar.f"
+#line 43 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("True:%s\n",yytext);
 			yylval.yInteger = 1;
@@ -817,7 +837,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 28 "../../tools/arvfb/source/parser/grammar.f"
+#line 49 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("False:%s\n",yytext);
 			yylval.yInteger = 0;
@@ -826,7 +846,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 34 "../../tools/arvfb/source/parser/grammar.f"
+#line 55 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Integer:%s\n",yytext);
 			yylval.yInteger = atoi(yytext);
@@ -835,7 +855,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 40 "../../tools/arvfb/source/parser/grammar.f"
+#line 61 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Hex:%s\n",yytext);
 			yylval.yInteger = htoi(yytext);
@@ -845,7 +865,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 47 "../../tools/arvfb/source/parser/grammar.f"
+#line 68 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Double:%s\n",yytext);
 			yylval.yDouble = atof(yytext);
@@ -854,7 +874,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 53 "../../tools/arvfb/source/parser/grammar.f"
+#line 74 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Pdu:%s\n",yytext);
 			yylval.yPdu = 0;	// value is ignored
@@ -863,7 +883,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 59 "../../tools/arvfb/source/parser/grammar.f"
+#line 80 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Signal:%s\n",yytext);
 			yylval.ySignal = 0;	// value is ignored
@@ -872,7 +892,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 65 "../../tools/arvfb/source/parser/grammar.f"
+#line 86 "../../tools/arvfb/source/parser/grammar.f"
 {
 			yylval.yExit = 0;
 			return yExit;	// exit
@@ -880,7 +900,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 70 "../../tools/arvfb/source/parser/grammar.f"
+#line 91 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Var:%s\n",yytext);
 			yylval.yString = strdup(yytext);
@@ -890,35 +910,35 @@ YY_RULE_SETUP
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 76 "../../tools/arvfb/source/parser/grammar.f"
+#line 97 "../../tools/arvfb/source/parser/grammar.f"
 {return '\n';}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 78 "../../tools/arvfb/source/parser/grammar.f"
+#line 99 "../../tools/arvfb/source/parser/grammar.f"
 DEBUG_FLEX( "An operator: %s\n", yytext );
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 80 "../../tools/arvfb/source/parser/grammar.f"
+#line 101 "../../tools/arvfb/source/parser/grammar.f"
 /* eat up one-line comments */
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 82 "../../tools/arvfb/source/parser/grammar.f"
+#line 103 "../../tools/arvfb/source/parser/grammar.f"
 /* eat up whitespace */
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 85 "../../tools/arvfb/source/parser/grammar.f"
+#line 106 "../../tools/arvfb/source/parser/grammar.f"
 DEBUG_FLEX( "Unrecognized character: %s\n", yytext );
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 89 "../../tools/arvfb/source/parser/grammar.f"
+#line 110 "../../tools/arvfb/source/parser/grammar.f"
 ECHO;
 	YY_BREAK
-#line 922 "lex.yy.c"
+#line 942 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1919,7 +1939,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 89 "../../tools/arvfb/source/parser/grammar.f"
+#line 110 "../../tools/arvfb/source/parser/grammar.f"
 
 
 

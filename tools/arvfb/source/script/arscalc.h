@@ -18,29 +18,17 @@
  * Email: parai@foxmail.com
  * Sourrce Open At: https://github.com/parai/OpenSAR/
  */
-#ifndef AR_CAN_H_H_H
-#define AR_CAN_H_H_H
+#ifndef ARSCALC_H_
+#define ARSCALC_H_
 
-#define MSG_CAN_LENGTH   (14)
 
-typedef 	struct
-{
-	uint32 Type;
-	uint32 Command;
-	uint32 Length; // inherit from ArMsg
-	struct{
-		uint32 Identifier;
-		uint8  Data[8];
-		uint8  DataLengthCode;
-		uint8  BusID;
-	}Msg;
-}ArCanMsgType;
 
-GtkWidget* ArCan(void);
-void Can_RxIndication(const ArCanMsgType* armsg);
-void Can_Transmit(const ArMsgType *armsg);
-
-void ArCan_Init(void);
-void ArCan_Schedule(void);
-#endif
-
+void arsc_copy(ArsValueType* to,ArsValueType* from);
+void arsc_add(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
+void arsc_sub(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
+void arsc_plus(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
+void arsc_div(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
+void arsc_neg(ArsValueType* out,const ArsValueType* in1);
+void arsc_pow(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
+void arsc_eval(ArsValueType* out,const ArsValueType* fnc,const ArsValueType* param);
+#endif /* ARSCALC_H_ */
