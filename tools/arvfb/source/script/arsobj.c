@@ -37,16 +37,26 @@ static ArsObjArchType sArch = {.IsInitialised = FALSE,};
 // ===================== [ LOCAL FUNCTIONS ] ================================
 
 // ===================== [    FUNCTIONS    ] ================================
-ArsObjType* arso_add(const char* Name,const ArsValueType* Value)
+
+char*       arso_strdup(const char* string)
+{
+	printf("##:new %s\n",string);
+	return strdup(string);
+}
+void        arso_strfree(char* string)
+{
+	printf("##:del %s\n",string);
+	free(string);
+}
+ArsObjType* arso_add(char* Name,const ArsValueType* Value)
 {
 	ArsObjType* obj = malloc(sizeof(ArsObjType));
 
-	obj->Name = strdup(Name);
+	obj->Name = arso_strdup(Name);
 	switch(Value->Type)
 	{
 		case ARS_STRING:
-			obj->Value.Var.String = strdup(Value->Var.String);
-			free(Value->Var.String);
+			obj->Value.Var.String = arso_strdup(Value->Var.String);
 			break;
 		case ARS_INTEGER:
 			obj->Value.Var.Integer = Value->Var.Integer;
@@ -76,7 +86,7 @@ void  arso_write(ArsObjType* obj,const ArsValueType* Value)
 	switch(obj->Value.Type)
 	{
 		case ARS_STRING:
-			obj->Value.Var.String = strdup(Value->Var.String);
+			obj->Value.Var.String = arso_strdup(Value->Var.String);
 			break;
 		case ARS_INTEGER:
 			obj->Value.Var.Integer = Value->Var.Integer;
@@ -99,7 +109,7 @@ void  arso_read(const ArsObjType* obj,ArsValueType* Value)
 	switch(obj->Value.Type)
 	{
 		case ARS_STRING:
-			Value->Var.String = strdup(obj->Value.Var.String);
+			Value->Var.String = arso_strdup(obj->Value.Var.String);
 			break;
 		case ARS_INTEGER:
 			Value->Var.Integer = obj->Value.Var.Integer;

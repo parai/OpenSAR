@@ -55,9 +55,11 @@ typedef struct ArsObj_t
 
 // ============================ [ FUNCTIONS ] =============================================
 void 		arso_init(void);
-ArsObjType* arso_add(const char* Name,const ArsValueType* Value);
+ArsObjType* arso_add(char* Name,const ArsValueType* Value);
 void  		arso_write(ArsObjType* obj,const ArsValueType* Value);
 void  		arso_read(const ArsObjType* obj,ArsValueType* Value);
 ArsObjType* arso_get(char* Name);
+char*       arso_strdup(const char* string);
+void        arso_strfree(char* string);
 
 #endif /* ARSOBJ_H_ */

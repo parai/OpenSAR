@@ -44,6 +44,51 @@ static double get_value(const ArsValueType* from)
 	}
 	return rv;
 }
+
+static boolean is_evaluable(const ArsValueType* me)
+{
+	boolean rv = FALSE;
+
+	switch(me->Type)
+	{
+		case ARS_INTEGER:
+		case ARS_DOUBLE:
+			rv = TRUE;
+			break;
+		default:
+			break;
+	}
+	return rv;
+}
+
+static boolean is_both_integer(const ArsValueType* in1,const ArsValueType* in2)
+{
+	if( (ARS_INTEGER == in1->Type) &&
+		(ARS_INTEGER == in2->Type))
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+static boolean is_both_double(const ArsValueType* in1,const ArsValueType* in2)
+{
+	if( (ARS_DOUBLE == in1->Type) &&
+		(ARS_DOUBLE == in2->Type))
+	{
+		return TRUE;
+	}
+	else
+	{
+		return FALSE;
+	}
+}
+static void arsc_error(void)
+{	// TODO it better
+	puts("arsc error: TODO.\n");
+}
 // ==================================== [ FUNCTIONS ] ==========================================
 void arsc_copy(ArsValueType* to,ArsValueType* from)
 {
@@ -52,113 +97,97 @@ void arsc_copy(ArsValueType* to,ArsValueType* from)
 
 void arsc_add(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
 {
-	if( (ARS_INTEGER == in1->Type) &&
-		(ARS_INTEGER == in2->Type))
+	if( (is_evaluable(in1)) &&
+		(is_evaluable(in2)))
 	{
+		if(is_both_integer(in1,in2))
+		{
+			out->Type = ARS_INTEGER;
+			out->Var.Integer = in1->Var.Integer + in2->Var.Integer;
+		}
+		else
+		{
+			out->Type = ARS_DOUBLE;
+			out->Var.Double = get_value(in1) + get_value(in2);
+		}
+	}
+	else
+	{
+		arsc_error();
 		out->Type = ARS_INTEGER;
-		out->Var.Integer = in1->Var.Integer + in2->Var.Integer;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			 (ARS_INTEGER == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double + in2->Var.Integer;
-	}
-	else if( (ARS_INTEGER == in1->Type) &&
-			 (ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Integer + in2->Var.Double;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			(ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double + in2->Var.Double;
+		out->Var.Integer = -1;
 	}
 }
 
 void arsc_sub(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
 {
-	if( (ARS_INTEGER == in1->Type) &&
-		(ARS_INTEGER == in2->Type))
+	if( (is_evaluable(in1)) &&
+		(is_evaluable(in2)))
 	{
+		if(is_both_integer(in1,in2))
+		{
+			out->Type = ARS_INTEGER;
+			out->Var.Integer = in1->Var.Integer - in2->Var.Integer;
+		}
+		else
+		{
+			out->Type = ARS_DOUBLE;
+			out->Var.Double = get_value(in1) - get_value(in2);
+		}
+	}
+	else
+	{
+		arsc_error();
 		out->Type = ARS_INTEGER;
-		out->Var.Integer = in1->Var.Integer - in2->Var.Integer;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			 (ARS_INTEGER == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double - in2->Var.Integer;
-	}
-	else if( (ARS_INTEGER == in1->Type) &&
-			 (ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Integer - in2->Var.Double;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			(ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double - in2->Var.Double;
+		out->Var.Integer = -1;
 	}
 }
 
 void arsc_plus(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
 {
-	if( (ARS_INTEGER == in1->Type) &&
-		(ARS_INTEGER == in2->Type))
+	if( (is_evaluable(in1)) &&
+		(is_evaluable(in2)))
 	{
+		if(is_both_integer(in1,in2))
+		{
+			out->Type = ARS_INTEGER;
+			out->Var.Integer = in1->Var.Integer * in2->Var.Integer;
+		}
+		else
+		{
+			out->Type = ARS_DOUBLE;
+			out->Var.Double = get_value(in1) * get_value(in2);
+		}
+	}
+	else
+	{
+		arsc_error();
 		out->Type = ARS_INTEGER;
-		out->Var.Integer = in1->Var.Integer * in2->Var.Integer;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			 (ARS_INTEGER == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double * in2->Var.Integer;
-	}
-	else if( (ARS_INTEGER == in1->Type) &&
-			 (ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Integer * in2->Var.Double;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			(ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double * in2->Var.Double;
+		out->Var.Integer = -1;
 	}
 }
 
 void arsc_div(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
 {
-	if( (ARS_INTEGER == in1->Type) &&
-		(ARS_INTEGER == in2->Type))
+	if( (is_evaluable(in1)) &&
+			(is_evaluable(in2)))
+	{	// TODO: if diveder is 0
+		if(is_both_integer(in1,in2))
+		{
+			out->Type = ARS_INTEGER;
+			out->Var.Integer = in1->Var.Integer / in2->Var.Integer;
+		}
+		else
+		{
+			out->Type = ARS_DOUBLE;
+			out->Var.Double = get_value(in1) / get_value(in2);
+		}
+	}
+	else
 	{
+		arsc_error();
 		out->Type = ARS_INTEGER;
-		out->Var.Integer = in1->Var.Integer / in2->Var.Integer;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			 (ARS_INTEGER == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double / in2->Var.Integer;
-	}
-	else if( (ARS_INTEGER == in1->Type) &&
-			 (ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Integer / in2->Var.Double;
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			(ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = in1->Var.Double / in2->Var.Double;
+		out->Var.Integer = -1;
 	}
 }
 
@@ -178,29 +207,17 @@ void arsc_neg(ArsValueType* out,const ArsValueType* in1)
 
 void arsc_pow(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
 {
-	if( (ARS_INTEGER == in1->Type) &&
-		(ARS_INTEGER == in2->Type))
+	if( (is_evaluable(in1)) &&
+			(is_evaluable(in2)))
 	{
+		out->Type = ARS_DOUBLE;
+		out->Var.Double = pow(get_value(in1), get_value(in2));
+	}
+	else
+	{
+		arsc_error();
 		out->Type = ARS_INTEGER;
-		out->Var.Integer = pow((double)in1->Var.Integer, (double)in2->Var.Integer);
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			 (ARS_INTEGER == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = pow(in1->Var.Double, (double)in2->Var.Integer);
-	}
-	else if( (ARS_INTEGER == in1->Type) &&
-			 (ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = pow((double)in1->Var.Integer, in2->Var.Double);
-	}
-	else if( (ARS_DOUBLE == in1->Type) &&
-			(ARS_DOUBLE == in2->Type))
-	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = pow(in1->Var.Double, in2->Var.Double);
+		out->Var.Integer = -1;
 	}
 }
 
@@ -211,7 +228,7 @@ void arsc_eval(ArsValueType* out,const ArsValueType* fnc,const ArsValueType* par
 	if( (NULL == obj) || (ARS_FUNCTION != obj->Value.Type) ||
 		((ARS_INTEGER != param->Type)&&(ARS_DOUBLE != param->Type)))
 	{
-		printf("arsc error: %s(%g) is not evaluable.\n",fnc->Var.String,get_value(param));
+		arsc_error();
 		out->Type = ARS_INTEGER;
 		out->Var.Integer = -1;	// indicate error
 	}

@@ -84,7 +84,7 @@ exit	{
 {STRING}	{
 			DEBUG_FLEX("Var:%s\n",yytext);
 			yylval.yString.Type = ARS_STRING;
-			yylval.yString.Var.String = strdup(yytext);
+			yylval.yString.Var.String = arso_strdup(yytext);
 			return yString;
 		}
 

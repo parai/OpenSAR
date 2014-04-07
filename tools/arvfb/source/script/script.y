@@ -104,7 +104,8 @@ line:
 				{
 					case ARS_STRING:
 						printf ("\t(String)%s\n", $1.Var.String); 
-						free($1.Var.String);
+						// as result has already been output, free
+						arso_strfree($1.Var.String);
 						break;
 					case ARS_INTEGER:
 						printf ("\t(Integer)%d\n", $1.Var.Integer); 
@@ -129,10 +130,12 @@ exp:
    	   	   	   	   	   if(NULL != obj)
    	   	   	   	   	   {
    	   	   	   	   		   arso_read(obj,&$$);
+   	   	   	   	   		   arso_strfree($1.Var.String);  // $1 is not needed any more 
    	   	   	   	   	   }
    	   	   	   	   	   else
    	   	   	   	   	   {
-   	   	   	   	   		   arsc_copy(&$$,&$1);
+   	   	   	   	   		   arsc_copy(&$$,&$1);		
+   	   	   	   	   		   // as $$ is a copy of $1, no need to free $1 string as still in use
    	   	   	   	   	   }
    	   	   	   	   	 }
 |  yDouble			 { arsc_copy(&$$,&$1);        			
@@ -143,6 +146,11 @@ exp:
 					    if(NULL == obj)
 					    {	// New it, 
 					    	obj = arso_add($1.Var.String,&$3);
+					    	arso_strfree($1.Var.String);
+					    	if(ARS_STRING == $3.Type)
+					    	{	// free it if $3 is string
+					    		arso_strfree($3.Var.String);
+					    	}
 					    }
 					    else
 					    {
