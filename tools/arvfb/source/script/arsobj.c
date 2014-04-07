@@ -40,12 +40,12 @@ static ArsObjArchType sArch = {.IsInitialised = FALSE,};
 
 char*       arso_strdup(const char* string)
 {
-	printf("##:new %s\n",string);
+	//printf("##:new %s\n",string);
 	return strdup(string);
 }
 void        arso_strfree(char* string)
 {
-	printf("##:del %s\n",string);
+	//printf("##:del %s\n",string);
 	free(string);
 }
 ArsObjType* arso_add(char* Name,const ArsValueType* Value)

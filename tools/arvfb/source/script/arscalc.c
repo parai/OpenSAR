@@ -21,6 +21,10 @@
 
 #include "arvfb.h"
 
+// ==================================== [ MACROS    ] ==========================================
+#define is_string(var)   (ARS_STRING ==(var)->Type)
+#define is_integer(var)  (ARS_INTEGER==(var)->Type)
+#define is_double(var)   (ARS_DOUBLE==(var)->Type)
 
 // ==================================== [ TYPES     ] ==========================================
 typedef double (*feval1_t)(double);  // Eval which with 1 parameter
@@ -109,6 +113,36 @@ void arsc_add(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
 		{
 			out->Type = ARS_DOUBLE;
 			out->Var.Double = get_value(in1) + get_value(in2);
+		}
+	}
+	else if(is_string(in1))
+	{
+		char temp[64];
+		int  length;
+		out->Type = ARS_STRING;
+		out->Var.String = arso_strdup(in1->Var.String);
+		switch(in2->Type)
+		{
+			case ARS_STRING:
+				out->Var.String = realloc(out->Var.String,
+						strlen(out->Var.String)+strlen(in2->Var.String)+1);
+				out->Var.String = strcat(out->Var.String,in2->Var.String);
+				break;
+			case ARS_INTEGER:
+				length = sprintf(temp,"%d",in2->Var.Integer);
+				out->Var.String = realloc(out->Var.String,
+						strlen(out->Var.String)+length+1);
+				out->Var.String = strcat(out->Var.String,temp);
+				break;
+			case ARS_DOUBLE:
+				length = sprintf(temp,"%g",in2->Var.Double);
+				out->Var.String = realloc(out->Var.String,
+						strlen(out->Var.String)+length+1);
+				out->Var.String = strcat(out->Var.String,temp);
+				break;
+			default:
+				assert(0);
+				break;
 		}
 	}
 	else

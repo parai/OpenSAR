@@ -67,8 +67,14 @@
 	#include <stdio.h>  /* For printf, etc. */
 	#include <math.h>   /* For pow, used in the grammar.  */
 	#include "arscript.h"
+	
+#define ARSO_FREE_IF_IS_STRING(ss)					\
+	if(ARS_STRING == (ss).Type)						\
+	{												\
+		arso_strfree((ss).Var.String);				\
+	}
 
-#line 72 "../../tools/arvfb/source/script/script.yc" /* yacc.c:339  */
+#line 78 "../../tools/arvfb/source/script/script.yc" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -114,7 +120,7 @@ typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
 
-#line 118 "../../tools/arvfb/source/script/script.yc" /* yacc.c:355  */
+#line 124 "../../tools/arvfb/source/script/script.yc" /* yacc.c:355  */
   /* yDouble  */
   ArsValueType yDouble;
   /* yInteger  */
@@ -139,7 +145,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 143 "../../tools/arvfb/source/script/script.yc" /* yacc.c:358  */
+#line 149 "../../tools/arvfb/source/script/script.yc" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -437,8 +443,8 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    95,    95,    96,   102,   103,   123,   129,   141,   143,
-     145,   161,   162,   163,   164,   165,   166,   167,   168,   169
+       0,    82,    82,    83,    89,    90,   110,   116,   128,   130,
+     132,   145,   149,   153,   157,   161,   165,   168,   172,   176
 };
 #endif
 
@@ -641,7 +647,7 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
   switch (yytype)
     {
           case 3: /* yDouble  */
-#line 72 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+#line 59 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(ArsValueType*)(&(*yyvaluep))).Type)
 			{
 				case ARS_STRING:
@@ -661,11 +667,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 665 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 671 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
     case 4: /* yInteger  */
-#line 72 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+#line 59 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(ArsValueType*)(&(*yyvaluep))).Type)
 			{
 				case ARS_STRING:
@@ -685,11 +691,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 689 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 695 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
     case 5: /* yExit  */
-#line 72 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+#line 59 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(ArsValueType*)(&(*yyvaluep))).Type)
 			{
 				case ARS_STRING:
@@ -709,11 +715,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 713 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 719 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
     case 6: /* yString  */
-#line 72 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+#line 59 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(ArsValueType*)(&(*yyvaluep))).Type)
 			{
 				case ARS_STRING:
@@ -733,11 +739,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 737 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 743 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
     case 20: /* exp  */
-#line 72 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+#line 59 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(ArsValueType*)(&(*yyvaluep))).Type)
 			{
 				case ARS_STRING:
@@ -757,7 +763,7 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 761 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 767 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
 
@@ -1354,7 +1360,7 @@ yyreduce:
   switch (yyn)
     {
         case 5:
-#line 103 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 90 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { switch((*(ArsValueType*)(&yyvsp[-1])).Type)
 				{
 					case ARS_STRING:
@@ -1375,17 +1381,17 @@ yyreduce:
 						assert(0);
 						break;
 				} }
-#line 1379 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
-    break;
-
-  case 6:
-#line 123 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    { yyerrok;                }
 #line 1385 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
+  case 6:
+#line 110 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    { yyerrok;                }
+#line 1391 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+    break;
+
   case 7:
-#line 129 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 116 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { ArsObjType* obj = arso_get((*(ArsValueType*)(&yyvsp[0])).Var.String);
    	   	   	   	   	   if(NULL != obj)
    	   	   	   	   	   {
@@ -1398,100 +1404,120 @@ yyreduce:
    	   	   	   	   		   // as $$ is a copy of $1, no need to free $1 string as still in use
    	   	   	   	   	   }
    	   	   	   	   	 }
-#line 1402 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1408 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 141 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 128 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { arsc_copy(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[0])));        			
 					 }
-#line 1409 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1415 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 143 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 130 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { arsc_copy(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[0])));        			
 					 }
-#line 1416 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1422 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 145 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 132 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  ArsObjType* obj = arso_get((*(ArsValueType*)(&yyvsp[-2])).Var.String);
 					    if(NULL == obj)
 					    {	// New it, 
 					    	obj = arso_add((*(ArsValueType*)(&yyvsp[-2])).Var.String,&(*(ArsValueType*)(&yyvsp[0])));
-					    	arso_strfree((*(ArsValueType*)(&yyvsp[-2])).Var.String);
-					    	if(ARS_STRING == (*(ArsValueType*)(&yyvsp[0])).Type)
-					    	{	// free it if $3 is string
-					    		arso_strfree((*(ArsValueType*)(&yyvsp[0])).Var.String);
-					    	}
 					    }
 					    else
 					    {
 					    	arso_write(obj,&(*(ArsValueType*)(&yyvsp[0])));  
 					    }
+					    arso_strfree((*(ArsValueType*)(&yyvsp[-2])).Var.String);
+					    ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[0])));
 					    arso_read(obj,&(*(ArsValueType*)(&yyval)));
 					 }
-#line 1437 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1440 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 161 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {	 arsc_eval(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-3])),&(*(ArsValueType*)(&yyvsp[-1])));         }
-#line 1443 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
-    break;
-
-  case 12:
-#line 162 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {   arsc_add(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0])));          }
+#line 145 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {	arsc_eval(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-3])),&(*(ArsValueType*)(&yyvsp[-1])));
+						arso_strfree((*(ArsValueType*)(&yyvsp[-3])).Var.String);
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[-1])));
+					 }
 #line 1449 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
+  case 12:
+#line 149 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {  arsc_add(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0]))); 
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[-2])));
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[0])));
+					 }
+#line 1458 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+    break;
+
   case 13:
-#line 163 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {   arsc_sub(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0])));          }
-#line 1455 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
-    break;
-
-  case 14:
-#line 164 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {   arsc_plus(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0])));         }
-#line 1461 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
-    break;
-
-  case 15:
-#line 165 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {   arsc_div(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0])));          }
+#line 153 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {  arsc_sub(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0])));
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[-2])));
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[0])));
+					 }
 #line 1467 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
-  case 16:
-#line 166 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {   arsc_neg(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[0])));              }
-#line 1473 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+  case 14:
+#line 157 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {  arsc_plus(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0]))); 
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[-2])));
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[0])));
+					 }
+#line 1476 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
-  case 17:
-#line 167 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {   arsc_pow(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0])));          }
-#line 1479 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
-    break;
-
-  case 18:
-#line 168 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
-    {   arsc_copy(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-1])));             }
+  case 15:
+#line 161 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {  arsc_div(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0])));
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[-2])));
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[0])));
+					 }
 #line 1485 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
+  case 16:
+#line 165 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {  arsc_neg(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[0]))); 
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[0])));
+					 }
+#line 1493 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+    break;
+
+  case 17:
+#line 168 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {  arsc_pow(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-2])),&(*(ArsValueType*)(&yyvsp[0]))); 
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[-2])));
+						ARSO_FREE_IF_IS_STRING((*(ArsValueType*)(&yyvsp[0])));
+					 }
+#line 1502 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+    break;
+
+  case 18:
+#line 172 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    {  arsc_copy(&(*(ArsValueType*)(&yyval)),&(*(ArsValueType*)(&yyvsp[-1])));
+						// copy is special, it is not back-up, $$ and $2 will be almost the same
+						// if its type is string.
+					 }
+#line 1511 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+    break;
+
   case 19:
-#line 169 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 176 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { return 0;                        }
-#line 1491 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1517 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
 
-#line 1495 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1521 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1719,6 +1745,6 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 173 "../../tools/arvfb/source/script/script.y" /* yacc.c:1906  */
+#line 180 "../../tools/arvfb/source/script/script.y" /* yacc.c:1906  */
 
 

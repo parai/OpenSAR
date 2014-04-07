@@ -21,7 +21,7 @@
 #ifndef ARSCALC_H_
 #define ARSCALC_H_
 
-
+// ==================================== [ MACROS    ] ==========================================
 
 void arsc_copy(ArsValueType* to,ArsValueType* from);
 void arsc_add(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);

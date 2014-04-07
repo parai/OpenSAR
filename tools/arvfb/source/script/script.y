@@ -23,6 +23,12 @@
 	#include <stdio.h>  /* For printf, etc. */
 	#include <math.h>   /* For pow, used in the grammar.  */
 	#include "arscript.h"
+	
+#define ARSO_FREE_IF_IS_STRING(ss)					\
+	if(ARS_STRING == (ss).Type)						\
+	{												\
+		arso_strfree((ss).Var.String);				\
+	}
 %}
 
 %define api.value.type   union  
@@ -50,25 +56,6 @@
 %printer { fprintf (yyoutput, "%d", $$); } <int>;
 %printer { fprintf (yyoutput, "%g", $$); } <double>;
 */
-%printer {  switch($$->Value.Type)
-			{
-				case ARS_STRING:
-					fprintf (yyoutput, "%s%s", $$->Name, $$->Value.Var.String); 
-					break;
-				case ARS_INTEGER:
-					fprintf (yyoutput, "%s = %d", $$->Name, $$->Value.Var.Integer); 
-					break;
-				case ARS_DOUBLE:
-					fprintf (yyoutput, "%s = %g", $$->Name, $$->Value.Var.Double); 
-					break;
-				case ARS_FUNCTION:
-					fprintf (yyoutput, "%s = %p", $$->Name, $$->Value.Var.Function); 
-					break;
-				default:
-					assert(0);
-					break;
-			}
-		} <ArsObjType*>;
 %printer { switch($$.Type)
 			{
 				case ARS_STRING:
@@ -146,26 +133,46 @@ exp:
 					    if(NULL == obj)
 					    {	// New it, 
 					    	obj = arso_add($1.Var.String,&$3);
-					    	arso_strfree($1.Var.String);
-					    	if(ARS_STRING == $3.Type)
-					    	{	// free it if $3 is string
-					    		arso_strfree($3.Var.String);
-					    	}
 					    }
 					    else
 					    {
 					    	arso_write(obj,&$3);  
 					    }
+					    arso_strfree($1.Var.String);
+					    ARSO_FREE_IF_IS_STRING($3);
 					    arso_read(obj,&$$);
 					 }
-| yString '(' exp ')'{	 arsc_eval(&$$,&$1,&$3);         }
-| exp '+' exp        {   arsc_add(&$$,&$1,&$3);          }
-| exp '-' exp        {   arsc_sub(&$$,&$1,&$3);          }
-| exp '*' exp        {   arsc_plus(&$$,&$1,&$3);         }
-| exp '/' exp        {   arsc_div(&$$,&$1,&$3);          }
-| '-' exp  %prec NEG {   arsc_neg(&$$,&$2);              }
-| exp '^' exp        {   arsc_pow(&$$,&$1,&$3);          }
-| '(' exp ')'        {   arsc_copy(&$$,&$2);             }
+| yString '(' exp ')'{	arsc_eval(&$$,&$1,&$3);
+						arso_strfree($1.Var.String);
+						ARSO_FREE_IF_IS_STRING($3);
+					 }
+| exp '+' exp        {  arsc_add(&$$,&$1,&$3); 
+						ARSO_FREE_IF_IS_STRING($1);
+						ARSO_FREE_IF_IS_STRING($3);
+					 }
+| exp '-' exp        {  arsc_sub(&$$,&$1,&$3);
+						ARSO_FREE_IF_IS_STRING($1);
+						ARSO_FREE_IF_IS_STRING($3);
+					 }
+| exp '*' exp        {  arsc_plus(&$$,&$1,&$3); 
+						ARSO_FREE_IF_IS_STRING($1);
+						ARSO_FREE_IF_IS_STRING($3);
+					 }
+| exp '/' exp        {  arsc_div(&$$,&$1,&$3);
+						ARSO_FREE_IF_IS_STRING($1);
+						ARSO_FREE_IF_IS_STRING($3);
+					 }
+| '-' exp  %prec NEG {  arsc_neg(&$$,&$2); 
+						ARSO_FREE_IF_IS_STRING($2);
+					 }
+| exp '^' exp        {  arsc_pow(&$$,&$1,&$3); 
+						ARSO_FREE_IF_IS_STRING($1);
+						ARSO_FREE_IF_IS_STRING($3);
+					 }
+| '(' exp ')'        {  arsc_copy(&$$,&$2);
+						// copy is special, it is not back-up, $$ and $2 will be almost the same
+						// if its type is string.
+					 }
 | yExit              { return 0;                        }
 ;
 
