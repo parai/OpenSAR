@@ -81,30 +81,52 @@ int yywrap (void )
 
 void ArScript_Init(void)
 {
-	ArsValueType arsValue;
+	yvar_t var;
 
 	arso_init();
 
-	arsValue.Type = ARS_FUNCTION;
+	var.type = YVAR_FUNCTION;
 
-	arsValue.Var.Function = (ArsFpType)sin;
-	arso_add("sin",	&arsValue);
-	arsValue.Var.Function = (ArsFpType)cos;
-	arso_add("cos",	&arsValue);
-	arsValue.Var.Function = (ArsFpType)atan;
-	arso_add("atan",	&arsValue);
-	arsValue.Var.Function = (ArsFpType)exp;
-	arso_add("exp",	&arsValue);
-	arsValue.Var.Function = (ArsFpType)log;
-	arso_add("ln",		&arsValue);
-	arsValue.Var.Function = (ArsFpType)sqrt;
-	arso_add("sqrt",	&arsValue);
+	var.u.function = (yfp_t)sin;
+	arso_new("sin",	&var);
+	var.u.function = (yfp_t)cos;
+	arso_new("cos",	&var);
+	var.u.function = (yfp_t)atan;
+	arso_new("atan",	&var);
+	var.u.function = (yfp_t)exp;
+	arso_new("exp",	&var);
+	var.u.function = (yfp_t)log;
+	arso_new("ln",		&var);
+	var.u.function = (yfp_t)sqrt;
+	arso_new("sqrt",	&var);
 }
 void ArScript(int argc, char* argv[])
 {
 	--argc;++argv;	// skip the Program name
 
-	puts("Test:Calc\n");
+	puts("Script:\n");
+//	if(argc==2)
+//	{
+//		yyin = fopen(argv[1],"r");
+//	}
+//	else
+//	{
+//		yyin = fopen("../../app/config/GEN/arvfb.spy","r");
+//		puts("script on arvfb.spy\n");
+//	}
+//	if(NULL==yyin)
+//	{
+//		yyin = stdin;
+//	}
+//	yyout = stdout;
+
+	yyparse();
+
+	if(yyin != stdin)
+	{
+		fclose(yyin);
+	}
+
 	yyparse();
 
 }

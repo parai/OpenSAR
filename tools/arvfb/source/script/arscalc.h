@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; withrvar even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -23,12 +23,14 @@
 
 // ==================================== [ MACROS    ] ==========================================
 
-void arsc_copy(ArsValueType* to,ArsValueType* from);
-void arsc_add(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
-void arsc_sub(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
-void arsc_plus(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
-void arsc_div(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
-void arsc_neg(ArsValueType* out,const ArsValueType* in1);
-void arsc_pow(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2);
-void arsc_eval(ArsValueType* out,const ArsValueType* fnc,const ArsValueType* param);
+void arsc_copy(yvar_t* to,yvar_t* from);
+void arsc_add(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2);
+void arsc_sub(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2);
+void arsc_plus(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2);
+void arsc_div(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2);
+void arsc_neg(yvar_t* rvar,const yvar_t* var1);
+void arsc_pow(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2);
+void arsc_read(yvar_t* rvar,const yvar_t* ref);
+void arsc_eval(yvar_t* rvar,const yvar_t* fnc,const yvar_t* param);
+void arsc_print(yvar_t* var);
 #endif /* ARSCALC_H_ */

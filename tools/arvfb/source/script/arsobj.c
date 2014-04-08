@@ -27,11 +27,11 @@ typedef struct
 {
 	boolean IsInitialised;
 
-	TAILQ_HEAD(head,ArsObj_t) ObjList;
+	TAILQ_HEAD(head,yobj_s) yobj_list;
 
-}ArsObjArchType;
+}ArsObjArchtype;
 // ===================== [ LOCAL VARIANTS  ] ================================
-static ArsObjArchType sArch = {.IsInitialised = FALSE,};
+static ArsObjArchtype sArch = {.IsInitialised = FALSE,};
 
 
 // ===================== [ LOCAL FUNCTIONS ] ================================
@@ -48,54 +48,57 @@ void        arso_strfree(char* string)
 	//printf("##:del %s\n",string);
 	free(string);
 }
-ArsObjType* arso_add(char* Name,const ArsValueType* Value)
+yobj_t* arso_new(char* name,const yvar_t* var)
 {
-	ArsObjType* obj = malloc(sizeof(ArsObjType));
+	yobj_t* obj = malloc(sizeof(yobj_t));
 
-	obj->Name = arso_strdup(Name);
-	switch(Value->Type)
+	obj->name = arso_strdup(name);
+	switch(var->type)
 	{
-		case ARS_STRING:
-			obj->Value.Var.String = arso_strdup(Value->Var.String);
+		case YVAR_CHAR:
+			obj->var.u.chr = var->u.chr;
 			break;
-		case ARS_INTEGER:
-			obj->Value.Var.Integer = Value->Var.Integer;
+		case YVAR_STRING:
+			obj->var.u.string = arso_strdup(var->u.string);
 			break;
-		case ARS_DOUBLE:
-			obj->Value.Var.Double = Value->Var.Double;
+		case YVAR_INTEGER:
+			obj->var.u.integer = var->u.integer;
 			break;
-		case ARS_FUNCTION:
-			obj->Value.Var.Function = Value->Var.Function;
+		case YVAR_DOUBLE:
+			obj->var.u.dvar = var->u.dvar;
 			break;
-		case ARS_UNDEFINE:
-			// Type is currently not known, process further
+		case YVAR_FUNCTION:
+			obj->var.u.function = var->u.function;
 			break;
 		default:
 			assert(0);
 			break;
 	}
-	obj->Value.Type = Value->Type;
-	TAILQ_INSERT_TAIL(&sArch.ObjList,obj,Entry);
+	obj->var.type = var->type;
+	TAILQ_INSERT_TAIL(&sArch.yobj_list,obj,entry);
 
 	return obj;
 }
 
-void  arso_write(ArsObjType* obj,const ArsValueType* Value)
+void  arso_write(yobj_t* obj,const yvar_t* var)
 {
-	obj->Value.Type = Value->Type;
-	switch(obj->Value.Type)
+	obj->var.type = var->type;
+	switch(obj->var.type)
 	{
-		case ARS_STRING:
-			obj->Value.Var.String = arso_strdup(Value->Var.String);
+		case YVAR_CHAR:
+			obj->var.u.chr = var->u.chr;
 			break;
-		case ARS_INTEGER:
-			obj->Value.Var.Integer = Value->Var.Integer;
+		case YVAR_STRING:
+			obj->var.u.string = arso_strdup(var->u.string);
 			break;
-		case ARS_DOUBLE:
-			obj->Value.Var.Double = Value->Var.Double;
+		case YVAR_INTEGER:
+			obj->var.u.integer = var->u.integer;
 			break;
-		case ARS_FUNCTION:
-			obj->Value.Var.Function = Value->Var.Function;
+		case YVAR_DOUBLE:
+			obj->var.u.dvar = var->u.dvar;
+			break;
+		case YVAR_FUNCTION:
+			obj->var.u.function = var->u.function;
 			break;
 		default:
 			assert(0);
@@ -103,22 +106,25 @@ void  arso_write(ArsObjType* obj,const ArsValueType* Value)
 	}
 }
 
-void  arso_read(const ArsObjType* obj,ArsValueType* Value)
+void  arso_read(const yobj_t* obj,yvar_t* var)
 {
-	Value->Type = obj->Value.Type;
-	switch(obj->Value.Type)
+	var->type = obj->var.type;
+	switch(obj->var.type)
 	{
-		case ARS_STRING:
-			Value->Var.String = arso_strdup(obj->Value.Var.String);
+		case YVAR_CHAR:
+			var->u.chr = obj->var.u.chr;
 			break;
-		case ARS_INTEGER:
-			Value->Var.Integer = obj->Value.Var.Integer;
+		case YVAR_STRING:
+			var->u.string = arso_strdup(obj->var.u.string);
 			break;
-		case ARS_DOUBLE:
-			Value->Var.Double = obj->Value.Var.Double;
+		case YVAR_INTEGER:
+			var->u.integer = obj->var.u.integer;
 			break;
-		case ARS_FUNCTION:
-			Value->Var.Function = obj->Value.Var.Function;
+		case YVAR_DOUBLE:
+			var->u.dvar = obj->var.u.dvar;
+			break;
+		case YVAR_FUNCTION:
+			var->u.function = obj->var.u.function;
 			break;
 		default:
 			assert(0);
@@ -126,12 +132,12 @@ void  arso_read(const ArsObjType* obj,ArsValueType* Value)
 	}
 }
 
-ArsObjType* arso_get(char* Name)
+yobj_t* arso_get(char* name)
 {
-	ArsObjType* obj;
-	TAILQ_FOREACH(obj,&sArch.ObjList,Entry)
+	yobj_t* obj;
+	TAILQ_FOREACH(obj,&sArch.yobj_list,entry)
 	{
-		if(0==strcmp(obj->Name,Name))
+		if(0==strcmp(obj->name,name))
 		{
 			return obj;
 		}
@@ -153,21 +159,21 @@ void arso_init(void)
 	else
 	{	// re-init
 		// free memory firstly
-		ArsObjType* obj;
-		ArsObjType objCopy;
-		TAILQ_FOREACH(obj,&sArch.ObjList,Entry)
+		yobj_t* obj;
+		yobj_t objCopy;
+		TAILQ_FOREACH(obj,&sArch.yobj_list,entry)
 		{
-			if(ARS_STRING == obj->Value.Type)
+			if(YVAR_STRING == obj->var.type)
 			{
-				free(obj->Value.Var.String);
+				free(obj->var.u.string);
 			}
-			free(obj->Name);
-			TAILQ_REMOVE(&sArch.ObjList,obj,Entry);
-			memcpy(&objCopy,obj,sizeof(ArsObjType));
+			free(obj->name);
+			TAILQ_REMOVE(&sArch.yobj_list,obj,entry);
+			memcpy(&objCopy,obj,sizeof(yobj_t));
 			free(obj);
 			obj = &objCopy;
 		}
 	}
 
-	TAILQ_INIT(& sArch.ObjList);
+	TAILQ_INIT(& sArch.yobj_list);
 }

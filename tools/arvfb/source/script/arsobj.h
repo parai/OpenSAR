@@ -22,43 +22,47 @@
 #define ARSOBJ_H_
 #include <sys/queue.h>
 // ========================== [ TYPEs ]======================================
+// here is the thing, for the reason to simple typing, all use small case.
 typedef enum
 {
-	ARS_STRING,
-	ARS_INTEGER,
-	ARS_DOUBLE,
-	ARS_FUNCTION,
-	ARS_UNDEFINE
-}ArsObjTypeType;
+	YVAR_CHAR,
+	YVAR_STRING,
+	YVAR_INTEGER,
+	YVAR_DOUBLE,
+	YVAR_FUNCTION,
+	YVAR_ERROR, // for arscript error report only
+	YVAR_UNDEFINE
+}yvar_type_t;
 
-typedef void (*ArsFpType)(void); // Function Pointer Type
+typedef void (*yfp_t)(void); // Function Pointer Type
 
 
 typedef struct
 {
-	ArsObjTypeType  Type;
+	yvar_type_t     type;
 	union
 	{
-		char*   	String;
-		int     	Integer;
-		double  	Double;
-		ArsFpType   Function;
-	}Var;
-}ArsValueType;
+		char*   	string;
+		int     	integer;
+		double  	dvar;
+		char        chr;
+		yfp_t       function;
+	}u;
+}yvar_t;
 
-typedef struct ArsObj_t
+typedef struct yobj_s
 {
-	char* 			Name;
-	ArsValueType    Value;
-	TAILQ_ENTRY(ArsObj_t) Entry;
-}ArsObjType;
+	char* 			name;
+	yvar_t    		var;
+	TAILQ_ENTRY(yobj_s) entry;
+}yobj_t;
 
 // ============================ [ FUNCTIONS ] =============================================
 void 		arso_init(void);
-ArsObjType* arso_add(char* Name,const ArsValueType* Value);
-void  		arso_write(ArsObjType* obj,const ArsValueType* Value);
-void  		arso_read(const ArsObjType* obj,ArsValueType* Value);
-ArsObjType* arso_get(char* Name);
+yobj_t* 	arso_new(char* name,const yvar_t* Value);
+void  		arso_write(yobj_t* obj,const yvar_t* Value);
+void  		arso_read(const yobj_t* obj,yvar_t* Value);
+yobj_t* 	arso_get(char* name);
 char*       arso_strdup(const char* string);
 void        arso_strfree(char* string);
 

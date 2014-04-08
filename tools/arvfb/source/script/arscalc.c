@@ -8,7 +8,7 @@
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * but WITHOUT ANY WARRANTY; withrvar even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
@@ -22,25 +22,33 @@
 #include "arvfb.h"
 
 // ==================================== [ MACROS    ] ==========================================
-#define is_string(var)   (ARS_STRING ==(var)->Type)
-#define is_integer(var)  (ARS_INTEGER==(var)->Type)
-#define is_double(var)   (ARS_DOUBLE==(var)->Type)
+#define is_string(var)   			(YVAR_STRING ==(var)->type)
+#define is_integer(var)  			(YVAR_INTEGER==(var)->type)
+#define is_double(var)   			(YVAR_DOUBLE==(var)->type)
+#define is_char(var)     			(YVAR_CHAR==(var)->type)
+#define is_function(var)     		(YVAR_FUNCTION==(var)->type)
+
+#define is_both_integer(var1,var2) ( is_integer(var1) && is_integer(var2) )
+#define is_both_char(var1,var2)    ( is_char(var1) && is_char(var2) )
 
 // ==================================== [ TYPES     ] ==========================================
 typedef double (*feval1_t)(double);  // Eval which with 1 parameter
 
 // ==================================== [ LOCAL FUNCTIONS ] ====================================
-static double get_value(const ArsValueType* from)
+static double get_value(const yvar_t* from)
 {
 	double rv = -1;
 
-	switch(from->Type)
+	switch(from->type)
 	{
-		case ARS_INTEGER:
-			rv = from->Var.Integer;
+		case YVAR_CHAR:
+			rv = from->u.chr;
 			break;
-		case ARS_DOUBLE:
-			rv = from->Var.Double;
+		case YVAR_INTEGER:
+			rv = from->u.integer;
+			break;
+		case YVAR_DOUBLE:
+			rv = from->u.dvar;
 			break;
 		default:
 			assert(0);
@@ -49,14 +57,15 @@ static double get_value(const ArsValueType* from)
 	return rv;
 }
 
-static boolean is_evaluable(const ArsValueType* me)
+static boolean is_evaluable(const yvar_t* me)
 {
 	boolean rv = FALSE;
 
-	switch(me->Type)
+	switch(me->type)
 	{
-		case ARS_INTEGER:
-		case ARS_DOUBLE:
+		case YVAR_CHAR:
+		case YVAR_INTEGER:
+		case YVAR_DOUBLE:
 			rv = TRUE;
 			break;
 		default:
@@ -65,80 +74,61 @@ static boolean is_evaluable(const ArsValueType* me)
 	return rv;
 }
 
-static boolean is_both_integer(const ArsValueType* in1,const ArsValueType* in2)
-{
-	if( (ARS_INTEGER == in1->Type) &&
-		(ARS_INTEGER == in2->Type))
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
-static boolean is_both_double(const ArsValueType* in1,const ArsValueType* in2)
-{
-	if( (ARS_DOUBLE == in1->Type) &&
-		(ARS_DOUBLE == in2->Type))
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
 static void arsc_error(void)
 {	// TODO it better
 	puts("arsc error: TODO.\n");
 }
 // ==================================== [ FUNCTIONS ] ==========================================
-void arsc_copy(ArsValueType* to,ArsValueType* from)
+void arsc_copy(yvar_t* to,yvar_t* from)
 {
-	memcpy(to,from,sizeof(ArsValueType));
+	memcpy(to,from,sizeof(yvar_t));
 }
 
-void arsc_add(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
+void arsc_add(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2)
 {
-	if( (is_evaluable(in1)) &&
-		(is_evaluable(in2)))
+	if( (is_evaluable(var1)) &&
+		(is_evaluable(var2)))
 	{
-		if(is_both_integer(in1,in2))
+		if(is_both_char(var1,var2))
 		{
-			out->Type = ARS_INTEGER;
-			out->Var.Integer = in1->Var.Integer + in2->Var.Integer;
+			rvar->type = YVAR_CHAR;
+			rvar->u.chr = var1->u.chr + var2->u.chr;
+		}
+		else if(is_both_integer(var1,var2))
+		{
+			rvar->type = YVAR_INTEGER;
+			rvar->u.integer = var1->u.integer + var2->u.integer;
 		}
 		else
 		{
-			out->Type = ARS_DOUBLE;
-			out->Var.Double = get_value(in1) + get_value(in2);
+			rvar->type = YVAR_DOUBLE;
+			rvar->u.dvar = get_value(var1) + get_value(var2);
 		}
 	}
-	else if(is_string(in1))
+	else if(is_string(var1))
 	{
 		char temp[64];
 		int  length;
-		out->Type = ARS_STRING;
-		out->Var.String = arso_strdup(in1->Var.String);
-		switch(in2->Type)
+		rvar->type = YVAR_STRING;
+		rvar->u.string = arso_strdup(var1->u.string);
+		switch(var2->type)
 		{
-			case ARS_STRING:
-				out->Var.String = realloc(out->Var.String,
-						strlen(out->Var.String)+strlen(in2->Var.String)+1);
-				out->Var.String = strcat(out->Var.String,in2->Var.String);
+			case YVAR_STRING:
+				rvar->u.string = realloc(rvar->u.string,
+						strlen(rvar->u.string)+strlen(var2->u.string)+1);
+				rvar->u.string = strcat(rvar->u.string,var2->u.string);
 				break;
-			case ARS_INTEGER:
-				length = sprintf(temp,"%d",in2->Var.Integer);
-				out->Var.String = realloc(out->Var.String,
-						strlen(out->Var.String)+length+1);
-				out->Var.String = strcat(out->Var.String,temp);
+			case YVAR_INTEGER:
+				length = sprintf(temp,"%d",var2->u.integer);
+				rvar->u.string = realloc(rvar->u.string,
+						strlen(rvar->u.string)+length+1);
+				rvar->u.string = strcat(rvar->u.string,temp);
 				break;
-			case ARS_DOUBLE:
-				length = sprintf(temp,"%g",in2->Var.Double);
-				out->Var.String = realloc(out->Var.String,
-						strlen(out->Var.String)+length+1);
-				out->Var.String = strcat(out->Var.String,temp);
+			case YVAR_DOUBLE:
+				length = sprintf(temp,"%g",var2->u.dvar);
+				rvar->u.string = realloc(rvar->u.string,
+						strlen(rvar->u.string)+length+1);
+				rvar->u.string = strcat(rvar->u.string,temp);
 				break;
 			default:
 				assert(0);
@@ -148,127 +138,219 @@ void arsc_add(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
 	else
 	{
 		arsc_error();
-		out->Type = ARS_INTEGER;
-		out->Var.Integer = -1;
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = -1;
 	}
 }
 
-void arsc_sub(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
+void arsc_sub(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2)
 {
-	if( (is_evaluable(in1)) &&
-		(is_evaluable(in2)))
+	if( (is_evaluable(var1)) &&
+		(is_evaluable(var2)))
 	{
-		if(is_both_integer(in1,in2))
+		if(is_both_char(var1,var2))
 		{
-			out->Type = ARS_INTEGER;
-			out->Var.Integer = in1->Var.Integer - in2->Var.Integer;
+			rvar->type = YVAR_CHAR;
+			rvar->u.chr = var1->u.chr - var2->u.chr;
+		}
+		else if(is_both_integer(var1,var2))
+		{
+			rvar->type = YVAR_INTEGER;
+			rvar->u.integer = var1->u.integer - var2->u.integer;
 		}
 		else
 		{
-			out->Type = ARS_DOUBLE;
-			out->Var.Double = get_value(in1) - get_value(in2);
+			rvar->type = YVAR_DOUBLE;
+			rvar->u.dvar = get_value(var1) - get_value(var2);
 		}
 	}
 	else
 	{
 		arsc_error();
-		out->Type = ARS_INTEGER;
-		out->Var.Integer = -1;
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = -1;
 	}
 }
 
-void arsc_plus(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
+void arsc_plus(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2)
 {
-	if( (is_evaluable(in1)) &&
-		(is_evaluable(in2)))
+	if( (is_evaluable(var1)) &&
+		(is_evaluable(var2)))
 	{
-		if(is_both_integer(in1,in2))
+		if(is_both_char(var1,var2))
 		{
-			out->Type = ARS_INTEGER;
-			out->Var.Integer = in1->Var.Integer * in2->Var.Integer;
+			rvar->type = YVAR_INTEGER;
+			rvar->u.chr = var1->u.chr * var2->u.chr;
+		}
+		else if(is_both_integer(var1,var2))
+		{
+			rvar->type = YVAR_INTEGER;
+			rvar->u.integer = var1->u.integer * var2->u.integer;
 		}
 		else
 		{
-			out->Type = ARS_DOUBLE;
-			out->Var.Double = get_value(in1) * get_value(in2);
+			rvar->type = YVAR_DOUBLE;
+			rvar->u.dvar = get_value(var1) * get_value(var2);
 		}
 	}
 	else
 	{
 		arsc_error();
-		out->Type = ARS_INTEGER;
-		out->Var.Integer = -1;
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = -1;
 	}
 }
 
-void arsc_div(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
+void arsc_div(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2)
 {
-	if( (is_evaluable(in1)) &&
-			(is_evaluable(in2)))
+	if( (is_evaluable(var1)) &&
+			(is_evaluable(var2)))
 	{	// TODO: if diveder is 0
-		if(is_both_integer(in1,in2))
+		if(is_both_char(var1,var2))
 		{
-			out->Type = ARS_INTEGER;
-			out->Var.Integer = in1->Var.Integer / in2->Var.Integer;
+			rvar->type = YVAR_INTEGER;
+			rvar->u.chr = var1->u.chr / var2->u.chr;
+		}
+		else if(is_both_integer(var1,var2))
+		{
+			rvar->type = YVAR_INTEGER;
+			rvar->u.integer = var1->u.integer / var2->u.integer;
 		}
 		else
 		{
-			out->Type = ARS_DOUBLE;
-			out->Var.Double = get_value(in1) / get_value(in2);
+			rvar->type = YVAR_DOUBLE;
+			rvar->u.dvar = get_value(var1) / get_value(var2);
 		}
 	}
 	else
 	{
 		arsc_error();
-		out->Type = ARS_INTEGER;
-		out->Var.Integer = -1;
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = -1;
 	}
 }
 
-void arsc_neg(ArsValueType* out,const ArsValueType* in1)
+void arsc_neg(yvar_t* rvar,const yvar_t* var1)
 {
-	if( (ARS_INTEGER == in1->Type))
+	if( (YVAR_CHAR == var1->type))
 	{
-		out->Type = ARS_INTEGER;
-		out->Var.Integer = - in1->Var.Integer;
+		rvar->type = YVAR_CHAR;
+		rvar->u.chr = - var1->u.chr;
 	}
-	else if( (ARS_DOUBLE == in1->Type))
+	else if( (YVAR_INTEGER == var1->type))
 	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = - in1->Var.Double;
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = - var1->u.integer;
+	}
+	else if( (YVAR_DOUBLE == var1->type))
+	{
+		rvar->type = YVAR_DOUBLE;
+		rvar->u.dvar = - var1->u.dvar;
 	}
 }
 
-void arsc_pow(ArsValueType* out,const ArsValueType* in1,const ArsValueType* in2)
+void arsc_pow(yvar_t* rvar,const yvar_t* var1,const yvar_t* var2)
 {
-	if( (is_evaluable(in1)) &&
-			(is_evaluable(in2)))
+	if( (is_evaluable(var1)) &&
+		(is_evaluable(var2)))
 	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = pow(get_value(in1), get_value(in2));
+		rvar->type = YVAR_DOUBLE;
+		rvar->u.dvar = pow(get_value(var1), get_value(var2));
 	}
 	else
 	{
 		arsc_error();
-		out->Type = ARS_INTEGER;
-		out->Var.Integer = -1;
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = -1;
 	}
 }
 
-void arsc_eval(ArsValueType* out,const ArsValueType* fnc,const ArsValueType* param)
+void arsc_eval(yvar_t* rvar,const yvar_t* fnc,const yvar_t* param)
 {
-	assert(ARS_STRING==fnc->Type);
-	ArsObjType* obj = arso_get(fnc->Var.String);
-	if( (NULL == obj) || (ARS_FUNCTION != obj->Value.Type) ||
-		((ARS_INTEGER != param->Type)&&(ARS_DOUBLE != param->Type)))
+	yobj_t* obj = arso_get(fnc->u.string);
+	if( (NULL == obj) || (YVAR_FUNCTION != obj->var.type) ||
+		(!is_evaluable(param)))
 	{
 		arsc_error();
-		out->Type = ARS_INTEGER;
-		out->Var.Integer = -1;	// indicate error
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = -1;	// indicate error
 	}
 	else
 	{
-		out->Type = ARS_DOUBLE;
-		out->Var.Double = ((feval1_t)obj->Value.Var.Function)(get_value(param));
+		rvar->type = YVAR_DOUBLE;
+		rvar->u.dvar = ((feval1_t)obj->var.u.function)(get_value(param));
+	}
+}
+
+void arsc_read(yvar_t* rvar,const yvar_t* ref)
+{
+	yobj_t* obj = arso_get(ref->u.string);
+	if(NULL != obj)
+	{
+		arsc_copy(rvar,&obj->var);
+	}
+	else
+	{
+		arsc_error();
+		rvar->type = YVAR_INTEGER;
+		rvar->u.integer = -1;	// indicate error
+	}
+}
+
+void arsc_print(yvar_t* var)
+{
+	switch(var->type)
+	{
+//		case YVAR_STRING:
+//		{
+//				yobj_t* obj = arso_get(var->u.name);
+//				if(obj != NULL)
+//				{
+//					if(is_string(& obj->var))
+//					{
+//						printf ("\t%s = %s\n", var->u.name,obj->var.u.string);
+//					}
+//					else if(is_double(& obj->var))
+//					{
+//						printf ("\t%s = %g\n", var->u.name,obj->var.u.dvar);
+//					}
+//					else if(is_integer(& obj->var))
+//					{
+//						printf ("\t%s = %d\n", var->u.name,obj->var.u.integer);
+//					}
+//					else if(is_char(& obj->var))
+//					{
+//						printf ("\t%s = '%c'\n", var->u.name,obj->var.u.chr);
+//					}
+//					else if(is_function(& obj->var))
+//					{
+//						printf ("\t%s = (yfp_t)%p\n", var->u.name,obj->var.u.function);
+//					}
+//					else
+//					{
+//						assert(0);
+//					}
+//				}
+//				else
+//				{
+//					printf ("\tERROR:var <%s> is not defined.\n", var->u.name);
+//				}
+//				break;
+//		}
+		case YVAR_STRING:
+			printf ("\t(String)\"%s\"\n", var->u.string);
+			break;
+		case YVAR_INTEGER:
+			printf ("\t(Integer)%d\n", var->u.integer);
+			break;
+		case YVAR_DOUBLE:
+			printf ("\t(Double)%g\n", var->u.dvar);
+			break;
+		case YVAR_FUNCTION:
+			printf ("\t(Function)%p\n", var->u.function);
+			break;
+		default:
+			assert(0);
+			break;
 	}
 }

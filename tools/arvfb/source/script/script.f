@@ -33,60 +33,76 @@
 
 DIGIT    [0-9]
 HEX      [0][xX][0-9A-Fa-f]+
-STRING   [_a-zA-Z][_a-zA-Z0-9]*
+ID       [_a-zA-Z][_a-zA-Z0-9]*
+CHAR     .
 
 %%
 
-"//"+[^\n]*	
+
+"//"+[^\n]*			/* comment ignore */
 "/*"+[^\n]*+"*/" 
+"#"+[^\n]*
 
 TRUE|true|True	{
 			DEBUG_FLEX("True:%s\n",yytext);
-			yylval.yInteger.Type = ARS_INTEGER;
-			yylval.yInteger.Var.Integer = 1;
-			return yInteger;
+			yylval.tk_integer.type = YVAR_INTEGER;
+			yylval.tk_integer.u.integer = 1;
+			return tk_integer;
 		}
 
 FALSE|false|False	{
 			DEBUG_FLEX("False:%s\n",yytext);
-			yylval.yInteger.Type = ARS_INTEGER;
-			yylval.yInteger.Var.Integer = 0;
-			return yInteger;
+			yylval.tk_integer.type = YVAR_INTEGER;
+			yylval.tk_integer.u.integer = 0;
+			return tk_integer;
 		}
 
 {DIGIT}+	{
 			DEBUG_FLEX("Integer:%s\n",yytext);
-			yylval.yInteger.Type = ARS_INTEGER;
-			yylval.yInteger.Var.Integer = atoi(yytext);
-			return yInteger;
+			yylval.tk_integer.type = YVAR_INTEGER;
+			yylval.tk_integer.u.integer = atoi(yytext);
+			return tk_integer;
 		}
 
 {HEX}		{
 			DEBUG_FLEX("Hex:%s\n",yytext);
-			yylval.yInteger.Type = ARS_INTEGER;
-			yylval.yInteger.Var.Integer = htoi(yytext);
-			return yInteger;
+			yylval.tk_integer.type = YVAR_INTEGER;
+			yylval.tk_integer.u.integer = htoi(yytext);
+			return tk_integer;
 	
 		}
 
 {DIGIT}+"."{DIGIT}*        {
 			DEBUG_FLEX("Double:%s\n",yytext);
-			yylval.yDouble.Type = ARS_DOUBLE;
-			yylval.yDouble.Var.Double = atof(yytext);
-			return yDouble;
+			yylval.tk_double.type = YVAR_DOUBLE;
+			yylval.tk_double.u.dvar = atof(yytext);
+			return tk_double;
 		}
 
 exit	{
-			// value is not cared.
-			return yExit;	// exit
+			return tk_exit;	// exit
 		}
 
-{STRING}	{
+\".*\"	{
 			DEBUG_FLEX("Var:%s\n",yytext);
-			yylval.yString.Type = ARS_STRING;
-			yylval.yString.Var.String = arso_strdup(yytext);
-			return yString;
+			yylval.tk_string.type = YVAR_STRING;
+			yytext[strlen(yytext)-1] = '\0'; // eat ""
+			yylval.tk_string.u.string = arso_strdup(&yytext[1]);
+			return tk_string;
 		}
+		
+\'{CHAR}\'	{
+		DEBUG_FLEX("Var:%s\n",yytext);
+		yylval.tk_obj.type = YVAR_CHAR;
+		yylval.tk_obj.u.chr = yytext[0];
+		return tk_obj;
+		}		
+{ID}	{
+		DEBUG_FLEX("Var:%s\n",yytext);
+		yylval.tk_obj.type = YVAR_STRING;
+		yylval.tk_obj.u.string = arso_strdup(yytext);
+		return tk_obj;
+	}		
 
 "+"|"-"|"*"|"/"|"="  {
 			DEBUG_FLEX("Operator:%s\n",yytext);

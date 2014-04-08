@@ -25,18 +25,20 @@
 	#include "arscript.h"
 	
 #define ARSO_FREE_IF_IS_STRING(ss)					\
-	if(ARS_STRING == (ss).Type)						\
+	if(YVAR_STRING == (ss).type)					\
 	{												\
-		arso_strfree((ss).Var.String);				\
+		arso_strfree((ss).u.string);				\
 	}
 %}
 
 %define api.value.type   union  
-%token <ArsValueType> 	yDouble
-%token <ArsValueType>   yInteger
-%token <ArsValueType>   yExit
-%token <ArsValueType>   yString
-%type  <ArsValueType>   exp
+%token <yvar_t>   tk_double
+%token <yvar_t>   tk_integer
+%token <char*> 	  tk_exit
+%token <yvar_t>   tk_char
+%token <yvar_t>   tk_string
+%token <yvar_t>   tk_obj
+%type  <yvar_t>   expr
 
 
 %precedence '='
@@ -56,25 +58,25 @@
 %printer { fprintf (yyoutput, "%d", $$); } <int>;
 %printer { fprintf (yyoutput, "%g", $$); } <double>;
 */
-%printer { switch($$.Type)
+%printer { switch($$.type)
 			{
-				case ARS_STRING:
-					fprintf (yyoutput, "%s", $$.Var.String); 
+				case YVAR_STRING:
+					fprintf (yyoutput, "%s", $$.u.string); 
 					break;
-				case ARS_INTEGER:
-					fprintf (yyoutput, "%d", $$.Var.Integer); 
+				case YVAR_INTEGER:
+					fprintf (yyoutput, "%d", $$.u.integer); 
 					break;
-				case ARS_DOUBLE:
-					fprintf (yyoutput, "%g", $$.Var.Double); 
+				case YVAR_DOUBLE:
+					fprintf (yyoutput, "%g", $$.u.dvar); 
 					break;
-				case ARS_FUNCTION:
-					fprintf (yyoutput, "%p", $$.Var.Function); 
+				case YVAR_FUNCTION:
+					fprintf (yyoutput, "%p", $$.u.function); 
 					break;
 				default:
 					assert(0);
 					break;
 			}
-		} <ArsValueType>;
+		} <yvar_t>;
 
 %% /* The grammar follows.  */
 
@@ -87,93 +89,59 @@ input:
 
 line:
   '\n'
-| exp '\n'   { switch($1.Type)
-				{
-					case ARS_STRING:
-						printf ("\t(String)%s\n", $1.Var.String); 
-						// as result has already been output, free
-						arso_strfree($1.Var.String);
-						break;
-					case ARS_INTEGER:
-						printf ("\t(Integer)%d\n", $1.Var.Integer); 
-						break;
-					case ARS_DOUBLE:
-						printf ("\t(Double)%g\n", $1.Var.Double); 
-						break;
-					case ARS_FUNCTION:
-						printf ("\t(Function)%p\n", $1.Var.Function); 
-						break;
-					default:
-						assert(0);
-						break;
-				} }
+| expr '\n'  { arsc_print(&$1);  ARSO_FREE_IF_IS_STRING($1); }
 | error '\n' { yyerrok;                }
 ;
 
 
 
-exp:
-   yString           { ArsObjType* obj = arso_get($1.Var.String);
-   	   	   	   	   	   if(NULL != obj)
-   	   	   	   	   	   {
-   	   	   	   	   		   arso_read(obj,&$$);
-   	   	   	   	   		   arso_strfree($1.Var.String);  // $1 is not needed any more 
-   	   	   	   	   	   }
-   	   	   	   	   	   else
-   	   	   	   	   	   {
-   	   	   	   	   		   arsc_copy(&$$,&$1);		
-   	   	   	   	   		   // as $$ is a copy of $1, no need to free $1 string as still in use
-   	   	   	   	   	   }
-   	   	   	   	   	 }
-|  yDouble			 { arsc_copy(&$$,&$1);        			
-					 }
-|  yInteger			 { arsc_copy(&$$,&$1);        			
-					 }
-|  yString '=' exp	 {  ArsObjType* obj = arso_get($1.Var.String);
+expr:
+   tk_obj            { 	arsc_read(&$$,&$1);		}
+|  tk_string         {  arsc_copy(&$$,&$1);		}	
+|  tk_double		 { 	arsc_copy(&$$,&$1);     }
+|  tk_integer		 { 	arsc_copy(&$$,&$1);     }
+| '(' expr ')'       {  arsc_copy(&$$,&$2);     }
+|  tk_obj '=' expr	 {  yobj_t* obj = arso_get($1.u.string);
 					    if(NULL == obj)
 					    {	// New it, 
-					    	obj = arso_add($1.Var.String,&$3);
+					    	obj = arso_new($1.u.string,&$3);
 					    }
 					    else
 					    {
 					    	arso_write(obj,&$3);  
 					    }
-					    arso_strfree($1.Var.String);
+					    arso_strfree($1.u.string);
 					    ARSO_FREE_IF_IS_STRING($3);
 					    arso_read(obj,&$$);
 					 }
-| yString '(' exp ')'{	arsc_eval(&$$,&$1,&$3);
-						arso_strfree($1.Var.String);
+| tk_obj '(' expr ')'{	arsc_eval(&$$,&$1,&$3);
+						arso_strfree($1.u.string);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
-| exp '+' exp        {  arsc_add(&$$,&$1,&$3); 
+| expr '+' expr      {  arsc_add(&$$,&$1,&$3); 
 						ARSO_FREE_IF_IS_STRING($1);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
-| exp '-' exp        {  arsc_sub(&$$,&$1,&$3);
+| expr '-' expr      {  arsc_sub(&$$,&$1,&$3);
 						ARSO_FREE_IF_IS_STRING($1);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
-| exp '*' exp        {  arsc_plus(&$$,&$1,&$3); 
+| expr '*' expr      {  arsc_plus(&$$,&$1,&$3); 
 						ARSO_FREE_IF_IS_STRING($1);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
-| exp '/' exp        {  arsc_div(&$$,&$1,&$3);
+| expr '/' expr      {  arsc_div(&$$,&$1,&$3);
 						ARSO_FREE_IF_IS_STRING($1);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
-| '-' exp  %prec NEG {  arsc_neg(&$$,&$2); 
+| '-' expr  %prec NEG{  arsc_neg(&$$,&$2); 
 						ARSO_FREE_IF_IS_STRING($2);
 					 }
-| exp '^' exp        {  arsc_pow(&$$,&$1,&$3); 
+| expr '^' expr      {  arsc_pow(&$$,&$1,&$3); 
 						ARSO_FREE_IF_IS_STRING($1);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
-| '(' exp ')'        {  arsc_copy(&$$,&$2);
-						// copy is special, it is not back-up, $$ and $2 will be almost the same
-						// if its type is string.
-					 }
-| yExit              { return 0;                        }
+| tk_exit              { return 0;                        }
 ;
 
 /* End of grammar.  */
