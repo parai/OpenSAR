@@ -7,7 +7,7 @@ sin(pi/2)
 
 cos(pi/2)
 
-pi = "3.14 \n value of pi\tfff!\n"
+pi = "3.14 \n value of pi\tfff!\n\t"
 
 4^2
 

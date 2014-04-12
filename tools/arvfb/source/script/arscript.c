@@ -71,7 +71,7 @@ void yyerror  (char const *);
 void yyerror  (char const * errMsg)
 {
 	assert(errMsg!=NULL);
-	printf("Script: %s\n",errMsg);
+	printf("Script Error: %s at line %d\n",errMsg,yylineno);
 }
 
 //int yywrap (void )
@@ -126,8 +126,6 @@ void ArScript(int argc, char* argv[])
 	{
 		fclose(yyin);
 	}
-
-	yyparse();
 
 }
 

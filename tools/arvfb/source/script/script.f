@@ -34,8 +34,11 @@
 %option yylineno
 %option noyywrap
 %option stack
+%option nounput
+%option noinput
 /* Start Conditions */
 %x      sc_str
+%x      sc_import
 
 DIGIT    [0-9]
 HEX      [0][xX][0-9A-Fa-f]+
@@ -45,8 +48,9 @@ CHAR     .
 %%
 
 	#define MAX_STR_CONST 1024
-	static char string_buf[MAX_STR_CONST];
-	static char *string_buf_ptr = string_buf;
+	char string_buf[MAX_STR_CONST];
+	char *string_buf_ptr = string_buf;
+	unsigned int import_counter = 0;
 
 "#"+[^\n]*
 
@@ -64,6 +68,7 @@ CHAR     .
 	\n      {
                  /* error - unterminated string constant */
                  /* generate error message */
+				 yyerror("unterminated string constant");
     }
 
 	\\[0-7]{1,3} {
@@ -82,6 +87,7 @@ CHAR     .
 		 /* generate error - bad escape sequence; something
 		  * like '\48' or '\0777777'
 		  */
+		yyerror("bad escape sequence;like '\48' or '\0777777'");
 	 }
 
 	\\n  *string_buf_ptr++ = '\n';
@@ -97,6 +103,27 @@ CHAR     .
 
 		 while ( *yptr )
 				 *string_buf_ptr++ = *yptr++;
+	}
+}
+
+import             BEGIN(sc_import);
+
+<sc_import>{
+	[ \t]* /* eat the whitespace */ 
+
+	[^ \t\n]+   { /* got the import module name */
+		yyin = fopen( yytext, "r" );
+		if ( ! yyin )
+		{	char string[1024];
+			sprintf(string,"Module <%s> is not exist",yytext);
+			yyerror(string);
+		}
+		else
+		{
+			import_counter ++; 
+			yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
+			BEGIN(INITIAL);
+		}
 	}
 }
 
@@ -167,15 +194,32 @@ exit	{	printf("##: %s\n",yytext);
 
 [ \t]+			/* eat up whitespace */
 
-<<EOF>>		{ printf("EOF: %s\n",yytext); 
-			  yylval.tk_char.type = YVAR_CHAR; 
-			  yylval.tk_char.u.chr = yytext[0];
-			  return tk_eof;
-		    }
-
 .           return yytext[0];
 
 
+<<EOF>>	{
+			if(import_counter > 0)
+			{
+				yypop_buffer_state();
+				import_counter --;
+				
+				if ( !YY_CURRENT_BUFFER )
+				{
+					yyterminate();
+					return tk_eof;
+				}
+				else
+				{
+					BEGIN(INITIAL);
+				}
+			}
+			else
+			{
+				DEBUG_FLEX("End of file.\n");
+				yyterminate();
+				return tk_eof;
+			}
+        }
 
 %%
 

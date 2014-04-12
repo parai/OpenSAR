@@ -212,6 +212,8 @@ int main (int argc, char *argv[])
 	ArParser(argc,argv);
 	ArScript(argc,argv);
 
+	printf("Initialize Done.\n");
+
 
 
 	gtk_box_pack_start(GTK_BOX(pBox),CreateMenubar(),FALSE,FALSE,0);

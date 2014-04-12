@@ -560,8 +560,9 @@ char *yytext;
 #line 30 "../../tools/arvfb/source/parser/grammar.f"
 	/* need this for the call to atof() below */
 	#include <math.h>
+#define YY_NO_INPUT 1
 /* %option stack */
-#line 565 "lex.yy.c"
+#line 566 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -620,8 +621,6 @@ extern int yywrap (void );
 #endif
 #endif
 
-    static void yyunput (int c,char *buf_ptr  );
-    
 #ifndef yytext_ptr
 static void yy_flex_strncpy (char *,yyconst char *,int );
 #endif
@@ -751,10 +750,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 42 "../../tools/arvfb/source/parser/grammar.f"
+#line 44 "../../tools/arvfb/source/parser/grammar.f"
 
 
-#line 758 "lex.yy.c"
+#line 757 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -850,17 +849,17 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 44 "../../tools/arvfb/source/parser/grammar.f"
+#line 46 "../../tools/arvfb/source/parser/grammar.f"
 
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 45 "../../tools/arvfb/source/parser/grammar.f"
+#line 47 "../../tools/arvfb/source/parser/grammar.f"
 
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 47 "../../tools/arvfb/source/parser/grammar.f"
+#line 49 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("True:%s\n",yytext);
 			yylval.yInteger = 1;
@@ -869,7 +868,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 53 "../../tools/arvfb/source/parser/grammar.f"
+#line 55 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("False:%s\n",yytext);
 			yylval.yInteger = 0;
@@ -878,7 +877,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 59 "../../tools/arvfb/source/parser/grammar.f"
+#line 61 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Integer:%s\n",yytext);
 			yylval.yInteger = atoi(yytext);
@@ -887,7 +886,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 65 "../../tools/arvfb/source/parser/grammar.f"
+#line 67 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Hex:%s\n",yytext);
 			yylval.yInteger = htoi(yytext);
@@ -897,7 +896,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 72 "../../tools/arvfb/source/parser/grammar.f"
+#line 74 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Double:%s\n",yytext);
 			yylval.yDouble = atof(yytext);
@@ -906,7 +905,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 78 "../../tools/arvfb/source/parser/grammar.f"
+#line 80 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Pdu:%s\n",yytext);
 			yylval.yPdu = 0;	// value is ignored
@@ -915,7 +914,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 84 "../../tools/arvfb/source/parser/grammar.f"
+#line 86 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Signal:%s\n",yytext);
 			yylval.ySignal = 0;	// value is ignored
@@ -924,7 +923,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 90 "../../tools/arvfb/source/parser/grammar.f"
+#line 92 "../../tools/arvfb/source/parser/grammar.f"
 {
 			yylval.yExit = 0;
 			return yExit;	// exit
@@ -932,7 +931,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 95 "../../tools/arvfb/source/parser/grammar.f"
+#line 97 "../../tools/arvfb/source/parser/grammar.f"
 {
 			DEBUG_FLEX("Var:%s\n",yytext);
 			yylval.yString = strdup(yytext);
@@ -942,35 +941,35 @@ YY_RULE_SETUP
 case 12:
 /* rule 12 can match eol */
 YY_RULE_SETUP
-#line 101 "../../tools/arvfb/source/parser/grammar.f"
+#line 103 "../../tools/arvfb/source/parser/grammar.f"
 {return '\n';}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 103 "../../tools/arvfb/source/parser/grammar.f"
+#line 105 "../../tools/arvfb/source/parser/grammar.f"
 DEBUG_FLEX( "An operator: %s\n", yytext );
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 105 "../../tools/arvfb/source/parser/grammar.f"
+#line 107 "../../tools/arvfb/source/parser/grammar.f"
 /* eat up one-line comments */
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 107 "../../tools/arvfb/source/parser/grammar.f"
+#line 109 "../../tools/arvfb/source/parser/grammar.f"
 /* eat up whitespace */
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 110 "../../tools/arvfb/source/parser/grammar.f"
+#line 112 "../../tools/arvfb/source/parser/grammar.f"
 DEBUG_FLEX( "Unrecognized character: %s\n", yytext );
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 114 "../../tools/arvfb/source/parser/grammar.f"
+#line 116 "../../tools/arvfb/source/parser/grammar.f"
 ECHO;
 	YY_BREAK
-#line 974 "lex.yy.c"
+#line 973 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1298,47 +1297,6 @@ static int yy_get_next_buffer (void)
 	yy_is_jam = (yy_current_state == 67);
 
 	return yy_is_jam ? 0 : yy_current_state;
-}
-
-    static void yyunput (int c, register char * yy_bp )
-{
-	register char *yy_cp;
-    
-    yy_cp = (yy_c_buf_p);
-
-	/* undo effects of setting up yytext */
-	*yy_cp = (yy_hold_char);
-
-	if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-		{ /* need to shift things up to make room */
-		/* +2 for EOB chars. */
-		register int number_to_move = (yy_n_chars) + 2;
-		register char *dest = &YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[
-					YY_CURRENT_BUFFER_LVALUE->yy_buf_size + 2];
-		register char *source =
-				&YY_CURRENT_BUFFER_LVALUE->yy_ch_buf[number_to_move];
-
-		while ( source > YY_CURRENT_BUFFER_LVALUE->yy_ch_buf )
-			*--dest = *--source;
-
-		yy_cp += (int) (dest - source);
-		yy_bp += (int) (dest - source);
-		YY_CURRENT_BUFFER_LVALUE->yy_n_chars =
-			(yy_n_chars) = YY_CURRENT_BUFFER_LVALUE->yy_buf_size;
-
-		if ( yy_cp < YY_CURRENT_BUFFER_LVALUE->yy_ch_buf + 2 )
-			YY_FATAL_ERROR( "flex scanner push-back overflow" );
-		}
-
-	*--yy_cp = (char) c;
-
-    if ( c == '\n' ){
-        --yylineno;
-    }
-
-	(yytext_ptr) = yy_bp;
-	(yy_hold_char) = *yy_cp;
-	(yy_c_buf_p) = yy_cp;
 }
 
 #ifndef YY_NO_INPUT
@@ -1982,7 +1940,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 114 "../../tools/arvfb/source/parser/grammar.f"
+#line 116 "../../tools/arvfb/source/parser/grammar.f"
 
 
 

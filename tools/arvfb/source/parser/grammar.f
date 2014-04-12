@@ -33,6 +33,8 @@
 
 %option yylineno
 %option noyywrap
+%option nounput
+%option noinput
 /* %option stack */
 
 DIGIT    [0-9]
