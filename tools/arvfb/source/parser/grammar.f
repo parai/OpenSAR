@@ -31,6 +31,10 @@
 	#include <math.h>
 %}
 
+%option yylineno
+%option noyywrap
+/* %option stack */
+
 DIGIT    [0-9]
 HEX      [0][xX][0-9A-Fa-f]+
 STRING   [_a-zA-Z][_a-zA-Z0-9]*
@@ -88,7 +92,7 @@ exit	{
 			return yExit;	// exit
 		}
 
-{STRING}	{
+{STRING} {
 			DEBUG_FLEX("Var:%s\n",yytext);
 			yylval.yString = strdup(yytext);
 			return yString;

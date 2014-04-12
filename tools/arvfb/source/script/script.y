@@ -34,10 +34,12 @@
 %define api.value.type   union  
 %token <yvar_t>   tk_double
 %token <yvar_t>   tk_integer
-%token <char*> 	  tk_exit
+%token <yvar_t>   tk_exit
+%token <yvar_t>   tk_eof
+%token <yvar_t>   tk_eol
 %token <yvar_t>   tk_char
 %token <yvar_t>   tk_string
-%token <yvar_t>   tk_obj
+%token <yvar_t>   tk_id
 %type  <yvar_t>   expr
 
 
@@ -88,20 +90,20 @@ input:
 
 
 line:
-  '\n'
-| expr '\n'  { arsc_print(&$1);  ARSO_FREE_IF_IS_STRING($1); }
-| error '\n' { yyerrok;                }
+	tk_eol
+| expr  tk_eol  { arsc_print(&$1);  ARSO_FREE_IF_IS_STRING($1); }
+| error tk_eol { yyerrok;                }
 ;
 
 
 
 expr:
-   tk_obj            { 	arsc_read(&$$,&$1);		}
+   tk_id             { 	arsc_read(&$$,&$1);		}
 |  tk_string         {  arsc_copy(&$$,&$1);		}	
 |  tk_double		 { 	arsc_copy(&$$,&$1);     }
 |  tk_integer		 { 	arsc_copy(&$$,&$1);     }
 | '(' expr ')'       {  arsc_copy(&$$,&$2);     }
-|  tk_obj '=' expr	 {  yobj_t* obj = arso_get($1.u.string);
+|  tk_id '=' expr	 {  yobj_t* obj = arso_get($1.u.string);
 					    if(NULL == obj)
 					    {	// New it, 
 					    	obj = arso_new($1.u.string,&$3);
@@ -114,7 +116,7 @@ expr:
 					    ARSO_FREE_IF_IS_STRING($3);
 					    arso_read(obj,&$$);
 					 }
-| tk_obj '(' expr ')'{	arsc_eval(&$$,&$1,&$3);
+| tk_id '(' expr ')' {	arsc_eval(&$$,&$1,&$3);
 						arso_strfree($1.u.string);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
@@ -141,7 +143,8 @@ expr:
 						ARSO_FREE_IF_IS_STRING($1);
 						ARSO_FREE_IF_IS_STRING($3);
 					 }
-| tk_exit              { return 0;                        }
+| tk_exit			 { return 0;                        }
+| tk_eof             { return 0;                        }
 ;
 
 /* End of grammar.  */

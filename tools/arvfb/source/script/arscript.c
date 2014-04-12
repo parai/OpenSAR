@@ -74,10 +74,10 @@ void yyerror  (char const * errMsg)
 	printf("Script: %s\n",errMsg);
 }
 
-int yywrap (void )
-{
-	return 0;
-}
+//int yywrap (void )
+//{
+//	return 0;
+//}
 
 void ArScript_Init(void)
 {
@@ -105,20 +105,20 @@ void ArScript(int argc, char* argv[])
 	--argc;++argv;	// skip the Program name
 
 	puts("Script:\n");
-//	if(argc==2)
-//	{
-//		yyin = fopen(argv[1],"r");
-//	}
-//	else
-//	{
-//		yyin = fopen("../../app/config/GEN/arvfb.spy","r");
-//		puts("script on arvfb.spy\n");
-//	}
-//	if(NULL==yyin)
-//	{
-//		yyin = stdin;
-//	}
-//	yyout = stdout;
+	if(argc==2)
+	{
+		yyin = fopen(argv[1],"r");
+	}
+	else
+	{
+		yyin = fopen("../../app/config/GEN/arvfb.spy","r");
+		puts("script on arvfb.spy\n");
+	}
+	if(NULL==yyin)
+	{
+		yyin = stdin;
+	}
+	yyout = stdout;
 
 	yyparse();
 

@@ -93,7 +93,7 @@ static int htoi(char* string)
 #define yyrealloc					ar_yyrealloc
 #define yyfree						ar_yyfree
 #define yyerror						ar_yyerror
-#define yywrap						ar_yywrap
+//#define yywrap						ar_yywrap
 #define yylineno					ar_yylineno
 #define yy_flex_debug				ar_yy_flex_debug
 
@@ -113,10 +113,10 @@ void yyerror  (char const * errMsg)
 	puts(errMsg);
 }
 
-int yywrap (void )
-{
-	return 0;
-}
+//int yywrap (void )
+//{
+//	return 0;
+//}
 
 void ArParser(int argc, char* argv[])
 {

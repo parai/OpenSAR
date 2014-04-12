@@ -109,10 +109,12 @@ extern int yydebug;
     tk_double = 258,
     tk_integer = 259,
     tk_exit = 260,
-    tk_char = 261,
-    tk_string = 262,
-    tk_obj = 263,
-    NEG = 264
+    tk_eof = 261,
+    tk_eol = 262,
+    tk_char = 263,
+    tk_string = 264,
+    tk_id = 265,
+    NEG = 266
   };
 #endif
 
@@ -122,19 +124,23 @@ typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
 
-#line 126 "../../tools/arvfb/source/script/script.yc" /* yacc.c:355  */
-  /* tk_exit  */
-  char* tk_exit;
+#line 128 "../../tools/arvfb/source/script/script.yc" /* yacc.c:355  */
   /* tk_double  */
   yvar_t tk_double;
   /* tk_integer  */
   yvar_t tk_integer;
+  /* tk_exit  */
+  yvar_t tk_exit;
+  /* tk_eof  */
+  yvar_t tk_eof;
+  /* tk_eol  */
+  yvar_t tk_eol;
   /* tk_char  */
   yvar_t tk_char;
   /* tk_string  */
   yvar_t tk_string;
-  /* tk_obj  */
-  yvar_t tk_obj;
+  /* tk_id  */
+  yvar_t tk_id;
   /* expr  */
   yvar_t expr;
 };
@@ -151,7 +157,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 155 "../../tools/arvfb/source/script/script.yc" /* yacc.c:358  */
+#line 161 "../../tools/arvfb/source/script/script.yc" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -393,21 +399,21 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  2
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   69
+#define YYLAST   71
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  19
+#define YYNTOKENS  20
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  20
+#define YYNRULES  21
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  34
+#define YYNSTATES  35
 
 /* YYTRANSLATE[YYX] -- Symbol number corresponding to YYX as returned
    by yylex, with out-of-bounds checking.  */
 #define YYUNDEFTOK  2
-#define YYMAXUTOK   264
+#define YYMAXUTOK   266
 
 #define YYTRANSLATE(YYX)                                                \
   ((unsigned int) (YYX) <= YYMAXUTOK ? yytranslate[YYX] : YYUNDEFTOK)
@@ -417,15 +423,15 @@ union yyalloc
 static const yytype_uint8 yytranslate[] =
 {
        0,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      16,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-      17,    18,    12,    11,     2,    10,     2,    13,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     9,     2,     2,     2,     2,     2,     2,     2,     2,
+      18,    19,    14,    13,     2,    12,     2,    15,     2,     2,
+       2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
+       2,    11,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
-       2,     2,     2,     2,    15,     2,     2,     2,     2,     2,
+       2,     2,     2,     2,    17,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
@@ -442,16 +448,16 @@ static const yytype_uint8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     2,     2,     2,     2,
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
-       5,     6,     7,     8,    14
+       5,     6,     7,     8,     9,    10,    16
 };
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    84,    84,    85,    91,    92,    93,    99,   100,   101,
-     102,   103,   104,   117,   121,   125,   129,   133,   137,   140,
-     144
+       0,    86,    86,    87,    93,    94,    95,   101,   102,   103,
+     104,   105,   106,   119,   123,   127,   131,   135,   139,   142,
+     146,   147
 };
 #endif
 
@@ -461,8 +467,9 @@ static const yytype_uint8 yyrline[] =
 static const char *const yytname[] =
 {
   "$end", "error", "$undefined", "tk_double", "tk_integer", "tk_exit",
-  "tk_char", "tk_string", "tk_obj", "'='", "'-'", "'+'", "'*'", "'/'",
-  "NEG", "'^'", "'\\n'", "'('", "')'", "$accept", "input", "line", "expr", YY_NULLPTR
+  "tk_eof", "tk_eol", "tk_char", "tk_string", "tk_id", "'='", "'-'", "'+'",
+  "'*'", "'/'", "NEG", "'^'", "'('", "')'", "$accept", "input", "line",
+  "expr", YY_NULLPTR
 };
 #endif
 
@@ -471,15 +478,15 @@ static const char *const yytname[] =
    (internal) symbol number NUM (which must be that of a token).  */
 static const yytype_uint16 yytoknum[] =
 {
-       0,   256,   257,   258,   259,   260,   261,   262,   263,    61,
-      45,    43,    42,    47,   264,    94,    10,    40,    41
+       0,   256,   257,   258,   259,   260,   261,   262,   263,   264,
+     265,    61,    45,    43,    42,    47,   266,    94,    40,    41
 };
 # endif
 
-#define YYPACT_NINF -15
+#define YYPACT_NINF -10
 
 #define yypact_value_is_default(Yystate) \
-  (!!((Yystate) == (-15)))
+  (!!((Yystate) == (-10)))
 
 #define YYTABLE_NINF -1
 
@@ -490,10 +497,10 @@ static const yytype_uint16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -15,     0,   -15,   -14,   -15,   -15,   -15,   -15,     4,    24,
-     -15,    24,   -15,    43,   -15,    24,    24,    -9,    25,    24,
-      24,    24,    24,    24,   -15,    50,    34,   -15,    54,    54,
-      -9,    -9,    -9,   -15
+     -10,     0,   -10,    -5,   -10,   -10,   -10,   -10,   -10,   -10,
+      15,    10,    10,   -10,    32,   -10,    10,    10,    -9,    38,
+     -10,    10,    10,    10,    10,    10,    54,    46,   -10,    26,
+      26,    -9,    -9,    -9,   -10
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -501,22 +508,22 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_uint8 yydefact[] =
 {
-       2,     0,     1,     0,     9,    10,    20,     8,     7,     0,
-       4,     0,     3,     0,     6,     0,     0,    18,     0,     0,
-       0,     0,     0,     0,     5,    12,     0,    11,    15,    14,
-      16,    17,    19,    13
+       2,     0,     1,     0,     9,    10,    20,    21,     4,     8,
+       7,     0,     0,     3,     0,     6,     0,     0,    18,     0,
+       5,     0,     0,     0,     0,     0,    12,     0,    11,    15,
+      14,    16,    17,    19,    13
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -15,   -15,   -15,     3
+     -10,   -10,   -10,    13
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     1,    12,    13
+      -1,     1,    13,    14
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -524,42 +531,44 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_uint8 yytable[] =
 {
-       2,     3,    14,     4,     5,     6,    23,     7,     8,     0,
-       9,     0,    17,    15,    18,     0,    10,    11,    25,    26,
-       0,    16,    28,    29,    30,    31,    32,     4,     5,     6,
-       0,     7,     8,     0,     9,    19,    20,    21,    22,     0,
-      23,    11,     0,    27,    19,    20,    21,    22,     0,    23,
-       0,     0,    33,    19,    20,    21,    22,     0,    23,    24,
-      19,    20,    21,    22,     0,    23,    21,    22,     0,    23
+       2,     3,    15,     4,     5,     6,     7,     8,    25,     9,
+      10,     0,    11,     4,     5,     6,     7,     0,    12,     9,
+      10,     0,    11,     0,    18,    19,    16,     0,    12,    26,
+      27,     0,     0,    17,    29,    30,    31,    32,    33,    20,
+      23,    24,     0,    25,    21,    22,    23,    24,     0,    25,
+      21,    22,    23,    24,     0,    25,     0,    28,    21,    22,
+      23,    24,     0,    25,     0,    34,    21,    22,    23,    24,
+       0,    25
 };
 
 static const yytype_int8 yycheck[] =
 {
-       0,     1,    16,     3,     4,     5,    15,     7,     8,    -1,
-      10,    -1,     9,     9,    11,    -1,    16,    17,    15,    16,
-      -1,    17,    19,    20,    21,    22,    23,     3,     4,     5,
-      -1,     7,     8,    -1,    10,    10,    11,    12,    13,    -1,
-      15,    17,    -1,    18,    10,    11,    12,    13,    -1,    15,
-      -1,    -1,    18,    10,    11,    12,    13,    -1,    15,    16,
-      10,    11,    12,    13,    -1,    15,    12,    13,    -1,    15
+       0,     1,     7,     3,     4,     5,     6,     7,    17,     9,
+      10,    -1,    12,     3,     4,     5,     6,    -1,    18,     9,
+      10,    -1,    12,    -1,    11,    12,    11,    -1,    18,    16,
+      17,    -1,    -1,    18,    21,    22,    23,    24,    25,     7,
+      14,    15,    -1,    17,    12,    13,    14,    15,    -1,    17,
+      12,    13,    14,    15,    -1,    17,    -1,    19,    12,    13,
+      14,    15,    -1,    17,    -1,    19,    12,    13,    14,    15,
+      -1,    17
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    20,     0,     1,     3,     4,     5,     7,     8,    10,
-      16,    17,    21,    22,    16,     9,    17,    22,    22,    10,
-      11,    12,    13,    15,    16,    22,    22,    18,    22,    22,
-      22,    22,    22,    18
+       0,    21,     0,     1,     3,     4,     5,     6,     7,     9,
+      10,    12,    18,    22,    23,     7,    11,    18,    23,    23,
+       7,    12,    13,    14,    15,    17,    23,    23,    19,    23,
+      23,    23,    23,    23,    19
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
-       0,    19,    20,    20,    21,    21,    21,    22,    22,    22,
-      22,    22,    22,    22,    22,    22,    22,    22,    22,    22,
-      22
+       0,    20,    21,    21,    22,    22,    22,    23,    23,    23,
+      23,    23,    23,    23,    23,    23,    23,    23,    23,    23,
+      23,    23
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -567,7 +576,7 @@ static const yytype_uint8 yyr2[] =
 {
        0,     2,     0,     2,     1,     2,     2,     1,     1,     1,
        1,     3,     3,     4,     3,     3,     3,     3,     2,     3,
-       1
+       1,     1
 };
 
 
@@ -656,7 +665,7 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
   switch (yytype)
     {
           case 3: /* tk_double  */
-#line 61 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(yvar_t*)(&(*yyvaluep))).type)
 			{
 				case YVAR_STRING:
@@ -676,11 +685,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 680 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 689 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
     case 4: /* tk_integer  */
-#line 61 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(yvar_t*)(&(*yyvaluep))).type)
 			{
 				case YVAR_STRING:
@@ -700,11 +709,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 704 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 713 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
-    case 6: /* tk_char  */
-#line 61 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+    case 5: /* tk_exit  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(yvar_t*)(&(*yyvaluep))).type)
 			{
 				case YVAR_STRING:
@@ -724,11 +733,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 728 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 737 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
-    case 7: /* tk_string  */
-#line 61 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+    case 6: /* tk_eof  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(yvar_t*)(&(*yyvaluep))).type)
 			{
 				case YVAR_STRING:
@@ -748,11 +757,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 752 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 761 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
-    case 8: /* tk_obj  */
-#line 61 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+    case 7: /* tk_eol  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(yvar_t*)(&(*yyvaluep))).type)
 			{
 				case YVAR_STRING:
@@ -772,11 +781,11 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 776 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 785 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
-    case 22: /* expr  */
-#line 61 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+    case 8: /* tk_char  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
       { switch((*(yvar_t*)(&(*yyvaluep))).type)
 			{
 				case YVAR_STRING:
@@ -796,7 +805,79 @@ yy_symbol_value_print (FILE *yyoutput, int yytype, YYSTYPE const * const yyvalue
 					break;
 			}
 		}
-#line 800 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+#line 809 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+        break;
+
+    case 9: /* tk_string  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+      { switch((*(yvar_t*)(&(*yyvaluep))).type)
+			{
+				case YVAR_STRING:
+					fprintf (yyoutput, "%s", (*(yvar_t*)(&(*yyvaluep))).u.string); 
+					break;
+				case YVAR_INTEGER:
+					fprintf (yyoutput, "%d", (*(yvar_t*)(&(*yyvaluep))).u.integer); 
+					break;
+				case YVAR_DOUBLE:
+					fprintf (yyoutput, "%g", (*(yvar_t*)(&(*yyvaluep))).u.dvar); 
+					break;
+				case YVAR_FUNCTION:
+					fprintf (yyoutput, "%p", (*(yvar_t*)(&(*yyvaluep))).u.function); 
+					break;
+				default:
+					assert(0);
+					break;
+			}
+		}
+#line 833 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+        break;
+
+    case 10: /* tk_id  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+      { switch((*(yvar_t*)(&(*yyvaluep))).type)
+			{
+				case YVAR_STRING:
+					fprintf (yyoutput, "%s", (*(yvar_t*)(&(*yyvaluep))).u.string); 
+					break;
+				case YVAR_INTEGER:
+					fprintf (yyoutput, "%d", (*(yvar_t*)(&(*yyvaluep))).u.integer); 
+					break;
+				case YVAR_DOUBLE:
+					fprintf (yyoutput, "%g", (*(yvar_t*)(&(*yyvaluep))).u.dvar); 
+					break;
+				case YVAR_FUNCTION:
+					fprintf (yyoutput, "%p", (*(yvar_t*)(&(*yyvaluep))).u.function); 
+					break;
+				default:
+					assert(0);
+					break;
+			}
+		}
+#line 857 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
+        break;
+
+    case 23: /* expr  */
+#line 63 "../../tools/arvfb/source/script/script.y" /* yacc.c:684  */
+      { switch((*(yvar_t*)(&(*yyvaluep))).type)
+			{
+				case YVAR_STRING:
+					fprintf (yyoutput, "%s", (*(yvar_t*)(&(*yyvaluep))).u.string); 
+					break;
+				case YVAR_INTEGER:
+					fprintf (yyoutput, "%d", (*(yvar_t*)(&(*yyvaluep))).u.integer); 
+					break;
+				case YVAR_DOUBLE:
+					fprintf (yyoutput, "%g", (*(yvar_t*)(&(*yyvaluep))).u.dvar); 
+					break;
+				case YVAR_FUNCTION:
+					fprintf (yyoutput, "%p", (*(yvar_t*)(&(*yyvaluep))).u.function); 
+					break;
+				default:
+					assert(0);
+					break;
+			}
+		}
+#line 881 "../../tools/arvfb/source/script/script.yc" /* yacc.c:684  */
         break;
 
 
@@ -1393,49 +1474,49 @@ yyreduce:
   switch (yyn)
     {
         case 5:
-#line 92 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 94 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { arsc_print(&(*(yvar_t*)(&yyvsp[-1])));  ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[-1]))); }
-#line 1399 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1480 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 6:
-#line 93 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 95 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { yyerrok;                }
-#line 1405 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1486 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 99 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 101 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { 	arsc_read(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[0])));		}
-#line 1411 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1492 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 100 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 102 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_copy(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[0])));		}
-#line 1417 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1498 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 101 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 103 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { 	arsc_copy(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[0])));     }
-#line 1423 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1504 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 102 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 104 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { 	arsc_copy(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[0])));     }
-#line 1429 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1510 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 103 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 105 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_copy(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[-1])));     }
-#line 1435 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1516 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 104 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 106 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  yobj_t* obj = arso_get((*(yvar_t*)(&yyvsp[-2])).u.string);
 					    if(NULL == obj)
 					    {	// New it, 
@@ -1449,79 +1530,85 @@ yyreduce:
 					    ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[0])));
 					    arso_read(obj,&(*(yvar_t*)(&yyval)));
 					 }
-#line 1453 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1534 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 117 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 119 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {	arsc_eval(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[-3])),&(*(yvar_t*)(&yyvsp[-1])));
 						arso_strfree((*(yvar_t*)(&yyvsp[-3])).u.string);
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[-1])));
 					 }
-#line 1462 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1543 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 121 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 123 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_add(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[-2])),&(*(yvar_t*)(&yyvsp[0]))); 
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[-2])));
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[0])));
 					 }
-#line 1471 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1552 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 15:
-#line 125 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 127 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_sub(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[-2])),&(*(yvar_t*)(&yyvsp[0])));
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[-2])));
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[0])));
 					 }
-#line 1480 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1561 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 129 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 131 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_plus(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[-2])),&(*(yvar_t*)(&yyvsp[0]))); 
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[-2])));
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[0])));
 					 }
-#line 1489 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1570 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 133 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 135 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_div(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[-2])),&(*(yvar_t*)(&yyvsp[0])));
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[-2])));
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[0])));
 					 }
-#line 1498 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1579 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 137 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 139 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_neg(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[0]))); 
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[0])));
 					 }
-#line 1506 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1587 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 140 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 142 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     {  arsc_pow(&(*(yvar_t*)(&yyval)),&(*(yvar_t*)(&yyvsp[-2])),&(*(yvar_t*)(&yyvsp[0]))); 
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[-2])));
 						ARSO_FREE_IF_IS_STRING((*(yvar_t*)(&yyvsp[0])));
 					 }
-#line 1515 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1596 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 144 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+#line 146 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
     { return 0;                        }
-#line 1521 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1602 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+    break;
+
+  case 21:
+#line 147 "../../tools/arvfb/source/script/script.y" /* yacc.c:1646  */
+    { return 0;                        }
+#line 1608 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
     break;
 
 
-#line 1525 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
+#line 1612 "../../tools/arvfb/source/script/script.yc" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1749,6 +1836,6 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 148 "../../tools/arvfb/source/script/script.y" /* yacc.c:1906  */
+#line 151 "../../tools/arvfb/source/script/script.y" /* yacc.c:1906  */
 
 
