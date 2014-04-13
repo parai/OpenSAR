@@ -18,7 +18,6 @@
  * Email: parai@foxmail.com
  * Sourrce Open At: https://github.com/parai/OpenSAR/
  */
-#include "arparser.h"
 #include "arvfb.h"
 
 // ================================ [ LOCAL VARIANTS ] ==================================
@@ -96,6 +95,9 @@ static int htoi(char* string)
 //#define yywrap						ar_yywrap
 #define yylineno					ar_yylineno
 #define yy_flex_debug				ar_yy_flex_debug
+#define yydebug						ar_yydebug
+#define yytext						ar_yytext
+#define yyleng						ar_yyleng
 
 
 #define YYERROR_VERBOSE

@@ -20,6 +20,8 @@
  */
 #include "arvfb.h"
 
+// ======================== [ IMPORTS        ] ==============================================
+extern int arscript_main (int argc, char** argv);
 
 // ======================== [ LOCAL VARIANTS  ] ==============================================
 static boolean isPaused = TRUE;
@@ -208,6 +210,8 @@ int main (int argc, char *argv[])
 	Initialize();
 
 	ArParser(argc,argv);
+
+	arscript_main(argc,argv);
 
 	printf("Initialize Done.\n");
 

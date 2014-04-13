@@ -1,0 +1,58 @@
+include "module1";
+require "module2";
+
+print("Hello");
+
+function main($args)
+{
+	//init varible
+	$resultCode = 0;
+	//call function from io lib
+	print("\"hello, world\n");
+
+	//open file
+	$srcFile = fopen("source_file");
+	$dstFile = fopen("destination file");
+	$var =  10 + 11 * 5;
+	
+	for($i = 0; $i < 0; $i++)
+	{
+		read($srcFile, $buffer);
+		write($dstFile, $buffer);
+	}
+
+	//Init boolean var
+	$conditionVal = true;
+	
+	while($conditionValue)
+	{
+		if( rand() % 10 > 5 ) {
+			$conditionValue = false;
+		}
+		
+		print(".");
+	}
+
+	//string concetate
+	$srcString = "hello";
+	$dstString = $srcString .", world!";
+	
+	//string size
+	strlen($dstString);
+	
+	$size = 1024;
+
+	// Singleline comment
+
+	/* 
+		Multiline comment 
+	*/
+
+	//return statement
+	return $resultCode;
+}
+
+function main()
+{
+  print("Hello");
+}

@@ -71,7 +71,7 @@ public:
             delete (*i);
     }
     int size() {
-        operators.size();
+        return operators.size();
     }
 
     virtual void print(int indent=0) {

@@ -42,7 +42,7 @@ obj-dir = $(BD)/tools/arvfb/objs
 ldflags-y += -Wl,-Map,$(obj-dir)/arvfb.map	
 	
 obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.c)))))	
-obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.cpp)))))	
+obj-y += $(patsubst %.cpp,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.cpp)))))	
 
 
 #common rules
@@ -87,11 +87,22 @@ GEN:
 	@mv -v bison.tab.h	$(BD)/tools/arvfb/source/smalvl/
 	@rm -fv bison.output
 
-all:$(obj-dir) GEN $(obj-y) $(OUT)
+POST:
+	cp -rv $(BD)/tools/arvfb/example   $(OUT)
+	mv -fv  $(OUT)/example/libc.ext    $(OUT)
+	echo Hello World! > $(OUT)/source_file.txt
+	echo >> $(OUT)/source_file.txt
+	echo >> $(OUT)/source_file.txt
+	echo orange >> $(OUT)/source_file.txt
+	echo pear >> $(OUT)/source_file.txt
+	echo apple >> $(OUT)/source_file.txt
+	echo banana >> $(OUT)/source_file.txt
+
+all:$(obj-dir) $(obj-y) $(OUT) POST
 	@echo $(obj-y)
 	@echo ">> LD $(TARGET)"
 	@$(LD) $(obj-y) $(ldflags-y) -o $(OUT)/$(TARGET) 
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET) DONE   <<<<<<<<<<<<<<<<<<<<<<"	
 
-clean:
+clean:GEN
 	@rm -fv $(obj-dir)/*

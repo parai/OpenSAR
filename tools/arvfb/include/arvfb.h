@@ -20,6 +20,10 @@
  */
 #ifndef ARVFB_H_
 #define ARVFB_H_
+
+#ifdef	__cplusplus
+extern "C" {
+#endif
 // =============================== [ SYSTEM INCLUDE ] ================================
 #include <glib.h>
 #include <gio/gio.h>
@@ -74,4 +78,7 @@ extern void    ArvfbSend(ArPortType port,const ArMsgType* pMsg);
 
 void Arch_Trace(const char* format,...);
 
+#ifdef	__cplusplus
+}
+#endif
 #endif /* ARVFB_H_ */
