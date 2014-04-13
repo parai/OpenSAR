@@ -64,11 +64,11 @@ static GtkWidget* CreateMenubar(void)
 	//{
 	pSub = gtk_menu_item_new_with_label("Open");
 	gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pSub);
-	g_signal_connect(G_OBJECT(pSub), "activate",G_CALLBACK(on_menu_activate), "Open");
+	g_signal_connect(G_OBJECT(pSub), "activate",G_CALLBACK(on_menu_activate), (gpointer)"Open");
 
 	pSub = gtk_menu_item_new_with_label("Save");
 	gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pSub);
-	g_signal_connect(G_OBJECT(pSub), "activate",G_CALLBACK(on_menu_activate), "Save");
+	g_signal_connect(G_OBJECT(pSub), "activate",G_CALLBACK(on_menu_activate), (gpointer)"Save");
 
 	pSub = gtk_menu_item_new_with_label("-----");
 	gtk_menu_shell_append(GTK_MENU_SHELL(pMenu), pSub);
@@ -154,8 +154,6 @@ static void Initialize(void)
 	ArTp_Init();
 	ArFl_Init();
 	ArCom_Init();
-
-	ArScript_Init();
 }
 
 static gboolean Schedule(gpointer data)
@@ -210,7 +208,6 @@ int main (int argc, char *argv[])
 	Initialize();
 
 	ArParser(argc,argv);
-	ArScript(argc,argv);
 
 	printf("Initialize Done.\n");
 

@@ -73,11 +73,11 @@ static void Start(void)
 
 static void on_fl_button_clicked(GtkButton *button,gpointer data)
 {
-	if(0==strcmp(data,"Start"))
+	if(0==strcmp((const char*)data,"Start"))
 	{
 		Start();
 	}
-	else if(0==strcmp(data,"Stop"))
+	else if(0==strcmp((const char*)data,"Stop"))
 	{
 		Stop();
 	}
@@ -267,11 +267,11 @@ GtkWidget* ArFlashLoader(void)
 
 	pButton = gtk_button_new_with_label("Start");
 	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
-	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_fl_button_clicked) , "Start");
+	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_fl_button_clicked) , (gpointer)"Start");
 
 	pButton = gtk_button_new_with_label("Stop");
 	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
-	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_fl_button_clicked) , "Stop");
+	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_fl_button_clicked) , (gpointer)"Stop");
 
 	{
 		GtkWidget *swindow;

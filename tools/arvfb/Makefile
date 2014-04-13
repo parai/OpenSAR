@@ -9,23 +9,23 @@ BD = ../..
 OUT = $(BD)/binaries/gtk
 
 #common compilers
-AS  = gcc
-CC  = gcc
-LD  = gcc
+AS  = g++
+CC  = g++
+LD  = g++
 AR  = ar
 RM  = rm
 
 #common flags
-cflags-y   = -c -g -std=gnu99 -O2 -Wall
-ldflags-y  = -g -std=gnu99 -O2 -Wall
+cflags-y   = -c -g --std=c++11 -O2 -Wall
+ldflags-y  = -g --std=c++11 -O2 -Wall
 cflags-y  += `pkg-config --cflags gtk+-3.0`
 ldflags-y += `pkg-config --cflags gtk+-3.0` \
 			 `pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` \
-			 -lpthread -lm			
+			 -lpthread -lm -lfl -ldl		
 
 inc-y += -I$(BD)/tools/arvfb/include
 inc-y += -I$(BD)/tools/arvfb/source/parser
-inc-y += -I$(BD)/tools/arvfb/source/script
+inc-y += -I$(BD)/tools/arvfb/source/smalvl
 inc-y += -I$(BD)/include
 
 def-y += -D__GTK__
@@ -33,7 +33,7 @@ def-y += -D__GTK__
 #objects
 dir-y = $(BD)/tools/arvfb/source	\
 		$(BD)/tools/arvfb/source/parser	\
-		$(BD)/tools/arvfb/source/script
+		$(BD)/tools/arvfb/source/smalvl
 		
 VPATH += $(dir-y)
 		
@@ -42,31 +42,23 @@ obj-dir = $(BD)/tools/arvfb/objs
 ldflags-y += -Wl,-Map,$(obj-dir)/arvfb.map	
 	
 obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.c)))))	
+obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.cpp)))))	
 
-bison-y = $(patsubst %.y,%.yc, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.y))))
-
-flex-y  = $(patsubst %.f,%.fc, $(foreach x,$(dir-y),$(wildcard $(addprefix $(x)/*,.f))))
 
 #common rules
-.SUFFIXES: .c .y .f
+.SUFFIXES: .c .cpp .y .f
 
-$(obj-dir)/%.o:%.c
+$(obj-dir)/%.o:%.cpp
 	@echo
 	@echo "  >> CC $(notdir $<)"
 	@$(CC) $(cflags-y) $(inc-y) $(def-y) -MM -MF $(patsubst %.o,%.d,$@) -MT $@ $<
 	@$(CC) $(cflags-y) $(inc-y) $(def-y) -o $@ $<
 	
-%.yc:%.y
+$(obj-dir)/%.o:%.c
 	@echo
-	@echo "  >> bison $(notdir $<)"
-	@bison $< -o $@
-	@rm -fv $(patsubst %.yc,%.output,$@)
-	
-%.fc:%.f
-	@echo
-	@echo "  >> flex $(notdir $<)"
-	@flex $<
-	@mv -fv lex.yy.c $@
+	@echo "  >> CC $(notdir $<)"
+	@$(CC) $(cflags-y) $(inc-y) $(def-y) -MM -MF $(patsubst %.o,%.d,$@) -MT $@ $<
+	@$(CC) $(cflags-y) $(inc-y) $(def-y) -o $@ $<	
 	
 .PHONY:all clean
 
@@ -78,14 +70,28 @@ $(OUT):
 
 include $(wildcard $(obj-dir)/*.d)
 
-cly:
-	@rm -fv $(bison-y) $(flex-y)
+GEN:
+	@echo "  >> flex grammar.f"
+	@flex $(BD)/tools/arvfb/source/parser/grammar.f
+	@mv -fv lex.yy.c $(BD)/tools/arvfb/source/parser/grammar.fc
+	@echo "  >> bison rule.y"
+	@bison  $(BD)/tools/arvfb/source/parser/rule.y -o $(BD)/tools/arvfb/source/parser/rule.yc
+	@rm -fv $(BD)/tools/arvfb/source/parser/rule.output
+	
+	@echo "  >> flex lex.f"
+	@flex $(BD)/tools/arvfb/source/smalvl/lex.f
+	@mv -fv lex.yy.c $(BD)/tools/arvfb/source/smalvl/lex.yy.cpp
+	@echo "  >> bison bison.y"
+	@bison  -v -t -d $(BD)/tools/arvfb/source/smalvl/bison.y
+	@mv -v bison.tab.c  $(BD)/tools/arvfb/source/smalvl/bison.tab.cpp
+	@mv -v bison.tab.h	$(BD)/tools/arvfb/source/smalvl/
+	@rm -fv bison.output
 
-all:$(obj-dir) cly $(bison-y) $(flex-y) $(obj-y) $(OUT)
+all:$(obj-dir) GEN $(obj-y) $(OUT)
 	@echo $(obj-y)
 	@echo ">> LD $(TARGET)"
 	@$(LD) $(obj-y) $(ldflags-y) -o $(OUT)/$(TARGET) 
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET) DONE   <<<<<<<<<<<<<<<<<<<<<<"	
 
-clean:cly
+clean:
 	@rm -fv $(obj-dir)/*
