@@ -27,7 +27,7 @@ typedef struct
 {
 	boolean IsInitialised;
 
-	TAILQ_HEAD(head,yobj_s) yobj_list;
+	TAILQ_HEAD(obj_head,yobj_s) yobj_list;
 
 }ArsObjArchtype;
 // ===================== [ LOCAL VARIANTS  ] ================================

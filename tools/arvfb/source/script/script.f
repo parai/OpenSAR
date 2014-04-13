@@ -61,7 +61,8 @@ CHAR     .
 				yy_pop_state();
 				*string_buf_ptr++ = '\0';
 				DEBUG_FLEX("Var:%s\n",string_buf);
-				yylval.tk_string.u.string = arso_strdup(string_buf);
+				yylval.var.type     = YVAR_STRING;
+				yylval.var.u.string = arso_strdup(string_buf);
 				return tk_string;
 	}
 
@@ -129,37 +130,37 @@ import             BEGIN(sc_import);
 
 TRUE|true|True	{
 			DEBUG_FLEX("True:%s\n",yytext);
-			yylval.tk_integer.type = YVAR_INTEGER;
-			yylval.tk_integer.u.integer = 1;
+			yylval.var.type = YVAR_INTEGER;
+			yylval.var.u.integer = 1;
 			return tk_integer;
 		}
 
 FALSE|false|False	{
 			DEBUG_FLEX("False:%s\n",yytext);
-			yylval.tk_integer.type = YVAR_INTEGER;
-			yylval.tk_integer.u.integer = 0;
+			yylval.var.type = YVAR_INTEGER;
+			yylval.var.u.integer = 0;
 			return tk_integer;
 		}
 
 {DIGIT}+	{
 			DEBUG_FLEX("Integer:%s\n",yytext);
-			yylval.tk_integer.type = YVAR_INTEGER;
-			yylval.tk_integer.u.integer = atoi(yytext);
+			yylval.var.type = YVAR_INTEGER;
+			yylval.var.u.integer = atoi(yytext);
 			return tk_integer;
 		}
 
 {HEX}		{
 			DEBUG_FLEX("Hex:%s\n",yytext);
-			yylval.tk_integer.type = YVAR_INTEGER;
-			yylval.tk_integer.u.integer = htoi(yytext);
+			yylval.var.type = YVAR_INTEGER;
+			yylval.var.u.integer = htoi(yytext);
 			return tk_integer;
 	
 		}
 
 {DIGIT}+"."{DIGIT}*        {
 			DEBUG_FLEX("Double:%s\n",yytext);
-			yylval.tk_double.type = YVAR_DOUBLE;
-			yylval.tk_double.u.dvar = atof(yytext);
+			yylval.var.type = YVAR_DOUBLE;
+			yylval.var.u.dvar = atof(yytext);
 			return tk_double;
 		}
 
@@ -169,14 +170,14 @@ exit	{	printf("##: %s\n",yytext);
 		
 \'{CHAR}\'	{
 		DEBUG_FLEX("Var:%s\n",yytext);
-		yylval.tk_char.type = YVAR_CHAR;
-		yylval.tk_char.u.chr = yytext[0];
+		yylval.var.type = YVAR_CHAR;
+		yylval.var.u.chr = yytext[0];
 		return tk_char;
 		}		
 {ID}	{
 		DEBUG_FLEX("Var:%s\n",yytext);
-		yylval.tk_id.type = YVAR_STRING;
-		yylval.tk_id.u.string = arso_strdup(yytext);
+		yylval.var.type = YVAR_STRING;
+		yylval.var.u.string = arso_strdup(yytext);
 		return tk_id;
 	}		
 
@@ -184,13 +185,15 @@ exit	{	printf("##: %s\n",yytext);
 			DEBUG_FLEX("Operator:%s\n",yytext);
 			return yytext[0];
 			}
-
-"\n"	    { yylval.tk_char.type = YVAR_CHAR; 
-			  yylval.tk_char.u.chr = yytext[0];
-			  return tk_eol;
+"\n"|";"	{
+				DEBUG_FLEX("EOL:%s\n",yytext);
+				return yytext[0];
 			}
 
-"{"[\^{}}]*"}"	/* eat up one-line comments */
+"{"|"}"|"("|")"		{
+				DEBUG_FLEX("BRACK:%s\n",yytext);
+				return yytext[0];
+			}
 
 [ \t]+			/* eat up whitespace */
 

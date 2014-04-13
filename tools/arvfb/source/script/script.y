@@ -31,16 +31,20 @@
 	}
 %}
 
-%define api.value.type   union  
-%token <yvar_t>   tk_double
-%token <yvar_t>   tk_integer
-%token <yvar_t>   tk_exit
-%token <yvar_t>   tk_eof
-%token <yvar_t>   tk_eol
-%token <yvar_t>   tk_char
-%token <yvar_t>   tk_string
-%token <yvar_t>   tk_id
-%type  <yvar_t>   expr
+/* %define api.value.type   union */
+%union{
+	yvar_t var;
+	char*  str;
+};
+%token <var>   tk_double
+%token <var>   tk_integer
+%token <var>   tk_exit
+%token <var>   tk_eof
+%token <var>   tk_eol
+%token <var>   tk_char
+%token <var>   tk_string
+%token <var>   tk_id
+%type  <var>   expr
 
 
 %precedence '='
@@ -78,21 +82,24 @@
 					assert(0);
 					break;
 			}
-		} <yvar_t>;
+		} <var>;
 
 %% /* The grammar follows.  */
 
-input:
+block:
   %empty
-| input line
+| block stmt
+| '{' block '}'
 ;
 
 
 
-line:
-	tk_eol
-| expr  tk_eol  { arsc_print(&$1);  ARSO_FREE_IF_IS_STRING($1); }
-| error tk_eol { yyerrok;                }
+stmt:
+	';' | '\n'
+| expr  ';'  |
+  expr  '\n'  { arsc_print(&$1);  ARSO_FREE_IF_IS_STRING($1); }
+| '{' stmt '}'
+| error      { yyerrok;                }
 ;
 
 

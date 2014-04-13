@@ -61,7 +61,7 @@ static int htoi(char* string)
 // ========================== [ IMPORTS ] ====================================
 #define YYERROR_VERBOSE
 #define DEBUG_FLEX(...)  //printf(__VA_ARGS__)
-#define DEBUG_BISON(...) //printf(__VA_ARGS__)
+#define DEBUG_BISON(...) printf(__VA_ARGS__)
 int  yylex    (void);
 void yyerror  (char const *);
 #include "script.yc"

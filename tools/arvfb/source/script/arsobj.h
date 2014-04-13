@@ -31,13 +31,20 @@ typedef enum
 	YVAR_DOUBLE,
 	YVAR_FUNCTION,
 	YVAR_ERROR, // for arscript error report only
-	YVAR_UNDEFINE
+	YVAR_UNDEFINE,
+
+
+	YVAR_ADD,
+	YVAR_SUB,
+	YVAR_PLUS,
+	YVAR_DIV,
+	YVAR_CALL
 }yvar_type_t;
 
 typedef void (*yfp_t)(void); // Function Pointer Type
 
 
-typedef struct
+typedef struct yvar_s
 {
 	yvar_type_t     type;
 	union
@@ -48,6 +55,8 @@ typedef struct
 		char        chr;
 		yfp_t       function;
 	}u;
+	TAILQ_HEAD(var_head,yvar_s) list;
+	TAILQ_ENTRY(yvar_s) 		entry;
 }yvar_t;
 
 typedef struct yobj_s
