@@ -12,33 +12,35 @@
 
 #define BUFFER_SIZE 1024
 
-struct meta_info_t {
-  TYPE return_type;
-  std::vector<TYPE> argument_types;
-  std::string name;
+struct meta_info_t
+{
+	TYPE return_type;
+std::vector<TYPE> argument_types;
+std::string name;
 };
 
-struct lib_extension_t {
-    std::list<meta_info_t> functions_list;
-    std::string lib_name;
-    void* handler;
+struct lib_extension_t
+{
+	std::list<meta_info_t> functions_list;
+	std::string lib_name;
+	void* handler;
 };
 
 class funcaller_t
 {
-  typedef std::list<lib_extension_t> extensions_list_t;
-  extensions_list_t extensions;
-  
-  ref_t call(void* faddr,  const meta_info_t& meta, std::vector<object_t*>& obj)
-  throw(runtime_exception_t);
-public:
-    funcaller_t();
-    bool open_extension(const char* name) throw (nativelib_exception_t);
-    meta_info_t parse_meta(const char* metaline) throw(nativelib_exception_t);
-    virtual ~funcaller_t();
-    ref_t call_function(function_call_t*, std::vector<object_t*>& obj) throw(runtime_exception_t);
-    void print_meta(meta_info_t& meta);
-    
+	typedef std::list<lib_extension_t> extensions_list_t;
+	extensions_list_t extensions;
+
+	ref_t call(void* faddr, const meta_info_t& meta, std::vector<object_t*>& obj)
+	throw(runtime_exception_t);
+	public:
+	funcaller_t();
+	bool open_extension(const char* name) throw (nativelib_exception_t);
+	meta_info_t parse_meta(const char* metaline) throw(nativelib_exception_t);
+	virtual ~funcaller_t();
+	ref_t call_function(function_call_t*, std::vector<object_t*>& obj) throw(runtime_exception_t);
+	void print_meta(meta_info_t& meta);
+
 };
 
 #endif // FUNCALLER_H

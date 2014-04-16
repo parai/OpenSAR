@@ -1,78 +1,78 @@
 require "libc.ext";
-//$srcFile = fopen("source_file.txt", "r");
-//
-//if( $srcFile == 0 )
-//{
-//  perror("Can't open file");
-//}
-//
-//$dstFile = fopen("destination_file.txt", "w");
-//if( $dstFile == 0 )
-//{
-//  perror("Can't open destination file");
-//}
-//
-//$buffer = "";
-//$strings = array[];
-//$size = 0;
-//
-///* Read file */
-//while(feof($srcFile) != 1 )
-//{
-//  $strings[$size] = fgets($buffer, 2048, $srcFile);
-//  $size++;
-//}
-//
-//printf("Lines number: " .$size ."\n");
-//
-//$k = $size - 1;
-///*Sorting array */
-//for($i=0; $i < $k; $i++)
-//{
-//  printf("do sort\n");
-//  sort();
-//}
-//
-//function sort()
-//{
-//  $j=0;
-//  for($j=0; $j < $k; $j++)
-//  {
-//    printf("\tIteration " .$j ."\n");
-//    printf("Comparing: " .strcmp($strings[$j], $strings[$j+1]) ."\n");
-//    if ( strcmp($strings[$j], $strings[$j+1]) > 0 )
-//    {
-//      $buffer = $strings[$j];
-//      $strings[$j] = $strings[$j+1];
-//      $strings[$j+1] = $buffer;
-//    }
-//  }
-//}
-//
-//say_hello("What",1);
-//
-//function say_hello($args,$args2)
-//{
-//	if(1==$args)
-//	{
-//		printf("Hello World!\n");
-//	}
-//	else
-//	{
-//		printf("Bad Girl ".$args." !\n");
-//	}
-//}
-//
-//say_hello(1,1);
-//
-///*Write to file */
-//for($i=0; $i < $size; $i++)
-//{
-//  fputs( $strings[$i], $dstFile );
-//}
-//
-//fclose($srcFile);
-//fclose($dstFile);
+$srcFile = fopen("source_file.txt", "r");
+
+if( $srcFile == 0 )
+{
+  perror("Can't open file");
+}
+
+$dstFile = fopen("destination_file.txt", "w");
+if( $dstFile == 0 )
+{
+  perror("Can't open destination file");
+}
+
+$buffer = "";
+$strings = array[];
+$size = 0;
+
+/* Read file */
+while(feof($srcFile) != 1 )
+{
+  $strings[$size] = fgets($buffer, 2048, $srcFile);
+  $size++;
+}
+
+printf("Lines number: " .$size ."\n");
+
+$k = $size - 1;
+/*Sorting array */
+for($i=0; $i < $k; $i++)
+{
+  printf("do sort\n");
+  sort();
+}
+
+function sort()
+{
+  $j=0;
+  for($j=0; $j < $k; $j++)
+  {
+    printf("\tIteration " .$j ."\n");
+    printf("Comparing: " .strcmp($strings[$j], $strings[$j+1]) ."\n");
+    if ( strcmp($strings[$j], $strings[$j+1]) > 0 )
+    {
+      $buffer = $strings[$j];
+      $strings[$j] = $strings[$j+1];
+      $strings[$j+1] = $buffer;
+    }
+  }
+}
+
+say_hello("What",1);
+
+function say_hello($args,$args2)
+{
+	if(1==$args)
+	{
+		printf("Hello World!\n");
+	}
+	else
+	{
+		printf("Bad Girl ".$args." !\n");
+	}
+}
+
+say_hello(1,1);
+
+/*Write to file */
+for($i=0; $i < $size; $i++)
+{
+  fputs( $strings[$i], $dstFile );
+}
+
+fclose($srcFile);
+fclose($dstFile);
 
 
 HelloWorld("Lily.");

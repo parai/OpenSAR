@@ -32,9 +32,10 @@ class function_declaration_t: public oper_t {
     std::string name;
 public:
     function_declaration_t(const std::string &_name,std::list<expr_t*> _args, oper_t* _impl):
-        args(_args), implementation(_impl), name(_name) {
+        implementation(_impl), args(_args), name(_name)
+	{
         SEMANTIC_NODE("Function %s declaration %p", name.c_str(), this);
-    }
+}
     
     std::string get_name() { return name; }
     
@@ -71,9 +72,9 @@ class for_op_t: public oper_t {
 
 public:
     for_op_t(oper_t* _init, expr_t* _condition, oper_t* _itop, oper_t* _block):
-        init(_init), condition(_condition), itop(_itop), block(_block) {
+    	condition(_condition), init(_init), itop(_itop), block(_block) {
         SEMANTIC_NODE("For cycle node created");
-    }
+}
 
     virtual void print(int indent=0)
     {
@@ -105,12 +106,13 @@ public:
     if_op_t(expr_t* _cond, oper_t* _thenops, oper_t* _elseops) :
         cond(_cond), thenops(_thenops) {
 	  
-	SEMANTIC_NODE("If statement:");
-	if( _elseops != 0x0)
+	SEMANTIC_NODE("If statement:");if( _elseops != 0x0)
 	  //TODO: Write normal code for elseops initialization
 	  elseops.append_safe(_elseops);
-        SEMANTIC_NODE("\t\tThen ops %p. Else ops %p. Condition expr %p", _thenops, _elseops, _cond);
-    }
+        SEMANTIC_NODE(
+		"\t\tThen ops %p. Else ops %p. Condition expr %p", _thenops, _elseops,
+		_cond);
+}
    
     void print(int indent=0) {
         std::cout << "IF statement (";
@@ -147,7 +149,7 @@ class while_op_t : public oper_t {
 public:
     while_op_t(expr_t* cond, oper_t* ops) : cond(cond), ops(ops) {
         SEMANTIC_NODE("While loop node created");
-    }
+}
 
     void print(int indent=0) {
         std::cout << "WHILE loop (";
@@ -175,7 +177,7 @@ class include_t: public oper_t {
 public:
     include_t(expr_t* _file) : file(_file) {
         SEMANTIC_NODE("Include instruction node created");
-    }
+}
 
     virtual void print(int indent=0) {
         std::cout << "INCLUDE ";
@@ -198,7 +200,7 @@ class require_t: public oper_t {
 public:
     require_t(expr_t* _file): file(_file) {
         SEMANTIC_NODE("Require instruction node created");
-    }
+}
 
     virtual void print(int indent=0) {
         std::cout << "REQUIRE ";
@@ -226,7 +228,7 @@ public:
     return_op_t(expr_t* value):
         retvalue(value) {
         SEMANTIC_NODE("Return instruction node created");
-    }
+}
 
     virtual void print(int indent=0) {
         std::cout << "RETURN ";
@@ -250,7 +252,7 @@ class break_op_t: public oper_t {
 public:
     break_op_t() {
         SEMANTIC_NODE("Break instruction node created");
-    }
+}
 
     virtual void print(int indent=0) {
         std::cout << "break;\n";
@@ -267,36 +269,45 @@ class assign_t : public oper_t {
     expr_t* value;
     var_t* var;
 public:
-    assign_t(expr_t* _var, expr_t* value) : var(dynamic_cast<var_t*>(_var)), value(value)
+    assign_t(expr_t* _var, expr_t* value) : value(value), var(dynamic_cast<var_t*>(_var))
     {
-        SEMANTIC_NODE("Assign instruction for var $%s created", var->get_name().c_str());
-    }
+        SEMANTIC_NODE("Assign instruction for var $%s created",
+		var->get_name().c_str());
+}
 
-    virtual void print(int indent) {
-        var->print(); std::cout << " = "; var->print();
-        std::cout << ";\n";
-    }
-    
-    var_t* get_var() { return var; }
-    expr_t* get_value() { return value; }
-    
-    virtual std::string get_decl() {
-      return std::string("var ") +var->get_name() + "assign statement";
-    }
-    
-    virtual ~assign_t() {
-        delete var;
-    }
+virtual void print(int indent)
+{
+var->print(); std::cout << " = "; var->print();
+std::cout << ";\n";
+}
+
+var_t* get_var()
+{return var;}
+expr_t* get_value()
+{return value;}
+
+virtual std::string get_decl()
+{
+return std::string("var ") +var->get_name() + "assign statement";
+}
+
+virtual ~assign_t()
+{
+delete var;
+}
 };
-
 
 class unset_t: public oper_t
 {
-  var_t* var;
+var_t* var;
 public:
-    unset_t(expr_t* expr): var(dynamic_cast<var_t*>(expr)) {};
-    virtual void print(int indent) {}
-    virtual std::string get_decl() { return std::string("unset $") +var->get_name(); }
-    virtual var_t* get_var() { return var; }
+unset_t(expr_t* expr): var(dynamic_cast<var_t*>(expr))
+{};
+virtual void print(int indent)
+{}
+virtual std::string get_decl()
+{return std::string("unset $") +var->get_name();}
+virtual var_t* get_var()
+{return var;}
 };
 #endif
