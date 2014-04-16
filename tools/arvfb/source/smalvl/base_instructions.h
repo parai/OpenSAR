@@ -19,8 +19,14 @@
 #endif
 
 
+// start to analyze smalvl, I am the one really know little about C++
 
 
+/*
+ * a base class for construct grammar tree, I guess the usage of the dynamic
+ * feature of C++, or abstract.
+ * the name is funny, with appendix "_t"
+ */
 class instr_t  {
 protected:
     instr_t() {}
@@ -29,6 +35,9 @@ public:
 };
 
 //base expression class
+/*
+ * still a empty class, isn't it?
+ */
 class expr_t: public instr_t {
 protected:
     expr_t() {}
@@ -38,15 +47,16 @@ public:
 };
 
 //base operation class
-class oper_t: public instr_t {
+class oper_t: public instr_t {	/* empty ? */
 protected:
     oper_t() {}
 public:
     virtual ~oper_t() {}
     virtual void print(int indent)=0;
-    virtual std::string get_decl()=0;
+    virtual std::string get_decl()=0;	/* get descriptor, virtual */
 };
 
+/* List to manage oper_t things */
 typedef std::list<oper_t*> instructions_list_t;
 
 //represent logical commands block

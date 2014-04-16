@@ -30,13 +30,12 @@ double acs::get_double(std::string str) throw (runtime_exception_t)
 
 bool acs::get_logical_value(std::string str) throw (runtime_exception_t)
 {
-	bool r;
-        if( str == std::string("true") )
-            return true;
-        else if( str == std::string("false") )
-            return false;
-        else
-            throw runtime_exception_t(NOT_LOGICAL);
+	if( str == std::string("true") )
+		return true;
+	else if( str == std::string("false") )
+		return false;
+	else
+		throw runtime_exception_t(NOT_LOGICAL);
 }
 
 TYPE acs::determine_type(std::string src)
@@ -84,19 +83,21 @@ object_t* acs::create_object(std::string v)
     object_t* object = new object_t(type);
     switch(type)
     {
-    case INTEGER:
-        sscanf(v.c_str(), "%d", &(object->i));
-        break;
-    case FLOATPOINT:
-        object->d = new double(0);
-        sscanf(v.c_str(), "%lf", (object->d));
-        break;
-    case BOOL:
-        object->b = acs::get_logical_value(v);
-        break;
-    case STRING:
-        object->s = new std::string(v);
-        break;
+		case INTEGER:
+			sscanf(v.c_str(), "%d", &(object->i));
+			break;
+		case FLOATPOINT:
+			object->d = new double(0);
+			sscanf(v.c_str(), "%lf", (object->d));
+			break;
+		case BOOL:
+			object->b = acs::get_logical_value(v);
+			break;
+		case STRING:
+			object->s = new std::string(v);
+			break;
+		default:
+			break;
     }
     return object;
 }
@@ -121,5 +122,8 @@ std::string acs::type_to_string(TYPE t) {
       return "Array";
     case BOOL:
       return "Boolean";
+    default:
+    	break;
   }
+  return "None";	// TODO
 }

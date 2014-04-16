@@ -68,6 +68,7 @@ public:
     /*Call function*/
     ref_t run_function(function_call_t*, frame_stack_t& fs) throw(runtime_exception_t);
     ref_t call_external_function(function_call_t*, frame_stack_t& fs) throw(runtime_exception_t);
+    bool  call_build_in_function(function_call_t*, frame_stack_t& fs,ref_t*) throw(runtime_exception_t);
     ref_t compute_expression(expr_t *expr, frame_stack_t& fs)  throw (runtime_exception_t);
     /*
      * Throw std::invalid_argument if try to exercise conversion on object_t;

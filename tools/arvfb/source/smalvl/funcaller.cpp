@@ -120,14 +120,14 @@ throw(runtime_exception_t)
             int(*fun)() = (int (*)()) faddr;
             ref_t ref  = heap_manager_t::get_instance()->add_object(INTEGER);
             object_t* obj = heap_manager_t::get_instance()->get_object(ref);
-	    obj->i = fun();
+            obj->i = fun();
             return ref;
         }
         else if(meta.return_type == STRING)
         {
             const char* (*fun)() = (const char* (*)()) faddr;
             ref_t ref = heap_manager_t::get_instance()->add_object(STRING);
-	    object_t* obj = heap_manager_t::get_instance()->get_object(ref);
+            object_t* obj = heap_manager_t::get_instance()->get_object(ref);
             obj->s = new std::string(fun());
             return ref;
         }
@@ -136,7 +136,7 @@ throw(runtime_exception_t)
             double(*fun)() = (double (*)()) faddr;
             ref_t ref = heap_manager_t::get_instance()->add_object(FLOATPOINT);
             object_t* obj = heap_manager_t::get_instance()->get_object(ref);
-	    obj->d = new double(fun());
+            obj->d = new double(fun());
             return ref;
         }
     }
@@ -151,7 +151,7 @@ throw(runtime_exception_t)
                 int(*fun)(const char*) = (int (*)(const char*)) faddr;
                 ref_t ref = heap_manager_t::get_instance()->add_object(INTEGER);
                 object_t* obj = heap_manager_t::get_instance()->get_object(ref);
-		obj->i = fun( ((const char*) *objs[0]) );
+                obj->i = fun( ((const char*) *objs[0]) );
                 return ref;
             }
             else if(meta.return_type == NONE) {
@@ -180,7 +180,7 @@ throw(runtime_exception_t)
 	        int(*fun)(int) = (int (*)(int)) faddr;
                 ref_t ref = heap_manager_t::get_instance()->add_object(INTEGER);
                 object_t* obj = heap_manager_t::get_instance()->get_object(ref);
-		obj->i = fun( (int) *objs[0] );
+                obj->i = fun( (int) *objs[0] );
                 return ref;
             }
         }

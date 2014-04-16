@@ -65,19 +65,72 @@ ref_t runtime_t::run_function(function_call_t* fc, frame_stack_t& fs) throw(runt
 
         ref_t result_ref =  run(fun->get_instructions(), fs);
         pop_frame_stack(fs);
+        return result_ref;
     } catch(runtime_exception_t e)
     {
         if(e.getType() == FUNCTION_NOT_DECL )
-            return call_external_function(fc, fs);
+        {
+        	ref_t result;
+        	bool rv = call_build_in_function(fc,fs,&result);
+			if(rv)
+			{
+				return result;
+			}
+			else
+			{
+				return call_external_function(fc, fs);
+			}
+        }
         else
+        {
             throw e;
+        }
     }
+}
+static void HelloWorld(std::vector<object_t*>& objs)
+{
+	if(objs[0]->get_type() == STRING)
+	{
+		printf("$$: Hello World! %s\n",objs[0]->s->c_str());
+	}
+	else
+	{
+
+	}
+}
+
+bool runtime_t::call_build_in_function(function_call_t* fc, frame_stack_t& fs,ref_t* result) throw(runtime_exception_t) {
+    std::list<expr_t*>::iterator i = fc->get_args().begin();
+    std::vector<object_t*> arg_objs;
+    const char* name = fc->get_name().c_str();
+    bool rv = true;
+
+    RUNTIME_DEBUG("Preparing %d arguments", (int)fc->get_args().size());
+	//coping function call arguments to ...
+	for(; i!= fc->get_args().end(); i++)
+	{
+		ref_t object_ref = compute_expression((*i), fs);
+
+		arg_objs.push_back( _memmanager->get_object(object_ref) );
+	}
+    RUNTIME_DEBUG("Try to call function from buildin libs");
+    if(!strcasecmp(name,"HelloWorld"))
+    {
+    	HelloWorld(arg_objs);
+    	*result = 0;
+    }
+    else
+    {
+    	rv = false;
+    }
+
+	return rv;
 }
 
 ref_t runtime_t::call_external_function(function_call_t* fc, frame_stack_t& fs) throw(runtime_exception_t) {
     std::list<expr_t*>::iterator i = fc->get_args().begin();
     std::vector<object_t*> arg_objs;
-    //RUNTIME_DEBUG("Preparing %d arguments", fc->get_args().size());
+    RUNTIME_DEBUG("Preparing %d arguments", (int)fc->get_args().size());
     //coping function call arguments to ...
     for(; i!= fc->get_args().end(); i++)
     {
@@ -85,7 +138,7 @@ ref_t runtime_t::call_external_function(function_call_t* fc, frame_stack_t& fs) 
 
         arg_objs.push_back( _memmanager->get_object(object_ref) );
     }
-    //RUNTIME_DEBUG("Try to call function from native libs");
+    RUNTIME_DEBUG("Try to call function from native libs");
     return _funcaller.call_function(fc, arg_objs);
 }
 
@@ -243,7 +296,7 @@ ref_t runtime_t::compute_expression(expr_t* expr, frame_stack_t& fs) throw (runt
     }
     else if(typeid(*expr) == typeid(value_t)) {
         value_t* value = dynamic_cast<value_t*>(expr);
-        RUNTIME_DEBUG("value_t  %s", ( (const char*) *value->get_value()));
+        //RUNTIME_DEBUG("value_t  %s", ( (const char*) *value->get_value()));
         /* Placing object in heap */
         object_t* explicit_obj = acs::create_object(value->get_value());
         /* Add new object to heap */
@@ -457,9 +510,9 @@ object_t* runtime_t::get_var_value(var_t* var, frame_stack_t& fs) throw (runtime
     if( typeid(*var) == typeid(array_t))
     {
         ref_t ref = get_var_ref(var, fs);
-        RUNTIME_DEBUG("* get_var_value( $%s[%s]) type = %s, value = %s ", array->get_name().data(),
-                      key.data(),
-                      dt::type_to_string(array_item->get_type()), ((const char*) *array_item));
+//        RUNTIME_DEBUG("* get_var_value( $%s[%s]) type = %s, value = %s ", array->get_name().data(),
+//                      key.data(),
+//                      dt::type_to_string(array_item->get_type()), ((const char*) *array_item));
         /* array_item point to element in to array map */
         obj = _memmanager->get_object(ref);
     }
@@ -520,9 +573,9 @@ void runtime_t::assign_var(var_t* var, ref_t& value_ref, frame_stack_t& fs) {
 
     }
     else {
-        RUNTIME_DEBUG("Assign $%s type=%s, value=%s", var->get_name().data(),
-                      dt::type_to_string(obj->get_type()),
-                      (const char*) *obj);
+//        RUNTIME_DEBUG("Assign $%s type=%s, value=%s", var->get_name().data(),
+//                      dt::type_to_string(obj->get_type()),
+//                      (const char*) *obj);
         /* Search var in frame stack */
         try {
             _memmanager->decrement_link_count( get_var_ref(var, fs) );

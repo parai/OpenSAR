@@ -28,7 +28,7 @@ inc-y += -I$(BD)/tools/arvfb/source/parser
 inc-y += -I$(BD)/tools/arvfb/source/smalvl
 inc-y += -I$(BD)/include
 
-def-y += -D__GTK__
+def-y += -DDEBUG_ENABLED=1
 
 #objects
 dir-y = $(BD)/tools/arvfb/source	\

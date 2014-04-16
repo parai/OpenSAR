@@ -46,7 +46,7 @@ static void     FL_SecuritySendKey(void);
 static void     FL_ReadFingerPrint(void);
 static void     FL_WriteFingerPrint(void);
 
-static void Trace(gchar* Log,...)
+static void Trace(char* Log,...)
 {
 	va_list args;
 	unsigned long length;

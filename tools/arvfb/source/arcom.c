@@ -411,12 +411,12 @@ void ArCom_Init(void)
 
 void ArCom_Schedule(void)
 {
-	static int I = 0;
+	static uint32 I = 0;
 	// TODO
 	if(IsTimerElapsed(1))
 	{
 		uint32 elapsed = GetTimerElapsedMicroSeconds();
-		for (int i=0; i<sArch.PduNbr; i++)
+		for (uint32 i=0; i<sArch.PduNbr; i++)
 		{
 			ArComPduType* Pdu = &(sArch.Pdu[i]);
 			if( (Pdu->IsTxEnabled) &&
@@ -452,7 +452,7 @@ void ArCom_Schedule(void)
 
 void ArCom_RxIndication(const ArCanMsgType* armsg)
 {
-	for (int i=0; i<sArch.PduNbr; i++)
+	for (uint32 i=0; i<sArch.PduNbr; i++)
 	{
 		ArComPduType* Pdu = &(sArch.Pdu[i]);
 		if ( (Pdu->BusID==armsg->Msg.BusID) && (Pdu->Identifier==armsg->Msg.Identifier) )
@@ -469,7 +469,7 @@ GtkWidget* ArCom(void)
 
 	pNotebook = gtk_notebook_new ();
 
-	for (int i = 0; i<sArch.PduNbr; i++)
+	for (uint32 i = 0; i<sArch.PduNbr; i++)
 	{
 		ArComPduType* Pdu = &(sArch.Pdu[i]);
 		gtk_notebook_append_page (GTK_NOTEBOOK(pNotebook),ComPage(Pdu),gtk_label_new(Pdu->Name));

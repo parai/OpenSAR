@@ -31,12 +31,15 @@ public:
         i=0x0;
         d=0x0;
         b=0x0;
-	a=0x0;
+        a=0x0;
     }
 
     ~object_t() {
 	RUNTIME_DEBUG("Destructing object %p, value=%s", this, ((const char*) *this));
-	void increment_link_count(ref_t& ref);
+	/* TODO: why a declaration of function increment_link_count here, but without use it.
+	 * Or am I not understand C++ grammar ?
+	 */
+	//void increment_link_count(ref_t& ref);
         switch(_dynamic_type)
         {
         case INTEGER:
@@ -54,49 +57,81 @@ public:
         case BOOL:
             /* Nothing to do */
             break;
+        default:
+        	break;	// supress warning as not process VA ...
         }
     }
-
+    /*
+     * OK, most of the key word of C++ is not understand by me.
+     * But who cares, if it works OK.
+     * We just need to know, a ha, do something like what in python
+     * bool('True'); int('0x789') ..., but only explicit
+     */
     explicit operator bool() const  throw(runtime_exception_t, std::invalid_argument) {
-        if(this->get_type() == STRING) {
+        if(this->get_type() == STRING)
+        {
             return acs::get_logical_value( *(this->s) );
         }
-        else if(this->get_type()==INTEGER || this->get_type() == FLOATPOINT) {
+        else if(this->get_type()==INTEGER || this->get_type() == FLOATPOINT)
+        {
             return (this->i!=0);
         }
         else if(this->get_type() == BOOL)
+        {
             return this->b;
+        }
         else
+        {
             throw runtime_exception_t(INVALID_COVERSION);
+        }
     }
 
     explicit operator int() const throw(runtime_exception_t, std::invalid_argument) {
-        if(this->get_type() == STRING) {
+        if(this->get_type() == STRING)
+        {
             return std::stoi( *(this->s) );
-        } else if(this->get_type()== FLOATPOINT) {
+        }
+        else if(this->get_type()== FLOATPOINT)
+        {
             return std::trunc( *(this->d) );
-        } else if(this->get_type() == BOOL) {
+        } else if(this->get_type() == BOOL)
+        {
             return (this->b)?(1):(0);
         } else if(this->get_type() == INTEGER)
+        {
             return this->i;
-	else if(this->get_type() == ARRAY)
-	  return a->size();
+        }
+        else if(this->get_type() == ARRAY)
+        {
+        	return a->size();
+        }
         else
+        {
             throw runtime_exception_t(INVALID_COVERSION);
+        }
     }
 
     explicit operator double() const throw(runtime_exception_t, std::invalid_argument)  {
-        if(this->get_type() == STRING) {
+        if(this->get_type() == STRING)
+        {
             return std::stod( *(this->s) );
-        } else if(this->get_type() == INTEGER) {
+        }
+        else if(this->get_type() == INTEGER)
+        {
             return (double) this->i;
-        } else if(this->get_type() == BOOL) {
+        }
+        else if(this->get_type() == BOOL)
+        {
             return (this->b)?(1.0):(0.0);
         } 
         else if(this->get_type() == ARRAY)
-	  return a->size();
-	else
-	  throw runtime_exception_t(INVALID_COVERSION);
+        {
+        	return a->size();
+        }
+        else
+        {
+        	throw runtime_exception_t(INVALID_COVERSION);
+        }
     }
 
     explicit operator std::string() const throw (std::invalid_argument) {
@@ -109,9 +144,11 @@ public:
         else if( this->get_type() == STRING )
             return *(this->s);
         else if( this->get_type() == NONE )
-	  return "NONE";
-	else if( this->get_type() == ARRAY )
-	  return std::string("Array with ") +std::to_string(a->size()) +" elements";
+        	return "NONE";
+        else if( this->get_type() == ARRAY )
+        	return std::string("Array with ") +std::to_string(a->size()) +" elements";
+        else
+        	throw runtime_exception_t(INVALID_COVERSION);
     }
 
     explicit operator const char*() const throw (std::invalid_argument) {
@@ -132,7 +169,9 @@ public:
             return ( (double) *this) < ( (double) obj);
         }
         else
+        {
             throw runtime_exception_t(UNCOMPARABLE_TYPES);
+        }
 
     }
 
@@ -150,7 +189,9 @@ public:
             return ( (double) *this) > ( (double) obj);
         }
         else
+        {
             throw runtime_exception_t(UNCOMPARABLE_TYPES);
+        }
     }
 
     bool operator >= (const object_t& obj) throw (runtime_exception_t) {

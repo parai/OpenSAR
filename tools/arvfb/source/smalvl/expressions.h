@@ -164,7 +164,7 @@ public:
     function_call_t(const std::string& name,
                     const std::list<expr_t*>& args) :
         name(name), args(args) {
-        SEMANTIC_NODE("Function '%s' call node created. %d function arguments", name.data(), args.size());
+        SEMANTIC_NODE("Function '%s' call node created. %d function arguments", name.data(), (int)args.size());
     }
 
     virtual void print() {

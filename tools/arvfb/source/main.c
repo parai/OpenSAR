@@ -209,7 +209,7 @@ int main (int argc, char *argv[])
 	// Initialize
 	Initialize();
 
-	ArParser(argc,argv);
+	//ArParser(argc,argv);
 
 	arscript_main(argc,argv);
 
