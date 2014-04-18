@@ -85,7 +85,8 @@ ref_t runtime_t::run_function(function_call_t* fc, frame_stack_t& fs)
 		ref_t result_ref = run(fun->get_instructions(), fs);
 		pop_frame_stack(fs);
 		return result_ref;
-	} catch (runtime_exception_t e)
+	}
+	catch (runtime_exception_t e)
 	{
 		if (e.getType() == FUNCTION_NOT_DECL)
 		{
@@ -106,17 +107,6 @@ ref_t runtime_t::run_function(function_call_t* fc, frame_stack_t& fs)
 		}
 	}
 }
-static void HelloWorld(std::vector<object_t*>& objs)
-{
-	if (objs[0]->get_type() == STRING)
-	{
-		printf("$$: Hello World! %s\n", objs[0]->s->c_str());
-	}
-	else
-	{
-
-	}
-}
 
 bool runtime_t::call_build_in_function(function_call_t* fc, frame_stack_t& fs,
 		ref_t* result) throw (runtime_exception_t)
@@ -133,18 +123,10 @@ bool runtime_t::call_build_in_function(function_call_t* fc, frame_stack_t& fs,
 		ref_t object_ref = compute_expression((*i), fs);
 
 		arg_objs.push_back(_memmanager->get_object(object_ref));
-	}RUNTIME_DEBUG("Try to call function from buildin libs");
-	if (!strcasecmp(name, "HelloWorld"))
-	{
-		HelloWorld(arg_objs);
-		*result = 0;
 	}
-	else
-	{
-		rv = false;
-	}
+	RUNTIME_DEBUG("Try to call function from buildin libs");
 
-	return rv;
+	return _funcaller.call_buildin(fc, arg_objs,result);;
 }
 
 ref_t runtime_t::call_external_function(function_call_t* fc, frame_stack_t& fs)
@@ -159,7 +141,8 @@ ref_t runtime_t::call_external_function(function_call_t* fc, frame_stack_t& fs)
 		ref_t object_ref = compute_expression((*i), fs);
 
 		arg_objs.push_back(_memmanager->get_object(object_ref));
-	}RUNTIME_DEBUG("Try to call function from native libs");
+	}
+	RUNTIME_DEBUG("Try to call function from native libs");
 	return _funcaller.call_function(fc, arg_objs);
 }
 
@@ -175,7 +158,8 @@ void runtime_t::interpretate()
 	try
 	{
 		runtime_t::get_instance()->run(this->_main_block, fs);
-	} catch (runtime_exception_t e)
+	}
+	catch (runtime_exception_t e)
 	{
 		std::cerr << "Fatal rutime error: ";
 		e.print();

@@ -1,55 +1,8 @@
 require "libc.ext";
-$srcFile = fopen("source_file.txt", "r");
 
-if( $srcFile == 0 )
-{
-  perror("Can't open file");
-}
+$pi = 3.1415926;
 
-$dstFile = fopen("destination_file.txt", "w");
-if( $dstFile == 0 )
-{
-  perror("Can't open destination file");
-}
-
-$buffer = "";
-$strings = array[];
-$size = 0;
-
-/* Read file */
-while( feof($srcFile) != 1 )
-{
-  $strings[$size] = fgets($buffer, 2048, $srcFile);
-  printf("Reading line: " .$size ."\n");
-  $size++;
-}
-
-printf("Lines number: " .$size ."\n");
-//unset $strings;
-
-
-for($i=0; $i < $size - 1; $i++)
-{
-
-  printf("Sorting iteration " .$i ."\n");
-  for($j=0; $j < $size - $i -1; $j++)
-  {
-    if ( strcmp($strings[$j], $strings[$j+1]) > 0 )
-    {
-      $buffer = $strings[$j];
-      $strings[$j] = $strings[$j+1];
-      $strings[$j+1] = $buffer;
-    }
-  }
-}
-
-/*Write to file */
-for($i=0; $i < $size; $i++)
-{
-  printf("Write to file: " .$i ."\n");
-  fputs( $strings[$i], $dstFile );
-}
-
-fflush($dstFile);
-fclose($srcFile);
-fclose($dstFile);
+print("Hello World:\n");
+print("pi = ",$pi);
+$rv = sin($pi/2);
+print("sin(pi/2) = ",$rv,"\n");

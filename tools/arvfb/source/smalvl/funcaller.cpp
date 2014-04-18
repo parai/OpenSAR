@@ -347,3 +347,57 @@ void funcaller_t::print_meta(meta_info_t& meta)
 
 	std::cout << std::endl;
 }
+
+void funcaller_t::Print(std::vector<object_t*>& objs,ref_t* result)
+{
+	for(unsigned int i=0; i<objs.size(); i++)
+	{
+		unsigned int I = objs.size() - i - 1;
+		switch(objs[I]->get_type())
+		{
+			case INTEGER:
+				printf("%d ",objs[I]->i);
+				break;
+			case FLOATPOINT:
+				printf("%f ",*(objs[I]->d));
+				break;
+			case ARRAY:
+				printf("[TODO] ");
+//				for(array_obj_t* item = objs[i]->a->begin();item != objs[i]->a->end();item++)
+//				{
+//
+//				}
+			case BOOL:
+				printf("%s ",objs[I]->b?"True":"False");
+				break;
+			case STRING:
+				printf("%s ",objs[I]->s->c_str());
+				break;
+			case NONE:
+				printf("None ");
+				break;
+			default:
+				break;
+		}
+	}
+	// return
+	*result = REF_IS_VOID;
+}
+bool funcaller_t::call_buildin(function_call_t* fc,std::vector<object_t*>& objs,ref_t* result)
+					throw (runtime_exception_t)
+{
+	bool rv = true;
+
+	const char* fname = fc->get_name().c_str();
+
+	if(!strcmp(fname,"print"))
+	{
+		Print(objs,result);
+	}
+	else
+	{
+		rv = false;
+	}
+
+	return rv;
+}

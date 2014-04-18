@@ -73,6 +73,3 @@ for($i=0; $i < $size; $i++)
 
 fclose($srcFile);
 fclose($dstFile);
-
-
-HelloWorld("Lily.");

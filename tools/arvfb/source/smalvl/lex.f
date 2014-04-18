@@ -16,9 +16,9 @@ int yycolumn = 0;
 %x SINGLE_LINE_COMMENT
 %x MULTI_LINE_COMMENT
 %x STR
-
-letter [a-zA-Z]
-digit [0-9]
+     
+DIGIT    [0-9]
+HEX      [0][xX][0-9A-Fa-f]+
 
 %%
 
@@ -71,7 +71,7 @@ digit [0-9]
   
 
 "$" {
-	return VAR_BEGIN;
+	return yytext[0];
 }
 
 "if" {
@@ -107,9 +107,19 @@ digit [0-9]
 }
  
 
-{digit}+ {
+{DIGIT}+ {
 	yylval.str = std::string(yytext);
-	return NUMBER;
+	return TK_INTEGER;
+}
+
+{HEX}		{
+	yylval.str = std::string(yytext);
+	return TK_INTEGER;
+}
+
+{DIGIT}+"."{DIGIT}*        {
+	yylval.str = std::string(yytext);
+	return TK_FLOATPOINT;
 }
 
 
@@ -125,48 +135,6 @@ digit [0-9]
 <MULTI_LINE_COMMENT>{
 		    [^(*/)]	;
 		    "*/"	yy_pop_state();
-}
-
-"%" {
-  return DIVIDE_MOD;
-}
-
-";" {
-	return END_INSTRUCTION;
-}
-
-"," {
-	return ARG_SPLITTER;
-}
-
-"+" {
-	return  PLUS;
-}
-
-"-" {
-	return MINUS;
-}
-
-"/" {
-	return DIVIDE;
-}
-
-"*" {
-	return MULTIPLY;
-}
-
-"=" {
-	return ASSIGN;
-}
-
-">" {
-	yylval.str = std::string(yytext);
-	return MORE;
-}
-
-"<" {
-	yylval.str = std::string(yytext);
-	return LESS;
 }
 
 ">=" {
@@ -189,33 +157,17 @@ digit [0-9]
 	return NOT_EQUAL;
 }
 
-"{" {
-	return OPEN_BLOCK;
+
+";"|","|"+"|"-"|"*"|"/"|"="|">"|"<"|"%"	{
+	return yytext[0];
 }
 
-"}" {
-	return CLOSE_BLOCK;
+"{"|"}"|"("|")"|"["|"]" {
+	return yytext[0];
 }
 
-"(" {
-	return OPEN_BRACKET;
-}
-
-")" {
-	return CLOSE_BRACKET;
-}
-
-"[" { 
-	return OPEN_SQUARE_BRACKET;
-	}
-	
-"]" {
-	return CLOSE_SQUARE_BRACKET;
-}
-
-"." {
-	yylval.str = std::string(yytext);
-	return STRING_CONCETATE;
+"." {	// string concate operater, TODO: I don't like it
+	return yytext[0];
 }
 
 . {

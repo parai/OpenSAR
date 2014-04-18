@@ -28,6 +28,9 @@ Since 2013-11-23 17:17 base on arc-stable-a45528fee37b.zip AUTOSAR 3.1
 	No care of drivers related to hardware, I will use GTK to simulate most of the drivers.
 	Start from OS firstly..., all According to AUTOSAR 4.0
 	By reading ArcCore OS, I think it is not that perfect, So what to do
+
+		>> 2014-4-16 Add a script intepreter for arvfb, good for me.
+		
 	
 	
 

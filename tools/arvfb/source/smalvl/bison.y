@@ -15,14 +15,10 @@ void yyerror(const char *str)
  
 %}
 
-%token FUNCTION VAR_BEGIN  ARRAY_DECLARATION
-%token IDENTIFIER NUMBER STRING_DEFINITION 
-%token END_INSTRUCTION ARG_SPLITTER 
-%token PLUS MINUS DIVIDE MULTIPLY DIVIDE_MOD
-%token ASSIGN
-%token MORE LESS MORE_OR_EQUAL LESS_OR_EQUAL EQUAL NOT_EQUAL
-%token OPEN_BLOCK CLOSE_BLOCK OPEN_BRACKET CLOSE_BRACKET STRING_CONCETATE RETURN INCLUDE REQUIRE
-%token OPEN_SQUARE_BRACKET CLOSE_SQUARE_BRACKET
+%token FUNCTION ARRAY_DECLARATION
+%token IDENTIFIER TK_INTEGER TK_FLOATPOINT STRING_DEFINITION 
+%token MORE_OR_EQUAL LESS_OR_EQUAL NOT_EQUAL EQUAL
+%token RETURN INCLUDE REQUIRE
 %token IF ELSE
 %token TRUE FALSE
 %token INC DEC
@@ -30,27 +26,20 @@ void yyerror(const char *str)
 %token BREAK
 %token UNSET
 
-%right PLUS
-%right MINUS
-%right DEVIDE
-%right MULTIPLY
-%right STRING_CONCETATE
+%right '+'
+%right '-'
+%right '*'
+%right '/'
+%right '.'
 
 %expect 11
 
 %type<str> IDENTIFIER  
-%type<str> NUMBER
+%type<str> TK_INTEGER TK_FLOATPOINT
 %type<str> STRING_DEFINITION
-%type<str> STRING_CONCETATE
-%type<str> PLUS
-%type<str> MINUS
-%type<str> DIVIDE
-%type<str> MULTIPLY
-%type<str> DIVIDE_MOD
-%type<str> MORE LESS MORE_OR_EQUAL LESS_OR_EQUAL EQUAL NOT_EQUAL
+%type<str> MORE_OR_EQUAL LESS_OR_EQUAL NOT_EQUAL EQUAL
 %type<str> TRUE FALSE
 %type<str> DEC INC
-%type<str> ASSIGN
 
 %type<oper> return_value
 %type<oper> break
@@ -107,9 +96,9 @@ body:
 top_level_cmd: 
   function_declaration
   |
-  include END_INSTRUCTION
+  include ';'
   |
-  require END_INSTRUCTION
+  require ';'
   |
   instructions { $$ = $1; }
   ;
@@ -121,7 +110,7 @@ instructions:
   ;
   
 instruction:
-   command END_INSTRUCTION { $$ = $1; }
+   command ';' { $$ = $1; }
    |
    condition_statement { $$ = $1; }
    ;
@@ -156,10 +145,10 @@ condition_statement:
   ;
 
 block: 
-  OPEN_BLOCK instructions CLOSE_BLOCK { $$ = new block_t($2); };
+  '{' instructions '}' { $$ = new block_t($2); };
 
 function_declaration:
-  FUNCTION IDENTIFIER OPEN_BRACKET function_declaration_arguments CLOSE_BRACKET block
+  FUNCTION IDENTIFIER '(' function_declaration_arguments ')' block
   {
     function_declaration_t* fd = new function_declaration_t($2, $4, $6);
     $$ = fd;
@@ -172,9 +161,8 @@ function_declaration:
     std::cerr << "Function declaration error!\n";
   };
 
-function_declaration_arguments: /* empty */
-  | 
-  var ARG_SPLITTER function_declaration_arguments {
+function_declaration_arguments: /* empty */ 
+  var ',' function_declaration_arguments {
     $$ = std::list<expr_t*>($3);
     $$.push_back($1);
   }
@@ -186,8 +174,7 @@ function_declaration_arguments: /* empty */
   ;
   
 function_call_arguments: /* empty */
-  | 
-  value ARG_SPLITTER function_call_arguments {
+  value ',' function_call_arguments {
     $$ = std::list<expr_t*>($3);
     $$.push_back($1);
   }
@@ -208,7 +195,9 @@ explicit_value:
   |
   FALSE { $$ = new value_t($1); }
   |
-  NUMBER { $$ = new value_t($1); }
+  TK_INTEGER { $$ = new value_t($1); }
+  |
+  TK_FLOATPOINT { $$ = new value_t($1); }
   |
   STRING_DEFINITION { $$ = new value_t($1); }
   |
@@ -235,9 +224,9 @@ array:
   ;
 
 var:
-  VAR_BEGIN IDENTIFIER { $$ = new var_t($2); }
+  '$' IDENTIFIER { $$ = new var_t($2); }
   |
-  VAR_BEGIN IDENTIFIER OPEN_SQUARE_BRACKET value CLOSE_SQUARE_BRACKET { 
+  '$' IDENTIFIER '[' value ']' { 
     $$ = new array_t($2, $4); 
   };
   
@@ -245,32 +234,32 @@ unset:
   UNSET var { $$ = new unset_t($2); };
   
 function_call:
-  IDENTIFIER OPEN_BRACKET function_call_arguments CLOSE_BRACKET  {
+  IDENTIFIER '(' function_call_arguments ')'  {
     $$ = new function_call_t($1, $3);
   } ;
 
 assign_value:
-  var ASSIGN value { $$ = new assign_t($1, $3); }
+  var '=' value { $$ = new assign_t($1, $3); }
   | 
-  var ASSIGN array { $$ = new assign_t($1, $3); }
+  var '=' array { $$ = new assign_t($1, $3); }
   ;
  
 return_value:
   RETURN value { $$ = new return_op_t($2); };
 
 loop_for:
-  FOR OPEN_BRACKET command END_INSTRUCTION expresion END_INSTRUCTION command CLOSE_BRACKET block
+  FOR '(' command ';' expresion ';' command ')' block
   {
     $$ = new for_op_t($3, $5, $7, $9);
   };
 
 loop_while:
-  WHILE OPEN_BRACKET value CLOSE_BRACKET block {
+  WHILE '(' value ')' block {
     $$ = new while_op_t($3, $5); 
   };
 
 if_stmt:
-  IF OPEN_BRACKET value CLOSE_BRACKET block else_stmt { $$ = new if_op_t($3, $5, $6); };
+  IF '(' value ')' block else_stmt { $$ = new if_op_t($3, $5, $6); };
 
 else_stmt:
   /* empty */
@@ -281,9 +270,9 @@ else_stmt:
 expresion:
   math_expr { $$ = $1; }
   |
-  expresion LESS math_expr { $$ = new binary_t("<", $1, $3); }
+  expresion '<' math_expr { $$ = new binary_t("<", $1, $3); }
   |
-  expresion MORE math_expr { $$ = new binary_t(">", $1, $3); }
+  expresion '>' math_expr { $$ = new binary_t(">", $1, $3); }
   |
   expresion EQUAL math_expr { $$ = new binary_t("==", $1, $3); }
   |
@@ -293,7 +282,7 @@ expresion:
   |
   expresion NOT_EQUAL math_expr { $$ = new binary_t("!=", $1, $3); }
   |
-  OPEN_BRACKET expresion CLOSE_BRACKET { $$ = $2; }
+  '(' expresion ')' { $$ = $2; }
   |
   error  { std::cerr << "Expresion error\n"; }
   ;
@@ -302,26 +291,27 @@ expresion:
 math_expr: 
   math_hight_expr 
   |
-  math_expr PLUS math_hight_expr { $$ = new binary_t("+", $1, $3); }
+  math_expr '+' math_hight_expr { $$ = new binary_t("+", $1, $3); }
   |
-  math_expr MINUS math_hight_expr { $$ = new binary_t("-", $1, $3); }
+  math_expr '-' math_hight_expr { $$ = new binary_t("-", $1, $3); }
   ;
   
 math_hight_expr:
   string_expr
   |
-  math_hight_expr MULTIPLY string_expr { $$ = new binary_t("*", $1, $3); }
+  math_hight_expr '*' string_expr { $$ = new binary_t("*", $1, $3); }
   |
-  math_hight_expr DIVIDE string_expr { $$ = new binary_t("/", $1, $3); }
+  math_hight_expr '/' string_expr { $$ = new binary_t("/", $1, $3); }
   |
-  math_hight_expr DIVIDE_MOD string_expr { $$ = new binary_t("%", $1, $3); }
+  math_hight_expr '%' string_expr { $$ = new binary_t("%", $1, $3); }
   ;
+
 
 string_expr:	
   explicit_value
   |
-  string_expr STRING_CONCETATE explicit_value { $$ = new binary_t(".", $1, $3); }
-  ;
+  string_expr '.' explicit_value { $$ = new binary_t(".", $1, $3); /* Yes, I change it, to make it more look like class string */}
+  ; 
   
 include:
   INCLUDE value	{ $$ = new include_t($2); } ;   
