@@ -1,32 +1,29 @@
 #include "analizator.h"
+#include "runtime.h"
 
-#define DEBUG_ENABLED 1
-int arscript_main(int argc, char** argv)
+void ArScript(char* file)
 {
 	yydebug = 0;
 
-	if (argc < 2)
+	if (NULL == file)
 	{
-#if DEBUG_ENABLED
-		yyin = fopen("./example/main.svl", "r");
-#else
-		std::cerr << "Input file not specified as first comandline argument. Using stdin as default input stream\n";
-#endif
+		Arch_Trace("\n\n## Load Script: /home/parai/workspace/OpenSAR/binaries/gtk/example/main.svl\n\n");
+		yyin = fopen("/home/parai/workspace/OpenSAR/binaries/gtk/example/main.svl", "r");
 	}
 	else
 	{
-		yyin = fopen(argv[1], "r");
-		if (yyin == NULL)
-		{
-			perror("Can't open source file");
-			return 2;
-		}
+		yyin = fopen(file, "r");
 	}
 
-	do
+	if (yyin == NULL)
 	{
-		yyparse();
-	} while (!feof(yyin));
-	return 0;
+		Arch_Trace("Script: file <%s> is not exist.\n",file);
+		return;
+	}
+
+	runtime_t::get_instance()->init();
+
+	yyparse();
+
 }
 

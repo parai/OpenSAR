@@ -76,9 +76,13 @@ public:
 		{
 			return acs::get_logical_value( *(this->s) );
 		}
-		else if(this->get_type()==INTEGER || this->get_type() == FLOATPOINT)
+		else if(this->get_type()==INTEGER)
 		{
-			return (this->i!=0);
+			return (this->i > 0);
+		}
+		else if(this->get_type() == FLOATPOINT)
+		{
+			return (*this->d > (double)0);
 		}
 		else if(this->get_type() == BOOL)
 		{

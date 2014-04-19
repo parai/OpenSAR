@@ -20,6 +20,8 @@ public:
 	static heap_manager_t* get_instance();
 	virtual ~heap_manager_t();
 
+	void init(void);
+
 	ref_t add_object(object_t* object=0x0) throw(runtime_exception_t);
 	ref_t add_object(TYPE type) throw (runtime_exception_t);
 	ref_t set_object(ref_t, object_t*) throw(runtime_exception_t);

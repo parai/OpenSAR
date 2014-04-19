@@ -224,7 +224,7 @@ ref_t funcaller_t::call(void* faddr, const meta_info_t& meta,
 						int) = ( int (*)(const char*, int) ) faddr;
 				ref_t ref = heap_manager_t::get_instance()->add_object(INTEGER);
 				object_t* obj = heap_manager_t::get_instance()->get_object(ref);
-				RUNTIME_DEBUG("Call function %s(\"%s\", \"%p\")",
+				RUNTIME_DEBUG("Call function %s(\"%s\", \"%d\")",
 						meta.name.data(), (const char*) *objs[1],
 						(int) *objs[0]);
 				obj->i = fun((const char*) *objs[1], (int) *objs[0]);
@@ -356,25 +356,25 @@ void funcaller_t::Print(std::vector<object_t*>& objs,ref_t* result)
 		switch(objs[I]->get_type())
 		{
 			case INTEGER:
-				printf("%d ",objs[I]->i);
+				Arch_Trace("%d",objs[I]->i);
 				break;
 			case FLOATPOINT:
-				printf("%f ",*(objs[I]->d));
+				Arch_Trace("%f",*(objs[I]->d));
 				break;
 			case ARRAY:
-				printf("[TODO] ");
+				Arch_Trace("[TODO]");
 //				for(array_obj_t* item = objs[i]->a->begin();item != objs[i]->a->end();item++)
 //				{
 //
 //				}
 			case BOOL:
-				printf("%s ",objs[I]->b?"True":"False");
+				Arch_Trace("%s",objs[I]->b?"True":"False");
 				break;
 			case STRING:
-				printf("%s ",objs[I]->s->c_str());
+				Arch_Trace("%s",objs[I]->s->c_str());
 				break;
 			case NONE:
-				printf("None ");
+				Arch_Trace("None");
 				break;
 			default:
 				break;

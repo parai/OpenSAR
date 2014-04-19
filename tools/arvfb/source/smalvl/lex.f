@@ -16,14 +16,37 @@ int yycolumn = 0;
 %x SINGLE_LINE_COMMENT
 %x MULTI_LINE_COMMENT
 %x STR
+%x sc_include
      
 DIGIT    [0-9]
 HEX      [0][xX][0-9A-Fa-f]+
 
 %%
 
-"include" {
-      return INCLUDE;
+	static unsigned int include_counter = 0;
+
+"include" BEGIN(sc_include);
+
+<sc_include>{
+	[ \t]* /* eat the whitespace */ 
+
+	[^ \t\n]+   { /* got the include module name */
+		yyin = fopen( yytext, "r" );
+		if ( ! yyin )
+		{	char string[1024];
+			sprintf(string,"Module <%s> is not exist",yytext);
+			yyerror(string);
+		}
+		else
+		{
+			printf("##open include <%s>\n",yytext);
+			include_counter ++; 
+			yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
+			BEGIN(INITIAL);
+		}
+	}
+	
+	"\n" BEGIN(INITIAL);
 }
 
 "require"  {
@@ -38,7 +61,7 @@ HEX      [0][xX][0-9A-Fa-f]+
     return BREAK;
 }
 
-"function" {
+"function"|"def" {
 	return FUNCTION;
 }
 
@@ -178,6 +201,17 @@ HEX      [0][xX][0-9A-Fa-f]+
 	yycolumn=1;
 }
 
+<<EOF>>	{
+	if(include_counter > 0)
+	{
+		yypop_buffer_state();
+		include_counter --;
+	}
+	else
+	{
+		yyterminate();
+	}
+}
 %%
 
 

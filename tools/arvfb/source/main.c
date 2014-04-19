@@ -21,7 +21,7 @@
 #include "arvfb.h"
 
 // ======================== [ IMPORTS        ] ==============================================
-extern int arscript_main (int argc, char** argv);
+extern void ArScript(char* file);
 
 // ======================== [ LOCAL VARIANTS  ] ==============================================
 static boolean isPaused = TRUE;
@@ -104,11 +104,38 @@ static GtkWidget* CreateToolbar(void)
 	return pToolbar;
 }
 
-GtkWidget* Console(void)
+static void on_button_clicked(GtkButton *button,gpointer data)
+{
+	if(0==strcmp((const char*)data,"Load"))
+	{
+		ArScript(NULL);
+	}
+	else if(0==strcmp((const char*)data,"Run"))
+	{
+
+	}
+	else
+	{
+
+	}
+}
+
+static GtkWidget* Console(void)
 {
 	GtkWidget* pBox;
 
 	pBox = gtk_box_new(GTK_ORIENTATION_VERTICAL,0);
+
+	GtkWidget* pButton;
+
+
+	pButton = gtk_button_new_with_label("Load Script");
+	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
+	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_button_clicked) , (gpointer)"Load");
+
+	pButton = gtk_button_new_with_label("Run");
+	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
+	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_button_clicked) , (gpointer)"Run");
 
 	{
 		GtkWidget *swindow;
@@ -209,9 +236,7 @@ int main (int argc, char *argv[])
 	// Initialize
 	Initialize();
 
-	//ArParser(argc,argv);
-
-	arscript_main(argc,argv);
+	ArParser(argc,argv);
 
 	printf("Initialize Done.\n");
 

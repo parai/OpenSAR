@@ -18,6 +18,7 @@ enum EXCEPTION_TYPE
 	REF_EXIST,
 	REF_INVALID,
 	INVALID_COVERSION,
+	INVALID_RETURN,
 	UNCOMPARABLE_TYPES
 };
 
@@ -63,44 +64,47 @@ public:
 		switch(type)
 		{
 			case NOT_NUMBER:
-			message = "Value is not a number";
-			break;
+				message = "Value is not a number";
+				break;
 			case NOT_LOGICAL:
-			message = "Value is not logical";
-			break;
+				message = "Value is not logical";
+				break;
 			case NULL_REF:
-			message = "Null regerence exception";
-			break;
+				message = "Null regerence exception";
+				break;
 			case FUNCTION_NOT_DECL:
-			message = "Function not declarated in this scope";
-			break;
+				message = "Function not declarated in this scope";
+				break;
 			case FUNCTION__CALL_INVALID_ARGUMENTS:
-			message = "Function call invalid arguments";
-			break;
+				message = "Function call invalid arguments";
+				break;
 			case INVALID_COVERSION:
-			message = "Dynamic type conversion error";
-			break;
+				message = "Dynamic type conversion error";
+				break;
 			case REF_INVALID:
-			message = "Incorrect reference to heap object";
-			break;
+				message = "Incorrect reference to heap object";
+				break;
 			case VAR_NOT_DECL:
-			message = "Variable don't declarated early and not initalized. First mentioning.";
-			break;
+				message = "Variable don't declarated early and not initalized. First mentioning.";
+				break;
 			case INTERNAL_EXCEPTION:
-			message = "Runtime internal exception";
-			break;
+				message = "Runtime internal exception";
+				break;
 			case VAR_DECL:
-			message = "Variable yet decalared early";
-			break;
+				message = "Variable yet decalared early";
+				break;
 			case REF_EXIST:
-			message = "Reference exist";
-			break;
+				message = "Reference exist";
+				break;
 			case UNCOMPARABLE_TYPES:
-			message = "I can't compare this values";
-			break;
+				message = "I can't compare this values";
+				break;
+			case INVALID_RETURN:
+				message = "Invalid Return, not in Function";
+				break;
 			default:
-			message = "Undefined exception, exception code is " +std::to_string(type);
-			break;
+				message = "Undefined exception, exception code is " +std::to_string(type);
+				break;
 		}
 	}
 

@@ -1,8 +1,44 @@
-require "libc.ext";
+//require "libc.ext";
 
-$pi = 3.1415926;
+include lib.inc
 
-print("Hello World:\n");
-print("pi = ",$pi);
-$rv = sin($pi/2);
-print("sin(pi/2) = ",$rv,"\n");
+def main()
+{
+	$rv = 1;
+	
+	HelloWorld();
+
+	while($rv < 10)
+	{
+		$rv++;
+		if($rv == 3)
+		{
+			print("Test Break,$rv=",$rv,"\n");
+			return 2;
+		}
+	}
+	if($rv == 3)
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
+}
+
+// Execute...
+$rv = main();
+
+if($rv == 0)
+{
+	print("Very Good\n");
+}
+else if($rv == 2)
+{
+	print("Very Good2\n");
+}
+else
+{
+	print("Bad Girl\n");
+}

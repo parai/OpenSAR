@@ -10,7 +10,7 @@
 
 void yyerror(const char *str)
 {
-        fprintf(stderr,"Parse error\tline: %d, %s in %s\n", yylineno, str, yytext);
+	fprintf(stderr,"Parse error\tline: %d, %s (yytext=%s)\n", yylineno, str, yytext);
 }
  
 %}
@@ -44,7 +44,6 @@ void yyerror(const char *str)
 %type<oper> return_value
 %type<oper> break
 %type<oper> require
-%type<oper> include
 %type<oper> loop_for
 %type<oper> loop_while
 %type<oper> if_stmt
@@ -95,8 +94,6 @@ body:
 /* Avalilable statements in source body*/
 top_level_cmd: 
   function_declaration
-  |
-  include ';'
   |
   require ';'
   |
@@ -162,6 +159,8 @@ function_declaration:
   };
 
 function_declaration_arguments: /* empty */ 
+  %empty	{}
+  |
   var ',' function_declaration_arguments {
     $$ = std::list<expr_t*>($3);
     $$.push_back($1);
@@ -174,6 +173,8 @@ function_declaration_arguments: /* empty */
   ;
   
 function_call_arguments: /* empty */
+  %empty	{}
+  |
   value ',' function_call_arguments {
     $$ = std::list<expr_t*>($3);
     $$.push_back($1);
@@ -262,10 +263,11 @@ if_stmt:
   IF '(' value ')' block else_stmt { $$ = new if_op_t($3, $5, $6); };
 
 else_stmt:
-  /* empty */
-  { $$ = 0x0; }
+  %empty	{ $$ = NULL; }
   |
   ELSE block { $$ = new block_t($2); };
+  |
+  ELSE IF '(' value ')' block else_stmt { $$ = new if_op_t($4, $6, $7); };
   
 expresion:
   math_expr { $$ = $1; }
@@ -313,8 +315,6 @@ string_expr:
   string_expr '.' explicit_value { $$ = new binary_t(".", $1, $3); /* Yes, I change it, to make it more look like class string */}
   ; 
   
-include:
-  INCLUDE value	{ $$ = new include_t($2); } ;   
-  
 require:
   REQUIRE value	{ $$ = new require_t($2); };
+

@@ -129,7 +129,7 @@ void ArParser(int argc, char* argv[])
 	}
 	else
 	{
-		yyin = fopen("../../app/config/GEN/arvfb.config","r");
+		yyin = fopen("/home/parai/workspace/OpenSAR/app/config/GEN/arvfb.config","r");
 		puts("parse on arvfb.config\n");
 	}
 	if(NULL==yyin)

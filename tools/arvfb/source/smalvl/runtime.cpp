@@ -8,15 +8,25 @@ runtime_t::runtime_t() :
 }
 
 /* Signleton implementation */
-runtime_t* runtime_t::self = 0x0;
+runtime_t* runtime_t::self = NULL;
 
 runtime_t* runtime_t::get_instance()
 {
-	if (self == 0x0)
+	if (self == NULL)
 	{
 		self = new runtime_t();
 	}
 	return self;
+}
+
+void runtime_t::init()
+{
+	if (self != NULL)
+	{
+		_memmanager->init();
+		delete self;
+		self = NULL;
+	}
 }
 
 function_declaration_t* runtime_t::get_function_declaration(std::string name)
@@ -39,12 +49,13 @@ void runtime_t::add_function_declaration(function_declaration_t* fd)
 {
 	RUNTIME_DEBUG("Added function declaration: %s", fd->get_name().c_str());
 	std::pair<std::string, function_declaration_t*> entry(fd->get_name(), fd);
-	std::pair<fun_map_t::iterator, bool> status = _function_declarations.insert(
-			entry);
+	std::pair<fun_map_t::iterator, bool> status = _function_declarations.insert(entry);
 	if (status.second == false)
 	{
 		std::cerr << "Semantic error: Function " << fd->get_name()
 				<< " redeclaration" << std::endl;
+
+		Arch_Trace("Semantic error: Function %s redeclaration.\n",fd->get_name().c_str());
 	}
 }
 
@@ -62,6 +73,7 @@ ref_t runtime_t::run_function(function_call_t* fc, frame_stack_t& fs)
 		throw (runtime_exception_t)
 {
 	RUNTIME_DEBUG("'%s' function call", fc->get_name().c_str());
+	ctrl_t ctrl = CTRL_FUNCTION;
 	try
 	{
 		function_declaration_t* fun = get_function_declaration(fc->get_name());
@@ -82,7 +94,7 @@ ref_t runtime_t::run_function(function_call_t* fc, frame_stack_t& fs)
 			assign_var(decl_var, ref, fs);
 		}
 
-		ref_t result_ref = run(fun->get_instructions(), fs);
+		ref_t result_ref = run(fun->get_instructions(), fs, &ctrl);
 		pop_frame_stack(fs);
 		return result_ref;
 	}
@@ -113,8 +125,6 @@ bool runtime_t::call_build_in_function(function_call_t* fc, frame_stack_t& fs,
 {
 	std::list<expr_t*>::iterator i = fc->get_args().begin();
 	std::vector<object_t*> arg_objs;
-	const char* name = fc->get_name().c_str();
-	bool rv = true;
 
 	RUNTIME_DEBUG("Preparing %d arguments", (int)fc->get_args().size());
 	//coping function call arguments to ...
@@ -156,17 +166,20 @@ void runtime_t::interpretate()
 	frame_stack_t fs;
 
 	try
-	{
-		runtime_t::get_instance()->run(this->_main_block, fs);
+	{	// wow, this is the start
+		ctrl_t ctrl = CTRL_MAIN_BLOCK;
+		runtime_t::get_instance()->run(this->_main_block, fs, &ctrl);
 	}
 	catch (runtime_exception_t e)
 	{
 		std::cerr << "Fatal rutime error: ";
 		e.print();
+
+		Arch_Trace("Fatal rutime error: %s\n",e.get_message().c_str());
 	}
 }
 
-ref_t runtime_t::run(block_t* block, frame_stack_t& fs)
+ref_t runtime_t::run(block_t* block, frame_stack_t& fs, ctrl_t* p_ctrl)
 		throw (runtime_exception_t)
 {
 	RUNTIME_DEBUG("Runing block: instuctions count is %d", block->size());
@@ -177,48 +190,64 @@ ref_t runtime_t::run(block_t* block, frame_stack_t& fs)
 	for (instructions_list_t::iterator i = instructions->begin();
 			i != instructions->end(); i++)
 	{
-		//TODO: return
+		ctrl_t ctrl = *p_ctrl;	// copy, where we are.
 		oper_t* instruction = (*i);
-		run_instruction(instruction, fs);
+		ref_t ref = run_instruction(instruction, fs, &ctrl);
+		if(CTRL_RETURN == ctrl)
+		{
+			pop_frame_stack(fs);
+			*p_ctrl = CTRL_RETURN;	// answer, we are going to return explicitly
+			return ref;
+		}
+		else if(CTRL_BREAK == ctrl)
+		{
+			*p_ctrl = CTRL_BREAK;
+			return ref;
+		}
+		else
+		{
+			// continue
+		}
 	}
 	//cleaning stack
 	pop_frame_stack(fs);
-	return 0x0;
+	return REF_IS_VOID;
 }
 
-ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs)
+ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs, ctrl_t* p_ctrl)
 		throw (runtime_exception_t)
 {
 #define ti typeid(*instruction)
+	ctrl_t ctrl = *p_ctrl;	// copy, where we are.
+	ref_t ref = REF_IS_VOID;
 	if ( ti == typeid(block_t))
 	{
-		return run(dynamic_cast<block_t*>(instruction), fs);
+		ref = run(dynamic_cast<block_t*>(instruction), fs, &ctrl);
 	}
 	else if (ti == typeid(function_call_t))
 	{
 		function_call_t *fc = reinterpret_cast<function_call_t*>(instruction);
-		return run_function(fc, fs);
+		ref =  run_function(fc, fs);
 	}
 	else if (ti == typeid(for_op_t))
 	{
 		for_op_t* for_op = dynamic_cast<for_op_t*>(instruction);
 
-		run_instruction(for_op->get_init_op(), fs);
-		object_t* condition_obj = _memmanager->get_object(
-				compute_expression(for_op->get_condition(), fs));
+		run_instruction(for_op->get_init_op(), fs , &ctrl);
+		object_t* condition_obj = _memmanager->get_object(compute_expression(for_op->get_condition(), fs));
 
 		for (; (bool) (*condition_obj);
-				condition_obj = _memmanager->get_object(
-						compute_expression(for_op->get_condition(), fs)))
+				condition_obj = _memmanager->get_object(compute_expression(for_op->get_condition(), fs)))
 		{
-			RUNTIME_DEBUG("While ( %s ) cycle", ((const char*) *condition_obj));
-			ref_t ref = run(for_op->get_block(), fs);
-			if (ref != REF_IS_VOID)
-				return ref;
-			run_instruction(for_op->get_iter_op(), fs);
+			RUNTIME_DEBUG("For ( %s ) cycle", ((const char*) *condition_obj));
+			ctrl = CTRL_FOR_LOOP;
+			ref = run(for_op->get_block(), fs, &ctrl);
+			if( (CTRL_BREAK == ctrl) || (CTRL_RETURN == ctrl))
+			{
+				break;
+			}
+			run_instruction(for_op->get_iter_op(), fs, &ctrl);
 		}
-
-		return REF_IS_VOID;
 	}
 	else if ( ti == typeid(while_op_t))
 	{
@@ -232,7 +261,13 @@ ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs)
 						compute_expression(while_op->get_condition(), fs)))
 		{
 			RUNTIME_DEBUG("While ( %s ) cycle", ((const char*) *condition_obj));
-			run(while_op->get_block(), fs);
+			ctrl = CTRL_WHILE_LOOP;
+			ref = run(while_op->get_block(), fs, &ctrl);
+
+			if( (CTRL_BREAK == ctrl) || (CTRL_RETURN == ctrl))
+			{
+				break;
+			}
 		}
 	}
 	else if ( ti == typeid(if_op_t))
@@ -244,11 +279,12 @@ ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs)
 				((const char*) *condition_obj));
 		if ((bool) (*condition_obj))
 		{
-			return run(if_op->get_then_instr(), fs);
+			ref = run(if_op->get_then_instr(), fs, &ctrl);
 		}
-		else if (if_op->get_else_instr() != 0x0)
-			return run(if_op->get_else_instr(), fs);
-
+		else if (if_op->get_else_instr() != NULL)
+		{
+			ref = run(if_op->get_else_instr(), fs, &ctrl);
+		}
 	}
 	else if ( ti == typeid(require_t))
 	{
@@ -258,15 +294,15 @@ ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs)
 	}
 	else if ( ti == typeid(break_op_t))
 	{
-		return 0x0;
+		RUNTIME_DEBUG("Break");
+		ctrl = CTRL_BREAK;
 	}
 	else if ( ti == typeid(return_op_t))
 	{
-		RUNTIME_DEBUG("Return value");
+		RUNTIME_DEBUG("Return");
 		return_op_t* ret = dynamic_cast<return_op_t*>(instruction);
-		ref_t ref = compute_expression(ret->get_value(), fs);
-		pop_frame_stack(fs);
-		return ref;
+		ref = compute_expression(ret->get_value(), fs);
+		ctrl = CTRL_RETURN;
 	}
 	else if ( ti == typeid(function_declaration_t))
 	{
@@ -295,7 +331,16 @@ ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs)
 		unset_var(unset->get_var(), fs);
 
 	}
-	return REF_IS_VOID;
+	else
+	{
+		printf("TODO: un-impl instruction\n");
+	}
+
+	if((CTRL_RETURN == ctrl) || (CTRL_BREAK == ctrl))
+	{
+		*p_ctrl = ctrl;
+	}
+	return ref;
 }
 
 ref_t runtime_t::compute_expression(expr_t* expr, frame_stack_t& fs)
@@ -341,7 +386,7 @@ ref_t runtime_t::compute_expression(expr_t* expr, frame_stack_t& fs)
 	else if (typeid(*expr) == typeid(value_t))
 	{
 		value_t* value = dynamic_cast<value_t*>(expr);
-		//RUNTIME_DEBUG("value_t  %s", ( (const char*) *value->get_value()));
+		RUNTIME_DEBUG("value_t  %s", value->get_value().c_str());
 		/* Placing object in heap */
 		object_t* explicit_obj = acs::create_object(value->get_value());
 		/* Add new object to heap */
@@ -351,7 +396,7 @@ ref_t runtime_t::compute_expression(expr_t* expr, frame_stack_t& fs)
 		return ref;
 	}
 
-	return 0x0;
+	return REF_IS_VOID;
 }
 
 ref_t runtime_t::compute_math_expression(object_t* obj1, const char* op,
@@ -476,6 +521,7 @@ ref_t runtime_t::compute_unary_expression(unary_t* expr, frame_stack_t& fs)
 		throw (runtime_exception_t, std::invalid_argument)
 {
 	const char* op = expr->get_operator();
+	ctrl_t ctrl = CTRL_NONE;
 
 	if (!strcmp(op, "++"))
 	{
@@ -483,7 +529,7 @@ ref_t runtime_t::compute_unary_expression(unary_t* expr, frame_stack_t& fs)
 		//TODO: do all actions in heap
 		assign_t *assign = new assign_t(expr->get_value(),
 				new binary_t("+", expr->get_value(), new value_t("1")));
-		run_instruction(assign, fs);
+		run_instruction(assign, fs, &ctrl);
 		return compute_expression(expr->get_value(), fs);
 	}
 	else if (!strcmp(op, "--"))
@@ -492,7 +538,7 @@ ref_t runtime_t::compute_unary_expression(unary_t* expr, frame_stack_t& fs)
 		//TODO: do all actions in heap
 		assign_t *assign = new assign_t(expr->get_value(),
 				new binary_t("-", expr->get_value(), new value_t("1")));
-		run_instruction(assign, fs);
+		run_instruction(assign, fs,&ctrl);
 		return compute_expression(expr->get_value(), fs);
 	}
 	else
@@ -509,8 +555,7 @@ ref_t runtime_t::create_var(var_t* var, ref_t& ref, frame_stack_t& fs)
 	/* Inset in local scope var*/
 	std::pair<std::string, ref_t> _pair(var->get_name(), ref);
 	var_scope->insert(_pair);
-	RUNTIME_DEBUG("Insert var $%s refer to %p to scope", var->get_name().data(),
-			ref);
+	RUNTIME_DEBUG("Insert var $%s refer to %d to scope", var->get_name().data(),ref);
 	return ref;
 }
 
@@ -635,7 +680,8 @@ void runtime_t::assign_var(var_t* var, ref_t& value_ref, frame_stack_t& fs)
 			}
 			_memmanager->increment_link_count(value_ref);
 			get_var_ref(var, fs) = value_ref;
-		} catch (runtime_exception_t e)
+		}
+		catch (runtime_exception_t e)
 		{
 			/* If not exist, create in local scope */
 			if (e.getType() == VAR_NOT_DECL)
@@ -648,7 +694,8 @@ void runtime_t::assign_var(var_t* var, ref_t& value_ref, frame_stack_t& fs)
 			{
 				throw e;
 			}
-		} catch (std::out_of_range e1)
+		}
+		catch (std::out_of_range e1)
 		{
 			throw std::out_of_range("Assigned uninit array element");
 		}
@@ -656,9 +703,6 @@ void runtime_t::assign_var(var_t* var, ref_t& value_ref, frame_stack_t& fs)
 	}
 	else
 	{
-//        RUNTIME_DEBUG("Assign $%s type=%s, value=%s", var->get_name().data(),
-//                      dt::type_to_string(obj->get_type()),
-//                      (const char*) *obj);
 		/* Search var in frame stack */
 		try
 		{

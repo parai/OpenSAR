@@ -28,8 +28,7 @@ inc-y += -I$(BD)/tools/arvfb/source/parser
 inc-y += -I$(BD)/tools/arvfb/source/smalvl
 inc-y += -I$(BD)/include
 
-def-y += 
-#-DDEBUG_ENABLED=1
+def-y += -DDEBUG_ENABLED
 
 #objects
 dir-y = $(BD)/tools/arvfb/source	\
@@ -89,15 +88,16 @@ GEN:
 	@rm -fv bison.output
 
 POST:
-	cp -rv $(BD)/tools/arvfb/example   $(OUT)
-	mv -fv  $(OUT)/example/libc.ext    $(OUT)
-	echo Hello World! > $(OUT)/source_file.txt
-	echo >> $(OUT)/source_file.txt
-	echo >> $(OUT)/source_file.txt
-	echo orange >> $(OUT)/source_file.txt
-	echo pear >> $(OUT)/source_file.txt
-	echo apple >> $(OUT)/source_file.txt
-	echo banana >> $(OUT)/source_file.txt
+	@cp -rv $(BD)/tools/arvfb/example   $(OUT)
+	@mv -fv  $(OUT)/example/libc.ext    $(OUT)
+	@mv -fv  $(OUT)/example/lib.inc    $(OUT)
+	@echo Hello World! > $(OUT)/source_file.txt
+	@echo >> $(OUT)/source_file.txt
+	@echo >> $(OUT)/source_file.txt
+	@echo orange >> $(OUT)/source_file.txt
+	@echo pear >> $(OUT)/source_file.txt
+	@echo apple >> $(OUT)/source_file.txt
+	@echo banana >> $(OUT)/source_file.txt
 
 all:$(obj-dir) $(obj-y) $(OUT) POST
 	@echo $(obj-y)

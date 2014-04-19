@@ -83,21 +83,21 @@ object_t* acs::create_object(std::string v)
 	object_t* object = new object_t(type);
 	switch (type)
 	{
-	case INTEGER:
-		sscanf(v.c_str(), "%d", &(object->i));
-		break;
-	case FLOATPOINT:
-		object->d = new double(0);
-		sscanf(v.c_str(), "%lf", (object->d));
-		break;
-	case BOOL:
-		object->b = acs::get_logical_value(v);
-		break;
-	case STRING:
-		object->s = new std::string(v);
-		break;
-	default:
-		break;
+		case INTEGER:
+			sscanf(v.c_str(), "%d", &(object->i));
+			break;
+		case FLOATPOINT:
+			object->d = new double(0);
+			sscanf(v.c_str(), "%lf", (object->d));
+			break;
+		case BOOL:
+			object->b = acs::get_logical_value(v);
+			break;
+		case STRING:
+			object->s = new std::string(v);
+			break;
+		default:
+			break;
 	}
 	return object;
 }

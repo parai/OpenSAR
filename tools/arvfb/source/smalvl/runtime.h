@@ -34,6 +34,8 @@ private:
 public:
 	static runtime_t* get_instance();
 
+	void init(void);
+
 	void gc(frame_stack_t& fs) throw (runtime_exception_t);
 
 	/*Function declaration operations*/
@@ -60,13 +62,13 @@ public:
 	void assign_var(var_t* var, expr_t* expr, frame_stack_t& fs);
 
 	/* Run code */
-	ref_t run(block_t* block, frame_stack_t& fs) throw(runtime_exception_t);
+	ref_t run(block_t* block, frame_stack_t& fs, ctrl_t* p_ctrl) throw(runtime_exception_t);
 	/* Run single instruction, not a block of instructions */
-	ref_t run_instruction(oper_t* instruction, frame_stack_t& fs) throw (runtime_exception_t);
+	ref_t run_instruction(oper_t* instruction, frame_stack_t& fs, ctrl_t* p_ctrl) throw (runtime_exception_t);
 	/*Call function*/
 	ref_t run_function(function_call_t*, frame_stack_t& fs) throw(runtime_exception_t);
 	ref_t call_external_function(function_call_t*, frame_stack_t& fs) throw(runtime_exception_t);
-	bool call_build_in_function(function_call_t*, frame_stack_t& fs,ref_t*) throw(runtime_exception_t);
+	bool  call_build_in_function(function_call_t*, frame_stack_t& fs,ref_t*) throw(runtime_exception_t);
 	ref_t compute_expression(expr_t *expr, frame_stack_t& fs) throw (runtime_exception_t);
 	/*
 	 * Throw std::invalid_argument if try to exercise conversion on object_t;

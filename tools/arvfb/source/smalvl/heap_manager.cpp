@@ -1,12 +1,14 @@
 #include "heap_manager.h"
 #include <ctime>
 
-heap_manager_t* heap_manager_t::_self = 0x0;
+heap_manager_t* heap_manager_t::_self = NULL;
 
 heap_manager_t* heap_manager_t::get_instance()
 {
-	if (_self == 0x0)
+	if (_self == NULL)
+	{
 		_self = new heap_manager_t();
+	}
 
 	return _self;
 }
@@ -20,7 +22,16 @@ heap_manager_t::heap_manager_t()
 
 heap_manager_t::~heap_manager_t()
 {
+	printf("DELETE OF HEAP\n");
+}
 
+void heap_manager_t::init(void)
+{
+	if(_self!=NULL)
+	{
+		delete _self;
+		_self = NULL;
+	}
 }
 
 ref_t heap_manager_t::add_object(object_t* object) throw (runtime_exception_t)
@@ -54,7 +65,7 @@ void heap_manager_t::remove_object(ref_t ref) throw (runtime_exception_t)
 		e.get_message() += std::string(" ") + std::string(__FILE__) + ":"
 				+ std::to_string(__LINE__);
 		throw e;
-	}RUNTIME_DEBUG("Object ref=%p deleted from heap", ref);
+	}RUNTIME_DEBUG("Object ref=%d deleted from heap", ref);
 }
 
 ref_t heap_manager_t::set_object(ref_t _ref, object_t* object)
@@ -68,7 +79,7 @@ ref_t heap_manager_t::set_object(ref_t _ref, object_t* object)
 	_heap.erase(_ref);
 	std::pair<heap_t::iterator, bool> status = _heap.insert(_pair);
 	(void) status; // TODO
-	RUNTIME_DEBUG("Set up ref=%p to object type=%s, value=%s", _ref,
+	RUNTIME_DEBUG("Set up ref=%d to object type=%s, value=%s", _ref,
 			dt::type_to_string(object->get_type()), ( (const char*) *object));
 	return _ref;
 }
