@@ -149,7 +149,7 @@ ref_t funcaller_t::call(void* faddr, const meta_info_t& meta,
 			double (*fun)() = (double (*)()) faddr;
 			ref_t ref = heap_manager_t::get_instance()->add_object(FLOATPOINT);
 			object_t* obj = heap_manager_t::get_instance()->get_object(ref);
-			obj->d = new double(fun());
+			obj->d = fun();
 			return ref;
 		}
 	}
@@ -359,7 +359,7 @@ void funcaller_t::Print(std::vector<object_t*>& objs,ref_t* result)
 				Arch_Trace("%d",objs[I]->i);
 				break;
 			case FLOATPOINT:
-				Arch_Trace("%f",*(objs[I]->d));
+				Arch_Trace("%lf",objs[I]->d);
 				break;
 			case ARRAY:
 				Arch_Trace("[TODO]");

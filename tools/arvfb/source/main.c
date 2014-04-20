@@ -21,7 +21,8 @@
 #include "arvfb.h"
 
 // ======================== [ IMPORTS        ] ==============================================
-extern void ArScript(char* file);
+extern void ArScriptLoad(const char* file);
+extern void ArScriptRun(void);
 
 // ======================== [ LOCAL VARIANTS  ] ==============================================
 static boolean isPaused = TRUE;
@@ -106,18 +107,20 @@ static GtkWidget* CreateToolbar(void)
 
 static void on_button_clicked(GtkButton *button,gpointer data)
 {
-	if(0==strcmp((const char*)data,"Load"))
+	if(0==strcmp((const char*)data,"Run"))
 	{
-		ArScript(NULL);
-	}
-	else if(0==strcmp((const char*)data,"Run"))
-	{
-
+		ArScriptRun();
 	}
 	else
 	{
 
 	}
+}
+
+static void on_file_set(GtkFileChooser *button)
+{
+	const char* file = (const char*)gtk_file_chooser_get_filename(button);
+	ArScriptLoad(file);
 }
 
 static GtkWidget* Console(void)
@@ -128,10 +131,12 @@ static GtkWidget* Console(void)
 
 	GtkWidget* pButton;
 
-
-	pButton = gtk_button_new_with_label("Load Script");
+	pButton = gtk_file_chooser_button_new("Load Script",GTK_FILE_CHOOSER_ACTION_OPEN);
 	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
-	g_signal_connect(G_OBJECT (pButton), "clicked", G_CALLBACK(on_button_clicked) , (gpointer)"Load");
+	g_signal_connect(G_OBJECT (pButton), "file_set", G_CALLBACK(on_file_set) , (gpointer)NULL);
+	GtkFileFilter* filter = gtk_file_filter_new();
+	gtk_file_filter_add_pattern(filter,"*.svl");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(pButton),filter);
 
 	pButton = gtk_button_new_with_label("Run");
 	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
@@ -211,6 +216,8 @@ void Arch_Trace(const char* format,...)
 	GtkTextIter Iter;
 	gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
 	gtk_text_buffer_insert(pTextBuffer,&Iter,log_buf,length);
+
+	gtk_text_iter_forward_visible_cursor_position(&Iter);
 }
 
 int main (int argc, char *argv[])

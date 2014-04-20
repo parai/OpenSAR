@@ -29,6 +29,7 @@ private:
 	static runtime_t* self;
 	block_t* _main_block;
 	std::string run_instruction_name;
+	frame_stack_t global_stack;
 	runtime_t();
 
 public:
@@ -55,7 +56,7 @@ public:
 	/* Create var in top frame stack var scope*/
 	ref_t create_var(var_t* var, ref_t& ref, frame_stack_t& fs);
 	object_t* get_var_value(var_t* var, frame_stack_t& fs) throw (runtime_exception_t);
-	ref_t& get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref=0x0) throw (runtime_exception_t);
+	ref_t& get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref=REF_IS_VOID) throw (runtime_exception_t);
 	void unset_var(std::string name, frame_stack_t& fs);
 	void unset_var(var_t* var, frame_stack_t& fs);
 	void assign_var(var_t* var, ref_t& ref, frame_stack_t& fs);

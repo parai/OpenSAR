@@ -183,29 +183,6 @@ public:
     }
 };
 
-class include_t: public oper_t {
-    expr_t *file;
-public:
-    include_t(expr_t* _file) : file(_file) {
-        SEMANTIC_NODE("Include instruction node created");
-    }
-
-    virtual void print(int indent=0) {
-        std::cout << "INCLUDE ";
-        file->print();
-        std::cout << ";\n";
-    }
-    
-    virtual std::string get_decl()
-    {
-      return std::string("include statement");
-    }
-
-    virtual ~include_t() {
-        delete file;
-    }
-};
-
 class require_t: public oper_t {
     expr_t* file;
 public:

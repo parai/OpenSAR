@@ -23,7 +23,7 @@ public:
 		std::string* s;
 		array_obj_t* a;
 		int i;
-		double *d;
+		double d;
 		bool b;
 	};
 
@@ -46,22 +46,21 @@ public:
 		switch(_dynamic_type)
 		{
 			case INTEGER:
-			/*Nothing to do */
-			break;
+				/*Nothing to do */
+				break;
 			case FLOATPOINT:
-			if(d) delete d;
-			break;
+				break;
 			case ARRAY:
-			if(a) delete a;
-			break;
+				if(a) delete a;
+				break;
 			case STRING:
-			if(s) delete s;
-			break;
+				if(s) delete s;
+				break;
 			case BOOL:
-			/* Nothing to do */
-			break;
+				/* Nothing to do */
+				break;
 			default:
-			break;	// supress warning as not process VA ...
+				break;	// supress warning as not process VA ...
 		}
 	}
 	/*
@@ -82,7 +81,7 @@ public:
 		}
 		else if(this->get_type() == FLOATPOINT)
 		{
-			return (*this->d > (double)0);
+			return (this->d > (double)0);
 		}
 		else if(this->get_type() == BOOL)
 		{
@@ -102,7 +101,7 @@ public:
 		}
 		else if(this->get_type()== FLOATPOINT)
 		{
-			return std::trunc( *(this->d) );
+			return std::trunc( this->d );
 		}
 		else if(this->get_type() == BOOL)
 		{
@@ -149,19 +148,19 @@ public:
 	explicit operator std::string() const throw (std::invalid_argument)
 	{
 		if(this->get_type() == FLOATPOINT)
-		return std::string( std::to_string(*(this->d)) );
+			return std::string( std::to_string(this->d) );
 		else if(this->get_type() == INTEGER)
-		return std::string( std::to_string(this->i) );
+			return std::string( std::to_string(this->i) );
 		else if(this->get_type() == BOOL)
-		return std::string( (this->b)?("true"):("false") );
+			return std::string( (this->b)?("true"):("false") );
 		else if( this->get_type() == STRING )
-		return *(this->s);
+			return *(this->s);
 		else if( this->get_type() == NONE )
-		return "NONE";
+			return "NONE";
 		else if( this->get_type() == ARRAY )
-		return std::string("Array with ") +std::to_string(a->size()) +" elements";
+			return std::string("Array with ") +std::to_string(a->size()) +" elements";
 		else
-		throw runtime_exception_t(INVALID_COVERSION);
+			throw runtime_exception_t(INVALID_COVERSION);
 	}
 
 	explicit operator const char*() const throw (std::invalid_argument)

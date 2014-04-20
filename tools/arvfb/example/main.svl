@@ -2,15 +2,26 @@
 
 include lib.inc
 
-def main()
-{
-	$rv = 1;
-	
-	HelloWorld();
 
+
+def add()
+{
+	$rv++;
+	print("Add $rv=",$rv,"\n");
+}
+
+def main()
+{	
+	$rv = 0x0;
+	
+	add();
+	
+	print("Global $rv=",$rv,"\n");
+	
 	while($rv < 10)
 	{
 		$rv++;
+		print("Global $rv=",$rv,"\n");
 		if($rv == 3)
 		{
 			print("Test Break,$rv=",$rv,"\n");

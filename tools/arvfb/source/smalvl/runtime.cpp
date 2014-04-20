@@ -163,12 +163,10 @@ bool runtime_t::semantic_analys()
 
 void runtime_t::interpretate()
 {
-	frame_stack_t fs;
-
 	try
 	{	// wow, this is the start
 		ctrl_t ctrl = CTRL_MAIN_BLOCK;
-		runtime_t::get_instance()->run(this->_main_block, fs, &ctrl);
+		runtime_t::get_instance()->run(this->_main_block, global_stack, &ctrl);
 	}
 	catch (runtime_exception_t e)
 	{
@@ -308,11 +306,6 @@ ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs, ctrl_t*
 	{
 		/* Nothing to do */
 	}
-	else if ( ti == typeid(include_t))
-	{
-		include_t* r = dynamic_cast<include_t*>(instruction);
-		(void) r;
-	}
 	else if ( ti == typeid(assign_t))
 	{
 		assign_t *a = dynamic_cast<assign_t*>(instruction);
@@ -388,7 +381,7 @@ ref_t runtime_t::compute_expression(expr_t* expr, frame_stack_t& fs)
 		value_t* value = dynamic_cast<value_t*>(expr);
 		RUNTIME_DEBUG("value_t  %s", value->get_value().c_str());
 		/* Placing object in heap */
-		object_t* explicit_obj = acs::create_object(value->get_value());
+		object_t* explicit_obj = acs::create_object(value->get_value(),value->get_type());
 		/* Add new object to heap */
 		ref_t ref = _memmanager->add_object(explicit_obj);
 		/* Increment link count. Will be const count=1 */
@@ -476,7 +469,7 @@ ref_t runtime_t::compute_math_expression(object_t* obj1, const char* op,
 		}
 		else
 		{
-			object->d = new double(dr);
+			object->d = dr;
 			RUNTIME_DEBUG("Binary operation result = %lf", dr);
 		}
 		return ref;
@@ -528,7 +521,7 @@ ref_t runtime_t::compute_unary_expression(unary_t* expr, frame_stack_t& fs)
 		//TODO: safe delete object
 		//TODO: do all actions in heap
 		assign_t *assign = new assign_t(expr->get_value(),
-				new binary_t("+", expr->get_value(), new value_t("1")));
+				new binary_t("+", expr->get_value(), new value_t("1",INTEGER)));
 		run_instruction(assign, fs, &ctrl);
 		return compute_expression(expr->get_value(), fs);
 	}
@@ -537,7 +530,7 @@ ref_t runtime_t::compute_unary_expression(unary_t* expr, frame_stack_t& fs)
 		//TODO: safe delete object
 		//TODO: do all actions in heap
 		assign_t *assign = new assign_t(expr->get_value(),
-				new binary_t("-", expr->get_value(), new value_t("1")));
+				new binary_t("-", expr->get_value(), new value_t("1",INTEGER)));
 		run_instruction(assign, fs,&ctrl);
 		return compute_expression(expr->get_value(), fs);
 	}
@@ -562,6 +555,7 @@ ref_t runtime_t::create_var(var_t* var, ref_t& ref, frame_stack_t& fs)
 ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 		throw (runtime_exception_t)
 {
+	// I think we should only search the global stack and the local stack
 	frame_stack_t::iterator i = fs.begin();
 	int indent = 0;
 
@@ -571,7 +565,6 @@ ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 		try
 		{
 			ref_t ref = var_scope->at(var->get_name());
-			//RUNTIME_DEBUG("Var $%s reference found in frame stack at %d level", var->get_name().data(), indent);
 			object_t* obj = _memmanager->get_object(ref);
 			/* We work with array */
 			if (typeid(*var) == typeid(array_t))
@@ -584,7 +577,7 @@ ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 
 				//in case if in array does't exist key
 				if (array_map->find(key) == array_map->end()
-						&& default_ref != 0x0)
+						&& default_ref != REF_IS_VOID)
 				{
 					std::pair<std::string, ref_t> _pair(key, default_ref);
 					array_map->insert(_pair);
@@ -610,7 +603,7 @@ ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 		indent++;
 	}
 
-	//RUNTIME_DEBUG("Var $%s reference not found in frame stack at all %d levels", var->get_name().data(), indent);
+	RUNTIME_DEBUG("Var $%s reference not found in frame stack at all %d levels", var->get_name().c_str(), indent);
 	runtime_exception_t e(VAR_NOT_DECL);
 	e.get_message() = "Var $";
 	e.get_message() += var->get_name();
@@ -635,7 +628,7 @@ object_t* runtime_t::get_var_value(var_t* var, frame_stack_t& fs)
 	}
 
 	RUNTIME_DEBUG("* get_var_value( $%s ), type = %s, value = %s ",
-			var->get_name().data(), dt::type_to_string(obj->get_type()),
+			var->get_name().c_str(), dt::type_to_string(obj->get_type()),
 			((const char*) *obj));
 	return obj;
 }
@@ -743,8 +736,7 @@ void runtime_t::print_frame_stack(frame_stack_t& fs)
 				std::cout << " ";
 
 			std::cout << (*var_iterator).first << "="
-					<< (const char*) (*_memmanager->get_object(
-							(*var_iterator).second)) << "\t"
+					<< (const char*) (*_memmanager->get_object((*var_iterator).second)) << "\t"
 					<< (*var_iterator).second << std::endl;
 		}
 

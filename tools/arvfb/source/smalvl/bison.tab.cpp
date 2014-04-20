@@ -1356,7 +1356,7 @@ yyreduce:
     {
    runtime_t::get_instance()->set_main_block((block_t*) (yyvsp[0].oper));
    runtime_t::get_instance()->semantic_analys();
-   runtime_t::get_instance()->interpretate();
+   //runtime_t::get_instance()->interpretate();
   }
 #line 1362 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1504,31 +1504,31 @@ yyreduce:
 
   case 32:
 #line 195 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
-    { (yyval.expr) = new value_t((yyvsp[0].str)); }
+    { (yyval.expr) = new value_t((yyvsp[0].str),BOOL); }
 #line 1509 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
 #line 197 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
-    { (yyval.expr) = new value_t((yyvsp[0].str)); }
+    { (yyval.expr) = new value_t((yyvsp[0].str),BOOL); }
 #line 1515 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
 #line 199 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
-    { (yyval.expr) = new value_t((yyvsp[0].str)); }
+    { (yyval.expr) = new value_t((yyvsp[0].str),INTEGER); }
 #line 1521 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
 #line 201 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
-    { (yyval.expr) = new value_t((yyvsp[0].str)); }
+    { (yyval.expr) = new value_t((yyvsp[0].str),FLOATPOINT); }
 #line 1527 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
 #line 203 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
-    { (yyval.expr) = new value_t((yyvsp[0].str)); }
+    { (yyval.expr) = new value_t((yyvsp[0].str),STRING); }
 #line 1533 "bison.tab.c" /* yacc.c:1646  */
     break;
 

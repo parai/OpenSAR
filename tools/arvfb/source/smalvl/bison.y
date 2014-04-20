@@ -79,7 +79,7 @@ program: body
   {
    runtime_t::get_instance()->set_main_block((block_t*) $1);
    runtime_t::get_instance()->semantic_analys();
-   runtime_t::get_instance()->interpretate();
+   //runtime_t::get_instance()->interpretate();
   }
   ;
 
@@ -192,15 +192,15 @@ value:
 /* End of top level rules */
 
 explicit_value:
-  TRUE { $$ = new value_t($1); }
+  TRUE { $$ = new value_t($1,BOOL); }
   |
-  FALSE { $$ = new value_t($1); }
+  FALSE { $$ = new value_t($1,BOOL); }
   |
-  TK_INTEGER { $$ = new value_t($1); }
+  TK_INTEGER { $$ = new value_t($1,INTEGER); }
   |
-  TK_FLOATPOINT { $$ = new value_t($1); }
+  TK_FLOATPOINT { $$ = new value_t($1,FLOATPOINT); }
   |
-  STRING_DEFINITION { $$ = new value_t($1); }
+  STRING_DEFINITION { $$ = new value_t($1,STRING); }
   |
   var 
   |
