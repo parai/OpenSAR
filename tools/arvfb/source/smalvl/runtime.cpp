@@ -76,9 +76,10 @@ ref_t runtime_t::run_function(function_call_t* fc, frame_stack_t& fs)
 	ctrl_t ctrl = CTRL_FUNCTION;
 	try
 	{
+		frame_stack_t fs_local;
 		function_declaration_t* fun = get_function_declaration(fc->get_name());
 		/* Function arguments scope */
-		fs.push_back(new var_scope_t());
+		fs_local.push_back(new var_scope_t());	// Local for it
 		/* Declaration arguments iterator */
 		std::list<expr_t*>::iterator decl_args = fun->get_args().begin();
 		/* Call function arguments iterator */
@@ -94,8 +95,8 @@ ref_t runtime_t::run_function(function_call_t* fc, frame_stack_t& fs)
 			assign_var(decl_var, ref, fs);
 		}
 
-		ref_t result_ref = run(fun->get_instructions(), fs, &ctrl);
-		pop_frame_stack(fs);
+		ref_t result_ref = run(fun->get_instructions(), fs_local, &ctrl);
+		pop_frame_stack(fs_local);
 		return result_ref;
 	}
 	catch (runtime_exception_t e)
@@ -555,7 +556,6 @@ ref_t runtime_t::create_var(var_t* var, ref_t& ref, frame_stack_t& fs)
 ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 		throw (runtime_exception_t)
 {
-	// I think we should only search the global stack and the local stack
 	frame_stack_t::iterator i = fs.begin();
 	int indent = 0;
 
@@ -603,7 +603,56 @@ ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 		indent++;
 	}
 
-	RUNTIME_DEBUG("Var $%s reference not found in frame stack at all %d levels", var->get_name().c_str(), indent);
+	RUNTIME_DEBUG("Var $%s reference not found in local frame stack at all %d levels", var->get_name().c_str(), indent);
+
+	i = global_stack.begin();
+	indent = 0;
+
+	for (; i != global_stack.end(); i++)
+	{
+		var_scope_t* var_scope = (*i);
+		try
+		{
+			ref_t ref = var_scope->at(var->get_name());
+			object_t* obj = _memmanager->get_object(ref);
+			/* We work with array */
+			if (typeid(*var) == typeid(array_t))
+			{
+				array_t *array = dynamic_cast<array_t*>(var);
+				array_obj_t* array_map = obj->a;
+				ref_t key_value = compute_expression(array->get_index(), fs);
+				std::string key = (std::string) (*_memmanager->get_object(
+						key_value));
+
+				//in case if in array does't exist key
+				if (array_map->find(key) == array_map->end()
+						&& default_ref != REF_IS_VOID)
+				{
+					std::pair<std::string, ref_t> _pair(key, default_ref);
+					array_map->insert(_pair);
+				}
+				else if (array_map->find(key) == array_map->end())
+				{
+					runtime_exception_t e(VAR_NOT_DECL);
+					e.get_message() = "Array $";
+					e.get_message() += var->get_name();
+					e.get_message() += ". Out of bound exception. Key=" + key;
+					throw e;
+				}
+				return (array_map->at(key));
+			}
+			else
+				return var_scope->at(var->get_name());
+
+		}
+		catch (std::out_of_range e)
+		{
+
+		}
+		indent++;
+	}
+
+	RUNTIME_DEBUG("Var $%s reference not found in global frame stack at all %d levels", var->get_name().c_str(), indent);
 	runtime_exception_t e(VAR_NOT_DECL);
 	e.get_message() = "Var $";
 	e.get_message() += var->get_name();

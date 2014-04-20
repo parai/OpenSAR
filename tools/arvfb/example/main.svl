@@ -3,6 +3,7 @@
 include lib.inc
 
 
+$rv = 0x16;
 
 def add()
 {
@@ -12,7 +13,7 @@ def add()
 
 def main()
 {	
-	$rv = 0x0;
+	//$rv = 0x0;
 	
 	add();
 	
