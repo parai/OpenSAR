@@ -17,7 +17,7 @@ typedef struct _YYSTYPE
 	std::string str;
 	oper_t* oper;
 	expr_t* expr;
-std::list<expr_t*> args;
+	std::list<expr_t*> args;
 } YYSTYPE;
 
 #define YYSTYPE _YYSTYPE

@@ -15,20 +15,13 @@ funcaller_t::~funcaller_t()
 	}
 }
 
-bool funcaller_t::open_extension(const char* name) throw (nativelib_exception_t)
+bool funcaller_t::open_extension(require_t* require) throw (nativelib_exception_t)
 {
-	std::ifstream fs;
-	fs.open(name);
 
-	if (!fs.is_open())
-	{
-		return false;
-	}
 
 	lib_extension_t ext;
-	std::getline(fs, ext.lib_name);
+	ext.lib_name = require->get_name();
 
-	RUNTIME_DEBUG("Loading native extension %s", ext.lib_name.data());
 	void* handle = dlopen(ext.lib_name.data(), RTLD_LAZY);
 
 	if (handle == NULL)
@@ -39,74 +32,51 @@ bool funcaller_t::open_extension(const char* name) throw (nativelib_exception_t)
 
 	ext.handler = handle;
 
-	while (!fs.eof())
+	//require->print();
+
+	std::list<expr_t*>& declares = require->get_declares();
+
+	for(std::list<expr_t*>::iterator i=declares.begin(); i!=declares.end(); i++)
 	{
-		std::string buffer;
-		std::getline(fs, buffer);
-
-		if (buffer.empty())
-			continue;
-		if (buffer.find_first_of("//") == 0)
-			continue;
-
-		meta_info_t meta = this->parse_meta(buffer.data());
-		//this->print_meta(meta);
-		ext.functions_list.push_back(meta);
-	}
-
-	extensions.push_back(ext);
-
-	return true;
-}
-
-meta_info_t funcaller_t::parse_meta(const char* line)
-		throw (nativelib_exception_t)
-{
-	int b;
-	bool token_start = false;
-	char token[128];
-	int t = 0;
-	meta_info_t meta;
-
-	for (int i = 0; line[i]; i++)
-	{
-		if (!token_start)
+		meta_info_t meta;
+		declare_t* declare = dynamic_cast<declare_t*>(*i);
+		declare->print();
+		if(declare)
 		{
-			if (std::isalnum(line[i]) || line[i] == '.')
+			type_t* type = dynamic_cast<type_t*>(declare->get_type());
+			if(type)
 			{
-				token_start = true;
-				b = i;
-				continue;
+				meta.return_type = type->get_value();
 			}
+			else
+			{
+				printf("Require Error1.\n");
+			}
+			meta.name = declare->get_name();
+			for(std::list<expr_t*>::iterator j=declare->get_args().begin(); j!=declare->get_args().end(); j++)
+			{
+				type_t* type = dynamic_cast<type_t*>(*j);
+				if(type)
+				{
+					meta.argument_types.push_back(type->get_value());
+				}
+				else
+				{
+					printf("Require Error2.\n");
+				}
+			}
+
+			ext.functions_list.push_back(meta);
 		}
 		else
 		{
-			if (!std::isalnum(line[i]) && line[i] != '.')
-			{
-				token_start = false;
-				/* Result token */
-				memset(token, 0, sizeof(token));
-				memcpy(token, line + b, i - b);
-				TYPE type = dt::string_to_type(token);
-
-				if (t == 0)
-				{
-					meta.return_type = type;
-				}
-				else if (t == 1)
-				{
-					meta.name = std::string(token);
-				}
-				else
-					meta.argument_types.push_back(type);
-
-				t++;
-
-				continue;
-			}
+			printf("Require Error3.\n");
 		}
 	}
-	return meta;
+
+	extensions.push_back(ext);
+	RUNTIME_DEBUG("Loading native extension %s Done.", ext.lib_name.data());
+	return true;
 }
 
 ref_t funcaller_t::call(void* faddr, const meta_info_t& meta,
@@ -204,8 +174,8 @@ ref_t funcaller_t::call(void* faddr, const meta_info_t& meta,
 	{
 		if (meta.return_type == INTEGER)
 		{
-			if (meta.argument_types[0] == STRING
-					&& meta.argument_types[1] == STRING)
+			if (meta.argument_types[1] == STRING
+					&& meta.argument_types[0] == STRING)
 			{
 				int (*fun)(const char*,
 						const char*) = ( int (*)(const char*, const char*) ) faddr;
@@ -217,8 +187,8 @@ ref_t funcaller_t::call(void* faddr, const meta_info_t& meta,
 				obj->i = fun((const char*) *objs[1], (const char*) *objs[0]);
 				return ref;
 			}
-			else if (meta.argument_types[0] == STRING
-					&& meta.argument_types[1] == INTEGER)
+			else if (meta.argument_types[1] == STRING
+					&& meta.argument_types[0] == INTEGER)
 			{
 				int (*fun)(const char*,
 						int) = ( int (*)(const char*, int) ) faddr;
@@ -237,9 +207,9 @@ ref_t funcaller_t::call(void* faddr, const meta_info_t& meta,
 	{
 		if (meta.return_type == STRING)
 		{
-			if (meta.argument_types[0] == STRING
+			if (meta.argument_types[2] == STRING
 					&& meta.argument_types[1] == INTEGER
-					&& meta.argument_types[2] == INTEGER)
+					&& meta.argument_types[0] == INTEGER)
 			{
 				const char* (*fun)(const char*, int,
 						int) = ( const char* (*)(const char*, int, int) ) faddr;
@@ -260,10 +230,10 @@ ref_t funcaller_t::call(void* faddr, const meta_info_t& meta,
 	{
 		if (meta.return_type == INTEGER)
 		{
-			if (meta.argument_types[0] == STRING
-					&& meta.argument_types[1] == INTEGER
+			if (meta.argument_types[3] == STRING
 					&& meta.argument_types[2] == INTEGER
-					&& meta.argument_types[3] == INTEGER)
+					&& meta.argument_types[1] == INTEGER
+					&& meta.argument_types[0] == INTEGER)
 			{
 				int (*fun)(const char*, int, int,
 						int) = (int (*)(const char*, int, int, int)) faddr;

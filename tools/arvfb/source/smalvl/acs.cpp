@@ -55,18 +55,18 @@ std::string acs::type_to_string(TYPE t)
 {
 	switch (t)
 	{
-	case INTEGER:
-		return "Integer";
-	case FLOATPOINT:
-		return "FloatPoint";
-	case STRING:
-		return "String";
-	case ARRAY:
-		return "Array";
-	case BOOL:
-		return "Boolean";
-	default:
-		break;
+		case INTEGER:
+			return "Integer";
+		case FLOATPOINT:
+			return "FloatPoint";
+		case STRING:
+			return "String";
+		case ARRAY:
+			return "Array";
+		case BOOL:
+			return "Boolean";
+		default:
+			break;
 	}
 	return "None";	// TODO
 }

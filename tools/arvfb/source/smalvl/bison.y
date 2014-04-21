@@ -16,9 +16,10 @@ void yyerror(const char *str)
 %}
 
 %token FUNCTION ARRAY_DECLARATION
-%token IDENTIFIER TK_INTEGER TK_FLOATPOINT STRING_DEFINITION 
+%token IDENTIFIER TK_INTEGER TK_FLOATPOINT TK_STRING 
+%token LIB_NAME TK_TYPE
 %token MORE_OR_EQUAL LESS_OR_EQUAL NOT_EQUAL EQUAL
-%token RETURN INCLUDE REQUIRE
+%token RETURN INCLUDE
 %token IF ELSE
 %token TRUE FALSE
 %token INC DEC
@@ -36,14 +37,14 @@ void yyerror(const char *str)
 
 %type<str> IDENTIFIER  
 %type<str> TK_INTEGER TK_FLOATPOINT
-%type<str> STRING_DEFINITION
+%type<str> TK_STRING  
+%type<str> LIB_NAME TK_TYPE
 %type<str> MORE_OR_EQUAL LESS_OR_EQUAL NOT_EQUAL EQUAL
 %type<str> TRUE FALSE
 %type<str> DEC INC
 
 %type<oper> return_value
 %type<oper> break
-%type<oper> require
 %type<oper> loop_for
 %type<oper> loop_while
 %type<oper> if_stmt
@@ -58,6 +59,10 @@ void yyerror(const char *str)
 %type<oper> body
 %type<oper> assign_value
 %type<oper> unset
+%type<oper> require
+%type<args> declare_list
+%type<expr> declare
+%type<args> arg_type_list
 
 %type<expr> value
 %type<expr> string_expr
@@ -69,11 +74,11 @@ void yyerror(const char *str)
 %type<expr> unar_op
 %type<expr> explicit_value
 %type<expr> var
+%type<expr> type
 
 %type<args> function_call_arguments
 %type<args> function_declaration_arguments
 %%
-
 /* Top level rules */
 program: body
   {
@@ -95,7 +100,7 @@ body:
 top_level_cmd: 
   function_declaration
   |
-  require ';'
+  require
   |
   instructions { $$ = $1; }
   ;
@@ -200,7 +205,7 @@ explicit_value:
   |
   TK_FLOATPOINT { $$ = new value_t($1,FLOATPOINT); }
   |
-  STRING_DEFINITION { $$ = new value_t($1,STRING); }
+  TK_STRING { $$ = new value_t($1,STRING); }
   |
   var 
   |
@@ -313,8 +318,43 @@ string_expr:
   explicit_value
   |
   string_expr '.' explicit_value { $$ = new binary_t(".", $1, $3); /* Yes, I change it, to make it more look like class string */}
-  ; 
-  
+  ;
+ 
 require:
-  REQUIRE value	{ $$ = new require_t($2); };
+	LIB_NAME '{' declare_list '}' ';'	{ $$ = new require_t($1,$3);}
+	;
+
+declare_list:
+	declare	{
+		$$ = std::list<expr_t*>();
+		$$.push_back($1);
+	}
+	|
+	declare declare_list {
+		$$ = std::list<expr_t*>($2);
+		$$.push_back($1);
+	}
+	;
+
+declare:
+	type IDENTIFIER '(' arg_type_list ')' ';'	{ $$ = new declare_t($1,$2,$4);}
+	;
+
+arg_type_list:
+	%empty	{}
+	|
+	type {  
+		$$ = std::list<expr_t*>();
+		$$.push_back($1);
+	}
+	|
+	type ',' arg_type_list {
+		$$ = std::list<expr_t*>($3);
+		$$.push_back($1);
+	}
+	;
+
+type:
+	TK_TYPE	{ $$ = new type_t($1) ; }
+
 

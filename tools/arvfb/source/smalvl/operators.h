@@ -127,7 +127,7 @@ public:
    
     void print(int indent=0) {
         std::cout << "IF statement (";
-	cond->print();
+        cond->print();
         std::cout << ")";
         std::cout << "{";
         thenops.print(indent+1);
@@ -180,33 +180,6 @@ public:
     
     virtual ~while_op_t() {
         delete cond;
-    }
-};
-
-class require_t: public oper_t {
-    expr_t* file;
-public:
-    require_t(expr_t* _file): file(_file) {
-        SEMANTIC_NODE("Require instruction node created");
-    }
-
-    virtual void print(int indent=0) {
-        std::cout << "REQUIRE ";
-        file->print();
-        std::cout << ";\n";
-    }
-    
-    expr_t* get_value() {
-       return file; 
-    }
-    
-    virtual std::string get_decl()
-    {
-      return std::string("require statement");
-    }
-    
-    virtual ~require_t() {
-        delete file;
     }
 };
 
@@ -297,5 +270,44 @@ public:
 	{
 		return var;
 	}
+};
+
+class require_t: public oper_t {
+	std::string name;		// name of the lib
+	std::list<expr_t*> declares;
+public:
+    require_t(const std::string& name, std::list<expr_t*> declares): name(name), declares(declares) {
+        SEMANTIC_NODE("Require instruction node created");
+    }
+
+    virtual void print(int indent=0) {
+        std::cout << "REQUIRE "<<name<< ";\n";
+        for(std::list<expr_t*>::iterator i=declares.begin(); i!=declares.end(); i++)
+		{
+			(*i)->print();
+		}
+    }
+
+    std::string get_name()
+    {
+    	return name;
+    }
+
+    std::list<expr_t*>& get_declares()
+	{
+    	return declares;
+	}
+
+    virtual std::string get_decl()
+    {
+      return std::string("require statement");
+    }
+
+    virtual ~require_t() {
+    	for(std::list<expr_t*>::iterator i=declares.begin(); i!=declares.end(); i++)
+		{
+			delete *i;
+		}
+    }
 };
 #endif

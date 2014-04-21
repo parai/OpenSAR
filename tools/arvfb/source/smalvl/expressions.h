@@ -32,6 +32,87 @@ public:
     virtual ~value_t() {}
 };
 
+class type_t : public expr_t {
+	std::string value;
+public:
+    type_t(const std::string text) : value(text) {}
+
+    virtual void print(void) {
+    	std::cout<<value;
+    }
+
+    TYPE get_value()
+	{
+		return dt::string_to_type(value.c_str());
+	}
+
+    virtual std::string get_decl()
+    {
+      return std::string("base type");
+    }
+
+    ~type_t() {}
+};
+
+class declare_t : public expr_t
+{
+	expr_t*	type;
+	std::string name;
+	std::list<expr_t*> args;
+public:
+	declare_t(expr_t* type,const std::string& name,std::list<expr_t*> args) :
+		type(type), name(name), args(args)
+	{
+		SEMANTIC_NODE("Declare '%s' call node created. %d function arguments", name.data(), (int)args.size());
+		print();
+	}
+
+	virtual void print()
+	{
+		type->print();
+		std::cout<<" "<<name<<"(";
+		for(std::list<expr_t*>::iterator i=args.begin(); i!=args.end(); i++)
+		{
+			if (i!=args.begin())
+				std::cout<<", ";
+			(*i)->print();
+		}
+		std::cout<<");\n";
+	}
+
+	virtual void print(int indent)
+	{
+		//TODO: implement it!
+	}
+
+	expr_t*	get_type()
+	{
+		return type;
+	}
+
+	virtual std::list<expr_t*>& get_args()
+	{
+		return args;
+	}
+
+	virtual std::string get_decl()
+	{
+		return std::string("unary operation");
+	}
+
+	std::string get_name()
+	{
+		return name;
+	}
+
+	virtual ~declare_t() {
+		for(std::list<expr_t*>::iterator i=args.begin(); i!=args.end(); i++)
+		{
+			delete *i;
+		}
+	}
+};
+
 class var_t: public expr_t {
 protected:
     std::string name;

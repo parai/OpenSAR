@@ -1,4 +1,5 @@
-require "libc.ext";
+require libc.ext
+
 $srcFile = fopen("source_file.txt", "r");
 
 if( $srcFile == 0 )

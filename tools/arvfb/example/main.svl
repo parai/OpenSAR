@@ -1,4 +1,4 @@
-//require "libc.ext";
+require libc.ext
 
 include lib.inc
 

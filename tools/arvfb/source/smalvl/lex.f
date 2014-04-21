@@ -17,13 +17,30 @@ int yycolumn = 0;
 %x MULTI_LINE_COMMENT
 %x STR
 %x sc_include
+%x sc_require
+%x sc_require2
      
 DIGIT    [0-9]
 HEX      [0][xX][0-9A-Fa-f]+
+ID       [_a-zA-Z][_a-zA-Z0-9]*
 
 %%
 
 	static unsigned int include_counter = 0;
+
+<*>"//"	yy_push_state(SINGLE_LINE_COMMENT);
+<SINGLE_LINE_COMMENT>{
+	[^\n]*	;
+	"\n"	{
+		yy_pop_state(); 
+	}
+}
+
+<*>"/*"	yy_push_state(MULTI_LINE_COMMENT);
+<MULTI_LINE_COMMENT>{
+		    [^(*/)]	;
+		    "*/"	yy_pop_state();
+}
 
 "include" BEGIN(sc_include);
 
@@ -34,24 +51,57 @@ HEX      [0][xX][0-9A-Fa-f]+
 		yyin = fopen( yytext, "r" );
 		if ( ! yyin )
 		{	char string[1024];
-			sprintf(string,"Module <%s> is not exist",yytext);
+			sprintf(string,"Include <%s> is not exist",yytext);
 			yyerror(string);
 		}
 		else
 		{
-			printf("##open include <%s>\n",yytext);
 			include_counter ++; 
 			yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
 			BEGIN(INITIAL);
 		}
 	}
 	
-	"\n" BEGIN(INITIAL);
 }
 
-"require"  {
-	return REQUIRE;
+"require"  BEGIN(sc_require);
+
+<sc_require>{
+	[ \t]* /* eat the whitespace */ 
+
+	[^ \t\n]+   { /* got the include module name */
+		yyin = fopen( yytext, "r" );
+		if ( ! yyin )
+		{	char string[1024];
+			sprintf(string,"Require <%s> is not exist",yytext);
+			yyerror(string);
+		}
+		else
+		{
+			printf("##open require <%s>\n",yytext);
+			yypush_buffer_state(yy_create_buffer( yyin, YY_BUF_SIZE ));
+			BEGIN(sc_require2);
+		}
+	}
 }
+
+<sc_require2>{
+	
+	{ID}".so."{DIGIT}+	{	yylval.str = std::string(yytext); return LIB_NAME; 	}
+	
+	"INTEGER"|"STRING"|"FLOATPOINT"|"..."|"NONE" {
+		yylval.str = std::string(yytext); 
+		return TK_TYPE; 	 
+	}
+	{ID}		{	yylval.str = std::string(yytext); return IDENTIFIER; }		
+	
+	"("|")"|","|";"|"{"|"}" {
+		return yytext[0];
+	}
+	<<EOF>>	{ yypop_buffer_state(); BEGIN(INITIAL); }
+}
+
+
 
 "return"  {
 	return RETURN;
@@ -121,10 +171,10 @@ HEX      [0][xX][0-9A-Fa-f]+
 <STR>\\t	yylval.str += std::string("\t");
 <STR>\\\"	yylval.str += std::string("\"");
 <STR>[^\"] 	yylval.str += std::string(yytext);
-<STR>"\""	yy_pop_state(); return STRING_DEFINITION; 
+<STR>"\""	yy_pop_state(); return TK_STRING; 
 
 
-[a-zA-Z_][a-zA-Z0-9_]* {
+{ID} {
 	yylval.str = std::string(yytext);
 	return IDENTIFIER;
 }
@@ -143,21 +193,6 @@ HEX      [0][xX][0-9A-Fa-f]+
 {DIGIT}+"."{DIGIT}*        {
 	yylval.str = std::string(yytext);
 	return TK_FLOATPOINT;
-}
-
-
-"//"	yy_push_state(SINGLE_LINE_COMMENT);
-<SINGLE_LINE_COMMENT>{
-	[^\n]*	;
-	"\n"	{
-		yy_pop_state(); 
-	}
-}
-
-"/*" 				yy_push_state(MULTI_LINE_COMMENT);
-<MULTI_LINE_COMMENT>{
-		    [^(*/)]	;
-		    "*/"	yy_pop_state();
 }
 
 ">=" {
@@ -193,11 +228,11 @@ HEX      [0][xX][0-9A-Fa-f]+
 	return yytext[0];
 }
 
-. {
+<*>. {
 	yycolumn++;
 }
 
-\n {
+<*>\n {
 	yycolumn=1;
 }
 

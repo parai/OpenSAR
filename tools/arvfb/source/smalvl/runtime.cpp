@@ -182,12 +182,15 @@ ref_t runtime_t::run(block_t* block, frame_stack_t& fs, ctrl_t* p_ctrl)
 		throw (runtime_exception_t)
 {
 	RUNTIME_DEBUG("Runing block: instuctions count is %d", block->size());
+	// TODO: yeah, that is for each block, it has its own scope, but the stupid
+	// get_var_ref ruins this all.
+	// let it go, I only need this script can handle a local and a global stack, now
+	// it is enough. who cares about local and local stack handling.
 	fs.push_back(new var_scope_t());
 
 	instructions_list_t* instructions = block->get_operators();
 	//print_frame_stack(fs);
-	for (instructions_list_t::iterator i = instructions->begin();
-			i != instructions->end(); i++)
+	for (instructions_list_t::iterator i = instructions->begin();i != instructions->end(); i++)
 	{
 		ctrl_t ctrl = *p_ctrl;	// copy, where we are.
 		oper_t* instruction = (*i);
@@ -288,8 +291,7 @@ ref_t runtime_t::run_instruction(oper_t* instruction, frame_stack_t& fs, ctrl_t*
 	else if ( ti == typeid(require_t))
 	{
 		require_t* r = dynamic_cast<require_t*>(instruction);
-		ref_t ref = compute_expression(r->get_value(), fs);
-		_funcaller.open_extension((const char*) *_memmanager->get_object(ref));
+		_funcaller.open_extension(r);
 	}
 	else if ( ti == typeid(break_op_t))
 	{
