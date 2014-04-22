@@ -8,6 +8,9 @@
 
 class object_t;
 typedef std::map<ref_t, object_t*> heap_t;
+// why it is a string
+// yes, you made it that each object can be a index, even a string
+// so,let me say that this is a python dict, great guys, I love it.
 typedef std::map<std::string, ref_t> array_obj_t;
 
 class object_t

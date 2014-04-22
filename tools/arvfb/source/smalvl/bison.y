@@ -11,6 +11,7 @@
 void yyerror(const char *str)
 {
 	fprintf(stderr,"Parse error\tline: %d, %s (yytext=%s)\n", yylineno, str, yytext);
+	Arch_Trace("Parse error\tline: %d, %s (yytext=%s)\n", yylineno, str, yytext);
 }
  
 %}

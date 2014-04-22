@@ -40,12 +40,12 @@ ref_t heap_manager_t::add_object(object_t* object) throw (runtime_exception_t)
 	if (object == 0x0)
 		object = new object_t(NONE);
 
-	//RUNTIME_DEBUG("Heap manager create new reference %p", _ref);
+	RUNTIME_DEBUG("Heap manager create new reference %d", _ref);
 	std::pair<ref_t, object_t*> _pair(_ref, object);
 	std::pair<heap_t::iterator, bool> status = _heap.insert(_pair);
 	if (!status.second)
 		throw runtime_exception_t(REF_EXIST);
-	//RUNTIME_DEBUG("Object type %s added %p to heap", dt::type_to_string( object->get_type() ), _ref);
+	RUNTIME_DEBUG("Object type %s added %d to heap", dt::type_to_string( object->get_type() ), _ref);
 	return _ref;
 }
 

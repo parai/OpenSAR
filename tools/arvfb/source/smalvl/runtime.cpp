@@ -574,12 +574,11 @@ ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 				array_t *array = dynamic_cast<array_t*>(var);
 				array_obj_t* array_map = obj->a;
 				ref_t key_value = compute_expression(array->get_index(), fs);
-				std::string key = (std::string) (*_memmanager->get_object(
-						key_value));
+				std::string key = (std::string) (*_memmanager->get_object(key_value));
 
 				//in case if in array does't exist key
-				if (array_map->find(key) == array_map->end()
-						&& default_ref != REF_IS_VOID)
+				if ( (array_map->find(key) == array_map->end())
+						&& (default_ref != REF_IS_VOID) )
 				{
 					std::pair<std::string, ref_t> _pair(key, default_ref);
 					array_map->insert(_pair);
@@ -623,8 +622,7 @@ ref_t& runtime_t::get_var_ref(var_t* var, frame_stack_t& fs, ref_t default_ref)
 				array_t *array = dynamic_cast<array_t*>(var);
 				array_obj_t* array_map = obj->a;
 				ref_t key_value = compute_expression(array->get_index(), fs);
-				std::string key = (std::string) (*_memmanager->get_object(
-						key_value));
+				std::string key = (std::string) (*_memmanager->get_object(key_value));
 
 				//in case if in array does't exist key
 				if (array_map->find(key) == array_map->end()

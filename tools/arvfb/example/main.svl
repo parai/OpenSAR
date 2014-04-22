@@ -3,19 +3,25 @@ require libc.ext
 include lib.inc
 
 
-$rv = 0x16;
-
-def add()
+def test_array()
 {
-	$rv++;
-	print("Add $rv=",$rv,"\n");
+	$A = array[];
+	$i = 0;
+	for($i=0;$i<8;$i++)
+	{
+		$A[$i] = $i*2 + 1;
+	}
+	
+	$A["HelloWorld"] = "Small Kitty";
+	
+	print("$A=",$A,"\n");
 }
 
 def main()
 {	
-	//$rv = 0x0;
+	$rv = 0x0;
 	
-	add();
+	test_array();
 	
 	print("Global $rv=",$rv,"\n");
 	
@@ -29,6 +35,7 @@ def main()
 			return 2;
 		}
 	}
+	
 	if($rv == 3)
 	{
 		return 0;

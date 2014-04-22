@@ -22,7 +22,7 @@ private:
 	fun_map_t _function_declarations;
 
 	/* Heap */
-	heap_manager_t *_memmanager;
+	heap_manager_t*_memmanager;
 	/* Native function caller */
 	funcaller_t _funcaller;
 	/* Singletone realization */
@@ -34,6 +34,8 @@ private:
 
 public:
 	static runtime_t* get_instance();
+
+	heap_manager_t* get_mem() { return _memmanager; };
 
 	void init(void);
 

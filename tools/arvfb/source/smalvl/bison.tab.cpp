@@ -76,10 +76,11 @@
 void yyerror(const char *str)
 {
 	fprintf(stderr,"Parse error\tline: %d, %s (yytext=%s)\n", yylineno, str, yytext);
+	Arch_Trace("Parse error\tline: %d, %s (yytext=%s)\n", yylineno, str, yytext);
 }
  
 
-#line 83 "bison.tab.c" /* yacc.c:339  */
+#line 84 "bison.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -152,7 +153,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 156 "bison.tab.c" /* yacc.c:358  */
+#line 157 "bison.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -452,15 +453,15 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    83,    83,    92,    94,   101,   103,   105,   109,   111,
-     115,   117,   121,   125,   130,   132,   134,   136,   138,   142,
-     144,   146,   150,   153,   160,   167,   169,   174,   181,   183,
-     187,   195,   200,   202,   204,   206,   208,   210,   212,   216,
-     220,   222,   224,   226,   229,   233,   235,   240,   243,   248,
-     250,   254,   257,   263,   268,   271,   273,   275,   278,   280,
-     282,   284,   286,   288,   290,   292,   294,   299,   301,   303,
-     307,   309,   311,   313,   318,   320,   324,   328,   333,   340,
-     344,   346,   351,   358
+       0,    84,    84,    93,    95,   102,   104,   106,   110,   112,
+     116,   118,   122,   126,   131,   133,   135,   137,   139,   143,
+     145,   147,   151,   154,   161,   168,   170,   175,   182,   184,
+     188,   196,   201,   203,   205,   207,   209,   211,   213,   217,
+     221,   223,   225,   227,   230,   234,   236,   241,   244,   249,
+     251,   255,   258,   264,   269,   272,   274,   276,   279,   281,
+     283,   285,   287,   289,   291,   293,   295,   300,   302,   304,
+     308,   310,   312,   314,   319,   321,   325,   329,   334,   341,
+     345,   347,   352,   359
 };
 #endif
 
@@ -1361,460 +1362,460 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 84 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 85 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
    runtime_t::get_instance()->set_main_block((block_t*) (yyvsp[0].oper));
    runtime_t::get_instance()->semantic_analys();
    //runtime_t::get_instance()->interpretate();
   }
-#line 1371 "bison.tab.c" /* yacc.c:1646  */
+#line 1372 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 4:
-#line 94 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 95 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {    
       (yyval.oper) = new block_t((yyvsp[-1].oper), (yyvsp[0].oper));
   }
-#line 1379 "bison.tab.c" /* yacc.c:1646  */
+#line 1380 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 7:
-#line 105 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 106 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = (yyvsp[0].oper); }
-#line 1385 "bison.tab.c" /* yacc.c:1646  */
+#line 1386 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 8:
-#line 109 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 110 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new block_t((yyvsp[-1].oper), (yyvsp[0].oper)); }
-#line 1391 "bison.tab.c" /* yacc.c:1646  */
+#line 1392 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 9:
-#line 111 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 112 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { }
-#line 1397 "bison.tab.c" /* yacc.c:1646  */
+#line 1398 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 10:
-#line 115 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 116 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = (yyvsp[-1].oper); }
-#line 1403 "bison.tab.c" /* yacc.c:1646  */
+#line 1404 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 11:
-#line 117 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 118 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = (yyvsp[0].oper); }
-#line 1409 "bison.tab.c" /* yacc.c:1646  */
+#line 1410 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 121 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 122 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     (yyval.oper) =  (oper_t*)((yyvsp[0].expr)); 
   }
-#line 1417 "bison.tab.c" /* yacc.c:1646  */
+#line 1418 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 125 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 126 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     /* Function call is expr_t and oper_t child */
       (yyval.oper) =  (oper_t*)((yyvsp[0].expr)); 
     }
-#line 1426 "bison.tab.c" /* yacc.c:1646  */
+#line 1427 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 138 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 139 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { yyerrok; yyclearin;  std::cerr <<"Error in command running statement\n"; }
-#line 1432 "bison.tab.c" /* yacc.c:1646  */
+#line 1433 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 150 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 151 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new block_t((yyvsp[-1].oper)); }
-#line 1438 "bison.tab.c" /* yacc.c:1646  */
+#line 1439 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 154 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 155 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     function_declaration_t* fd = new function_declaration_t((yyvsp[-4].str), (yyvsp[-2].args), (yyvsp[0].oper));
     (yyval.oper) = fd;
     runtime_t::get_instance()->add_function_declaration(fd);
   }
-#line 1448 "bison.tab.c" /* yacc.c:1646  */
+#line 1449 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 160 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 161 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     yyerrok;
     yyclearin;
     std::cerr << "Function declaration error!\n";
   }
-#line 1458 "bison.tab.c" /* yacc.c:1646  */
+#line 1459 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 167 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 168 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {}
-#line 1464 "bison.tab.c" /* yacc.c:1646  */
+#line 1465 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 169 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 170 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     (yyval.args) = std::list<expr_t*>((yyvsp[0].args));
     (yyval.args).push_back((yyvsp[-2].expr));
   }
-#line 1473 "bison.tab.c" /* yacc.c:1646  */
+#line 1474 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 174 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 175 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {  
      (yyval.args) = std::list<expr_t*>();
      (yyval.args).push_back((yyvsp[0].expr));
   }
-#line 1482 "bison.tab.c" /* yacc.c:1646  */
+#line 1483 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 181 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 182 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {}
-#line 1488 "bison.tab.c" /* yacc.c:1646  */
+#line 1489 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 183 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 184 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     (yyval.args) = std::list<expr_t*>((yyvsp[0].args));
     (yyval.args).push_back((yyvsp[-2].expr));
   }
-#line 1497 "bison.tab.c" /* yacc.c:1646  */
+#line 1498 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 188 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 189 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {  
      (yyval.args) = std::list<expr_t*>();
      (yyval.args).push_back((yyvsp[0].expr));
   }
-#line 1506 "bison.tab.c" /* yacc.c:1646  */
+#line 1507 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 195 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 196 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = (yyvsp[0].expr); }
-#line 1512 "bison.tab.c" /* yacc.c:1646  */
+#line 1513 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 200 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 201 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new value_t((yyvsp[0].str),BOOL); }
-#line 1518 "bison.tab.c" /* yacc.c:1646  */
+#line 1519 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 202 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 203 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new value_t((yyvsp[0].str),BOOL); }
-#line 1524 "bison.tab.c" /* yacc.c:1646  */
+#line 1525 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 204 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 205 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new value_t((yyvsp[0].str),INTEGER); }
-#line 1530 "bison.tab.c" /* yacc.c:1646  */
+#line 1531 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 206 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 207 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new value_t((yyvsp[0].str),FLOATPOINT); }
-#line 1536 "bison.tab.c" /* yacc.c:1646  */
+#line 1537 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 208 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 209 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new value_t((yyvsp[0].str),STRING); }
-#line 1542 "bison.tab.c" /* yacc.c:1646  */
+#line 1543 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 216 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 217 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new break_op_t(); }
-#line 1548 "bison.tab.c" /* yacc.c:1646  */
+#line 1549 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 220 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 221 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new unary_t("++", (yyvsp[-1].expr)); }
-#line 1554 "bison.tab.c" /* yacc.c:1646  */
+#line 1555 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 222 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 223 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new unary_t("--", (yyvsp[-1].expr)); }
-#line 1560 "bison.tab.c" /* yacc.c:1646  */
+#line 1561 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 224 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 225 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new unary_t("--", (yyvsp[0].expr)); }
-#line 1566 "bison.tab.c" /* yacc.c:1646  */
+#line 1567 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 226 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 227 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new unary_t("++", (yyvsp[0].expr)); }
-#line 1572 "bison.tab.c" /* yacc.c:1646  */
+#line 1573 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 229 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 230 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new array_init_t(); }
-#line 1578 "bison.tab.c" /* yacc.c:1646  */
+#line 1579 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 233 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 234 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new var_t((yyvsp[0].str)); }
-#line 1584 "bison.tab.c" /* yacc.c:1646  */
+#line 1585 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 235 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 236 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { 
     (yyval.expr) = new array_t((yyvsp[-3].str), (yyvsp[-1].expr)); 
   }
-#line 1592 "bison.tab.c" /* yacc.c:1646  */
+#line 1593 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 240 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 241 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new unset_t((yyvsp[0].expr)); }
-#line 1598 "bison.tab.c" /* yacc.c:1646  */
+#line 1599 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 243 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 244 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     (yyval.expr) = new function_call_t((yyvsp[-3].str), (yyvsp[-1].args));
   }
-#line 1606 "bison.tab.c" /* yacc.c:1646  */
+#line 1607 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 248 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 249 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new assign_t((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1612 "bison.tab.c" /* yacc.c:1646  */
+#line 1613 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 250 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 251 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new assign_t((yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1618 "bison.tab.c" /* yacc.c:1646  */
+#line 1619 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 254 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 255 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new return_op_t((yyvsp[0].expr)); }
-#line 1624 "bison.tab.c" /* yacc.c:1646  */
+#line 1625 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 258 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 259 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     (yyval.oper) = new for_op_t((yyvsp[-6].oper), (yyvsp[-4].expr), (yyvsp[-2].oper), (yyvsp[0].oper));
   }
-#line 1632 "bison.tab.c" /* yacc.c:1646  */
+#line 1633 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 263 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 264 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
     (yyval.oper) = new while_op_t((yyvsp[-2].expr), (yyvsp[0].oper)); 
   }
-#line 1640 "bison.tab.c" /* yacc.c:1646  */
+#line 1641 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 268 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 269 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new if_op_t((yyvsp[-3].expr), (yyvsp[-1].oper), (yyvsp[0].oper)); }
-#line 1646 "bison.tab.c" /* yacc.c:1646  */
+#line 1647 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 271 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 272 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = NULL; }
-#line 1652 "bison.tab.c" /* yacc.c:1646  */
+#line 1653 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 273 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 274 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new block_t((yyvsp[0].oper)); }
-#line 1658 "bison.tab.c" /* yacc.c:1646  */
+#line 1659 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 275 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 276 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new if_op_t((yyvsp[-3].expr), (yyvsp[-1].oper), (yyvsp[0].oper)); }
-#line 1664 "bison.tab.c" /* yacc.c:1646  */
+#line 1665 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 278 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 279 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = (yyvsp[0].expr); }
-#line 1670 "bison.tab.c" /* yacc.c:1646  */
+#line 1671 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 280 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 281 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("<", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1676 "bison.tab.c" /* yacc.c:1646  */
+#line 1677 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 282 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 283 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t(">", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1682 "bison.tab.c" /* yacc.c:1646  */
+#line 1683 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 284 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 285 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("==", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1688 "bison.tab.c" /* yacc.c:1646  */
+#line 1689 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 286 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 287 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t(">=", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1694 "bison.tab.c" /* yacc.c:1646  */
+#line 1695 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 288 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 289 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("<=", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1700 "bison.tab.c" /* yacc.c:1646  */
+#line 1701 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 290 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 291 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("!=", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1706 "bison.tab.c" /* yacc.c:1646  */
+#line 1707 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 292 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 293 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = (yyvsp[-1].expr); }
-#line 1712 "bison.tab.c" /* yacc.c:1646  */
+#line 1713 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 294 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 295 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { std::cerr << "Expresion error\n"; }
-#line 1718 "bison.tab.c" /* yacc.c:1646  */
+#line 1719 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 301 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 302 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("+", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1724 "bison.tab.c" /* yacc.c:1646  */
+#line 1725 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 303 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 304 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("-", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1730 "bison.tab.c" /* yacc.c:1646  */
+#line 1731 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 309 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 310 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("*", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1736 "bison.tab.c" /* yacc.c:1646  */
+#line 1737 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 311 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 312 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("/", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1742 "bison.tab.c" /* yacc.c:1646  */
+#line 1743 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 313 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 314 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t("%", (yyvsp[-2].expr), (yyvsp[0].expr)); }
-#line 1748 "bison.tab.c" /* yacc.c:1646  */
+#line 1749 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 320 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 321 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new binary_t(".", (yyvsp[-2].expr), (yyvsp[0].expr)); /* Yes, I change it, to make it more look like class string */}
-#line 1754 "bison.tab.c" /* yacc.c:1646  */
+#line 1755 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 324 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 325 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.oper) = new require_t((yyvsp[-4].str),(yyvsp[-2].args));}
-#line 1760 "bison.tab.c" /* yacc.c:1646  */
+#line 1761 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 328 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 329 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
 		(yyval.args) = std::list<expr_t*>();
 		(yyval.args).push_back((yyvsp[0].expr));
 	}
-#line 1769 "bison.tab.c" /* yacc.c:1646  */
+#line 1770 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 333 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 334 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
 		(yyval.args) = std::list<expr_t*>((yyvsp[0].args));
 		(yyval.args).push_back((yyvsp[-1].expr));
 	}
-#line 1778 "bison.tab.c" /* yacc.c:1646  */
+#line 1779 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 79:
-#line 340 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 341 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new declare_t((yyvsp[-5].expr),(yyvsp[-4].str),(yyvsp[-2].args));}
-#line 1784 "bison.tab.c" /* yacc.c:1646  */
+#line 1785 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 80:
-#line 344 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 345 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {}
-#line 1790 "bison.tab.c" /* yacc.c:1646  */
+#line 1791 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 81:
-#line 346 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 347 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {  
 		(yyval.args) = std::list<expr_t*>();
 		(yyval.args).push_back((yyvsp[0].expr));
 	}
-#line 1799 "bison.tab.c" /* yacc.c:1646  */
+#line 1800 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 82:
-#line 351 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 352 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     {
 		(yyval.args) = std::list<expr_t*>((yyvsp[0].args));
 		(yyval.args).push_back((yyvsp[-2].expr));
 	}
-#line 1808 "bison.tab.c" /* yacc.c:1646  */
+#line 1809 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 83:
-#line 358 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
+#line 359 "../../tools/arvfb/source/smalvl/bison.y" /* yacc.c:1646  */
     { (yyval.expr) = new type_t((yyvsp[0].str)) ; }
-#line 1814 "bison.tab.c" /* yacc.c:1646  */
+#line 1815 "bison.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1818 "bison.tab.c" /* yacc.c:1646  */
+#line 1819 "bison.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires

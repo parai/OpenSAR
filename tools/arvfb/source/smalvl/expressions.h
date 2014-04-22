@@ -64,7 +64,6 @@ public:
 		type(type), name(name), args(args)
 	{
 		SEMANTIC_NODE("Declare '%s' call node created. %d function arguments", name.data(), (int)args.size());
-		print();
 	}
 
 	virtual void print()

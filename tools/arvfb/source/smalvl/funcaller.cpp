@@ -1,4 +1,5 @@
 #include "funcaller.h"
+#include "runtime.h"
 #include <fstream>
 
 funcaller_t::funcaller_t()
@@ -317,38 +318,49 @@ void funcaller_t::print_meta(meta_info_t& meta)
 
 	std::cout << std::endl;
 }
-
+static void print_obj(object_t* obj)
+{
+	switch(obj->get_type())
+	{
+		case INTEGER:
+			Arch_Trace("%d",obj->i);
+			break;
+		case FLOATPOINT:
+			Arch_Trace("%lf",obj->d);
+			break;
+		case ARRAY:
+		{
+			array_obj_t* array_map = obj->a;
+			Arch_Trace("dict[");
+			for(std::map<std::string, ref_t>::iterator i=array_map->begin();i!=array_map->end();i++)
+			{
+				Arch_Trace("%s=",(*i).first.c_str());
+				object_t* obj = runtime_t::get_instance()->get_mem()->get_object((*i).second);
+				print_obj(obj);
+				Arch_Trace(", ");
+			}
+			Arch_Trace("]");
+			break;
+		}
+		case BOOL:
+			Arch_Trace("%s",obj->b?"True":"False");
+			break;
+		case STRING:
+			Arch_Trace("%s",obj->s->c_str());
+			break;
+		case NONE:
+			Arch_Trace("None");
+			break;
+		default:
+			break;
+	}
+}
 void funcaller_t::Print(std::vector<object_t*>& objs,ref_t* result)
 {
 	for(unsigned int i=0; i<objs.size(); i++)
 	{
 		unsigned int I = objs.size() - i - 1;
-		switch(objs[I]->get_type())
-		{
-			case INTEGER:
-				Arch_Trace("%d",objs[I]->i);
-				break;
-			case FLOATPOINT:
-				Arch_Trace("%lf",objs[I]->d);
-				break;
-			case ARRAY:
-				Arch_Trace("[TODO]");
-//				for(array_obj_t* item = objs[i]->a->begin();item != objs[i]->a->end();item++)
-//				{
-//
-//				}
-			case BOOL:
-				Arch_Trace("%s",objs[I]->b?"True":"False");
-				break;
-			case STRING:
-				Arch_Trace("%s",objs[I]->s->c_str());
-				break;
-			case NONE:
-				Arch_Trace("None");
-				break;
-			default:
-				break;
-		}
+		print_obj(objs[I]);
 	}
 	// return
 	*result = REF_IS_VOID;
