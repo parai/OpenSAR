@@ -632,7 +632,27 @@ int yy_flex_debug = 0;
 #define YY_RESTORE_YY_MORE_OFFSET
 char *yytext;
 #line 1 "../../tools/arvfb/source/smalvl/lex.f"
-#line 2 "../../tools/arvfb/source/smalvl/lex.f"
+/* Copyright(C) 2013, OpenSAR by Fan Wang(parai). All rights reserved.
+ *
+ * This file is part of OpenSAR.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Email: parai@foxmail.com
+ * Source Open At: https://github.com/parai/OpenSAR/
+ */
+#line 22 "../../tools/arvfb/source/smalvl/lex.f"
 #include <cstdlib>
 #include <cstring>
 #include <string>
@@ -648,7 +668,7 @@ int yycolumn = 0;
 
 
 
-#line 652 "lex.yy.c"
+#line 672 "lex.yy.c"
 
 #define INITIAL 0
 #define SINGLE_LINE_COMMENT 1
@@ -851,12 +871,12 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 27 "../../tools/arvfb/source/smalvl/lex.f"
+#line 47 "../../tools/arvfb/source/smalvl/lex.f"
 
 
 	static unsigned int include_counter = 0;
 
-#line 860 "lex.yy.c"
+#line 880 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -951,19 +971,19 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 31 "../../tools/arvfb/source/smalvl/lex.f"
+#line 51 "../../tools/arvfb/source/smalvl/lex.f"
 yy_push_state(SINGLE_LINE_COMMENT);
 	YY_BREAK
 
 case 2:
 YY_RULE_SETUP
-#line 33 "../../tools/arvfb/source/smalvl/lex.f"
+#line 53 "../../tools/arvfb/source/smalvl/lex.f"
 ;
 	YY_BREAK
 case 3:
 /* rule 3 can match eol */
 YY_RULE_SETUP
-#line 34 "../../tools/arvfb/source/smalvl/lex.f"
+#line 54 "../../tools/arvfb/source/smalvl/lex.f"
 {
 		yy_pop_state(); 
 	}
@@ -971,36 +991,36 @@ YY_RULE_SETUP
 
 case 4:
 YY_RULE_SETUP
-#line 39 "../../tools/arvfb/source/smalvl/lex.f"
+#line 59 "../../tools/arvfb/source/smalvl/lex.f"
 yy_push_state(MULTI_LINE_COMMENT);
 	YY_BREAK
 
 case 5:
 /* rule 5 can match eol */
 YY_RULE_SETUP
-#line 41 "../../tools/arvfb/source/smalvl/lex.f"
+#line 61 "../../tools/arvfb/source/smalvl/lex.f"
 ;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 42 "../../tools/arvfb/source/smalvl/lex.f"
+#line 62 "../../tools/arvfb/source/smalvl/lex.f"
 yy_pop_state();
 	YY_BREAK
 
 case 7:
 YY_RULE_SETUP
-#line 45 "../../tools/arvfb/source/smalvl/lex.f"
+#line 65 "../../tools/arvfb/source/smalvl/lex.f"
 BEGIN(sc_include);
 	YY_BREAK
 
 case 8:
 YY_RULE_SETUP
-#line 48 "../../tools/arvfb/source/smalvl/lex.f"
+#line 68 "../../tools/arvfb/source/smalvl/lex.f"
 /* eat the whitespace */ 
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 50 "../../tools/arvfb/source/smalvl/lex.f"
+#line 70 "../../tools/arvfb/source/smalvl/lex.f"
 { /* got the include module name */
 		yyin = fopen( yytext, "r" );
 		if ( ! yyin )
@@ -1019,18 +1039,18 @@ YY_RULE_SETUP
 
 case 10:
 YY_RULE_SETUP
-#line 67 "../../tools/arvfb/source/smalvl/lex.f"
+#line 87 "../../tools/arvfb/source/smalvl/lex.f"
 BEGIN(sc_require);
 	YY_BREAK
 
 case 11:
 YY_RULE_SETUP
-#line 70 "../../tools/arvfb/source/smalvl/lex.f"
+#line 90 "../../tools/arvfb/source/smalvl/lex.f"
 /* eat the whitespace */ 
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 72 "../../tools/arvfb/source/smalvl/lex.f"
+#line 92 "../../tools/arvfb/source/smalvl/lex.f"
 { /* got the include module name */
 		yyin = fopen( yytext, "r" );
 		if ( ! yyin )
@@ -1050,12 +1070,12 @@ YY_RULE_SETUP
 
 case 13:
 YY_RULE_SETUP
-#line 90 "../../tools/arvfb/source/smalvl/lex.f"
+#line 110 "../../tools/arvfb/source/smalvl/lex.f"
 {	yylval.str = std::string(yytext); return LIB_NAME; 	}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 92 "../../tools/arvfb/source/smalvl/lex.f"
+#line 112 "../../tools/arvfb/source/smalvl/lex.f"
 {
 		yylval.str = std::string(yytext); 
 		return TK_TYPE; 	 
@@ -1063,52 +1083,52 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 96 "../../tools/arvfb/source/smalvl/lex.f"
+#line 116 "../../tools/arvfb/source/smalvl/lex.f"
 {	yylval.str = std::string(yytext); return IDENTIFIER; }		
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 98 "../../tools/arvfb/source/smalvl/lex.f"
+#line 118 "../../tools/arvfb/source/smalvl/lex.f"
 {
 		return yytext[0];
 	}
 	YY_BREAK
 case YY_STATE_EOF(sc_require2):
-#line 101 "../../tools/arvfb/source/smalvl/lex.f"
+#line 121 "../../tools/arvfb/source/smalvl/lex.f"
 { yypop_buffer_state(); BEGIN(INITIAL); }
 	YY_BREAK
 
 case 17:
 YY_RULE_SETUP
-#line 106 "../../tools/arvfb/source/smalvl/lex.f"
+#line 126 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return RETURN;
 }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 110 "../../tools/arvfb/source/smalvl/lex.f"
+#line 130 "../../tools/arvfb/source/smalvl/lex.f"
 {
     return BREAK;
 }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 114 "../../tools/arvfb/source/smalvl/lex.f"
+#line 134 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return FUNCTION;
 }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 118 "../../tools/arvfb/source/smalvl/lex.f"
+#line 138 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return WHILE;
 }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 122 "../../tools/arvfb/source/smalvl/lex.f"
+#line 142 "../../tools/arvfb/source/smalvl/lex.f"
 {
   yylval.str = yytext;
   return TRUE;
@@ -1116,7 +1136,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 127 "../../tools/arvfb/source/smalvl/lex.f"
+#line 147 "../../tools/arvfb/source/smalvl/lex.f"
 {
   yylval.str = yytext;
   return FALSE;
@@ -1124,7 +1144,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 132 "../../tools/arvfb/source/smalvl/lex.f"
+#line 152 "../../tools/arvfb/source/smalvl/lex.f"
 {
   yylval.str = yytext;
   return UNSET;
@@ -1132,49 +1152,49 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 137 "../../tools/arvfb/source/smalvl/lex.f"
+#line 157 "../../tools/arvfb/source/smalvl/lex.f"
 {
   return INC;
 }
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 141 "../../tools/arvfb/source/smalvl/lex.f"
+#line 161 "../../tools/arvfb/source/smalvl/lex.f"
 {
   return DEC;
 }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 146 "../../tools/arvfb/source/smalvl/lex.f"
+#line 166 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return yytext[0];
 }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 150 "../../tools/arvfb/source/smalvl/lex.f"
+#line 170 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return IF;
 }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 154 "../../tools/arvfb/source/smalvl/lex.f"
+#line 174 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return ELSE;
 }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 158 "../../tools/arvfb/source/smalvl/lex.f"
+#line 178 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return FOR;
 }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 163 "../../tools/arvfb/source/smalvl/lex.f"
+#line 183 "../../tools/arvfb/source/smalvl/lex.f"
 {
   //TODO: predefined array size
   return ARRAY_DECLARATION;
@@ -1182,38 +1202,38 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 169 "../../tools/arvfb/source/smalvl/lex.f"
+#line 189 "../../tools/arvfb/source/smalvl/lex.f"
 yy_push_state(STR); yylval.str = std::string();
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 170 "../../tools/arvfb/source/smalvl/lex.f"
+#line 190 "../../tools/arvfb/source/smalvl/lex.f"
 yylval.str += std::string("\n");
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 171 "../../tools/arvfb/source/smalvl/lex.f"
+#line 191 "../../tools/arvfb/source/smalvl/lex.f"
 yylval.str += std::string("\t");
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 172 "../../tools/arvfb/source/smalvl/lex.f"
+#line 192 "../../tools/arvfb/source/smalvl/lex.f"
 yylval.str += std::string("\"");
 	YY_BREAK
 case 35:
 /* rule 35 can match eol */
 YY_RULE_SETUP
-#line 173 "../../tools/arvfb/source/smalvl/lex.f"
+#line 193 "../../tools/arvfb/source/smalvl/lex.f"
 yylval.str += std::string(yytext);
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 174 "../../tools/arvfb/source/smalvl/lex.f"
+#line 194 "../../tools/arvfb/source/smalvl/lex.f"
 yy_pop_state(); return TK_STRING; 
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 177 "../../tools/arvfb/source/smalvl/lex.f"
+#line 197 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return IDENTIFIER;
@@ -1221,7 +1241,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 183 "../../tools/arvfb/source/smalvl/lex.f"
+#line 203 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return TK_INTEGER;
@@ -1229,7 +1249,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 188 "../../tools/arvfb/source/smalvl/lex.f"
+#line 208 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return TK_INTEGER;
@@ -1237,7 +1257,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 193 "../../tools/arvfb/source/smalvl/lex.f"
+#line 213 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return TK_FLOATPOINT;
@@ -1245,7 +1265,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 198 "../../tools/arvfb/source/smalvl/lex.f"
+#line 218 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return MORE_OR_EQUAL;
@@ -1253,7 +1273,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 203 "../../tools/arvfb/source/smalvl/lex.f"
+#line 223 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return LESS_OR_EQUAL;
@@ -1261,7 +1281,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 208 "../../tools/arvfb/source/smalvl/lex.f"
+#line 228 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return EQUAL;
@@ -1269,7 +1289,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 213 "../../tools/arvfb/source/smalvl/lex.f"
+#line 233 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yylval.str = std::string(yytext);
 	return NOT_EQUAL;
@@ -1277,28 +1297,28 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 219 "../../tools/arvfb/source/smalvl/lex.f"
+#line 239 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return yytext[0];
 }
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 223 "../../tools/arvfb/source/smalvl/lex.f"
+#line 243 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	return yytext[0];
 }
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 227 "../../tools/arvfb/source/smalvl/lex.f"
+#line 247 "../../tools/arvfb/source/smalvl/lex.f"
 {	// string concate operater, TODO: I don't like it
 	return yytext[0];
 }
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 231 "../../tools/arvfb/source/smalvl/lex.f"
+#line 251 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yycolumn++;
 }
@@ -1306,7 +1326,7 @@ YY_RULE_SETUP
 case 49:
 /* rule 49 can match eol */
 YY_RULE_SETUP
-#line 235 "../../tools/arvfb/source/smalvl/lex.f"
+#line 255 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	yycolumn=1;
 }
@@ -1317,7 +1337,7 @@ case YY_STATE_EOF(MULTI_LINE_COMMENT):
 case YY_STATE_EOF(STR):
 case YY_STATE_EOF(sc_include):
 case YY_STATE_EOF(sc_require):
-#line 239 "../../tools/arvfb/source/smalvl/lex.f"
+#line 259 "../../tools/arvfb/source/smalvl/lex.f"
 {
 	if(include_counter > 0)
 	{
@@ -1332,10 +1352,10 @@ case YY_STATE_EOF(sc_require):
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 250 "../../tools/arvfb/source/smalvl/lex.f"
+#line 270 "../../tools/arvfb/source/smalvl/lex.f"
 ECHO;
 	YY_BREAK
-#line 1339 "lex.yy.c"
+#line 1359 "lex.yy.c"
 
 	case YY_END_OF_BUFFER:
 		{
@@ -2388,7 +2408,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 250 "../../tools/arvfb/source/smalvl/lex.f"
+#line 270 "../../tools/arvfb/source/smalvl/lex.f"
 
 
 

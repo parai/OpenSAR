@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  * Email: parai@foxmail.com
- * Sourrce Open At: https://github.com/parai/OpenSAR/
+ * Source Open At: https://github.com/parai/OpenSAR/
  */
 #ifndef ARVFB_H_
 #define ARVFB_H_
