@@ -10,6 +10,8 @@ def test_array()
 	for($i=0;$i<8;$i++)
 	{
 		$A[$i] = $i*2 + 1;
+		sleep(1000*1000);	// sleep 1 second
+		print($i," seconds elapsed\n");
 	}
 	
 	$A["HelloWorld"] = "Small Kitty";

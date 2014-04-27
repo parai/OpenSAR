@@ -66,6 +66,7 @@ public:
 			throw (runtime_exception_t);
 
 	void Print(std::vector<object_t*>& objs,ref_t* result);
+	void Sleep(std::vector<object_t*>& objs,ref_t* result);
 };
 
 #endif // FUNCALLER_H

@@ -21,6 +21,7 @@
 #include "funcaller.h"
 #include "runtime.h"
 #include <fstream>
+#include "arvfb.h"
 
 funcaller_t::funcaller_t()
 {
@@ -385,21 +386,36 @@ void funcaller_t::Print(std::vector<object_t*>& objs,ref_t* result)
 	// return
 	*result = REF_IS_VOID;
 }
+
+void funcaller_t::Sleep(std::vector<object_t*>& objs,ref_t* result)
+{
+	if( (1==objs.size()) && (INTEGER==objs[0]->get_type()))
+	{
+		usleep(objs[0]->i);
+	}
+	// return
+	*result = REF_IS_VOID;
+}
+
 bool funcaller_t::call_buildin(function_call_t* fc,std::vector<object_t*>& objs,ref_t* result)
 					throw (runtime_exception_t)
 {
 	bool rv = true;
 
 	const char* fname = fc->get_name().c_str();
-
+	//GDK_THREADS_ENTER();
 	if(!strcmp(fname,"print"))
 	{
 		Print(objs,result);
+	}
+	else if(!strcmp(fname,"sleep"))
+	{
+		Sleep(objs,result);
 	}
 	else
 	{
 		rv = false;
 	}
-
+	//GDK_THREADS_LEAVE();
 	return rv;
 }

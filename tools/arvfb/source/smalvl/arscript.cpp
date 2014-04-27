@@ -20,6 +20,20 @@
  */
 #include "analizator.h"
 #include "runtime.h"
+#include "arvfb.h"
+// ==========================[ LOCAL ] =================================
+
+GThread* main_thread = NULL;
+static gpointer main_runtime(gpointer param)
+{
+	Arch_Trace("\n\n// ==================== [ Script Run Start ] ====================\n\n");
+
+	runtime_t::get_instance()->interpretate();
+
+	Arch_Trace("\n\n// ==================== [ Script Run  End  ] ====================\n\n");
+
+	return NULL;
+}
 
 void ArScriptLoad(const char* file)
 {
@@ -50,10 +64,10 @@ void ArScriptLoad(const char* file)
 
 void ArScriptRun(void)
 {
-	Arch_Trace("\n\n// ==================== [ Script Run Start ] ====================\n\n");
-
-	runtime_t::get_instance()->interpretate();
-
-	Arch_Trace("\n\n// ==================== [ Script Run  End  ] ====================\n\n");
+	if(main_thread != NULL)
+	{
+		g_thread_unref(main_thread);
+	}
+	main_thread = g_thread_new("main_runtime",main_runtime,NULL);
 }
 
