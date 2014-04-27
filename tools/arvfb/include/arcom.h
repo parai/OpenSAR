@@ -39,4 +39,6 @@ void ArCom_DefinePdu( char* Name,uint32 Identifier,uint8 BusID,boolean IsTxEnabl
 
 void ArCom_DefineSignal( char* Name,uint8 StartBit,uint8 BitSize,uint32 DefaultValue);
 
+int ArCom_Write(const char* Name,int Value);
+int ArCom_Read(const char* Name, int*Value);
 #endif /* ARCOM_H_ */

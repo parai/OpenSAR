@@ -31,6 +31,9 @@
 #include <ctime>
 #include <vector>
 
+#define RUNTIME_CRITICAL_ENTER()  GDK_THREADS_ENTER()
+#define RUNTIME_CRITICAL_LEAVE()  GDK_THREADS_LEAVE()
+
 typedef std::map<std::string, ref_t> var_scope_t;
 typedef std::vector<var_scope_t*> frame_stack_t;
 

@@ -125,7 +125,7 @@ static uint32 GetTimerElapsedMicroSeconds()
 
 static void Write(const ArComSignalType* arsig,uint32 SigValue)
 {
-
+	printf("##:write %s %d\n",arsig->Name,SigValue);
     int BA = 0;
     int bitsize = arsig->BitSize;
     int SigSize = arsig->BitSize;
@@ -488,5 +488,54 @@ void ArCom_DefinePdu( char* Name,uint32 Identifier,uint8 BusID,boolean IsTxEnabl
 void ArCom_DefineSignal( char* Name,uint8 StartBit,uint8 BitSize,uint32 DefaultValue)
 {
 	DefineSignal(Name,StartBit,BitSize,DefaultValue);
+}
+
+int ArCom_Write(const char* Name,int Value)
+{
+	int rv = FALSE;
+	for (uint32 i=0; (i<sArch.PduNbr)&&(FALSE==rv); i++)
+	{
+		ArComPduType* Pdu = &(sArch.Pdu[i]);
+		if(Pdu->IsTxEnabled)
+		{
+			for(uint32 j=0;j<Pdu->SignalNbr;j++)
+			{
+				ArComSignalType* sig = &(Pdu->Signals[j]);
+				if(!strcmp(sig->Name,Name))
+				{
+					Write(sig,(uint32)Value);
+					rv = TRUE;
+					break;
+				}
+			}
+		}
+		if(TRUE==rv)
+		{
+			Refresh(Pdu);
+		}
+	}
+
+	return rv;
+}
+
+int ArCom_Read(const char* Name,int* Value)
+{
+	int rv = FALSE;
+	for (uint32 i=0; (i<sArch.PduNbr)&&(FALSE==rv); i++)
+	{
+		ArComPduType* Pdu = &(sArch.Pdu[i]);
+		for(uint32 j=0;j<Pdu->SignalNbr;j++)
+		{
+			ArComSignalType* sig = &(Pdu->Signals[j]);
+			if(!strcmp(sig->Name,Name))
+			{
+				*Value = Read(sig);
+				rv = TRUE;
+				break;
+			}
+		}
+	}
+
+	return rv;
 }
 

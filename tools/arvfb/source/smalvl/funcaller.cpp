@@ -62,7 +62,7 @@ bool funcaller_t::open_extension(require_t* require) throw (nativelib_exception_
 	{
 		meta_info_t meta;
 		declare_t* declare = dynamic_cast<declare_t*>(*i);
-		declare->print();
+		//declare->print();
 		if(declare)
 		{
 			type_t* type = dynamic_cast<type_t*>(declare->get_type());
@@ -375,14 +375,17 @@ static void print_obj(object_t* obj)
 		default:
 			break;
 	}
+
 }
 void funcaller_t::Print(std::vector<object_t*>& objs,ref_t* result)
 {
+	RUNTIME_CRITICAL_ENTER();
 	for(unsigned int i=0; i<objs.size(); i++)
 	{
 		unsigned int I = objs.size() - i - 1;
 		print_obj(objs[I]);
 	}
+	RUNTIME_CRITICAL_LEAVE();
 	// return
 	*result = REF_IS_VOID;
 }
@@ -397,13 +400,58 @@ void funcaller_t::Sleep(std::vector<object_t*>& objs,ref_t* result)
 	*result = REF_IS_VOID;
 }
 
+void funcaller_t::Write(std::vector<object_t*>& objs,ref_t* result)
+			throw (runtime_exception_t)
+{
+	bool rv = false;
+	RUNTIME_CRITICAL_ENTER();
+	if( (2==objs.size()) && (STRING==objs[1]->get_type()) && (INTEGER==objs[0]->get_type()))
+	{
+		rv = ArCom_Write(objs[1]->s->c_str(),objs[0]->i);
+	}
+	RUNTIME_CRITICAL_LEAVE();
+
+	if(false == rv)
+	{
+		throw runtime_exception_t(std::string("Wrong parameter when call write."));
+	}
+	// return
+	*result = REF_IS_VOID;
+}
+
+void funcaller_t::Read(std::vector<object_t*>& objs,ref_t* result)
+			throw (runtime_exception_t)
+{
+	bool rv = false;
+	// return
+	*result = REF_IS_VOID;
+	RUNTIME_CRITICAL_ENTER();
+	if( (1==objs.size()) && (STRING==objs[0]->get_type()))
+	{
+		int value;
+		rv = ArCom_Read(objs[0]->s->c_str(),&value);
+		if(rv)
+		{
+			ref_t ref = heap_manager_t::get_instance()->add_object(INTEGER);
+			object_t* obj = heap_manager_t::get_instance()->get_object(ref);
+			obj->i = value;
+			*result = ref;
+		}
+	}
+	RUNTIME_CRITICAL_LEAVE();
+
+	if(false == rv)
+	{
+		throw runtime_exception_t(std::string("Wrong parameter when call read."));
+	}
+}
+
 bool funcaller_t::call_buildin(function_call_t* fc,std::vector<object_t*>& objs,ref_t* result)
 					throw (runtime_exception_t)
 {
 	bool rv = true;
 
 	const char* fname = fc->get_name().c_str();
-	//GDK_THREADS_ENTER();
 	if(!strcmp(fname,"print"))
 	{
 		Print(objs,result);
@@ -412,10 +460,17 @@ bool funcaller_t::call_buildin(function_call_t* fc,std::vector<object_t*>& objs,
 	{
 		Sleep(objs,result);
 	}
+	else if(!strcmp(fname,"write"))
+	{
+		Write(objs,result);
+	}
+	else if(!strcmp(fname,"read"))
+	{
+		Read(objs,result);
+	}
 	else
 	{
 		rv = false;
 	}
-	//GDK_THREADS_LEAVE();
 	return rv;
 }

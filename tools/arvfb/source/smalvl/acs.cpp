@@ -41,12 +41,10 @@ object_t* acs::create_object(std::string v,TYPE type)
 			if((v.c_str()[0] == '0' )&&((v.c_str()[1] == 'x' )||(v.c_str()[1] == 'X')))
 			{
 				sscanf(&(v.c_str()[2]), "%x", &(object->i));
-				printf("####: Create from hex(%s)=%d\n",v.c_str(),object->i);
 			}
 			else
 			{
 				sscanf(v.c_str(), "%d", &(object->i));
-				printf("####: Create from int(%s)=%d\n",v.c_str(),object->i);
 			}
 			break;
 		case FLOATPOINT:

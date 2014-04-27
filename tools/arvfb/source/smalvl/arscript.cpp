@@ -26,12 +26,15 @@
 GThread* main_thread = NULL;
 static gpointer main_runtime(gpointer param)
 {
+	RUNTIME_CRITICAL_ENTER();
 	Arch_Trace("\n\n// ==================== [ Script Run Start ] ====================\n\n");
+	RUNTIME_CRITICAL_LEAVE();
 
 	runtime_t::get_instance()->interpretate();
 
+	RUNTIME_CRITICAL_ENTER();
 	Arch_Trace("\n\n// ==================== [ Script Run  End  ] ====================\n\n");
-
+	RUNTIME_CRITICAL_LEAVE();
 	return NULL;
 }
 
@@ -64,6 +67,7 @@ void ArScriptLoad(const char* file)
 
 void ArScriptRun(void)
 {
+
 	if(main_thread != NULL)
 	{
 		g_thread_unref(main_thread);
