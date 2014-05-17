@@ -43,6 +43,7 @@ private:
 	/* Function declaration scope */
 	typedef std::map<std::string, function_declaration_t*> fun_map_t;
 	fun_map_t _function_declarations;
+	fun_map_t _event_declarations;
 
 	/* Heap */
 	heap_manager_t*_memmanager;
@@ -67,6 +68,7 @@ public:
 	/*Function declaration operations*/
 	function_declaration_t* get_function_declaration(std::string name) throw (runtime_exception_t);
 	void add_function_declaration(function_declaration_t* fd) throw (runtime_exception_t);
+	void add_event_declaration(function_declaration_t* fd) throw (runtime_exception_t);
 
 	/* Main hierarchy block */
 	void set_main_block(block_t* block);

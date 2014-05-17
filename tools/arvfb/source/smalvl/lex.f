@@ -135,6 +135,10 @@ ID       [_a-zA-Z][_a-zA-Z0-9]*
 	return FUNCTION;
 }
 
+"on" {
+	return ON;
+}
+
 "while" {
 	return WHILE;
 }

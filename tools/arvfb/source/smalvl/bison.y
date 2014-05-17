@@ -36,7 +36,7 @@ void yyerror(const char *str)
  
 %}
 
-%token FUNCTION ARRAY_DECLARATION
+%token FUNCTION ON ARRAY_DECLARATION
 %token IDENTIFIER TK_INTEGER TK_FLOATPOINT TK_STRING 
 %token LIB_NAME TK_TYPE
 %token MORE_OR_EQUAL LESS_OR_EQUAL NOT_EQUAL EQUAL
@@ -71,6 +71,7 @@ void yyerror(const char *str)
 %type<oper> if_stmt
 %type<oper> else_stmt
 %type<oper> function_declaration
+%type<oper> on_event_declaration
 %type<oper> block
 %type<oper> condition_statement
 %type<oper> command
@@ -120,6 +121,8 @@ body:
 /* Avalilable statements in source body*/
 top_level_cmd: 
   function_declaration
+  |
+  on_event_declaration
   |
   require
   |
@@ -183,6 +186,14 @@ function_declaration:
     yyclearin;
     std::cerr << "Function declaration error!\n";
   };
+  
+on_event_declaration:
+	ON IDENTIFIER '(' function_declaration_arguments ')' block
+	{
+	  function_declaration_t* fd = new function_declaration_t($2, $4, $6);
+	  $$ = fd;
+	  runtime_t::get_instance()->add_event_declaration(fd);
+	}
 
 function_declaration_arguments: /* empty */ 
   %empty	{}

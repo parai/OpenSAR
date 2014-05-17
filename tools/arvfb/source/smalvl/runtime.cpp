@@ -79,6 +79,21 @@ void runtime_t::add_function_declaration(function_declaration_t* fd)
 	}
 }
 
+void runtime_t::add_event_declaration(function_declaration_t* fd)
+		throw (runtime_exception_t)
+{
+	RUNTIME_DEBUG("Added event declaration: %s", fd->get_name().c_str());
+	std::pair<std::string, function_declaration_t*> entry(fd->get_name(), fd);
+	std::pair<fun_map_t::iterator, bool> status = _event_declarations.insert(entry);
+	if (status.second == false)
+	{
+		std::cerr << "Semantic error: Event " << fd->get_name()
+				<< " redeclaration" << std::endl;
+
+		Arch_Trace("Semantic error: Event %s redeclaration.\n",fd->get_name().c_str());
+	}
+}
+
 void runtime_t::set_main_block(block_t* block)
 {
 	_main_block = block;
