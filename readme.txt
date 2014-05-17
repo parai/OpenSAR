@@ -30,6 +30,15 @@ Since 2013-11-23 17:17 base on arc-stable-a45528fee37b.zip AUTOSAR 3.1
 	By reading ArcCore OS, I think it is not that perfect, So what to do
 
 		>> 2014-4-16 Add a script intepreter for arvfb, good for me.
+		   2014-5-17, something no good happened to me, this script is stopped half done.
+		   That is the script has no Event and Alarm attribute which are really I hoped.
+		
+		>> 2014-5-17, I learn something more about python, it is so powerful, that is somehow 
+		the reason why I left the script half done. Yes, get the point from ply<python-lex-yacc>,
+		I think I can use the python reflection attribute to build a more powerful arvfb.
+		  SIP will do the support for interaction with C/C++ code.
+		
+		
 		
 	
 	
