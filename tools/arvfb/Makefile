@@ -28,7 +28,8 @@ inc-y += -I$(BD)/tools/arvfb/source/parser
 inc-y += -I$(BD)/tools/arvfb/source/smalvl
 inc-y += -I$(BD)/include
 
-def-y += -DDEBUG_ENABLED
+def-y += 
+#-DDEBUG_ENABLED
 
 #objects
 dir-y = $(BD)/tools/arvfb/source	\
@@ -105,5 +106,5 @@ all:$(obj-dir) $(obj-y) $(OUT) POST
 	@$(LD) $(obj-y) $(ldflags-y) -o $(OUT)/$(TARGET) 
 	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET) DONE   <<<<<<<<<<<<<<<<<<<<<<"	
 
-clean:GEN
+clean:
 	@rm -fv $(obj-dir)/*

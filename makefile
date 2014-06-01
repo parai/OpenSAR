@@ -234,7 +234,7 @@ run-support: tool binaries/gtk/Flash.img binaries/gtk/Eeprom.img
 run:
 	
 tool:
-	@(cd ./tools/arvfb;make all)
+	#@(cd ./tools/arvfb;make all)
 	
 
 		
