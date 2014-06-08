@@ -18,17 +18,22 @@ RM  = rm
 #common flags
 cflags-y   = -c -g -std=gnu99 -O2 -Wall
 ldflags-y  = -g -std=gnu99 -O2 -Wall
-cflags-y  += `pkg-config --cflags gtk+-3.0`
-ldflags-y += `pkg-config --cflags gtk+-3.0` \
-			 `pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` \
-			 -lm	
-ldflags-y += -lwinmm	
+#cflags-y  += `pkg-config --cflags gtk+-3.0`
+#ldflags-y += `pkg-config --cflags gtk+-3.0` \
+#			 `pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` 	
+ldflags-y += -lm -lwinmm	
 
+inc-y += -I$(BD)/include
+inc-y += -I$(BD)/include/generic
 inc-y += -I$(BD)/system/FreeRTOS/Source/include
 inc-y += -I$(BD)/system/FreeRTOS/Source/portable/MSVC-MingW
 inc-y += -I$(BD)/system/FreeRTOS/Config
+inc-y += -I$(BD)/system/kernel/include
+inc-y += -I$(BD)/arch/generic/gtk/kernel
+inc-y += -I$(BD)/app/config/GEN
+inc-y += -I$(BD)/app/config
 
-def-y += 
+def-y += -DWIN32
 #-DDEBUG_ENABLED
 
 #objects
@@ -37,7 +42,8 @@ dir-y = $(BD)/system/FreeRTOS/Source						\
 		$(BD)/system/FreeRTOS/Source/portable/MSVC-MingW
 		
 VPATH += $(dir-y)	\
-		$(BD)/system/FreeRTOS/Source/portable/MemMang
+		$(BD)/system/FreeRTOS/Source/portable/MemMang	\
+		$(BD)/app/config/GEN
 		
 obj-dir = $(OUT)/objs
 
@@ -47,7 +53,8 @@ obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard 
 #obj-y += $(patsubst %.cpp,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard $(addprefix $(x)/*,.cpp)))))	
 
 # special objs
-obj-y += $(obj-dir)/heap_3.o
+obj-y += $(obj-dir)/heap_3.o	\
+		 $(obj-dir)/Os_Cfg.o
 
 #common rules
 .SUFFIXES: .c .cpp

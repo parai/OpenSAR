@@ -4,55 +4,114 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "semphr.h"
+#include "Os.h"
 
-/* Priorities at which the tasks are created. */
-#define TASK1_PRIORITY		( tskIDLE_PRIORITY + 2 )
-#define TASK2_PRIORITY		( tskIDLE_PRIORITY + 1 )
-
+#ifdef WIN32
+#define SetEvent SetEvent2
+#endif
 
 /*-----------------------------------------------------------*/
+void ShutdownHook( StatusType Error )
+{
+}
+void StartupHook( void )
+{
+}
+void ErrorHook( StatusType Error )
+{
+}
+void PreTaskHook( void )
+{
+}
+void PostTaskHook( void )
+{
+}
 
-static void Task1(void* in)
+TASK(OsIdle)
 {
 	for(;;)
 	{
-		vTaskDelay(1000);
-		printf("Task1 is running\n");
 	}
 }
 
-static void Task2(void* in)
+TASK(Task10ms)
 {
 	for(;;)
 	{
-		vTaskDelay(1000);
-		printf("Task2 is running\n");
+		vTaskDelay(10);
+		printf("Task10ms is running\n");
 	}
 }
 
+TASK(Task20ms)
+{
+	for(;;)
+	{
+		vTaskDelay(20);
+		printf("Task20ms is running\n");
+	}
+}
+
+TASK(Task100ms)
+{
+	for(;;)
+	{
+		vTaskDelay(100);
+		printf("Task100ms is running\n");
+	}
+}
+
+TASK(Task1000ms)
+{
+	for(;;)
+	{
+		//vTaskDelay(1000);
+		WaitEvent(EVENT_MASK_Event1);
+		ClearEvent(EVENT_MASK_Event1);
+		printf("Task1000ms is running\n");
+		TerminateTask();
+	}
+}
+
+TASK(SchM_Startup)
+{
+	int i=0;
+	//ActivateTask(TASK_ID_Task1000ms);
+	for(;;)
+	{
+		i ++;
+		//printf("i=%d\n",i);
+		//vTaskDelay(1000);
+		//SetEvent(TASK_ID_Task1000ms,EVENT_MASK_Event1);
+//		if(i==3)
+//		{
+//			TerminateTask();
+//		}
+		ActivateTask(TASK_ID_Task1000ms);
+		printf("SchM_Startup is running\n");
+		vTaskDelay(1000);
+		SetEvent(TASK_ID_Task1000ms,EVENT_MASK_Event1);
+
+	}
+}
+
+TASK(SchM_BswService)
+{
+	for(;;);
+}
 /*-----------------------------------------------------------*/
 
 int main( int argc, char* argv[] )
 {
-	xTaskCreate( Task1, "Task1", 512, ( void * ) NULL, TASK1_PRIORITY, NULL );
-	xTaskCreate( Task2, "Task2", 512, ( void * ) NULL, TASK2_PRIORITY, NULL );
-
-	/* Start the tasks and timer running. */
-	vTaskStartScheduler();
-
-	/* If all is well, the scheduler will now be running, and the following
-	line will never be reached.  If the following line does execute, then
-	there was insufficient FreeRTOS heap memory available for the idle and/or
-	timer tasks	to be created.  See the memory management section on the
-	FreeRTOS web site for more details. */
-	for( ;; );
+	StartOS(OSDEFAULTAPPMODE);
 }
-
 
 void vAssertCalled( unsigned long ulLine, const char * const pcFileName )
 {
-
+	printf("Line %d: %s\n",(int)ulLine,pcFileName);
+	for(;;);
 }
+
 unsigned long ulGetRunTimeCounterValue( void )
 {
 	return 0;
