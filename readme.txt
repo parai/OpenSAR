@@ -42,9 +42,7 @@ Since 2013-11-23 17:17 base on arc-stable-a45528fee37b.zip AUTOSAR 3.1
 		But really, I became more and more lazy, I feel I couldn't continue this project. 
 		I think a lot, I still feel confused about what the true meaning of the things I do.
 		I am still wondering about.
-		   So I add FreeRTOS to this project, as I feel ArcCore OS is stupid, and I have no ability to 
-		develop a good one. And really FreeRTOS is so good, it even runs perfect on MinGW and MSVC.
-		So maybe I can build a OSEK OS abstract layer base on FreeRTOS.
+		So I add FreeRTOS to this project, as I feel ArcCore OS is stupid, and I have no ability to develop a good one. And really FreeRTOS is so good, it even runs perfect on MinGW and MSVC.So maybe I can build a OSEK OS abstract layer base on FreeRTOS.
 		
 	
 	

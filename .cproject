@@ -45,10 +45,7 @@
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include\gtk-3.0&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include\glib-2.0&quot;"/>
 								</option>
-								<option id="gnu.c.compiler.option.preprocessor.def.symbols.2113901385" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="__GTK__"/>
-									<listOptionValue builtIn="false" value="USE_GUI"/>
-								</option>
+								<option id="gnu.c.compiler.option.preprocessor.def.symbols.2113901385" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols" valueType="definedSymbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1318009084" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>
 							</tool>
 							<tool id="cdt.managedbuild.tool.gnu.c.linker.mingw.base.1938826711" name="MinGW C Linker" superClass="cdt.managedbuild.tool.gnu.c.linker.mingw.base">

@@ -118,12 +118,15 @@ struct name {								\
 #define	SLIST_HEAD_INITIALIZER(head)					\
 	{ NULL }
 
-#ifndef SLIST_ENTRY // for WIN32 warnning
+#ifdef SLIST_ENTRY // for WIN32 warnning
+#warning "SLIST_ENTRY() DEFINED BY WIN32, undef it for FreeRTOS port."
+#undef SLIST_ENTRY
+#endif
 #define	SLIST_ENTRY(type)						\
 struct {								\
 	struct type *sle_next;	/* next element */			\
 }
-#endif
+
 /*
  * Singly-linked List functions.
  */

@@ -70,7 +70,13 @@ void arch_enable_int(void)
 {
 	sArch.imask = cArchIsrEnabled;
 }
-
+void Arch_Trace(const char* format,...)
+{
+	va_list args;
+	va_start(args, format);
+	vprintf(format,args);
+	va_end(args);
+}
 HANDLE arch_cre_secondary_thread(DWORD (*thread_entry)(PVOID),PVOID thread_param)
 {
 	/* Start the thread that simulates the IRQn peripheral to generate

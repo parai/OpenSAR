@@ -36,68 +36,41 @@ TASK(OsIdle)
 
 TASK(Task10ms)
 {
-	for(;;)
-	{
-		vTaskDelay(10);
-		printf("Task10ms is running\n");
-	}
+	printf("Task10ms is running\n");
+	CancelAlarm(ALARM_ID_Alarm10ms);
+	TerminateTask();
 }
 
 TASK(Task20ms)
 {
-	for(;;)
-	{
-		vTaskDelay(20);
-		printf("Task20ms is running\n");
-	}
+	printf("Task20ms is running\n");
+	CancelAlarm(ALARM_ID_Alarm20ms);
+	TerminateTask();
 }
 
 TASK(Task100ms)
 {
-	for(;;)
-	{
-		vTaskDelay(100);
-		printf("Task100ms is running\n");
-	}
+	printf("Task100ms is running\n");
+	CancelAlarm(ALARM_ID_Alarm100ms);
+	TerminateTask();
 }
 
 TASK(Task1000ms)
 {
-	for(;;)
-	{
-		//vTaskDelay(1000);
-		WaitEvent(EVENT_MASK_Event1);
-		ClearEvent(EVENT_MASK_Event1);
-		printf("Task1000ms is running\n");
-		TerminateTask();
-	}
+	printf("Task1000ms is running\n");
+	TerminateTask();
 }
 
 TASK(SchM_Startup)
 {
-	int i=0;
-	//ActivateTask(TASK_ID_Task1000ms);
-	for(;;)
-	{
-		i ++;
-		//printf("i=%d\n",i);
-		//vTaskDelay(1000);
-		//SetEvent(TASK_ID_Task1000ms,EVENT_MASK_Event1);
-//		if(i==3)
-//		{
-//			TerminateTask();
-//		}
-		ActivateTask(TASK_ID_Task1000ms);
-		printf("SchM_Startup is running\n");
-		vTaskDelay(1000);
-		SetEvent(TASK_ID_Task1000ms,EVENT_MASK_Event1);
 
-	}
+	printf("SchM_Startup is running\n");
+	TerminateTask();
 }
 
 TASK(SchM_BswService)
 {
-	for(;;);
+	TerminateTask();
 }
 /*-----------------------------------------------------------*/
 

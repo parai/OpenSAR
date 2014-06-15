@@ -98,6 +98,7 @@ typedef unsigned long UBaseType_t;
 #define portTICK_PERIOD_MS			( ( TickType_t ) 1000 / configTICK_RATE_HZ )
 #define portBYTE_ALIGNMENT			4
 
+#define portYIELD_FROM_ISR( IsRequired )	do { if ( pdTRUE == IsRequired ) { portYIELD(); } } while(0)
 #define portYIELD()					vPortGenerateSimulatedInterrupt( portINTERRUPT_YIELD )
 
 void vPortCloseRunningThread( void *pvTaskToDelete, volatile BaseType_t *pxPendYield );

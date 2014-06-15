@@ -101,9 +101,8 @@ obj-$(USE_CAN)-$(CFG_PPC) += Can_PBcfg.o
 obj-$(USE_CAN)-$(CFG_ARM_CM3) += Can_Lcfg.o
 obj-$(USE_CAN)-$(CFG_ARM_CR4) += Can_Lcfg.o
 obj-$(USE_CAN)-$(CFG_HC1X) += Can_Lcfg.o
-obj-$(USE_CAN)-$(CFG_GTK) += CanHw.o
-obj-$(USE_CAN)-$(CFG_GTK) += arvfb.o
-obj-$(USE_CAN)-$(CFG_GTK) += Can_PBcfg.o
+obj-$(USE_CAN)-$(CFG_GTK) += CanHw.o arvfb.o Can_PBcfg.o
+obj-$(USE_CAN)-$(CFG_MINGW) += Can_PBcfg.o CanSocket.o
 
 # CanIf
 obj-$(USE_CANIF) += CanIf.o
@@ -157,6 +156,10 @@ vpath-$(USE_J1939TP) += $(ROOTDIR)/communication/J1939Tp
 # Include the kernel
 ifneq ($(USE_KERNEL),)
 include $(ROOTDIR)/system/kernel/makefile
+endif
+
+ifneq ($(USE_FREERTOS),)
+include $(ROOTDIR)/system/FreeRTOS/FreeRTOS.mak
 endif
 
 # Spi

@@ -11,10 +11,10 @@ VPATH +=  $(ROOTDIR)/app/src/Dia
 
 # some special files for GTK
 obj-y += Stmo.o Stmo_Cfg.o
-def-y += USE_GUI
-obj-y += Gui.o SgDraw.o Gui_Cfg.o Lcd.o lcd_font10x14.o
-inc-y += $(ROOTDIR)/system/Gui/include
-VPATH += $(ROOTDIR)/system/Gui
+#def-y += USE_GUI
+#obj-y += Gui.o SgDraw.o Gui_Cfg.o Lcd.o lcd_font10x14.o
+#inc-y += $(ROOTDIR)/system/Gui/include
+#VPATH += $(ROOTDIR)/system/Gui
 
 
 inc-y += $(ROOTDIR)/app/inc
