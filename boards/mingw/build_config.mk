@@ -35,7 +35,7 @@ MOD_USE += MCU FREERTOS ECUM CAN CANIF CANTP PDUR DCM COM DET SCHM  COMM NM CANN
 # Extra defines 
 #
 
-def-y += __GTK__ _WIN32 WIN32
+def-y += WIN32
 
 
 # Default cross compiler

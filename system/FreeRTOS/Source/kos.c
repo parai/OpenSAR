@@ -454,8 +454,33 @@ StatusType CancelAlarm(AlarmType AlarmId)
 	}
 	return rv;
 }
+
+TickType GetOsTick ( )
+{
+	return xTaskGetTickCount();
+}
+
+StatusType GetResource( ResourceType ResID )
+{
+	return E_OK;
+}
+
+StatusType ReleaseResource( ResourceType ResID)
+{
+	return E_OK;
+}
+
+void ShutdownOS( StatusType Error )
+{
+	for(;;);
+}
 #if defined(USE_FREERTOS)
 #include "EcuM.h"
+TASK(OsIdle)
+{
+	for(;;);
+}
+
 int main (int argc,char* argv[])
 {
 	EcuM_Init();
@@ -469,6 +494,35 @@ void vAssertCalled( unsigned long ulLine, const char * const pcFileName )
 unsigned long ulGetRunTimeCounterValue( void )
 {
 	return 0;
+}
+void vConfigureTimerForRunTimeStats( void )
+{
+
+}
+#include "isr.h"
+#include "Irq_Types.h"
+imask_t arch_save_int(void){ return 0;}
+void arch_restore_int(imask_t flags){}
+void arch_disable_int(void){}
+void arch_enable_int(void){}
+
+void Arch_Trace(const char* format,...)
+{
+	va_list args;
+	va_start(args, format);
+	vprintf(format,args);
+	va_end(args);
+}
+
+ISRType Os_IsrAdd( const OsIsrConstType * restrict isrPtr )
+{
+	return 0;
+}
+void Os_SysTickInit()
+{
+}
+void Os_SysTickStart(TickType period_ticks)
+{
 }
 #endif
 

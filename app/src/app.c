@@ -29,7 +29,7 @@ void PostTaskHook( void )
 	//printf("in %s().\n",__FUNCTION__);
 }
 
-void Task10ms(void)
+TASK( Task10ms )
 {
 //	static uint32 degree = 0;
 //	degree += 2;
@@ -39,14 +39,14 @@ void Task10ms(void)
 	TerminateTask();
 }
 
-void Task20ms(void)
+TASK( Task20ms )
 {
 	app_led_20ms_runnable();
 	app_gauge_20ms_runnable();
 	TerminateTask();
 }
 
-void Task100ms(void)
+TASK( Task100ms )
 {
 #if defined(USE_GUI)
 	Sg_MainFunction();
@@ -54,8 +54,9 @@ void Task100ms(void)
 	TerminateTask();
 }
 
-void Task1000ms(void)
+TASK( Task1000ms )
 {
+	printf("Task1000ms is running.\n");
 	app_led_1000ms_runnable();
 	app_time_1000ms_runnable();
 	app_nvm_1000ms_runnable();

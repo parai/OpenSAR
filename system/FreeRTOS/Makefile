@@ -38,10 +38,11 @@ def-y += -DWIN32
 
 #objects
 dir-y = $(BD)/system/FreeRTOS/Source						\
-		$(BD)/system/FreeRTOS/Config						\
-		$(BD)/system/FreeRTOS/Source/portable/MSVC-MingW
+		$(BD)/system/FreeRTOS/Config
+		
 		
 VPATH += $(dir-y)	\
+		$(BD)/system/FreeRTOS/Source/portable/MSVC-MingW	\
 		$(BD)/system/FreeRTOS/Source/portable/MemMang	\
 		$(BD)/app/config/GEN
 		
@@ -54,6 +55,7 @@ obj-y += $(patsubst %.c,$(obj-dir)/%.o,$(foreach x,$(dir-y),$(notdir $(wildcard 
 
 # special objs
 obj-y += $(obj-dir)/heap_3.o	\
+		 $(obj-dir)/port.o		\
 		 $(obj-dir)/Os_Cfg.o
 
 #common rules

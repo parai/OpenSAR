@@ -223,13 +223,13 @@ studio:
 gen:
 	@(cd ./tools/OpenSAR;python ArGen.py)
 
-binaries/gtk/Flash.img:
-	dd if=/dev/zero of=binaries/gtk/Flash.img bs=1M count=1
+binaries/$(BOARDDIR)/Flash.img:
+	dd if=/dev/zero of=binaries/$(BOARDDIR)/Flash.img bs=1M count=1
 	
-binaries/gtk/Eeprom.img:
-	dd if=/dev/zero of=binaries/gtk/Eeprom.img bs=16K count=1
+binaries/$(BOARDDIR)/Eeprom.img:
+	dd if=/dev/zero of=binaries/$(BOARDDIR)/Eeprom.img bs=16K count=1
 
-run-support: tool binaries/gtk/Flash.img binaries/gtk/Eeprom.img
+run-support: tool binaries/$(BOARDDIR)/Flash.img binaries/$(BOARDDIR)/Eeprom.img
 	
 run:
 	
