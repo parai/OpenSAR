@@ -1,1 +1,0 @@
-In this folder should modules related to diagnostic services be placed.
