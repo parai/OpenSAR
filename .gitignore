@@ -1,0 +1,8 @@
+*.o
+*.~
+
+doc/html
+doc/latex
+binaries
+objs
+
