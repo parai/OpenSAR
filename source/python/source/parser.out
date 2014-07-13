@@ -1,0 +1,714 @@
+Created by PLY version 3.4 (http://www.dabeaz.com/ply)
+
+Unused terminals:
+
+    LPAREN
+    NE
+    FULL
+    GT
+    TRUE
+    MINUS
+    RPAREN
+    POWER
+    MASK
+    LT
+    PRIORITY
+    PLUS
+    ALARMCALLBACK
+    ACTION
+    COMMA
+    LBK
+    EXTENDED
+    DIVIDE
+    AUTO
+    ACTIVATION
+    APPMODE
+    SETEVENT
+    GE
+    LE
+    RBK
+    AUTOSTART
+    INTEGER
+    MIXED
+    TIMES
+    ACTIVATETASK
+    FLOAT
+    STRING
+
+Grammar
+
+Rule 0     S' -> mil
+Rule 1     mil -> mil object
+Rule 2     mil -> object
+Rule 3     object -> Os
+Rule 4     object -> Task
+Rule 5     object -> Alarm
+Rule 6     object -> Event
+Rule 7     Os -> OS ID LBRACE DeclareList RBRACE SEMI
+Rule 8     Task -> TASK ID LBRACE DeclareList RBRACE SEMI
+Rule 9     Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI
+Rule 10    Event -> EVENT ID LBRACE DeclareList RBRACE SEMI
+Rule 11    DeclareList -> DeclareList Declare
+Rule 12    DeclareList -> Declare
+Rule 13    Declare -> STATUS EQUALS STANDARD SEMI
+Rule 14    Declare -> ERRORHOOK EQUALS FALSE SEMI
+Rule 15    Declare -> PRETASKHOOK EQUALS FALSE SEMI
+Rule 16    Declare -> POSTTASKHOOK EQUALS FALSE SEMI
+Rule 17    Declare -> SCHEDULE EQUALS NON SEMI
+Rule 18    empty -> <empty>
+
+Terminals, with rules where they appear
+
+ACTION               : 
+ACTIVATETASK         : 
+ACTIVATION           : 
+ALARM                : 9
+ALARMCALLBACK        : 
+APPMODE              : 
+AUTO                 : 
+AUTOSTART            : 
+COMMA                : 
+DIVIDE               : 
+EQUALS               : 13 14 15 16 17
+ERRORHOOK            : 14
+EVENT                : 10
+EXTENDED             : 
+FALSE                : 14 15 16
+FLOAT                : 
+FULL                 : 
+GE                   : 
+GT                   : 
+ID                   : 7 8 9 10
+INTEGER              : 
+LBK                  : 
+LBRACE               : 7 8 9 10
+LE                   : 
+LPAREN               : 
+LT                   : 
+MASK                 : 
+MINUS                : 
+MIXED                : 
+NE                   : 
+NON                  : 17
+OS                   : 7
+PLUS                 : 
+POSTTASKHOOK         : 16
+POWER                : 
+PRETASKHOOK          : 15
+PRIORITY             : 
+RBK                  : 
+RBRACE               : 7 8 9 10
+RPAREN               : 
+SCHEDULE             : 17
+SEMI                 : 7 8 9 10 13 14 15 16 17
+SETEVENT             : 
+STANDARD             : 13
+STATUS               : 13
+STRING               : 
+TASK                 : 8
+TIMES                : 
+TRUE                 : 
+error                : 
+
+Nonterminals, with rules where they appear
+
+Alarm                : 5
+Declare              : 11 12
+DeclareList          : 7 8 9 10 11
+Event                : 6
+Os                   : 3
+Task                 : 4
+empty                : 
+mil                  : 1 0
+object               : 1 2
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . mil
+    (1) mil -> . mil object
+    (2) mil -> . object
+    (3) object -> . Os
+    (4) object -> . Task
+    (5) object -> . Alarm
+    (6) object -> . Event
+    (7) Os -> . OS ID LBRACE DeclareList RBRACE SEMI
+    (8) Task -> . TASK ID LBRACE DeclareList RBRACE SEMI
+    (9) Alarm -> . ALARM ID LBRACE DeclareList RBRACE SEMI
+    (10) Event -> . EVENT ID LBRACE DeclareList RBRACE SEMI
+
+    OS              shift and go to state 3
+    TASK            shift and go to state 10
+    ALARM           shift and go to state 6
+    EVENT           shift and go to state 7
+
+    Task                           shift and go to state 1
+    mil                            shift and go to state 2
+    Alarm                          shift and go to state 4
+    object                         shift and go to state 5
+    Os                             shift and go to state 8
+    Event                          shift and go to state 9
+
+state 1
+
+    (4) object -> Task .
+
+    OS              reduce using rule 4 (object -> Task .)
+    TASK            reduce using rule 4 (object -> Task .)
+    ALARM           reduce using rule 4 (object -> Task .)
+    EVENT           reduce using rule 4 (object -> Task .)
+    $end            reduce using rule 4 (object -> Task .)
+
+
+state 2
+
+    (0) S' -> mil .
+    (1) mil -> mil . object
+    (3) object -> . Os
+    (4) object -> . Task
+    (5) object -> . Alarm
+    (6) object -> . Event
+    (7) Os -> . OS ID LBRACE DeclareList RBRACE SEMI
+    (8) Task -> . TASK ID LBRACE DeclareList RBRACE SEMI
+    (9) Alarm -> . ALARM ID LBRACE DeclareList RBRACE SEMI
+    (10) Event -> . EVENT ID LBRACE DeclareList RBRACE SEMI
+
+    OS              shift and go to state 3
+    TASK            shift and go to state 10
+    ALARM           shift and go to state 6
+    EVENT           shift and go to state 7
+
+    Task                           shift and go to state 1
+    Alarm                          shift and go to state 4
+    object                         shift and go to state 11
+    Os                             shift and go to state 8
+    Event                          shift and go to state 9
+
+state 3
+
+    (7) Os -> OS . ID LBRACE DeclareList RBRACE SEMI
+
+    ID              shift and go to state 12
+
+
+state 4
+
+    (5) object -> Alarm .
+
+    OS              reduce using rule 5 (object -> Alarm .)
+    TASK            reduce using rule 5 (object -> Alarm .)
+    ALARM           reduce using rule 5 (object -> Alarm .)
+    EVENT           reduce using rule 5 (object -> Alarm .)
+    $end            reduce using rule 5 (object -> Alarm .)
+
+
+state 5
+
+    (2) mil -> object .
+
+    OS              reduce using rule 2 (mil -> object .)
+    TASK            reduce using rule 2 (mil -> object .)
+    ALARM           reduce using rule 2 (mil -> object .)
+    EVENT           reduce using rule 2 (mil -> object .)
+    $end            reduce using rule 2 (mil -> object .)
+
+
+state 6
+
+    (9) Alarm -> ALARM . ID LBRACE DeclareList RBRACE SEMI
+
+    ID              shift and go to state 13
+
+
+state 7
+
+    (10) Event -> EVENT . ID LBRACE DeclareList RBRACE SEMI
+
+    ID              shift and go to state 14
+
+
+state 8
+
+    (3) object -> Os .
+
+    OS              reduce using rule 3 (object -> Os .)
+    TASK            reduce using rule 3 (object -> Os .)
+    ALARM           reduce using rule 3 (object -> Os .)
+    EVENT           reduce using rule 3 (object -> Os .)
+    $end            reduce using rule 3 (object -> Os .)
+
+
+state 9
+
+    (6) object -> Event .
+
+    OS              reduce using rule 6 (object -> Event .)
+    TASK            reduce using rule 6 (object -> Event .)
+    ALARM           reduce using rule 6 (object -> Event .)
+    EVENT           reduce using rule 6 (object -> Event .)
+    $end            reduce using rule 6 (object -> Event .)
+
+
+state 10
+
+    (8) Task -> TASK . ID LBRACE DeclareList RBRACE SEMI
+
+    ID              shift and go to state 15
+
+
+state 11
+
+    (1) mil -> mil object .
+
+    OS              reduce using rule 1 (mil -> mil object .)
+    TASK            reduce using rule 1 (mil -> mil object .)
+    ALARM           reduce using rule 1 (mil -> mil object .)
+    EVENT           reduce using rule 1 (mil -> mil object .)
+    $end            reduce using rule 1 (mil -> mil object .)
+
+
+state 12
+
+    (7) Os -> OS ID . LBRACE DeclareList RBRACE SEMI
+
+    LBRACE          shift and go to state 16
+
+
+state 13
+
+    (9) Alarm -> ALARM ID . LBRACE DeclareList RBRACE SEMI
+
+    LBRACE          shift and go to state 17
+
+
+state 14
+
+    (10) Event -> EVENT ID . LBRACE DeclareList RBRACE SEMI
+
+    LBRACE          shift and go to state 18
+
+
+state 15
+
+    (8) Task -> TASK ID . LBRACE DeclareList RBRACE SEMI
+
+    LBRACE          shift and go to state 19
+
+
+state 16
+
+    (7) Os -> OS ID LBRACE . DeclareList RBRACE SEMI
+    (11) DeclareList -> . DeclareList Declare
+    (12) DeclareList -> . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    DeclareList                    shift and go to state 26
+    Declare                        shift and go to state 23
+
+state 17
+
+    (9) Alarm -> ALARM ID LBRACE . DeclareList RBRACE SEMI
+    (11) DeclareList -> . DeclareList Declare
+    (12) DeclareList -> . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    DeclareList                    shift and go to state 27
+    Declare                        shift and go to state 23
+
+state 18
+
+    (10) Event -> EVENT ID LBRACE . DeclareList RBRACE SEMI
+    (11) DeclareList -> . DeclareList Declare
+    (12) DeclareList -> . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    DeclareList                    shift and go to state 28
+    Declare                        shift and go to state 23
+
+state 19
+
+    (8) Task -> TASK ID LBRACE . DeclareList RBRACE SEMI
+    (11) DeclareList -> . DeclareList Declare
+    (12) DeclareList -> . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    DeclareList                    shift and go to state 29
+    Declare                        shift and go to state 23
+
+state 20
+
+    (13) Declare -> STATUS . EQUALS STANDARD SEMI
+
+    EQUALS          shift and go to state 30
+
+
+state 21
+
+    (17) Declare -> SCHEDULE . EQUALS NON SEMI
+
+    EQUALS          shift and go to state 31
+
+
+state 22
+
+    (16) Declare -> POSTTASKHOOK . EQUALS FALSE SEMI
+
+    EQUALS          shift and go to state 32
+
+
+state 23
+
+    (12) DeclareList -> Declare .
+
+    RBRACE          reduce using rule 12 (DeclareList -> Declare .)
+    STATUS          reduce using rule 12 (DeclareList -> Declare .)
+    ERRORHOOK       reduce using rule 12 (DeclareList -> Declare .)
+    PRETASKHOOK     reduce using rule 12 (DeclareList -> Declare .)
+    POSTTASKHOOK    reduce using rule 12 (DeclareList -> Declare .)
+    SCHEDULE        reduce using rule 12 (DeclareList -> Declare .)
+
+
+state 24
+
+    (15) Declare -> PRETASKHOOK . EQUALS FALSE SEMI
+
+    EQUALS          shift and go to state 33
+
+
+state 25
+
+    (14) Declare -> ERRORHOOK . EQUALS FALSE SEMI
+
+    EQUALS          shift and go to state 34
+
+
+state 26
+
+    (7) Os -> OS ID LBRACE DeclareList . RBRACE SEMI
+    (11) DeclareList -> DeclareList . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    RBRACE          shift and go to state 35
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    Declare                        shift and go to state 36
+
+state 27
+
+    (9) Alarm -> ALARM ID LBRACE DeclareList . RBRACE SEMI
+    (11) DeclareList -> DeclareList . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    RBRACE          shift and go to state 37
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    Declare                        shift and go to state 36
+
+state 28
+
+    (10) Event -> EVENT ID LBRACE DeclareList . RBRACE SEMI
+    (11) DeclareList -> DeclareList . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    RBRACE          shift and go to state 38
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    Declare                        shift and go to state 36
+
+state 29
+
+    (8) Task -> TASK ID LBRACE DeclareList . RBRACE SEMI
+    (11) DeclareList -> DeclareList . Declare
+    (13) Declare -> . STATUS EQUALS STANDARD SEMI
+    (14) Declare -> . ERRORHOOK EQUALS FALSE SEMI
+    (15) Declare -> . PRETASKHOOK EQUALS FALSE SEMI
+    (16) Declare -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (17) Declare -> . SCHEDULE EQUALS NON SEMI
+
+    RBRACE          shift and go to state 39
+    STATUS          shift and go to state 20
+    ERRORHOOK       shift and go to state 25
+    PRETASKHOOK     shift and go to state 24
+    POSTTASKHOOK    shift and go to state 22
+    SCHEDULE        shift and go to state 21
+
+    Declare                        shift and go to state 36
+
+state 30
+
+    (13) Declare -> STATUS EQUALS . STANDARD SEMI
+
+    STANDARD        shift and go to state 40
+
+
+state 31
+
+    (17) Declare -> SCHEDULE EQUALS . NON SEMI
+
+    NON             shift and go to state 41
+
+
+state 32
+
+    (16) Declare -> POSTTASKHOOK EQUALS . FALSE SEMI
+
+    FALSE           shift and go to state 42
+
+
+state 33
+
+    (15) Declare -> PRETASKHOOK EQUALS . FALSE SEMI
+
+    FALSE           shift and go to state 43
+
+
+state 34
+
+    (14) Declare -> ERRORHOOK EQUALS . FALSE SEMI
+
+    FALSE           shift and go to state 44
+
+
+state 35
+
+    (7) Os -> OS ID LBRACE DeclareList RBRACE . SEMI
+
+    SEMI            shift and go to state 45
+
+
+state 36
+
+    (11) DeclareList -> DeclareList Declare .
+
+    RBRACE          reduce using rule 11 (DeclareList -> DeclareList Declare .)
+    STATUS          reduce using rule 11 (DeclareList -> DeclareList Declare .)
+    ERRORHOOK       reduce using rule 11 (DeclareList -> DeclareList Declare .)
+    PRETASKHOOK     reduce using rule 11 (DeclareList -> DeclareList Declare .)
+    POSTTASKHOOK    reduce using rule 11 (DeclareList -> DeclareList Declare .)
+    SCHEDULE        reduce using rule 11 (DeclareList -> DeclareList Declare .)
+
+
+state 37
+
+    (9) Alarm -> ALARM ID LBRACE DeclareList RBRACE . SEMI
+
+    SEMI            shift and go to state 46
+
+
+state 38
+
+    (10) Event -> EVENT ID LBRACE DeclareList RBRACE . SEMI
+
+    SEMI            shift and go to state 47
+
+
+state 39
+
+    (8) Task -> TASK ID LBRACE DeclareList RBRACE . SEMI
+
+    SEMI            shift and go to state 48
+
+
+state 40
+
+    (13) Declare -> STATUS EQUALS STANDARD . SEMI
+
+    SEMI            shift and go to state 49
+
+
+state 41
+
+    (17) Declare -> SCHEDULE EQUALS NON . SEMI
+
+    SEMI            shift and go to state 50
+
+
+state 42
+
+    (16) Declare -> POSTTASKHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 51
+
+
+state 43
+
+    (15) Declare -> PRETASKHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 52
+
+
+state 44
+
+    (14) Declare -> ERRORHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 53
+
+
+state 45
+
+    (7) Os -> OS ID LBRACE DeclareList RBRACE SEMI .
+
+    OS              reduce using rule 7 (Os -> OS ID LBRACE DeclareList RBRACE SEMI .)
+    TASK            reduce using rule 7 (Os -> OS ID LBRACE DeclareList RBRACE SEMI .)
+    ALARM           reduce using rule 7 (Os -> OS ID LBRACE DeclareList RBRACE SEMI .)
+    EVENT           reduce using rule 7 (Os -> OS ID LBRACE DeclareList RBRACE SEMI .)
+    $end            reduce using rule 7 (Os -> OS ID LBRACE DeclareList RBRACE SEMI .)
+
+
+state 46
+
+    (9) Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI .
+
+    OS              reduce using rule 9 (Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI .)
+    TASK            reduce using rule 9 (Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI .)
+    ALARM           reduce using rule 9 (Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI .)
+    EVENT           reduce using rule 9 (Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI .)
+    $end            reduce using rule 9 (Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI .)
+
+
+state 47
+
+    (10) Event -> EVENT ID LBRACE DeclareList RBRACE SEMI .
+
+    OS              reduce using rule 10 (Event -> EVENT ID LBRACE DeclareList RBRACE SEMI .)
+    TASK            reduce using rule 10 (Event -> EVENT ID LBRACE DeclareList RBRACE SEMI .)
+    ALARM           reduce using rule 10 (Event -> EVENT ID LBRACE DeclareList RBRACE SEMI .)
+    EVENT           reduce using rule 10 (Event -> EVENT ID LBRACE DeclareList RBRACE SEMI .)
+    $end            reduce using rule 10 (Event -> EVENT ID LBRACE DeclareList RBRACE SEMI .)
+
+
+state 48
+
+    (8) Task -> TASK ID LBRACE DeclareList RBRACE SEMI .
+
+    OS              reduce using rule 8 (Task -> TASK ID LBRACE DeclareList RBRACE SEMI .)
+    TASK            reduce using rule 8 (Task -> TASK ID LBRACE DeclareList RBRACE SEMI .)
+    ALARM           reduce using rule 8 (Task -> TASK ID LBRACE DeclareList RBRACE SEMI .)
+    EVENT           reduce using rule 8 (Task -> TASK ID LBRACE DeclareList RBRACE SEMI .)
+    $end            reduce using rule 8 (Task -> TASK ID LBRACE DeclareList RBRACE SEMI .)
+
+
+state 49
+
+    (13) Declare -> STATUS EQUALS STANDARD SEMI .
+
+    RBRACE          reduce using rule 13 (Declare -> STATUS EQUALS STANDARD SEMI .)
+    STATUS          reduce using rule 13 (Declare -> STATUS EQUALS STANDARD SEMI .)
+    ERRORHOOK       reduce using rule 13 (Declare -> STATUS EQUALS STANDARD SEMI .)
+    PRETASKHOOK     reduce using rule 13 (Declare -> STATUS EQUALS STANDARD SEMI .)
+    POSTTASKHOOK    reduce using rule 13 (Declare -> STATUS EQUALS STANDARD SEMI .)
+    SCHEDULE        reduce using rule 13 (Declare -> STATUS EQUALS STANDARD SEMI .)
+
+
+state 50
+
+    (17) Declare -> SCHEDULE EQUALS NON SEMI .
+
+    RBRACE          reduce using rule 17 (Declare -> SCHEDULE EQUALS NON SEMI .)
+    STATUS          reduce using rule 17 (Declare -> SCHEDULE EQUALS NON SEMI .)
+    ERRORHOOK       reduce using rule 17 (Declare -> SCHEDULE EQUALS NON SEMI .)
+    PRETASKHOOK     reduce using rule 17 (Declare -> SCHEDULE EQUALS NON SEMI .)
+    POSTTASKHOOK    reduce using rule 17 (Declare -> SCHEDULE EQUALS NON SEMI .)
+    SCHEDULE        reduce using rule 17 (Declare -> SCHEDULE EQUALS NON SEMI .)
+
+
+state 51
+
+    (16) Declare -> POSTTASKHOOK EQUALS FALSE SEMI .
+
+    RBRACE          reduce using rule 16 (Declare -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    STATUS          reduce using rule 16 (Declare -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    ERRORHOOK       reduce using rule 16 (Declare -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    PRETASKHOOK     reduce using rule 16 (Declare -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    POSTTASKHOOK    reduce using rule 16 (Declare -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    SCHEDULE        reduce using rule 16 (Declare -> POSTTASKHOOK EQUALS FALSE SEMI .)
+
+
+state 52
+
+    (15) Declare -> PRETASKHOOK EQUALS FALSE SEMI .
+
+    RBRACE          reduce using rule 15 (Declare -> PRETASKHOOK EQUALS FALSE SEMI .)
+    STATUS          reduce using rule 15 (Declare -> PRETASKHOOK EQUALS FALSE SEMI .)
+    ERRORHOOK       reduce using rule 15 (Declare -> PRETASKHOOK EQUALS FALSE SEMI .)
+    PRETASKHOOK     reduce using rule 15 (Declare -> PRETASKHOOK EQUALS FALSE SEMI .)
+    POSTTASKHOOK    reduce using rule 15 (Declare -> PRETASKHOOK EQUALS FALSE SEMI .)
+    SCHEDULE        reduce using rule 15 (Declare -> PRETASKHOOK EQUALS FALSE SEMI .)
+
+
+state 53
+
+    (14) Declare -> ERRORHOOK EQUALS FALSE SEMI .
+
+    RBRACE          reduce using rule 14 (Declare -> ERRORHOOK EQUALS FALSE SEMI .)
+    STATUS          reduce using rule 14 (Declare -> ERRORHOOK EQUALS FALSE SEMI .)
+    ERRORHOOK       reduce using rule 14 (Declare -> ERRORHOOK EQUALS FALSE SEMI .)
+    PRETASKHOOK     reduce using rule 14 (Declare -> ERRORHOOK EQUALS FALSE SEMI .)
+    POSTTASKHOOK    reduce using rule 14 (Declare -> ERRORHOOK EQUALS FALSE SEMI .)
+    SCHEDULE        reduce using rule 14 (Declare -> ERRORHOOK EQUALS FALSE SEMI .)
+

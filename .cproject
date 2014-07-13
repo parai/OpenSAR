@@ -101,10 +101,10 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets">
 		<buildTargets>
-			<target name="misc.py" path="source/python" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
+			<target name="mcc.py" path="source/python/source" targetID="org.eclipse.cdt.build.MakeTargetBuilder">
 				<buildCommand>python</buildCommand>
 				<buildArguments/>
-				<buildTarget>misc.py</buildTarget>
+				<buildTarget>mcc.py</buildTarget>
 				<stopOnError>true</stopOnError>
 				<useDefaultCommand>false</useDefaultCommand>
 				<runAllBuilders>true</runAllBuilders>
