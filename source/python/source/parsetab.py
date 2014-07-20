@@ -5,9 +5,9 @@ _tabversion = '3.2'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'I\x9ccCI\xf4\x06n3$n%\xcb-!\xd3'
+_lr_signature = '\xe8*\x8e\x9c\x84xC\xc4y7\x046\xdef\xa3\xb5'
     
-_lr_action_items = {'STATUS':([16,17,18,19,24,25,30,33,34,35,41,49,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,],[20,27,27,27,-9,20,-24,27,27,27,-8,-23,-11,-10,-15,-14,-19,-18,-16,-17,-13,-12,-25,-29,-28,-27,-26,]),'EXTENDED':([36,],[52,]),'TASK':([0,1,2,4,5,8,9,11,60,68,69,70,],[10,-4,10,-5,-2,-3,-6,-1,-7,-21,-22,-20,]),'FALSE':([37,38,39,42,45,46,47,],[54,56,59,61,65,66,67,]),'RBRACE':([24,25,30,33,34,35,41,49,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,],[-9,40,-24,48,50,51,-8,-23,-11,-10,-15,-14,-19,-18,-16,-17,-13,-12,-25,-29,-28,-27,-26,]),'PRETASKHOOK':([16,17,18,19,24,25,30,33,34,35,41,49,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,],[21,31,31,31,-9,21,-24,31,31,31,-8,-23,-11,-10,-15,-14,-19,-18,-16,-17,-13,-12,-25,-29,-28,-27,-26,]),'SCHEDULE':([17,18,19,30,33,34,35,49,81,82,83,84,85,],[28,28,28,-24,28,28,28,-23,-25,-29,-28,-27,-26,]),'TRUE':([37,38,39,42,],[55,57,58,62,]),'ALARM':([0,1,2,4,5,8,9,11,60,68,69,70,],[6,-4,6,-5,-2,-3,-6,-1,-7,-21,-22,-20,]),'SHUTDOWNHOOK':([16,24,25,41,71,72,73,74,75,76,77,78,79,80,],[22,-9,22,-8,-11,-10,-15,-14,-19,-18,-16,-17,-13,-12,]),'POSTTASKHOOK':([16,17,18,19,24,25,30,33,34,35,41,49,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,],[23,29,29,29,-9,23,-24,29,29,29,-8,-23,-11,-10,-15,-14,-19,-18,-16,-17,-13,-12,-25,-29,-28,-27,-26,]),'EQUALS':([20,21,22,23,26,27,28,29,31,32,],[36,37,38,39,42,43,44,45,46,47,]),'NON':([44,],[64,]),'ID':([3,6,7,10,],[12,13,14,15,]),'ERRORHOOK':([16,17,18,19,24,25,30,33,34,35,41,49,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,],[26,32,32,32,-9,26,-24,32,32,32,-8,-23,-11,-10,-15,-14,-19,-18,-16,-17,-13,-12,-25,-29,-28,-27,-26,]),'LBRACE':([12,13,14,15,],[16,17,18,19,]),'SEMI':([40,48,50,51,52,53,54,55,56,57,58,59,61,62,63,64,65,66,67,],[60,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,]),'STANDARD':([36,43,],[53,63,]),'OS':([0,1,2,4,5,8,9,11,60,68,69,70,],[3,-4,3,-5,-2,-3,-6,-1,-7,-21,-22,-20,]),'EVENT':([0,1,2,4,5,8,9,11,60,68,69,70,],[7,-4,7,-5,-2,-3,-6,-1,-7,-21,-22,-20,]),'$end':([1,2,4,5,8,9,11,60,68,69,70,],[-4,0,-5,-2,-3,-6,-1,-7,-21,-22,-20,]),}
+_lr_action_items = {'ALARM':([0,1,2,4,5,8,9,11,72,76,79,87,],[6,-4,6,-5,-2,-3,-6,-1,-7,-33,-34,-20,]),'FULL':([56,],[81,]),'TRUE':([42,43,44,45,59,],[65,66,69,71,86,]),'TASK':([0,1,2,4,5,8,9,11,72,76,79,87,],[10,-4,10,-5,-2,-3,-6,-1,-7,-33,-34,-20,]),'SEMI':([46,51,55,60,62,63,64,65,66,67,68,69,70,71,73,74,75,77,78,80,81,82,83,84,85,114,116,],[72,76,79,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,117,118,]),'PRIORITY':([19,36,40,61,103,104,105,106,107,108,117,],[38,-22,38,-21,-23,-24,-25,-27,-26,-28,-29,]),'ERRORHOOK':([16,17,18,21,26,30,33,34,47,52,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,],[25,32,32,-9,25,32,-36,32,-8,-35,-11,-10,-19,-18,-16,-17,-15,-14,-13,-12,-37,-41,-40,-39,-38,]),'INTEGER':([57,58,],[83,84,]),'$end':([1,2,4,5,8,9,11,72,76,79,87,],[-4,0,-5,-2,-3,-6,-1,-7,-33,-34,-20,]),'STATUS':([16,17,18,21,26,30,33,34,47,52,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,],[20,27,27,-9,20,27,-36,27,-8,-35,-11,-10,-19,-18,-16,-17,-15,-14,-13,-12,-37,-41,-40,-39,-38,]),'EXTENDED':([41,],[62,]),'RBRACE':([21,26,30,33,34,36,40,47,52,61,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,111,112,115,117,118,],[-9,46,51,-36,55,-22,60,-8,-35,-21,-11,-10,-19,-18,-16,-17,-15,-14,-13,-12,-37,-41,-40,-39,-38,-23,-24,-25,-27,-26,-28,-31,114,-30,-29,-32,]),'SCHEDULE':([17,18,19,30,33,34,36,40,52,61,98,99,100,101,102,103,104,105,106,107,108,117,],[28,28,35,28,-36,28,-22,35,-35,-21,-37,-41,-40,-39,-38,-23,-24,-25,-27,-26,-28,-29,]),'ACTIVATION':([19,36,40,61,103,104,105,106,107,108,117,],[37,-22,37,-21,-23,-24,-25,-27,-26,-28,-29,]),'APPMODE':([109,111,112,115,118,],[110,-31,110,-30,-32,]),'POSTTASKHOOK':([16,17,18,21,26,30,33,34,47,52,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,],[23,29,29,-9,23,29,-36,29,-8,-35,-11,-10,-19,-18,-16,-17,-15,-14,-13,-12,-37,-41,-40,-39,-38,]),'EQUALS':([20,22,23,24,25,27,28,29,31,32,35,37,38,39,110,],[41,42,43,44,45,48,49,50,53,54,56,57,58,59,113,]),'STANDARD':([41,48,],[63,73,]),'AUTOSTART':([19,36,40,61,103,104,105,106,107,108,117,],[39,-22,39,-21,-23,-24,-25,-27,-26,-28,-29,]),'MIXED':([56,],[82,]),'ID':([3,6,7,10,113,],[12,13,14,15,116,]),'NON':([49,56,],[74,80,]),'LBRACE':([12,13,14,15,86,],[16,17,18,19,109,]),'FALSE':([42,43,44,45,50,53,54,59,],[64,67,68,70,75,77,78,85,]),'PRETASKHOOK':([16,17,18,21,26,30,33,34,47,52,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,],[24,31,31,-9,24,31,-36,31,-8,-35,-11,-10,-19,-18,-16,-17,-15,-14,-13,-12,-37,-41,-40,-39,-38,]),'SHUTDOWNHOOK':([16,21,26,47,88,89,90,91,92,93,94,95,96,97,],[22,-9,22,-8,-11,-10,-19,-18,-16,-17,-15,-14,-13,-12,]),'OS':([0,1,2,4,5,8,9,11,72,76,79,87,],[3,-4,3,-5,-2,-3,-6,-1,-7,-33,-34,-20,]),'EVENT':([0,1,2,4,5,8,9,11,72,76,79,87,],[7,-4,7,-5,-2,-3,-6,-1,-7,-33,-34,-20,]),}
 
 _lr_action = { }
 for _k, _v in _lr_action_items.items():
@@ -16,7 +16,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'Task':([0,2,],[1,1,]),'mil':([0,],[2,]),'Alarm':([0,2,],[4,4,]),'object':([0,2,],[5,11,]),'Declare':([17,18,19,33,34,35,],[30,30,30,49,49,49,]),'OsDeclare':([16,25,],[24,41,]),'OsDeclareList':([16,],[25,]),'Os':([0,2,],[8,8,]),'Event':([0,2,],[9,9,]),'DeclareList':([17,18,19,],[33,34,35,]),}
+_lr_goto_items = {'Task':([0,2,],[1,1,]),'Attrib':([17,18,30,34,],[33,33,52,52,]),'mil':([0,],[2,]),'OsAttrib':([16,26,],[21,47,]),'TaskAttrib':([19,40,],[36,61,]),'Alarm':([0,2,],[4,4,]),'object':([0,2,],[5,11,]),'AttribList':([17,18,],[30,34,]),'TaskAttribList':([19,],[40,]),'OsAttribList':([16,],[26,]),'AppMode':([109,112,],[111,115,]),'Os':([0,2,],[8,8,]),'Event':([0,2,],[9,9,]),'AppModeList':([109,],[112,]),}
 
 _lr_goto = { }
 for _k, _v in _lr_goto_items.items():
@@ -28,32 +28,44 @@ _lr_productions = [
   ("S' -> mil","S'",1,None,None,None),
   ('mil -> mil object','mil',2,'p_mil','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',17),
   ('mil -> object','mil',1,'p_mil','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',18),
-  ('object -> Os','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',24),
-  ('object -> Task','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',25),
-  ('object -> Alarm','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',26),
-  ('object -> Event','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',27),
-  ('Os -> OS ID LBRACE OsDeclareList RBRACE SEMI','Os',6,'p_Os','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',31),
-  ('OsDeclareList -> OsDeclareList OsDeclare','OsDeclareList',2,'p_OsDeclareList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',34),
-  ('OsDeclareList -> OsDeclare','OsDeclareList',1,'p_OsDeclareList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',35),
-  ('OsDeclare -> STATUS EQUALS STANDARD SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',39),
-  ('OsDeclare -> STATUS EQUALS EXTENDED SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',40),
-  ('OsDeclare -> ERRORHOOK EQUALS TRUE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',41),
-  ('OsDeclare -> ERRORHOOK EQUALS FALSE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',42),
-  ('OsDeclare -> PRETASKHOOK EQUALS TRUE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',43),
-  ('OsDeclare -> PRETASKHOOK EQUALS FALSE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',44),
-  ('OsDeclare -> POSTTASKHOOK EQUALS TRUE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',45),
-  ('OsDeclare -> POSTTASKHOOK EQUALS FALSE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',46),
-  ('OsDeclare -> SHUTDOWNHOOK EQUALS TRUE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',47),
-  ('OsDeclare -> SHUTDOWNHOOK EQUALS FALSE SEMI','OsDeclare',4,'p_OsDeclare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',48),
-  ('Task -> TASK ID LBRACE DeclareList RBRACE SEMI','Task',6,'p_Task','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',51),
-  ('Alarm -> ALARM ID LBRACE DeclareList RBRACE SEMI','Alarm',6,'p_Alarm','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',54),
-  ('Event -> EVENT ID LBRACE DeclareList RBRACE SEMI','Event',6,'p_Event','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',57),
-  ('DeclareList -> DeclareList Declare','DeclareList',2,'p_DeclareList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',61),
-  ('DeclareList -> Declare','DeclareList',1,'p_DeclareList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',62),
-  ('Declare -> STATUS EQUALS STANDARD SEMI','Declare',4,'p_Declare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',66),
-  ('Declare -> ERRORHOOK EQUALS FALSE SEMI','Declare',4,'p_Declare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',67),
-  ('Declare -> PRETASKHOOK EQUALS FALSE SEMI','Declare',4,'p_Declare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',68),
-  ('Declare -> POSTTASKHOOK EQUALS FALSE SEMI','Declare',4,'p_Declare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',69),
-  ('Declare -> SCHEDULE EQUALS NON SEMI','Declare',4,'p_Declare','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',70),
-  ('empty -> <empty>','empty',0,'p_empty','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',77),
+  ('object -> Os','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',31),
+  ('object -> Task','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',32),
+  ('object -> Alarm','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',33),
+  ('object -> Event','object',1,'p_object','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',34),
+  ('Os -> OS ID LBRACE OsAttribList RBRACE SEMI','Os',6,'p_Os','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',49),
+  ('OsAttribList -> OsAttribList OsAttrib','OsAttribList',2,'p_OsAttribList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',57),
+  ('OsAttribList -> OsAttrib','OsAttribList',1,'p_OsAttribList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',58),
+  ('OsAttrib -> STATUS EQUALS STANDARD SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',62),
+  ('OsAttrib -> STATUS EQUALS EXTENDED SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',63),
+  ('OsAttrib -> ERRORHOOK EQUALS TRUE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',64),
+  ('OsAttrib -> ERRORHOOK EQUALS FALSE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',65),
+  ('OsAttrib -> PRETASKHOOK EQUALS TRUE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',66),
+  ('OsAttrib -> PRETASKHOOK EQUALS FALSE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',67),
+  ('OsAttrib -> POSTTASKHOOK EQUALS TRUE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',68),
+  ('OsAttrib -> POSTTASKHOOK EQUALS FALSE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',69),
+  ('OsAttrib -> SHUTDOWNHOOK EQUALS TRUE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',70),
+  ('OsAttrib -> SHUTDOWNHOOK EQUALS FALSE SEMI','OsAttrib',4,'p_OsAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',71),
+  ('Task -> TASK ID LBRACE TaskAttribList RBRACE SEMI','Task',6,'p_Task','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',74),
+  ('TaskAttribList -> TaskAttribList TaskAttrib','TaskAttribList',2,'p_TaskAttribList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',81),
+  ('TaskAttribList -> TaskAttrib','TaskAttribList',1,'p_TaskAttribList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',82),
+  ('TaskAttrib -> SCHEDULE EQUALS NON SEMI','TaskAttrib',4,'p_TaskAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',85),
+  ('TaskAttrib -> SCHEDULE EQUALS FULL SEMI','TaskAttrib',4,'p_TaskAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',86),
+  ('TaskAttrib -> SCHEDULE EQUALS MIXED SEMI','TaskAttrib',4,'p_TaskAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',87),
+  ('TaskAttrib -> PRIORITY EQUALS INTEGER SEMI','TaskAttrib',4,'p_TaskAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',88),
+  ('TaskAttrib -> ACTIVATION EQUALS INTEGER SEMI','TaskAttrib',4,'p_TaskAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',89),
+  ('TaskAttrib -> AUTOSTART EQUALS FALSE SEMI','TaskAttrib',4,'p_TaskAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',90),
+  ('TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI','TaskAttrib',7,'p_TaskAttrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',91),
+  ('AppModeList -> AppModeList AppMode','AppModeList',2,'p_AppModeList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',98),
+  ('AppModeList -> AppMode','AppModeList',1,'p_AppModeList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',99),
+  ('AppMode -> APPMODE EQUALS ID SEMI','AppMode',4,'p_AppMode','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',109),
+  ('Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI','Alarm',6,'p_Alarm','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',113),
+  ('Event -> EVENT ID LBRACE AttribList RBRACE SEMI','Event',6,'p_Event','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',116),
+  ('AttribList -> AttribList Attrib','AttribList',2,'p_AttribList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',120),
+  ('AttribList -> Attrib','AttribList',1,'p_AttribList','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',121),
+  ('Attrib -> STATUS EQUALS STANDARD SEMI','Attrib',4,'p_Attrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',125),
+  ('Attrib -> ERRORHOOK EQUALS FALSE SEMI','Attrib',4,'p_Attrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',126),
+  ('Attrib -> PRETASKHOOK EQUALS FALSE SEMI','Attrib',4,'p_Attrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',127),
+  ('Attrib -> POSTTASKHOOK EQUALS FALSE SEMI','Attrib',4,'p_Attrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',128),
+  ('Attrib -> SCHEDULE EQUALS NON SEMI','Attrib',4,'p_Attrib','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',129),
+  ('empty -> <empty>','empty',0,'p_empty','D:\\cygwin64\\home\\Administrator\\workspace\\OpenSAR\\source\\python\\source\\mil\\myacc.py',136),
 ]

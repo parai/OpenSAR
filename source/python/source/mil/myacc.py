@@ -34,17 +34,7 @@ def p_object(p):
             |    Event'''
     p[0] = p[1]
 
-def p_Os(p):
-    '''Os : OS ID LBRACE OsDeclareList RBRACE SEMI '''
-    p[0] = ('OS',p[2],p[4])
-    cstr = 'OS %s {\n'%(p[2])
-    for attr,value in p[4].items():
-        cstr += '\t%s = %s;\n'%(attr,value)
-    cstr += '};\n\n'
-    print cstr
-def p_OsDeclareList(p):
-    '''OsDeclareList : OsDeclareList OsDeclare
-                    | OsDeclare '''
+def __AttribList(p):
     if len(p) == 2 and p[1]:
         p[0] = { }
         (attr,oper,value) = p[1]
@@ -55,9 +45,21 @@ def p_OsDeclareList(p):
         if p[2]:
             (attr,oper,value) = p[2]
             p[0][attr] = value
+def p_Os(p):
+    '''Os : OS ID LBRACE OsAttribList RBRACE SEMI '''
+    p[0] = ('OS',p[2],p[4])
+    cstr = 'OS %s {\n'%(p[2])
+    for attr,value in p[4].items():
+        cstr += '\t%s = %s;\n'%(attr,value)
+    cstr += '};\n\n'
+    print cstr
+def p_OsAttribList(p):
+    '''OsAttribList : OsAttribList OsAttrib
+                    | OsAttrib '''
+    __AttribList(p)
     
-def p_OsDeclare(p):
-    '''OsDeclare :  STATUS EQUALS STANDARD SEMI
+def p_OsAttrib(p):
+    '''OsAttrib :  STATUS EQUALS STANDARD SEMI
                 | STATUS EQUALS EXTENDED SEMI
                 | ERRORHOOK EQUALS TRUE SEMI
                 | ERRORHOOK EQUALS FALSE SEMI
@@ -69,22 +71,59 @@ def p_OsDeclare(p):
                 | SHUTDOWNHOOK EQUALS FALSE SEMI '''
     p[0] = (p[1],p[2],p[3])
 def p_Task(p):
-    '''Task : TASK ID LBRACE DeclareList RBRACE SEMI '''
-    pass
+    '''Task : TASK ID LBRACE TaskAttribList RBRACE SEMI '''
+    cstr = 'Task %s {\n'%(p[2])
+    for attr,value in p[4].items():
+        cstr += '\t%s = %s;\n'%(attr,value)
+    cstr += '};\n\n'
+    print cstr
+
+def p_TaskAttribList(p):
+    '''TaskAttribList : TaskAttribList TaskAttrib
+                    | TaskAttrib '''
+    __AttribList(p)
+def p_TaskAttrib(p):
+    '''TaskAttrib :  SCHEDULE EQUALS NON SEMI
+                | SCHEDULE EQUALS FULL SEMI
+                | SCHEDULE EQUALS MIXED SEMI
+                | PRIORITY EQUALS INTEGER SEMI
+                | ACTIVATION EQUALS INTEGER SEMI
+                | AUTOSTART EQUALS FALSE SEMI
+                | AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI '''
+    if len(p) == 5:
+        p[0] = (p[1],p[2],p[3])
+    elif len(p) == 8:
+        p[0] = (p[1],p[2],(p[3],p[5]))
+
+def p_AppModeList(p):
+    ''' AppModeList : AppModeList AppMode
+                    | AppMode'''
+    if len(p) == 2:
+       p[0] = []
+       p[0].append(p[1])
+    elif len(p) ==3:
+       p[0] = p[1]
+       if not p[0]: p[0] = []
+       if p[2]:
+           p[0].append(p[1])
+def p_AppMode(p):
+    ''' AppMode : APPMODE EQUALS ID SEMI'''
+    p[0] = (p[1],p[2],p[3])
+    
 def p_Alarm(p):
-    '''Alarm : ALARM ID LBRACE DeclareList RBRACE SEMI '''
+    '''Alarm : ALARM ID LBRACE AttribList RBRACE SEMI '''
     pass
 def p_Event(p):
-    '''Event : EVENT ID LBRACE DeclareList RBRACE SEMI '''
+    '''Event : EVENT ID LBRACE AttribList RBRACE SEMI '''
     pass  
 
-def p_DeclareList(p):
-    '''DeclareList : DeclareList Declare
-                    | Declare '''
+def p_AttribList(p):
+    '''AttribList : AttribList Attrib
+                    | Attrib '''
     pass
     
-def p_Declare(p):
-    '''Declare :  STATUS EQUALS STANDARD SEMI
+def p_Attrib(p):
+    '''Attrib :  STATUS EQUALS STANDARD SEMI
                 | ERRORHOOK EQUALS FALSE SEMI
                 | PRETASKHOOK EQUALS FALSE SEMI
                 | POSTTASKHOOK EQUALS FALSE SEMI
