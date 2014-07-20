@@ -24,7 +24,7 @@ PUBLIC STATIC void Init ( void )
 }
 
 /* ============================= [ INTERFACE ] ================================ */
-const EcuM_Class EcuM = {
+INSTANCE CONST EcuM_Class EcuM = {
 	.Init = Init
 };
 

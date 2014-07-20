@@ -29,9 +29,27 @@ PUBLIC STATIC void Start ( AppModeType app_mode )
 	OsekOs.Start(app_mode);
 }
 
+PUBLIC STATIC StatusType ActivateTask ( TaskType TaskID )
+{
+	return OsekOs.ActivateTask(TaskID);
+}
+
+PUBLIC STATIC StatusType TerminateTask ( void )
+{
+	return OsekOs.TerminateTask();
+}
+
+PUBLIC STATIC StatusType Schedule(void)
+{
+	return OsekOs.Schedule();
+}
+
 /* ============================= [ INTERFACE ] ================================ */
-const Os_Class Os = {
+INSTANCE CONST Os_Class Os = {
 	.Init  = Init,
-	.Start = Start
+	.Start = Start,
+	.Schedule = Schedule,
+	.ActivateTask = ActivateTask,
+	.TerminateTask = TerminateTask
 };
 

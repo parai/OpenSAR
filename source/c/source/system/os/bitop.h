@@ -26,5 +26,5 @@ typedef struct
 	PUBLIC void  (*ClearBit) ( uint8 );
 }Bitop_Class;
 /* ============================= [ INTERFACE ] ================================ */
-extern const Bitop_Class Bitop;
+INSTANCE CONST Bitop_Class Bitop;
 #endif /* BITOP_H_ */

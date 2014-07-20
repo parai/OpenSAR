@@ -20,17 +20,39 @@
 #include "Std_Types.h"
 
 /* ============================= [ TYPES ] ==================================== */
+/*! standard OS types */
 typedef uint8			TaskType;
 typedef TaskType*		TaskRefType;
 typedef uint32			TickType;
 typedef TickType*		TickRefType;
 typedef uint8 			StatusType;
-typedef uint32 			AppModeType;
+typedef uint32 			AppModeType;	/*! each bit is a mode */
+
+/*! extended OS types */
+typedef void_fn_void_t task_entry_t;
+typedef uint8 		   task_priority_t;
+
+/*! \class Os_Class "Os.h"
+ *  \brief Operating System.
+ *
+ * AUTOSAR OS
+ */
 typedef struct
 {
+	/*! \fn void Init( void )
+	 *  \brief Initialize OS.
+	 */
 	PUBLIC void (*Init) 	(void);
+	/*! \fn void Start( AppModeType app_mode )
+	 *  \brief Start OS.
+	 *  \param app_mode application mode
+	 */
 	PUBLIC void (*Start)	(AppModeType);
+	PUBLIC StatusType (*Schedule) (void);
+	PUBLIC StatusType (*ActivateTask) (TaskType);
+	PUBLIC StatusType (*TerminateTask) ( void );
 }Os_Class;
+
 /* ============================= [ MACROS ] =================================== */
 #define E_OS_ACCESS 	(StatusType)1
 #define	E_OS_CALLEVEL 	(StatusType)2
@@ -45,6 +67,8 @@ typedef struct
 
 #define TASK(_task)		void _task( void )
 
+#include "OsekOs.h"
+
 /* ============================= [ INTERFACE ] ================================ */
-extern const Os_Class Os;
+INSTANCE CONST Os_Class Os;
 #endif /* OS_H_ */

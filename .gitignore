@@ -2,8 +2,7 @@
 *.~
 *.pyc
 
-doc/html
-doc/latex
 binaries
 objs
+doc/c/html
 

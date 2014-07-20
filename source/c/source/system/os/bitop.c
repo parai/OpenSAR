@@ -60,7 +60,7 @@ PUBLIC STATIC void Init ( void )
 }
 PUBLIC STATIC uint8 GetBit ( void  )
 {
-	uint8 result;
+	uint8 result = 0;	/* the OsIdle must be with priority 0 */
 	if( readyGrp != 0x00u)
 	{
 		uint8 y = tableUnMap[readyGrp];
@@ -93,7 +93,7 @@ PUBLIC STATIC void ClearBit(uint8 priority)
 }
 
 /* ============================= [ INTERFACE ] ================================ */
-const Bitop_Class Bitop = {
+INSTANCE CONST Bitop_Class Bitop = {
 	.Init   = Init,
 	.GetBit = GetBit,
 	.SetBit = SetBit,

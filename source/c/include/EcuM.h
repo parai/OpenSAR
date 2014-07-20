@@ -22,7 +22,7 @@ typedef struct
 	PUBLIC void (*Init) (void);
 } EcuM_Class;
 /* ============================= [ INTERFACE ] ================================ */
-extern const EcuM_Class EcuM;
+INSTANCE CONST EcuM_Class EcuM;
 
 
 #endif /* ECUM_H_ */

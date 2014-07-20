@@ -18,14 +18,29 @@
 #include "Os.h"
 
 /* ============================= [ TYPES ] ==================================== */
+
+typedef struct
+{
+	task_entry_t    entry;
+	task_priority_t priority;	/*! priority also represent the task id, the same as TaskType */
+	bool            autostart;
+	AppModeType     app_mode;	/*! means task runnable modes */
+}task_declare_t;
+
 typedef struct
 {
 	PUBLIC void (*Init) 	(void);
 	PUBLIC void (*Start)	(AppModeType);
+	PUBLIC StatusType (*Schedule) (void);
+	PUBLIC StatusType (*ActivateTask) (TaskType);
+	PUBLIC StatusType (*TerminateTask) ( void );
 }OsekOs_Class;
 
+
+#include "os_cfg.h"
+
 /* ============================= [ INTERFACE ] ================================ */
-extern const OsekOs_Class OsekOs;
+INSTANCE CONST OsekOs_Class OsekOs;
 
 
 #endif /* OSEKOS_H_ */
