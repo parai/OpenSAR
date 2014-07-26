@@ -6,7 +6,7 @@ keywords = (
     'OS',   'STATUS', 'ERRORHOOK', 'PRETASKHOOK', 'POSTTASKHOOK', 'SHUTDOWNHOOK',
     'TASK', 'SCHEDULE', 'PRIORITY', 'ACTIVATION', 'AUTOSTART', 'APPMODE',
     'ALARM', 'ACTION', 'ACTIVATETASK', 'SETEVENT', 'ALARMCALLBACK',
-    'EVENT', 'MASK',
+    'EVENT', 'MASK','ALARMCALLBACKNAME',
     'AUTO','TRUE','FALSE','STANDARD','EXTENDED',
     'NON','FULL','MIXED'
 )
@@ -49,7 +49,7 @@ t_GE      = r'>='
 t_NE      = r'<>'
 t_COMMA   = r'\,'
 t_SEMI    = r';'
-t_INTEGER = r'\d+'    
+t_INTEGER = r'(\d+)|(0x|X[0-9a-fA-F]+)'  
 t_FLOAT   = r'((\d*\.\d+)(E[\+-]?\d+)?|([1-9]\d*E[\+-]?\d+))'
 t_STRING  = r'\".*?\"'
 

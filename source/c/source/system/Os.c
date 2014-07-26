@@ -44,12 +44,47 @@ PUBLIC STATIC StatusType Schedule(void)
 	return OsekOs.Schedule();
 }
 
+PUBLIC STATIC StatusType GetAlarmBase( AlarmType AlarmId, AlarmBaseRefType Info )
+{
+	return OsekOs.GetAlarmBase(AlarmId,Info);
+}
+
+PUBLIC STATIC StatusType GetAlarm(AlarmType AlarmId, TickRefType Tick)
+{
+	return OsekOs.GetAlarm(AlarmId,Tick);
+}
+PUBLIC STATIC StatusType SetRelAlarm(AlarmType AlarmId, TickType Increment, TickType Cycle)
+{
+	return OsekOs.SetRelAlarm(AlarmId,Increment,Cycle);
+}
+
+PUBLIC STATIC StatusType SetAbsAlarm(AlarmType AlarmId, TickType Start, TickType Cycle)
+{
+	return OsekOs.SetAbsAlarm(AlarmId,Start,Cycle);
+}
+
+PUBLIC STATIC StatusType CancelAlarm(AlarmType AlarmId)
+{
+	return OsekOs.CancelAlarm(AlarmId);
+}
+
+PUBLIC STATIC TickType GetOsTick( void )
+{
+	return OsekOs.GetOsTick();
+}
+
 /* ============================= [ INTERFACE ] ================================ */
 INSTANCE CONST Os_Class Os = {
 	.Init  = Init,
 	.Start = Start,
 	.Schedule = Schedule,
 	.ActivateTask = ActivateTask,
-	.TerminateTask = TerminateTask
+	.TerminateTask = TerminateTask,
+	.GetAlarmBase = GetAlarmBase,
+	.GetAlarm = GetAlarm,
+	.SetRelAlarm = SetRelAlarm,
+	.SetAbsAlarm = SetAbsAlarm,
+	.CancelAlarm = CancelAlarm,
+	.GetOsTick = GetOsTick,
 };
 

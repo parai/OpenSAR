@@ -16,27 +16,22 @@
 
 TASK(OsIdle)
 {
-	Os.ActivateTask(TASKID_SchM_BswService);
 }
 
-PROTECT task_declare_t TaskList[TASK_NUM] =
+ALARM(SchM_BswService)
 {
-	{
-		.entry = OsIdle,
-		.priority = 0,
-		.autostart = TRUE,
-		.app_mode = OSDEFAULTAPPMODE
-	},
-	{
-		.entry = SchM_Startup,
-		.priority = 1,
-		.autostart = TRUE,
-		.app_mode = OSDEFAULTAPPMODE
-	},
-	{
-		.entry = SchM_BswService,
-		.priority = 2,
-		.autostart = FALSE,
-		.app_mode = OSDEFAULTAPPMODE
-	}
+	(void)Os.ActivateTask(TASKID_SchM_BswService);
+}
+
+PROTECT CONST task_declare_t TaskList[TASK_NUM] =
+{
+	DeclareTask(OsIdle,			TRUE,	OSDEFAULTAPPMODE),
+	DeclareTask(SchM_Startup,	TRUE,	OSDEFAULTAPPMODE),
+	DeclareTask(SchM_BswService,FALSE,	0				)
+};
+
+
+PROTECT CONST alarm_declare_t	AlarmList[ALARM_NUM] =
+{
+		DeclareAlarm(SchM_BswService)
 };

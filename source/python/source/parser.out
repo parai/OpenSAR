@@ -12,18 +12,14 @@ Unused terminals:
     MASK
     LT
     PLUS
-    ALARMCALLBACK
-    ACTION
     COMMA
     LBK
     DIVIDE
     AUTO
-    SETEVENT
     GE
     LE
     RBK
     TIMES
-    ACTIVATETASK
     STRING
 
 Grammar
@@ -61,42 +57,53 @@ Rule 29    TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI
 Rule 30    AppModeList -> AppModeList AppMode
 Rule 31    AppModeList -> AppMode
 Rule 32    AppMode -> APPMODE EQUALS ID SEMI
-Rule 33    Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI
-Rule 34    Event -> EVENT ID LBRACE AttribList RBRACE SEMI
-Rule 35    AttribList -> AttribList Attrib
-Rule 36    AttribList -> Attrib
-Rule 37    Attrib -> STATUS EQUALS STANDARD SEMI
-Rule 38    Attrib -> ERRORHOOK EQUALS FALSE SEMI
-Rule 39    Attrib -> PRETASKHOOK EQUALS FALSE SEMI
-Rule 40    Attrib -> POSTTASKHOOK EQUALS FALSE SEMI
-Rule 41    Attrib -> SCHEDULE EQUALS NON SEMI
-Rule 42    empty -> <empty>
+Rule 33    Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE SEMI
+Rule 34    AlarmAttribList -> AlarmAttribList AlarmAttrib
+Rule 35    AlarmAttribList -> AlarmAttrib
+Rule 36    AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI
+Rule 37    AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
+Rule 38    AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+Rule 39    AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+Rule 40    AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+Rule 41    AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
+Rule 42    AlarmAttrib -> AUTOSTART EQUALS FALSE SEMI
+Rule 43    AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI
+Rule 44    Event -> EVENT ID LBRACE AttribList RBRACE SEMI
+Rule 45    AttribList -> AttribList Attrib
+Rule 46    AttribList -> Attrib
+Rule 47    Attrib -> STATUS EQUALS STANDARD SEMI
+Rule 48    Attrib -> ERRORHOOK EQUALS FALSE SEMI
+Rule 49    Attrib -> PRETASKHOOK EQUALS FALSE SEMI
+Rule 50    Attrib -> POSTTASKHOOK EQUALS FALSE SEMI
+Rule 51    Attrib -> SCHEDULE EQUALS NON SEMI
+Rule 52    empty -> <empty>
 
 Terminals, with rules where they appear
 
-ACTION               : 
-ACTIVATETASK         : 
+ACTION               : 36 37 38 39 40 41
+ACTIVATETASK         : 36
 ACTIVATION           : 27
 ALARM                : 33
-ALARMCALLBACK        : 
+ALARMCALLBACK        : 37
+ALARMCALLBACKNAME    : 37
 APPMODE              : 32
 AUTO                 : 
-AUTOSTART            : 28 29
+AUTOSTART            : 28 29 42 43
 COMMA                : 
 DIVIDE               : 
-EQUALS               : 10 11 12 13 14 15 16 17 18 19 23 24 25 26 27 28 29 32 37 38 39 40 41
-ERRORHOOK            : 12 13 38
-EVENT                : 34
+EQUALS               : 10 11 12 13 14 15 16 17 18 19 23 24 25 26 27 28 29 32 36 36 37 37 38 38 38 39 39 39 40 40 40 41 41 41 42 43 47 48 49 50 51
+ERRORHOOK            : 12 13 48
+EVENT                : 38 39 40 41 44
 EXTENDED             : 11
-FALSE                : 13 15 17 19 28 38 39 40
+FALSE                : 13 15 17 19 28 42 48 49 50
 FLOAT                : 
 FULL                 : 24
 GE                   : 
 GT                   : 
-ID                   : 7 20 32 33 34
-INTEGER              : 26 27
+ID                   : 7 20 32 33 36 37 38 38 39 40 40 41 44
+INTEGER              : 26 27 39 41
 LBK                  : 
-LBRACE               : 7 20 29 33 34
+LBRACE               : 7 20 29 33 36 37 38 39 40 41 43 44
 LE                   : 
 LPAREN               : 
 LT                   : 
@@ -104,35 +111,37 @@ MASK                 :
 MINUS                : 
 MIXED                : 25
 NE                   : 
-NON                  : 23 41
+NON                  : 23 51
 OS                   : 7
 PLUS                 : 
-POSTTASKHOOK         : 16 17 40
+POSTTASKHOOK         : 16 17 50
 POWER                : 
-PRETASKHOOK          : 14 15 39
+PRETASKHOOK          : 14 15 49
 PRIORITY             : 26
 RBK                  : 
-RBRACE               : 7 20 29 33 34
+RBRACE               : 7 20 29 33 36 37 38 39 40 41 43 44
 RPAREN               : 
-SCHEDULE             : 23 24 25 41
-SEMI                 : 7 10 11 12 13 14 15 16 17 18 19 20 23 24 25 26 27 28 29 32 33 34 37 38 39 40 41
-SETEVENT             : 
+SCHEDULE             : 23 24 25 51
+SEMI                 : 7 10 11 12 13 14 15 16 17 18 19 20 23 24 25 26 27 28 29 32 33 36 36 37 37 38 38 38 39 39 39 40 40 40 41 41 41 42 43 44 47 48 49 50 51
+SETEVENT             : 38 39 40 41
 SHUTDOWNHOOK         : 18 19
-STANDARD             : 10 37
-STATUS               : 10 11 37
+STANDARD             : 10 47
+STATUS               : 10 11 47
 STRING               : 
-TASK                 : 20
+TASK                 : 20 36 38 39 40 41
 TIMES                : 
-TRUE                 : 12 14 16 18 29
+TRUE                 : 12 14 16 18 29 43
 error                : 
 
 Nonterminals, with rules where they appear
 
 Alarm                : 5
+AlarmAttrib          : 34 35
+AlarmAttribList      : 33 34
 AppMode              : 30 31
-AppModeList          : 29 30
-Attrib               : 35 36
-AttribList           : 33 34 35
+AppModeList          : 29 30 43
+Attrib               : 45 46
+AttribList           : 44 45
 Event                : 6
 Os                   : 3
 OsAttrib             : 8 9
@@ -157,8 +166,8 @@ state 0
     (6) object -> . Event
     (7) Os -> . OS ID LBRACE OsAttribList RBRACE SEMI
     (20) Task -> . TASK ID LBRACE TaskAttribList RBRACE SEMI
-    (33) Alarm -> . ALARM ID LBRACE AttribList RBRACE SEMI
-    (34) Event -> . EVENT ID LBRACE AttribList RBRACE SEMI
+    (33) Alarm -> . ALARM ID LBRACE AlarmAttribList RBRACE SEMI
+    (44) Event -> . EVENT ID LBRACE AttribList RBRACE SEMI
 
     OS              shift and go to state 3
     TASK            shift and go to state 10
@@ -193,8 +202,8 @@ state 2
     (6) object -> . Event
     (7) Os -> . OS ID LBRACE OsAttribList RBRACE SEMI
     (20) Task -> . TASK ID LBRACE TaskAttribList RBRACE SEMI
-    (33) Alarm -> . ALARM ID LBRACE AttribList RBRACE SEMI
-    (34) Event -> . EVENT ID LBRACE AttribList RBRACE SEMI
+    (33) Alarm -> . ALARM ID LBRACE AlarmAttribList RBRACE SEMI
+    (44) Event -> . EVENT ID LBRACE AttribList RBRACE SEMI
 
     OS              shift and go to state 3
     TASK            shift and go to state 10
@@ -238,14 +247,14 @@ state 5
 
 state 6
 
-    (33) Alarm -> ALARM . ID LBRACE AttribList RBRACE SEMI
+    (33) Alarm -> ALARM . ID LBRACE AlarmAttribList RBRACE SEMI
 
     ID              shift and go to state 13
 
 
 state 7
 
-    (34) Event -> EVENT . ID LBRACE AttribList RBRACE SEMI
+    (44) Event -> EVENT . ID LBRACE AttribList RBRACE SEMI
 
     ID              shift and go to state 14
 
@@ -299,14 +308,14 @@ state 12
 
 state 13
 
-    (33) Alarm -> ALARM ID . LBRACE AttribList RBRACE SEMI
+    (33) Alarm -> ALARM ID . LBRACE AlarmAttribList RBRACE SEMI
 
     LBRACE          shift and go to state 17
 
 
 state 14
 
-    (34) Event -> EVENT ID . LBRACE AttribList RBRACE SEMI
+    (44) Event -> EVENT ID . LBRACE AttribList RBRACE SEMI
 
     LBRACE          shift and go to state 18
 
@@ -345,42 +354,42 @@ state 16
 
 state 17
 
-    (33) Alarm -> ALARM ID LBRACE . AttribList RBRACE SEMI
-    (35) AttribList -> . AttribList Attrib
-    (36) AttribList -> . Attrib
-    (37) Attrib -> . STATUS EQUALS STANDARD SEMI
-    (38) Attrib -> . ERRORHOOK EQUALS FALSE SEMI
-    (39) Attrib -> . PRETASKHOOK EQUALS FALSE SEMI
-    (40) Attrib -> . POSTTASKHOOK EQUALS FALSE SEMI
-    (41) Attrib -> . SCHEDULE EQUALS NON SEMI
+    (33) Alarm -> ALARM ID LBRACE . AlarmAttribList RBRACE SEMI
+    (34) AlarmAttribList -> . AlarmAttribList AlarmAttrib
+    (35) AlarmAttribList -> . AlarmAttrib
+    (36) AlarmAttrib -> . ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI
+    (37) AlarmAttrib -> . ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
+    (38) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+    (40) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (42) AlarmAttrib -> . AUTOSTART EQUALS FALSE SEMI
+    (43) AlarmAttrib -> . AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI
 
-    STATUS          shift and go to state 27
-    ERRORHOOK       shift and go to state 32
-    PRETASKHOOK     shift and go to state 31
-    POSTTASKHOOK    shift and go to state 29
-    SCHEDULE        shift and go to state 28
+    ACTION          shift and go to state 30
+    AUTOSTART       shift and go to state 29
 
-    Attrib                         shift and go to state 33
-    AttribList                     shift and go to state 30
+    AlarmAttribList                shift and go to state 27
+    AlarmAttrib                    shift and go to state 28
 
 state 18
 
-    (34) Event -> EVENT ID LBRACE . AttribList RBRACE SEMI
-    (35) AttribList -> . AttribList Attrib
-    (36) AttribList -> . Attrib
-    (37) Attrib -> . STATUS EQUALS STANDARD SEMI
-    (38) Attrib -> . ERRORHOOK EQUALS FALSE SEMI
-    (39) Attrib -> . PRETASKHOOK EQUALS FALSE SEMI
-    (40) Attrib -> . POSTTASKHOOK EQUALS FALSE SEMI
-    (41) Attrib -> . SCHEDULE EQUALS NON SEMI
+    (44) Event -> EVENT ID LBRACE . AttribList RBRACE SEMI
+    (45) AttribList -> . AttribList Attrib
+    (46) AttribList -> . Attrib
+    (47) Attrib -> . STATUS EQUALS STANDARD SEMI
+    (48) Attrib -> . ERRORHOOK EQUALS FALSE SEMI
+    (49) Attrib -> . PRETASKHOOK EQUALS FALSE SEMI
+    (50) Attrib -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (51) Attrib -> . SCHEDULE EQUALS NON SEMI
 
-    STATUS          shift and go to state 27
-    ERRORHOOK       shift and go to state 32
-    PRETASKHOOK     shift and go to state 31
-    POSTTASKHOOK    shift and go to state 29
-    SCHEDULE        shift and go to state 28
+    STATUS          shift and go to state 31
+    ERRORHOOK       shift and go to state 36
+    PRETASKHOOK     shift and go to state 35
+    POSTTASKHOOK    shift and go to state 33
+    SCHEDULE        shift and go to state 32
 
-    Attrib                         shift and go to state 33
+    Attrib                         shift and go to state 37
     AttribList                     shift and go to state 34
 
 state 19
@@ -396,20 +405,20 @@ state 19
     (28) TaskAttrib -> . AUTOSTART EQUALS FALSE SEMI
     (29) TaskAttrib -> . AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI
 
-    SCHEDULE        shift and go to state 35
-    PRIORITY        shift and go to state 38
-    ACTIVATION      shift and go to state 37
-    AUTOSTART       shift and go to state 39
+    SCHEDULE        shift and go to state 38
+    PRIORITY        shift and go to state 41
+    ACTIVATION      shift and go to state 40
+    AUTOSTART       shift and go to state 42
 
-    TaskAttribList                 shift and go to state 40
-    TaskAttrib                     shift and go to state 36
+    TaskAttribList                 shift and go to state 43
+    TaskAttrib                     shift and go to state 39
 
 state 20
 
     (10) OsAttrib -> STATUS . EQUALS STANDARD SEMI
     (11) OsAttrib -> STATUS . EQUALS EXTENDED SEMI
 
-    EQUALS          shift and go to state 41
+    EQUALS          shift and go to state 44
 
 
 state 21
@@ -429,7 +438,7 @@ state 22
     (18) OsAttrib -> SHUTDOWNHOOK . EQUALS TRUE SEMI
     (19) OsAttrib -> SHUTDOWNHOOK . EQUALS FALSE SEMI
 
-    EQUALS          shift and go to state 42
+    EQUALS          shift and go to state 45
 
 
 state 23
@@ -437,7 +446,7 @@ state 23
     (16) OsAttrib -> POSTTASKHOOK . EQUALS TRUE SEMI
     (17) OsAttrib -> POSTTASKHOOK . EQUALS FALSE SEMI
 
-    EQUALS          shift and go to state 43
+    EQUALS          shift and go to state 46
 
 
 state 24
@@ -445,7 +454,7 @@ state 24
     (14) OsAttrib -> PRETASKHOOK . EQUALS TRUE SEMI
     (15) OsAttrib -> PRETASKHOOK . EQUALS FALSE SEMI
 
-    EQUALS          shift and go to state 44
+    EQUALS          shift and go to state 47
 
 
 state 25
@@ -453,7 +462,7 @@ state 25
     (12) OsAttrib -> ERRORHOOK . EQUALS TRUE SEMI
     (13) OsAttrib -> ERRORHOOK . EQUALS FALSE SEMI
 
-    EQUALS          shift and go to state 45
+    EQUALS          shift and go to state 48
 
 
 state 26
@@ -471,110 +480,139 @@ state 26
     (18) OsAttrib -> . SHUTDOWNHOOK EQUALS TRUE SEMI
     (19) OsAttrib -> . SHUTDOWNHOOK EQUALS FALSE SEMI
 
-    RBRACE          shift and go to state 46
+    RBRACE          shift and go to state 49
     STATUS          shift and go to state 20
     ERRORHOOK       shift and go to state 25
     PRETASKHOOK     shift and go to state 24
     POSTTASKHOOK    shift and go to state 23
     SHUTDOWNHOOK    shift and go to state 22
 
-    OsAttrib                       shift and go to state 47
+    OsAttrib                       shift and go to state 50
 
 state 27
 
-    (37) Attrib -> STATUS . EQUALS STANDARD SEMI
+    (33) Alarm -> ALARM ID LBRACE AlarmAttribList . RBRACE SEMI
+    (34) AlarmAttribList -> AlarmAttribList . AlarmAttrib
+    (36) AlarmAttrib -> . ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI
+    (37) AlarmAttrib -> . ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
+    (38) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+    (40) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> . ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (42) AlarmAttrib -> . AUTOSTART EQUALS FALSE SEMI
+    (43) AlarmAttrib -> . AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI
 
-    EQUALS          shift and go to state 48
+    RBRACE          shift and go to state 51
+    ACTION          shift and go to state 30
+    AUTOSTART       shift and go to state 29
 
+    AlarmAttrib                    shift and go to state 52
 
 state 28
 
-    (41) Attrib -> SCHEDULE . EQUALS NON SEMI
+    (35) AlarmAttribList -> AlarmAttrib .
 
-    EQUALS          shift and go to state 49
+    RBRACE          reduce using rule 35 (AlarmAttribList -> AlarmAttrib .)
+    ACTION          reduce using rule 35 (AlarmAttribList -> AlarmAttrib .)
+    AUTOSTART       reduce using rule 35 (AlarmAttribList -> AlarmAttrib .)
 
 
 state 29
 
-    (40) Attrib -> POSTTASKHOOK . EQUALS FALSE SEMI
-
-    EQUALS          shift and go to state 50
-
-
-state 30
-
-    (33) Alarm -> ALARM ID LBRACE AttribList . RBRACE SEMI
-    (35) AttribList -> AttribList . Attrib
-    (37) Attrib -> . STATUS EQUALS STANDARD SEMI
-    (38) Attrib -> . ERRORHOOK EQUALS FALSE SEMI
-    (39) Attrib -> . PRETASKHOOK EQUALS FALSE SEMI
-    (40) Attrib -> . POSTTASKHOOK EQUALS FALSE SEMI
-    (41) Attrib -> . SCHEDULE EQUALS NON SEMI
-
-    RBRACE          shift and go to state 51
-    STATUS          shift and go to state 27
-    ERRORHOOK       shift and go to state 32
-    PRETASKHOOK     shift and go to state 31
-    POSTTASKHOOK    shift and go to state 29
-    SCHEDULE        shift and go to state 28
-
-    Attrib                         shift and go to state 52
-
-state 31
-
-    (39) Attrib -> PRETASKHOOK . EQUALS FALSE SEMI
+    (42) AlarmAttrib -> AUTOSTART . EQUALS FALSE SEMI
+    (43) AlarmAttrib -> AUTOSTART . EQUALS TRUE LBRACE AppModeList RBRACE SEMI
 
     EQUALS          shift and go to state 53
 
 
-state 32
+state 30
 
-    (38) Attrib -> ERRORHOOK . EQUALS FALSE SEMI
+    (36) AlarmAttrib -> ACTION . EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI
+    (37) AlarmAttrib -> ACTION . EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
+    (38) AlarmAttrib -> ACTION . EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION . EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+    (40) AlarmAttrib -> ACTION . EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> ACTION . EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
 
     EQUALS          shift and go to state 54
 
 
+state 31
+
+    (47) Attrib -> STATUS . EQUALS STANDARD SEMI
+
+    EQUALS          shift and go to state 55
+
+
+state 32
+
+    (51) Attrib -> SCHEDULE . EQUALS NON SEMI
+
+    EQUALS          shift and go to state 56
+
+
 state 33
 
-    (36) AttribList -> Attrib .
+    (50) Attrib -> POSTTASKHOOK . EQUALS FALSE SEMI
 
-    RBRACE          reduce using rule 36 (AttribList -> Attrib .)
-    STATUS          reduce using rule 36 (AttribList -> Attrib .)
-    ERRORHOOK       reduce using rule 36 (AttribList -> Attrib .)
-    PRETASKHOOK     reduce using rule 36 (AttribList -> Attrib .)
-    POSTTASKHOOK    reduce using rule 36 (AttribList -> Attrib .)
-    SCHEDULE        reduce using rule 36 (AttribList -> Attrib .)
+    EQUALS          shift and go to state 57
 
 
 state 34
 
-    (34) Event -> EVENT ID LBRACE AttribList . RBRACE SEMI
-    (35) AttribList -> AttribList . Attrib
-    (37) Attrib -> . STATUS EQUALS STANDARD SEMI
-    (38) Attrib -> . ERRORHOOK EQUALS FALSE SEMI
-    (39) Attrib -> . PRETASKHOOK EQUALS FALSE SEMI
-    (40) Attrib -> . POSTTASKHOOK EQUALS FALSE SEMI
-    (41) Attrib -> . SCHEDULE EQUALS NON SEMI
+    (44) Event -> EVENT ID LBRACE AttribList . RBRACE SEMI
+    (45) AttribList -> AttribList . Attrib
+    (47) Attrib -> . STATUS EQUALS STANDARD SEMI
+    (48) Attrib -> . ERRORHOOK EQUALS FALSE SEMI
+    (49) Attrib -> . PRETASKHOOK EQUALS FALSE SEMI
+    (50) Attrib -> . POSTTASKHOOK EQUALS FALSE SEMI
+    (51) Attrib -> . SCHEDULE EQUALS NON SEMI
 
-    RBRACE          shift and go to state 55
-    STATUS          shift and go to state 27
-    ERRORHOOK       shift and go to state 32
-    PRETASKHOOK     shift and go to state 31
-    POSTTASKHOOK    shift and go to state 29
-    SCHEDULE        shift and go to state 28
+    RBRACE          shift and go to state 58
+    STATUS          shift and go to state 31
+    ERRORHOOK       shift and go to state 36
+    PRETASKHOOK     shift and go to state 35
+    POSTTASKHOOK    shift and go to state 33
+    SCHEDULE        shift and go to state 32
 
-    Attrib                         shift and go to state 52
+    Attrib                         shift and go to state 59
 
 state 35
+
+    (49) Attrib -> PRETASKHOOK . EQUALS FALSE SEMI
+
+    EQUALS          shift and go to state 60
+
+
+state 36
+
+    (48) Attrib -> ERRORHOOK . EQUALS FALSE SEMI
+
+    EQUALS          shift and go to state 61
+
+
+state 37
+
+    (46) AttribList -> Attrib .
+
+    RBRACE          reduce using rule 46 (AttribList -> Attrib .)
+    STATUS          reduce using rule 46 (AttribList -> Attrib .)
+    ERRORHOOK       reduce using rule 46 (AttribList -> Attrib .)
+    PRETASKHOOK     reduce using rule 46 (AttribList -> Attrib .)
+    POSTTASKHOOK    reduce using rule 46 (AttribList -> Attrib .)
+    SCHEDULE        reduce using rule 46 (AttribList -> Attrib .)
+
+
+state 38
 
     (23) TaskAttrib -> SCHEDULE . EQUALS NON SEMI
     (24) TaskAttrib -> SCHEDULE . EQUALS FULL SEMI
     (25) TaskAttrib -> SCHEDULE . EQUALS MIXED SEMI
 
-    EQUALS          shift and go to state 56
+    EQUALS          shift and go to state 62
 
 
-state 36
+state 39
 
     (22) TaskAttribList -> TaskAttrib .
 
@@ -585,29 +623,29 @@ state 36
     AUTOSTART       reduce using rule 22 (TaskAttribList -> TaskAttrib .)
 
 
-state 37
+state 40
 
     (27) TaskAttrib -> ACTIVATION . EQUALS INTEGER SEMI
 
-    EQUALS          shift and go to state 57
+    EQUALS          shift and go to state 63
 
 
-state 38
+state 41
 
     (26) TaskAttrib -> PRIORITY . EQUALS INTEGER SEMI
 
-    EQUALS          shift and go to state 58
+    EQUALS          shift and go to state 64
 
 
-state 39
+state 42
 
     (28) TaskAttrib -> AUTOSTART . EQUALS FALSE SEMI
     (29) TaskAttrib -> AUTOSTART . EQUALS TRUE LBRACE AppModeList RBRACE SEMI
 
-    EQUALS          shift and go to state 59
+    EQUALS          shift and go to state 65
 
 
-state 40
+state 43
 
     (20) Task -> TASK ID LBRACE TaskAttribList . RBRACE SEMI
     (21) TaskAttribList -> TaskAttribList . TaskAttrib
@@ -619,54 +657,27 @@ state 40
     (28) TaskAttrib -> . AUTOSTART EQUALS FALSE SEMI
     (29) TaskAttrib -> . AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI
 
-    RBRACE          shift and go to state 60
-    SCHEDULE        shift and go to state 35
-    PRIORITY        shift and go to state 38
-    ACTIVATION      shift and go to state 37
-    AUTOSTART       shift and go to state 39
+    RBRACE          shift and go to state 66
+    SCHEDULE        shift and go to state 38
+    PRIORITY        shift and go to state 41
+    ACTIVATION      shift and go to state 40
+    AUTOSTART       shift and go to state 42
 
-    TaskAttrib                     shift and go to state 61
+    TaskAttrib                     shift and go to state 67
 
-state 41
+state 44
 
     (10) OsAttrib -> STATUS EQUALS . STANDARD SEMI
     (11) OsAttrib -> STATUS EQUALS . EXTENDED SEMI
 
-    STANDARD        shift and go to state 63
-    EXTENDED        shift and go to state 62
-
-
-state 42
-
-    (18) OsAttrib -> SHUTDOWNHOOK EQUALS . TRUE SEMI
-    (19) OsAttrib -> SHUTDOWNHOOK EQUALS . FALSE SEMI
-
-    TRUE            shift and go to state 65
-    FALSE           shift and go to state 64
-
-
-state 43
-
-    (16) OsAttrib -> POSTTASKHOOK EQUALS . TRUE SEMI
-    (17) OsAttrib -> POSTTASKHOOK EQUALS . FALSE SEMI
-
-    TRUE            shift and go to state 66
-    FALSE           shift and go to state 67
-
-
-state 44
-
-    (14) OsAttrib -> PRETASKHOOK EQUALS . TRUE SEMI
-    (15) OsAttrib -> PRETASKHOOK EQUALS . FALSE SEMI
-
-    TRUE            shift and go to state 69
-    FALSE           shift and go to state 68
+    STANDARD        shift and go to state 69
+    EXTENDED        shift and go to state 68
 
 
 state 45
 
-    (12) OsAttrib -> ERRORHOOK EQUALS . TRUE SEMI
-    (13) OsAttrib -> ERRORHOOK EQUALS . FALSE SEMI
+    (18) OsAttrib -> SHUTDOWNHOOK EQUALS . TRUE SEMI
+    (19) OsAttrib -> SHUTDOWNHOOK EQUALS . FALSE SEMI
 
     TRUE            shift and go to state 71
     FALSE           shift and go to state 70
@@ -674,12 +685,39 @@ state 45
 
 state 46
 
-    (7) Os -> OS ID LBRACE OsAttribList RBRACE . SEMI
+    (16) OsAttrib -> POSTTASKHOOK EQUALS . TRUE SEMI
+    (17) OsAttrib -> POSTTASKHOOK EQUALS . FALSE SEMI
 
-    SEMI            shift and go to state 72
+    TRUE            shift and go to state 72
+    FALSE           shift and go to state 73
 
 
 state 47
+
+    (14) OsAttrib -> PRETASKHOOK EQUALS . TRUE SEMI
+    (15) OsAttrib -> PRETASKHOOK EQUALS . FALSE SEMI
+
+    TRUE            shift and go to state 75
+    FALSE           shift and go to state 74
+
+
+state 48
+
+    (12) OsAttrib -> ERRORHOOK EQUALS . TRUE SEMI
+    (13) OsAttrib -> ERRORHOOK EQUALS . FALSE SEMI
+
+    TRUE            shift and go to state 77
+    FALSE           shift and go to state 76
+
+
+state 49
+
+    (7) Os -> OS ID LBRACE OsAttribList RBRACE . SEMI
+
+    SEMI            shift and go to state 78
+
+
+state 50
 
     (8) OsAttribList -> OsAttribList OsAttrib .
 
@@ -691,109 +729,141 @@ state 47
     SHUTDOWNHOOK    reduce using rule 8 (OsAttribList -> OsAttribList OsAttrib .)
 
 
-state 48
-
-    (37) Attrib -> STATUS EQUALS . STANDARD SEMI
-
-    STANDARD        shift and go to state 73
-
-
-state 49
-
-    (41) Attrib -> SCHEDULE EQUALS . NON SEMI
-
-    NON             shift and go to state 74
-
-
-state 50
-
-    (40) Attrib -> POSTTASKHOOK EQUALS . FALSE SEMI
-
-    FALSE           shift and go to state 75
-
-
 state 51
 
-    (33) Alarm -> ALARM ID LBRACE AttribList RBRACE . SEMI
-
-    SEMI            shift and go to state 76
-
-
-state 52
-
-    (35) AttribList -> AttribList Attrib .
-
-    RBRACE          reduce using rule 35 (AttribList -> AttribList Attrib .)
-    STATUS          reduce using rule 35 (AttribList -> AttribList Attrib .)
-    ERRORHOOK       reduce using rule 35 (AttribList -> AttribList Attrib .)
-    PRETASKHOOK     reduce using rule 35 (AttribList -> AttribList Attrib .)
-    POSTTASKHOOK    reduce using rule 35 (AttribList -> AttribList Attrib .)
-    SCHEDULE        reduce using rule 35 (AttribList -> AttribList Attrib .)
-
-
-state 53
-
-    (39) Attrib -> PRETASKHOOK EQUALS . FALSE SEMI
-
-    FALSE           shift and go to state 77
-
-
-state 54
-
-    (38) Attrib -> ERRORHOOK EQUALS . FALSE SEMI
-
-    FALSE           shift and go to state 78
-
-
-state 55
-
-    (34) Event -> EVENT ID LBRACE AttribList RBRACE . SEMI
+    (33) Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE . SEMI
 
     SEMI            shift and go to state 79
 
 
+state 52
+
+    (34) AlarmAttribList -> AlarmAttribList AlarmAttrib .
+
+    RBRACE          reduce using rule 34 (AlarmAttribList -> AlarmAttribList AlarmAttrib .)
+    ACTION          reduce using rule 34 (AlarmAttribList -> AlarmAttribList AlarmAttrib .)
+    AUTOSTART       reduce using rule 34 (AlarmAttribList -> AlarmAttribList AlarmAttrib .)
+
+
+state 53
+
+    (42) AlarmAttrib -> AUTOSTART EQUALS . FALSE SEMI
+    (43) AlarmAttrib -> AUTOSTART EQUALS . TRUE LBRACE AppModeList RBRACE SEMI
+
+    FALSE           shift and go to state 80
+    TRUE            shift and go to state 81
+
+
+state 54
+
+    (36) AlarmAttrib -> ACTION EQUALS . ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI
+    (37) AlarmAttrib -> ACTION EQUALS . ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
+    (38) AlarmAttrib -> ACTION EQUALS . SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS . SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+    (40) AlarmAttrib -> ACTION EQUALS . SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> ACTION EQUALS . SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
+
+    ACTIVATETASK    shift and go to state 84
+    ALARMCALLBACK   shift and go to state 83
+    SETEVENT        shift and go to state 82
+
+
+state 55
+
+    (47) Attrib -> STATUS EQUALS . STANDARD SEMI
+
+    STANDARD        shift and go to state 85
+
+
 state 56
+
+    (51) Attrib -> SCHEDULE EQUALS . NON SEMI
+
+    NON             shift and go to state 86
+
+
+state 57
+
+    (50) Attrib -> POSTTASKHOOK EQUALS . FALSE SEMI
+
+    FALSE           shift and go to state 87
+
+
+state 58
+
+    (44) Event -> EVENT ID LBRACE AttribList RBRACE . SEMI
+
+    SEMI            shift and go to state 88
+
+
+state 59
+
+    (45) AttribList -> AttribList Attrib .
+
+    RBRACE          reduce using rule 45 (AttribList -> AttribList Attrib .)
+    STATUS          reduce using rule 45 (AttribList -> AttribList Attrib .)
+    ERRORHOOK       reduce using rule 45 (AttribList -> AttribList Attrib .)
+    PRETASKHOOK     reduce using rule 45 (AttribList -> AttribList Attrib .)
+    POSTTASKHOOK    reduce using rule 45 (AttribList -> AttribList Attrib .)
+    SCHEDULE        reduce using rule 45 (AttribList -> AttribList Attrib .)
+
+
+state 60
+
+    (49) Attrib -> PRETASKHOOK EQUALS . FALSE SEMI
+
+    FALSE           shift and go to state 89
+
+
+state 61
+
+    (48) Attrib -> ERRORHOOK EQUALS . FALSE SEMI
+
+    FALSE           shift and go to state 90
+
+
+state 62
 
     (23) TaskAttrib -> SCHEDULE EQUALS . NON SEMI
     (24) TaskAttrib -> SCHEDULE EQUALS . FULL SEMI
     (25) TaskAttrib -> SCHEDULE EQUALS . MIXED SEMI
 
-    NON             shift and go to state 80
-    FULL            shift and go to state 81
-    MIXED           shift and go to state 82
+    NON             shift and go to state 91
+    FULL            shift and go to state 92
+    MIXED           shift and go to state 93
 
 
-state 57
+state 63
 
     (27) TaskAttrib -> ACTIVATION EQUALS . INTEGER SEMI
 
-    INTEGER         shift and go to state 83
+    INTEGER         shift and go to state 94
 
 
-state 58
+state 64
 
     (26) TaskAttrib -> PRIORITY EQUALS . INTEGER SEMI
 
-    INTEGER         shift and go to state 84
+    INTEGER         shift and go to state 95
 
 
-state 59
+state 65
 
     (28) TaskAttrib -> AUTOSTART EQUALS . FALSE SEMI
     (29) TaskAttrib -> AUTOSTART EQUALS . TRUE LBRACE AppModeList RBRACE SEMI
 
-    FALSE           shift and go to state 85
-    TRUE            shift and go to state 86
+    FALSE           shift and go to state 96
+    TRUE            shift and go to state 97
 
 
-state 60
+state 66
 
     (20) Task -> TASK ID LBRACE TaskAttribList RBRACE . SEMI
 
-    SEMI            shift and go to state 87
+    SEMI            shift and go to state 98
 
 
-state 61
+state 67
 
     (21) TaskAttribList -> TaskAttribList TaskAttrib .
 
@@ -804,77 +874,77 @@ state 61
     AUTOSTART       reduce using rule 21 (TaskAttribList -> TaskAttribList TaskAttrib .)
 
 
-state 62
+state 68
 
     (11) OsAttrib -> STATUS EQUALS EXTENDED . SEMI
 
-    SEMI            shift and go to state 88
-
-
-state 63
-
-    (10) OsAttrib -> STATUS EQUALS STANDARD . SEMI
-
-    SEMI            shift and go to state 89
-
-
-state 64
-
-    (19) OsAttrib -> SHUTDOWNHOOK EQUALS FALSE . SEMI
-
-    SEMI            shift and go to state 90
-
-
-state 65
-
-    (18) OsAttrib -> SHUTDOWNHOOK EQUALS TRUE . SEMI
-
-    SEMI            shift and go to state 91
-
-
-state 66
-
-    (16) OsAttrib -> POSTTASKHOOK EQUALS TRUE . SEMI
-
-    SEMI            shift and go to state 92
-
-
-state 67
-
-    (17) OsAttrib -> POSTTASKHOOK EQUALS FALSE . SEMI
-
-    SEMI            shift and go to state 93
-
-
-state 68
-
-    (15) OsAttrib -> PRETASKHOOK EQUALS FALSE . SEMI
-
-    SEMI            shift and go to state 94
+    SEMI            shift and go to state 99
 
 
 state 69
 
-    (14) OsAttrib -> PRETASKHOOK EQUALS TRUE . SEMI
+    (10) OsAttrib -> STATUS EQUALS STANDARD . SEMI
 
-    SEMI            shift and go to state 95
+    SEMI            shift and go to state 100
 
 
 state 70
 
-    (13) OsAttrib -> ERRORHOOK EQUALS FALSE . SEMI
+    (19) OsAttrib -> SHUTDOWNHOOK EQUALS FALSE . SEMI
 
-    SEMI            shift and go to state 96
+    SEMI            shift and go to state 101
 
 
 state 71
 
-    (12) OsAttrib -> ERRORHOOK EQUALS TRUE . SEMI
+    (18) OsAttrib -> SHUTDOWNHOOK EQUALS TRUE . SEMI
 
-    SEMI            shift and go to state 97
+    SEMI            shift and go to state 102
 
 
 state 72
+
+    (16) OsAttrib -> POSTTASKHOOK EQUALS TRUE . SEMI
+
+    SEMI            shift and go to state 103
+
+
+state 73
+
+    (17) OsAttrib -> POSTTASKHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 104
+
+
+state 74
+
+    (15) OsAttrib -> PRETASKHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 105
+
+
+state 75
+
+    (14) OsAttrib -> PRETASKHOOK EQUALS TRUE . SEMI
+
+    SEMI            shift and go to state 106
+
+
+state 76
+
+    (13) OsAttrib -> ERRORHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 107
+
+
+state 77
+
+    (12) OsAttrib -> ERRORHOOK EQUALS TRUE . SEMI
+
+    SEMI            shift and go to state 108
+
+
+state 78
 
     (7) Os -> OS ID LBRACE OsAttribList RBRACE SEMI .
 
@@ -885,113 +955,151 @@ state 72
     $end            reduce using rule 7 (Os -> OS ID LBRACE OsAttribList RBRACE SEMI .)
 
 
-state 73
-
-    (37) Attrib -> STATUS EQUALS STANDARD . SEMI
-
-    SEMI            shift and go to state 98
-
-
-state 74
-
-    (41) Attrib -> SCHEDULE EQUALS NON . SEMI
-
-    SEMI            shift and go to state 99
-
-
-state 75
-
-    (40) Attrib -> POSTTASKHOOK EQUALS FALSE . SEMI
-
-    SEMI            shift and go to state 100
-
-
-state 76
-
-    (33) Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI .
-
-    OS              reduce using rule 33 (Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI .)
-    TASK            reduce using rule 33 (Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI .)
-    ALARM           reduce using rule 33 (Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI .)
-    EVENT           reduce using rule 33 (Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI .)
-    $end            reduce using rule 33 (Alarm -> ALARM ID LBRACE AttribList RBRACE SEMI .)
-
-
-state 77
-
-    (39) Attrib -> PRETASKHOOK EQUALS FALSE . SEMI
-
-    SEMI            shift and go to state 101
-
-
-state 78
-
-    (38) Attrib -> ERRORHOOK EQUALS FALSE . SEMI
-
-    SEMI            shift and go to state 102
-
-
 state 79
 
-    (34) Event -> EVENT ID LBRACE AttribList RBRACE SEMI .
+    (33) Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE SEMI .
 
-    OS              reduce using rule 34 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
-    TASK            reduce using rule 34 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
-    ALARM           reduce using rule 34 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
-    EVENT           reduce using rule 34 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
-    $end            reduce using rule 34 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
+    OS              reduce using rule 33 (Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE SEMI .)
+    TASK            reduce using rule 33 (Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE SEMI .)
+    ALARM           reduce using rule 33 (Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE SEMI .)
+    EVENT           reduce using rule 33 (Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE SEMI .)
+    $end            reduce using rule 33 (Alarm -> ALARM ID LBRACE AlarmAttribList RBRACE SEMI .)
 
 
 state 80
 
-    (23) TaskAttrib -> SCHEDULE EQUALS NON . SEMI
+    (42) AlarmAttrib -> AUTOSTART EQUALS FALSE . SEMI
 
-    SEMI            shift and go to state 103
+    SEMI            shift and go to state 109
 
 
 state 81
 
-    (24) TaskAttrib -> SCHEDULE EQUALS FULL . SEMI
+    (43) AlarmAttrib -> AUTOSTART EQUALS TRUE . LBRACE AppModeList RBRACE SEMI
 
-    SEMI            shift and go to state 104
+    LBRACE          shift and go to state 110
 
 
 state 82
 
-    (25) TaskAttrib -> SCHEDULE EQUALS MIXED . SEMI
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT . LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT . LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT . LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT . LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
 
-    SEMI            shift and go to state 105
+    LBRACE          shift and go to state 111
 
 
 state 83
 
-    (27) TaskAttrib -> ACTIVATION EQUALS INTEGER . SEMI
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK . LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
 
-    SEMI            shift and go to state 106
+    LBRACE          shift and go to state 112
 
 
 state 84
 
-    (26) TaskAttrib -> PRIORITY EQUALS INTEGER . SEMI
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK . LBRACE TASK EQUALS ID SEMI RBRACE SEMI
 
-    SEMI            shift and go to state 107
+    LBRACE          shift and go to state 113
 
 
 state 85
 
-    (28) TaskAttrib -> AUTOSTART EQUALS FALSE . SEMI
+    (47) Attrib -> STATUS EQUALS STANDARD . SEMI
 
-    SEMI            shift and go to state 108
+    SEMI            shift and go to state 114
 
 
 state 86
 
-    (29) TaskAttrib -> AUTOSTART EQUALS TRUE . LBRACE AppModeList RBRACE SEMI
+    (51) Attrib -> SCHEDULE EQUALS NON . SEMI
 
-    LBRACE          shift and go to state 109
+    SEMI            shift and go to state 115
 
 
 state 87
+
+    (50) Attrib -> POSTTASKHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 116
+
+
+state 88
+
+    (44) Event -> EVENT ID LBRACE AttribList RBRACE SEMI .
+
+    OS              reduce using rule 44 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
+    TASK            reduce using rule 44 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
+    ALARM           reduce using rule 44 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
+    EVENT           reduce using rule 44 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
+    $end            reduce using rule 44 (Event -> EVENT ID LBRACE AttribList RBRACE SEMI .)
+
+
+state 89
+
+    (49) Attrib -> PRETASKHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 117
+
+
+state 90
+
+    (48) Attrib -> ERRORHOOK EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 118
+
+
+state 91
+
+    (23) TaskAttrib -> SCHEDULE EQUALS NON . SEMI
+
+    SEMI            shift and go to state 119
+
+
+state 92
+
+    (24) TaskAttrib -> SCHEDULE EQUALS FULL . SEMI
+
+    SEMI            shift and go to state 120
+
+
+state 93
+
+    (25) TaskAttrib -> SCHEDULE EQUALS MIXED . SEMI
+
+    SEMI            shift and go to state 121
+
+
+state 94
+
+    (27) TaskAttrib -> ACTIVATION EQUALS INTEGER . SEMI
+
+    SEMI            shift and go to state 122
+
+
+state 95
+
+    (26) TaskAttrib -> PRIORITY EQUALS INTEGER . SEMI
+
+    SEMI            shift and go to state 123
+
+
+state 96
+
+    (28) TaskAttrib -> AUTOSTART EQUALS FALSE . SEMI
+
+    SEMI            shift and go to state 124
+
+
+state 97
+
+    (29) TaskAttrib -> AUTOSTART EQUALS TRUE . LBRACE AppModeList RBRACE SEMI
+
+    LBRACE          shift and go to state 125
+
+
+state 98
 
     (20) Task -> TASK ID LBRACE TaskAttribList RBRACE SEMI .
 
@@ -1002,7 +1110,7 @@ state 87
     $end            reduce using rule 20 (Task -> TASK ID LBRACE TaskAttribList RBRACE SEMI .)
 
 
-state 88
+state 99
 
     (11) OsAttrib -> STATUS EQUALS EXTENDED SEMI .
 
@@ -1014,7 +1122,7 @@ state 88
     SHUTDOWNHOOK    reduce using rule 11 (OsAttrib -> STATUS EQUALS EXTENDED SEMI .)
 
 
-state 89
+state 100
 
     (10) OsAttrib -> STATUS EQUALS STANDARD SEMI .
 
@@ -1026,7 +1134,7 @@ state 89
     SHUTDOWNHOOK    reduce using rule 10 (OsAttrib -> STATUS EQUALS STANDARD SEMI .)
 
 
-state 90
+state 101
 
     (19) OsAttrib -> SHUTDOWNHOOK EQUALS FALSE SEMI .
 
@@ -1038,7 +1146,7 @@ state 90
     SHUTDOWNHOOK    reduce using rule 19 (OsAttrib -> SHUTDOWNHOOK EQUALS FALSE SEMI .)
 
 
-state 91
+state 102
 
     (18) OsAttrib -> SHUTDOWNHOOK EQUALS TRUE SEMI .
 
@@ -1050,7 +1158,7 @@ state 91
     SHUTDOWNHOOK    reduce using rule 18 (OsAttrib -> SHUTDOWNHOOK EQUALS TRUE SEMI .)
 
 
-state 92
+state 103
 
     (16) OsAttrib -> POSTTASKHOOK EQUALS TRUE SEMI .
 
@@ -1062,7 +1170,7 @@ state 92
     SHUTDOWNHOOK    reduce using rule 16 (OsAttrib -> POSTTASKHOOK EQUALS TRUE SEMI .)
 
 
-state 93
+state 104
 
     (17) OsAttrib -> POSTTASKHOOK EQUALS FALSE SEMI .
 
@@ -1074,7 +1182,7 @@ state 93
     SHUTDOWNHOOK    reduce using rule 17 (OsAttrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
 
 
-state 94
+state 105
 
     (15) OsAttrib -> PRETASKHOOK EQUALS FALSE SEMI .
 
@@ -1086,7 +1194,7 @@ state 94
     SHUTDOWNHOOK    reduce using rule 15 (OsAttrib -> PRETASKHOOK EQUALS FALSE SEMI .)
 
 
-state 95
+state 106
 
     (14) OsAttrib -> PRETASKHOOK EQUALS TRUE SEMI .
 
@@ -1098,7 +1206,7 @@ state 95
     SHUTDOWNHOOK    reduce using rule 14 (OsAttrib -> PRETASKHOOK EQUALS TRUE SEMI .)
 
 
-state 96
+state 107
 
     (13) OsAttrib -> ERRORHOOK EQUALS FALSE SEMI .
 
@@ -1110,7 +1218,7 @@ state 96
     SHUTDOWNHOOK    reduce using rule 13 (OsAttrib -> ERRORHOOK EQUALS FALSE SEMI .)
 
 
-state 97
+state 108
 
     (12) OsAttrib -> ERRORHOOK EQUALS TRUE SEMI .
 
@@ -1122,67 +1230,113 @@ state 97
     SHUTDOWNHOOK    reduce using rule 12 (OsAttrib -> ERRORHOOK EQUALS TRUE SEMI .)
 
 
-state 98
+state 109
 
-    (37) Attrib -> STATUS EQUALS STANDARD SEMI .
+    (42) AlarmAttrib -> AUTOSTART EQUALS FALSE SEMI .
 
-    RBRACE          reduce using rule 37 (Attrib -> STATUS EQUALS STANDARD SEMI .)
-    STATUS          reduce using rule 37 (Attrib -> STATUS EQUALS STANDARD SEMI .)
-    ERRORHOOK       reduce using rule 37 (Attrib -> STATUS EQUALS STANDARD SEMI .)
-    PRETASKHOOK     reduce using rule 37 (Attrib -> STATUS EQUALS STANDARD SEMI .)
-    POSTTASKHOOK    reduce using rule 37 (Attrib -> STATUS EQUALS STANDARD SEMI .)
-    SCHEDULE        reduce using rule 37 (Attrib -> STATUS EQUALS STANDARD SEMI .)
+    RBRACE          reduce using rule 42 (AlarmAttrib -> AUTOSTART EQUALS FALSE SEMI .)
+    ACTION          reduce using rule 42 (AlarmAttrib -> AUTOSTART EQUALS FALSE SEMI .)
+    AUTOSTART       reduce using rule 42 (AlarmAttrib -> AUTOSTART EQUALS FALSE SEMI .)
 
 
-state 99
+state 110
 
-    (41) Attrib -> SCHEDULE EQUALS NON SEMI .
+    (43) AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE . AppModeList RBRACE SEMI
+    (30) AppModeList -> . AppModeList AppMode
+    (31) AppModeList -> . AppMode
+    (32) AppMode -> . APPMODE EQUALS ID SEMI
 
-    RBRACE          reduce using rule 41 (Attrib -> SCHEDULE EQUALS NON SEMI .)
-    STATUS          reduce using rule 41 (Attrib -> SCHEDULE EQUALS NON SEMI .)
-    ERRORHOOK       reduce using rule 41 (Attrib -> SCHEDULE EQUALS NON SEMI .)
-    PRETASKHOOK     reduce using rule 41 (Attrib -> SCHEDULE EQUALS NON SEMI .)
-    POSTTASKHOOK    reduce using rule 41 (Attrib -> SCHEDULE EQUALS NON SEMI .)
-    SCHEDULE        reduce using rule 41 (Attrib -> SCHEDULE EQUALS NON SEMI .)
+    APPMODE         shift and go to state 126
 
+    AppMode                        shift and go to state 127
+    AppModeList                    shift and go to state 128
 
-state 100
+state 111
 
-    (40) Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE . TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE . TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE . EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE . EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
 
-    RBRACE          reduce using rule 40 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
-    STATUS          reduce using rule 40 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
-    ERRORHOOK       reduce using rule 40 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
-    PRETASKHOOK     reduce using rule 40 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
-    POSTTASKHOOK    reduce using rule 40 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
-    SCHEDULE        reduce using rule 40 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
-
-
-state 101
-
-    (39) Attrib -> PRETASKHOOK EQUALS FALSE SEMI .
-
-    RBRACE          reduce using rule 39 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
-    STATUS          reduce using rule 39 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
-    ERRORHOOK       reduce using rule 39 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
-    PRETASKHOOK     reduce using rule 39 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
-    POSTTASKHOOK    reduce using rule 39 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
-    SCHEDULE        reduce using rule 39 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
+    TASK            shift and go to state 130
+    EVENT           shift and go to state 129
 
 
-state 102
+state 112
 
-    (38) Attrib -> ERRORHOOK EQUALS FALSE SEMI .
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE . ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
 
-    RBRACE          reduce using rule 38 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
-    STATUS          reduce using rule 38 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
-    ERRORHOOK       reduce using rule 38 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
-    PRETASKHOOK     reduce using rule 38 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
-    POSTTASKHOOK    reduce using rule 38 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
-    SCHEDULE        reduce using rule 38 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
+    ALARMCALLBACKNAME shift and go to state 131
 
 
-state 103
+state 113
+
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE . TASK EQUALS ID SEMI RBRACE SEMI
+
+    TASK            shift and go to state 132
+
+
+state 114
+
+    (47) Attrib -> STATUS EQUALS STANDARD SEMI .
+
+    RBRACE          reduce using rule 47 (Attrib -> STATUS EQUALS STANDARD SEMI .)
+    STATUS          reduce using rule 47 (Attrib -> STATUS EQUALS STANDARD SEMI .)
+    ERRORHOOK       reduce using rule 47 (Attrib -> STATUS EQUALS STANDARD SEMI .)
+    PRETASKHOOK     reduce using rule 47 (Attrib -> STATUS EQUALS STANDARD SEMI .)
+    POSTTASKHOOK    reduce using rule 47 (Attrib -> STATUS EQUALS STANDARD SEMI .)
+    SCHEDULE        reduce using rule 47 (Attrib -> STATUS EQUALS STANDARD SEMI .)
+
+
+state 115
+
+    (51) Attrib -> SCHEDULE EQUALS NON SEMI .
+
+    RBRACE          reduce using rule 51 (Attrib -> SCHEDULE EQUALS NON SEMI .)
+    STATUS          reduce using rule 51 (Attrib -> SCHEDULE EQUALS NON SEMI .)
+    ERRORHOOK       reduce using rule 51 (Attrib -> SCHEDULE EQUALS NON SEMI .)
+    PRETASKHOOK     reduce using rule 51 (Attrib -> SCHEDULE EQUALS NON SEMI .)
+    POSTTASKHOOK    reduce using rule 51 (Attrib -> SCHEDULE EQUALS NON SEMI .)
+    SCHEDULE        reduce using rule 51 (Attrib -> SCHEDULE EQUALS NON SEMI .)
+
+
+state 116
+
+    (50) Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .
+
+    RBRACE          reduce using rule 50 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    STATUS          reduce using rule 50 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    ERRORHOOK       reduce using rule 50 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    PRETASKHOOK     reduce using rule 50 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    POSTTASKHOOK    reduce using rule 50 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
+    SCHEDULE        reduce using rule 50 (Attrib -> POSTTASKHOOK EQUALS FALSE SEMI .)
+
+
+state 117
+
+    (49) Attrib -> PRETASKHOOK EQUALS FALSE SEMI .
+
+    RBRACE          reduce using rule 49 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
+    STATUS          reduce using rule 49 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
+    ERRORHOOK       reduce using rule 49 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
+    PRETASKHOOK     reduce using rule 49 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
+    POSTTASKHOOK    reduce using rule 49 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
+    SCHEDULE        reduce using rule 49 (Attrib -> PRETASKHOOK EQUALS FALSE SEMI .)
+
+
+state 118
+
+    (48) Attrib -> ERRORHOOK EQUALS FALSE SEMI .
+
+    RBRACE          reduce using rule 48 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
+    STATUS          reduce using rule 48 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
+    ERRORHOOK       reduce using rule 48 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
+    PRETASKHOOK     reduce using rule 48 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
+    POSTTASKHOOK    reduce using rule 48 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
+    SCHEDULE        reduce using rule 48 (Attrib -> ERRORHOOK EQUALS FALSE SEMI .)
+
+
+state 119
 
     (23) TaskAttrib -> SCHEDULE EQUALS NON SEMI .
 
@@ -1193,7 +1347,7 @@ state 103
     AUTOSTART       reduce using rule 23 (TaskAttrib -> SCHEDULE EQUALS NON SEMI .)
 
 
-state 104
+state 120
 
     (24) TaskAttrib -> SCHEDULE EQUALS FULL SEMI .
 
@@ -1204,7 +1358,7 @@ state 104
     AUTOSTART       reduce using rule 24 (TaskAttrib -> SCHEDULE EQUALS FULL SEMI .)
 
 
-state 105
+state 121
 
     (25) TaskAttrib -> SCHEDULE EQUALS MIXED SEMI .
 
@@ -1215,7 +1369,7 @@ state 105
     AUTOSTART       reduce using rule 25 (TaskAttrib -> SCHEDULE EQUALS MIXED SEMI .)
 
 
-state 106
+state 122
 
     (27) TaskAttrib -> ACTIVATION EQUALS INTEGER SEMI .
 
@@ -1226,7 +1380,7 @@ state 106
     AUTOSTART       reduce using rule 27 (TaskAttrib -> ACTIVATION EQUALS INTEGER SEMI .)
 
 
-state 107
+state 123
 
     (26) TaskAttrib -> PRIORITY EQUALS INTEGER SEMI .
 
@@ -1237,7 +1391,7 @@ state 107
     AUTOSTART       reduce using rule 26 (TaskAttrib -> PRIORITY EQUALS INTEGER SEMI .)
 
 
-state 108
+state 124
 
     (28) TaskAttrib -> AUTOSTART EQUALS FALSE SEMI .
 
@@ -1248,26 +1402,26 @@ state 108
     AUTOSTART       reduce using rule 28 (TaskAttrib -> AUTOSTART EQUALS FALSE SEMI .)
 
 
-state 109
+state 125
 
     (29) TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE . AppModeList RBRACE SEMI
     (30) AppModeList -> . AppModeList AppMode
     (31) AppModeList -> . AppMode
     (32) AppMode -> . APPMODE EQUALS ID SEMI
 
-    APPMODE         shift and go to state 110
+    APPMODE         shift and go to state 126
 
-    AppMode                        shift and go to state 111
-    AppModeList                    shift and go to state 112
+    AppMode                        shift and go to state 127
+    AppModeList                    shift and go to state 133
 
-state 110
+state 126
 
     (32) AppMode -> APPMODE . EQUALS ID SEMI
 
-    EQUALS          shift and go to state 113
+    EQUALS          shift and go to state 134
 
 
-state 111
+state 127
 
     (31) AppModeList -> AppMode .
 
@@ -1275,32 +1429,73 @@ state 111
     APPMODE         reduce using rule 31 (AppModeList -> AppMode .)
 
 
-state 112
+state 128
+
+    (43) AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList . RBRACE SEMI
+    (30) AppModeList -> AppModeList . AppMode
+    (32) AppMode -> . APPMODE EQUALS ID SEMI
+
+    RBRACE          shift and go to state 135
+    APPMODE         shift and go to state 126
+
+    AppMode                        shift and go to state 136
+
+state 129
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT . EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT . EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
+
+    EQUALS          shift and go to state 137
+
+
+state 130
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK . EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK . EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+
+    EQUALS          shift and go to state 138
+
+
+state 131
+
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME . EQUALS ID SEMI RBRACE SEMI
+
+    EQUALS          shift and go to state 139
+
+
+state 132
+
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK . EQUALS ID SEMI RBRACE SEMI
+
+    EQUALS          shift and go to state 140
+
+
+state 133
 
     (29) TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList . RBRACE SEMI
     (30) AppModeList -> AppModeList . AppMode
     (32) AppMode -> . APPMODE EQUALS ID SEMI
 
-    RBRACE          shift and go to state 114
-    APPMODE         shift and go to state 110
+    RBRACE          shift and go to state 141
+    APPMODE         shift and go to state 126
 
-    AppMode                        shift and go to state 115
+    AppMode                        shift and go to state 136
 
-state 113
+state 134
 
     (32) AppMode -> APPMODE EQUALS . ID SEMI
 
-    ID              shift and go to state 116
+    ID              shift and go to state 142
 
 
-state 114
+state 135
 
-    (29) TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE . SEMI
+    (43) AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE . SEMI
 
-    SEMI            shift and go to state 117
+    SEMI            shift and go to state 143
 
 
-state 115
+state 136
 
     (30) AppModeList -> AppModeList AppMode .
 
@@ -1308,14 +1503,97 @@ state 115
     APPMODE         reduce using rule 30 (AppModeList -> AppModeList AppMode .)
 
 
-state 116
+state 137
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS . ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS . INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
+
+    ID              shift and go to state 145
+    INTEGER         shift and go to state 144
+
+
+state 138
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS . ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS . ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+
+    ID              shift and go to state 146
+
+
+state 139
+
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS . ID SEMI RBRACE SEMI
+
+    ID              shift and go to state 147
+
+
+state 140
+
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS . ID SEMI RBRACE SEMI
+
+    ID              shift and go to state 148
+
+
+state 141
+
+    (29) TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE . SEMI
+
+    SEMI            shift and go to state 149
+
+
+state 142
 
     (32) AppMode -> APPMODE EQUALS ID . SEMI
 
-    SEMI            shift and go to state 118
+    SEMI            shift and go to state 150
 
 
-state 117
+state 143
+
+    (43) AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI .
+
+    RBRACE          reduce using rule 43 (AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI .)
+    ACTION          reduce using rule 43 (AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI .)
+    AUTOSTART       reduce using rule 43 (AlarmAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI .)
+
+
+state 144
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER . SEMI TASK EQUALS ID SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 151
+
+
+state 145
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID . SEMI TASK EQUALS ID SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 152
+
+
+state 146
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID . SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID . SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 153
+
+
+state 147
+
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID . SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 154
+
+
+state 148
+
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID . SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 155
+
+
+state 149
 
     (29) TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI .
 
@@ -1326,10 +1604,243 @@ state 117
     AUTOSTART       reduce using rule 29 (TaskAttrib -> AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI .)
 
 
-state 118
+state 150
 
     (32) AppMode -> APPMODE EQUALS ID SEMI .
 
     RBRACE          reduce using rule 32 (AppMode -> APPMODE EQUALS ID SEMI .)
     APPMODE         reduce using rule 32 (AppMode -> APPMODE EQUALS ID SEMI .)
+
+
+state 151
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI . TASK EQUALS ID SEMI RBRACE SEMI
+
+    TASK            shift and go to state 156
+
+
+state 152
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI . TASK EQUALS ID SEMI RBRACE SEMI
+
+    TASK            shift and go to state 157
+
+
+state 153
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI . EVENT EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI . EVENT EQUALS INTEGER SEMI RBRACE SEMI
+
+    EVENT           shift and go to state 158
+
+
+state 154
+
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI . RBRACE SEMI
+
+    RBRACE          shift and go to state 159
+
+
+state 155
+
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI . RBRACE SEMI
+
+    RBRACE          shift and go to state 160
+
+
+state 156
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK . EQUALS ID SEMI RBRACE SEMI
+
+    EQUALS          shift and go to state 161
+
+
+state 157
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK . EQUALS ID SEMI RBRACE SEMI
+
+    EQUALS          shift and go to state 162
+
+
+state 158
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT . EQUALS ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT . EQUALS INTEGER SEMI RBRACE SEMI
+
+    EQUALS          shift and go to state 163
+
+
+state 159
+
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE . SEMI
+
+    SEMI            shift and go to state 164
+
+
+state 160
+
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE . SEMI
+
+    SEMI            shift and go to state 165
+
+
+state 161
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS . ID SEMI RBRACE SEMI
+
+    ID              shift and go to state 166
+
+
+state 162
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS . ID SEMI RBRACE SEMI
+
+    ID              shift and go to state 167
+
+
+state 163
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS . ID SEMI RBRACE SEMI
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS . INTEGER SEMI RBRACE SEMI
+
+    ID              shift and go to state 169
+    INTEGER         shift and go to state 168
+
+
+state 164
+
+    (37) AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI .
+
+    RBRACE          reduce using rule 37 (AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI .)
+    ACTION          reduce using rule 37 (AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI .)
+    AUTOSTART       reduce using rule 37 (AlarmAttrib -> ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI .)
+
+
+state 165
+
+    (36) AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI .
+
+    RBRACE          reduce using rule 36 (AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI .)
+    ACTION          reduce using rule 36 (AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI .)
+    AUTOSTART       reduce using rule 36 (AlarmAttrib -> ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI .)
+
+
+state 166
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID . SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 170
+
+
+state 167
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID . SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 171
+
+
+state 168
+
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER . SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 172
+
+
+state 169
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID . SEMI RBRACE SEMI
+
+    SEMI            shift and go to state 173
+
+
+state 170
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI . RBRACE SEMI
+
+    RBRACE          shift and go to state 174
+
+
+state 171
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI . RBRACE SEMI
+
+    RBRACE          shift and go to state 175
+
+
+state 172
+
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI . RBRACE SEMI
+
+    RBRACE          shift and go to state 176
+
+
+state 173
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI . RBRACE SEMI
+
+    RBRACE          shift and go to state 177
+
+
+state 174
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE . SEMI
+
+    SEMI            shift and go to state 178
+
+
+state 175
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE . SEMI
+
+    SEMI            shift and go to state 179
+
+
+state 176
+
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE . SEMI
+
+    SEMI            shift and go to state 180
+
+
+state 177
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE . SEMI
+
+    SEMI            shift and go to state 181
+
+
+state 178
+
+    (41) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI .
+
+    RBRACE          reduce using rule 41 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI .)
+    ACTION          reduce using rule 41 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI .)
+    AUTOSTART       reduce using rule 41 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI .)
+
+
+state 179
+
+    (40) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI .
+
+    RBRACE          reduce using rule 40 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI .)
+    ACTION          reduce using rule 40 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI .)
+    AUTOSTART       reduce using rule 40 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI .)
+
+
+state 180
+
+    (39) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI .
+
+    RBRACE          reduce using rule 39 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI .)
+    ACTION          reduce using rule 39 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI .)
+    AUTOSTART       reduce using rule 39 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI .)
+
+
+state 181
+
+    (38) AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI .
+
+    RBRACE          reduce using rule 38 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI .)
+    ACTION          reduce using rule 38 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI .)
+    AUTOSTART       reduce using rule 38 (AlarmAttrib -> ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI .)
 

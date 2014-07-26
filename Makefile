@@ -22,7 +22,7 @@ ldflags-y  =    -g -std=gnu99 -O0 -Wall
 ldflags-y += -lm
 ldflags-y += -Wl,-Map,$(obj-dir)/$(TARGET).map	
 
-def-y += 
+def-y += -DPC_DEBUG
 
 dir-y += $(src-dir)/include
 dir-y += $(src-dir)/lib
@@ -68,4 +68,7 @@ all:$(obj-dir) $(bin-dir) $(obj-y)
 
 clean:
 	@rm -fv $(obj-dir)/*
+	
+run:
+	@start $(bin-dir)/$(target).exe
 	

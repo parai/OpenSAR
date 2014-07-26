@@ -18,14 +18,20 @@
 /* ============================= [ INCLUDE ] ================================== */
 #include "OsekOs.h"
 
-#define TASKID_OsIdle		   0
-#define TASKID_SchM_Startup    1
-#define TASKID_SchM_BswService 2
+/* ============================= [ MACROS ] =================================== */
+#define TASKID_OsIdle		   	0
+#define TASKID_SchM_Startup    	1
+#define TASKID_SchM_BswService 	2
+#define TASK_NUM               	3
 
-#define TASK_NUM               3
+#define ALARMID_BswService		0
+#define ALARM_NUM				1
 
+/* ============================= [ INTERFACE ] ================================ */
+TASK(OsIdle);
 TASK(SchM_Startup);
 TASK(SchM_BswService);
-TASK(OsIdle);
+
+ALARM(SchM_BswService);
 
 #endif /* OS_CFG_H_ */

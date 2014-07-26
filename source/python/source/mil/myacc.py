@@ -11,6 +11,13 @@ precedence = (
                #('right','UMINUS')
 )
 
+def obj2str(o):
+    cstr = '%s %s {\n'%(o[0],o[1])
+    for attr,value in o[2].items():
+        cstr += '\t%s = %s;\n'%(attr,value)
+    cstr += '};\n\n'
+    return cstr
+
 #### A MIL file is a series of objects. 
 
 def p_mil(p):
@@ -48,11 +55,7 @@ def __AttribList(p):
 def p_Os(p):
     '''Os : OS ID LBRACE OsAttribList RBRACE SEMI '''
     p[0] = ('OS',p[2],p[4])
-    cstr = 'OS %s {\n'%(p[2])
-    for attr,value in p[4].items():
-        cstr += '\t%s = %s;\n'%(attr,value)
-    cstr += '};\n\n'
-    print cstr
+    print obj2str(p[0])
 def p_OsAttribList(p):
     '''OsAttribList : OsAttribList OsAttrib
                     | OsAttrib '''
@@ -72,12 +75,9 @@ def p_OsAttrib(p):
     p[0] = (p[1],p[2],p[3])
 def p_Task(p):
     '''Task : TASK ID LBRACE TaskAttribList RBRACE SEMI '''
-    cstr = 'Task %s {\n'%(p[2])
-    for attr,value in p[4].items():
-        cstr += '\t%s = %s;\n'%(attr,value)
-    cstr += '};\n\n'
-    print cstr
-
+    p[0] = ('TASK',p[2],p[4])
+    print obj2str(p[0])
+    
 def p_TaskAttribList(p):
     '''TaskAttribList : TaskAttribList TaskAttrib
                     | TaskAttrib '''
@@ -99,20 +99,35 @@ def p_AppModeList(p):
     ''' AppModeList : AppModeList AppMode
                     | AppMode'''
     if len(p) == 2:
-       p[0] = []
-       p[0].append(p[1])
+       p[0] = '%s'%(p[1])
     elif len(p) ==3:
-       p[0] = p[1]
-       if not p[0]: p[0] = []
-       if p[2]:
-           p[0].append(p[1])
+       p[0] = '%s | %s'%(p[1],p[2])
 def p_AppMode(p):
     ''' AppMode : APPMODE EQUALS ID SEMI'''
-    p[0] = (p[1],p[2],p[3])
+    p[0] = p[3]
     
 def p_Alarm(p):
-    '''Alarm : ALARM ID LBRACE AttribList RBRACE SEMI '''
-    pass
+    '''Alarm : ALARM ID LBRACE AlarmAttribList RBRACE SEMI '''
+    p[0] = ('ALARM',p[2],p[4])
+    print obj2str(p[0])
+
+def p_AlarmAttribList(p):
+    '''AlarmAttribList : AlarmAttribList AlarmAttrib
+                    | AlarmAttrib '''
+    __AttribList(p)
+def p_AlarmAttrib(p):
+    '''AlarmAttrib :  ACTION EQUALS ACTIVATETASK LBRACE TASK EQUALS ID SEMI RBRACE SEMI
+                | ACTION EQUALS ALARMCALLBACK LBRACE ALARMCALLBACKNAME EQUALS ID SEMI RBRACE SEMI
+                | ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS ID SEMI RBRACE SEMI
+                | ACTION EQUALS SETEVENT LBRACE TASK EQUALS ID SEMI EVENT EQUALS INTEGER SEMI RBRACE SEMI
+                | ACTION EQUALS SETEVENT LBRACE EVENT EQUALS ID SEMI TASK EQUALS ID SEMI RBRACE SEMI
+                | ACTION EQUALS SETEVENT LBRACE EVENT EQUALS INTEGER SEMI TASK EQUALS ID SEMI RBRACE SEMI
+                | AUTOSTART EQUALS FALSE SEMI
+                | AUTOSTART EQUALS TRUE LBRACE AppModeList RBRACE SEMI '''
+    if len(p) == 5:
+        p[0] = (p[1],p[2],p[3])
+    elif len(p) == 11:
+        p[0] = (p[1],p[2],(p[3],'%s=%s'%(p[5],p[7])))
 def p_Event(p):
     '''Event : EVENT ID LBRACE AttribList RBRACE SEMI '''
     pass  

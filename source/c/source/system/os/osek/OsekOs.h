@@ -21,11 +21,17 @@
 
 typedef struct
 {
-	task_entry_t    entry;
+	task_main_t    	main;
 	task_priority_t priority;	/*! priority also represent the task id, the same as TaskType */
 	bool            autostart;
 	AppModeType     app_mode;	/*! means task runnable modes */
 }task_declare_t;
+
+typedef struct
+{
+	alarm_main_t main;
+	/* No Autostart support */
+}alarm_declare_t;
 
 typedef struct
 {
@@ -34,8 +40,27 @@ typedef struct
 	PUBLIC StatusType (*Schedule) (void);
 	PUBLIC StatusType (*ActivateTask) (TaskType);
 	PUBLIC StatusType (*TerminateTask) ( void );
+	PUBLIC StatusType (*GetAlarmBase)  ( AlarmType, AlarmBaseRefType );
+	PUBLIC StatusType (*GetAlarm)      ( AlarmType, TickRefType );
+	PUBLIC StatusType (*SetRelAlarm)   ( AlarmType, TickType, TickType );
+	PUBLIC StatusType (*SetAbsAlarm)   ( AlarmType, TickType, TickType );
+	PUBLIC StatusType (*CancelAlarm)   ( AlarmType);
+	PUBLIC TickType   (*GetOsTick)     ( void );
 }OsekOs_Class;
 
+/* ============================= [ MACROS ] =================================== */
+#define DeclareTask(Name,Autostart,AppMode)		\
+	{											\
+		.main = Name,							\
+		.priority = TASKID_##Name,				\
+		.autostart = Autostart,					\
+		.app_mode = AppMode						\
+	}
+
+#define DeclareAlarm(Name)						\
+	{											\
+		.main = AlarmMain_##Name						\
+	}
 
 #include "os_cfg.h"
 

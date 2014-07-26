@@ -28,8 +28,19 @@ typedef TickType*		TickRefType;
 typedef uint8 			StatusType;
 typedef uint32 			AppModeType;	/*! each bit is a mode */
 
+typedef uint8			AlarmType;
+typedef struct
+{
+	TickType MaxAllowedValue;
+	TickType TickPerBase;
+	TickType MinCycle;
+} AlarmBaseType;
+
+typedef AlarmBaseType *AlarmBaseRefType;
+
 /*! extended OS types */
-typedef void_fn_void_t task_entry_t;
+typedef void_fn_void_t task_main_t;
+typedef void_fn_void_t alarm_main_t;
 typedef uint8 		   task_priority_t;
 
 /*! \class Os_Class "Os.h"
@@ -51,6 +62,12 @@ typedef struct
 	PUBLIC StatusType (*Schedule) (void);
 	PUBLIC StatusType (*ActivateTask) (TaskType);
 	PUBLIC StatusType (*TerminateTask) ( void );
+	PUBLIC StatusType (*GetAlarmBase)  ( AlarmType, AlarmBaseRefType );
+	PUBLIC StatusType (*GetAlarm)      ( AlarmType, TickRefType );
+	PUBLIC StatusType (*SetRelAlarm)   ( AlarmType, TickType, TickType );
+	PUBLIC StatusType (*SetAbsAlarm)   ( AlarmType, TickType, TickType );
+	PUBLIC StatusType (*CancelAlarm)   ( AlarmType);
+	PUBLIC TickType   (*GetOsTick)     ( void );
 }Os_Class;
 
 /* ============================= [ MACROS ] =================================== */
@@ -66,9 +83,13 @@ typedef struct
 #define OSDEFAULTAPPMODE (AppModeType)1
 
 #define TASK(_task)		void _task( void )
+#define ALARM(_alarm)	void AlarmMain_##_alarm( void )
+
+#define TICK_MAX       (TickType)-1
 
 #include "OsekOs.h"
 
 /* ============================= [ INTERFACE ] ================================ */
 INSTANCE CONST Os_Class Os;
+PROTECT void OsTick(void);
 #endif /* OS_H_ */

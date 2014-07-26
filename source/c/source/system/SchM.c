@@ -19,11 +19,12 @@
 
 TASK(SchM_Startup)
 {
+	Os.SetRelAlarm(ALARMID_BswService,10,5);
 	Os.TerminateTask();
 }
 
 TASK(SchM_BswService)
 {
-
+	printf("%s is running,OsTick=%d.\n",__FUNCTION__,(int)Os.GetOsTick());
 	Os.TerminateTask();
 }
