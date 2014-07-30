@@ -26,6 +26,7 @@ def-y += -DPC_DEBUG
 
 dir-y += $(src-dir)/include
 dir-y += $(src-dir)/lib
+dir-y += $(src-dir)/lib/include
 dir-y += $(src-dir)/source/system
 dir-y += $(src-dir)/source/system/os/osek
 dir-y += $(src-dir)/source/system/os

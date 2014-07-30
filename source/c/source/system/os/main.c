@@ -13,11 +13,11 @@
  * for more details.
  */
 /* ============================= [ INCLUDE ] ================================== */
-#include "EcuM.h"
+#include "sldl.h"
 /* ============================= [ FUNCTION ] ================================= */
 int main(int argc,char* argv[])
 {
-	EcuM.Init();
-
+	SLDL.Init();
+	SLDL.Start(OSDEFAULTAPPMODE);
 	return 0;
 }

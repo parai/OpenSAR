@@ -17,6 +17,7 @@
 #include "Os.h"
 #include "OsekOs.h"
 #include "EcuM.h"
+#include "sldl.h"
 
 /* ============================= [ FUNCTION ] ================================= */
 PUBLIC STATIC void Init ( void )

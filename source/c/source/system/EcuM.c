@@ -15,12 +15,12 @@
 /* ============================= [ INCLUDE ] ================================== */
 #include "EcuM.h"
 #include "Os.h"
+#include "sldl.h"
 
 /* ============================= [ FUNCTION ] ================================= */
 PUBLIC STATIC void Init ( void )
 {
 	Os.Init();
-	Os.Start(OSDEFAULTAPPMODE);
 }
 
 /* ============================= [ INTERFACE ] ================================ */

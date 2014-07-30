@@ -18,6 +18,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdint.h>
+#include <stdbool.h>
 #include <assert.h>
 
 /* ============================= [ TYPES ] ==================================== */
@@ -33,7 +34,6 @@ typedef   signed long long 	sint64;		/* this type for 32 bit cpu only */
 typedef   uint8 			Std_ReturnType;
 /*! extended types */
 typedef void (*void_fn_void_t)(void);
-typedef uint8               bool;
 
 /* ============================= [ MACROS ] =================================== */
 #define E_OK 					(Std_ReturnType)0
