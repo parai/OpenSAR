@@ -13,28 +13,25 @@
  * for more details.
  */
 
-#ifndef SLDL_H_
-#define SLDL_H_
+#ifndef OS_CFG_H_
+#define OS_CFG_H_
 /* ============================= [ INCLUDE ] ================================== */
-#include "EcuM.h"
-#include "Os.h"
+#include "OsekOs.h"
 
 /* ============================= [ MACROS ] =================================== */
+#define TASKID_OsIdle		   	0
+#define TASKID_SchM_Startup    	1
+#define TASKID_SchM_BswService 	2
+#define TASK_NUM               	3
 
-/* ============================= [ TYPES ] ==================================== */
-typedef void*  stack_t;
-typedef uint32 stack_size_t;
-typedef struct
-{
-	PUBLIC void (*Init) (void);
-	PUBLIC void (*Start) (void);
-	PUBLIC void (*SetContext) ( TaskType, task_main_t, stack_t, stack_size_t);
-
-	PUBLIC void (*Dispatch) (void);
-
-}SLDL_Class;	/* system-level design language */
-
+#define ALARMID_BswService		0
+#define ALARM_NUM				1
 
 /* ============================= [ INTERFACE ] ================================ */
-INSTANCE CONST SLDL_Class SLDL;
-#endif /* SLDL_H_ */
+TASK(OsIdle);
+TASK(SchM_Startup);
+TASK(SchM_BswService);
+
+ALARM(SchM_BswService);
+
+#endif /* OS_CFG_H_ */

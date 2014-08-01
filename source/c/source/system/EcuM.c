@@ -21,6 +21,8 @@
 PUBLIC STATIC void Init ( void )
 {
 	Os.Init();
+
+	Os.Start(OSDEFAULTAPPMODE);
 }
 
 /* ============================= [ INTERFACE ] ================================ */

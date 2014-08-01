@@ -15,25 +15,15 @@
 /* ============================= [ INCLUDE ] ================================== */
 #include "OsekOs.h"
 #include "bitop.h"
-#ifdef   PC_DEBUG
-#include <setjmp.h>
 #include <time.h>
-#endif
 /* ============================= [ MACROS ] =================================== */
 #ifdef  PC_DEBUG
-#define TRY					if(0==setjmp(JumpBuf[CurrentTask]))
-#define EXCEPTION_TERMINATE	else
-#define RAISE_EXCEPTION_TERMINATE longjmp(JumpBuf[CurrentTask],1)
 #define DRIVE_OS_TICK()		OsTick()
 #define OS_TICK_INIT()      PreviousClock = clock()
 #define OS_TICK_RESTART()   PreviousClock = clock()
 // normally CLOCKS_PER_SEC == 1000, so it is OK
 #define OS_TICK_1_MS_ELAPSED if( (clock() > PreviousClock) ||  (clock() </*overflow*/ PreviousClock))
 #else
-#define EXCEPTION_INIT()
-#define TRY
-#define EXCEPTION_TERMINATE
-#define RAISE_EXCEPTION_TERMINATE
 #define DRIVE_OS_TICK()
 #define OS_TICK_INIT()
 #define OS_TICK_RESTART()
@@ -50,7 +40,6 @@ PRIVATE	TickType				OsTickCounter;
 PRIVATE TickType			 	AlarmTick[ALARM_NUM];
 PRIVATE TickType			 	AlarmPeriod[ALARM_NUM];
 #ifdef   PC_DEBUG
-PRIVATE jmp_buf JumpBuf[TASK_NUM];
 PRIVATE clock_t	PreviousClock;	// see CLOCKS_PER_SEC
 #endif
 
@@ -84,9 +73,6 @@ PUBLIC STATIC StatusType ActivateTask ( TaskType TaskID )
 
 PUBLIC STATIC StatusType TerminateTask ( void )
 {	/* task self-terminate when it do return */
-
-	RAISE_EXCEPTION_TERMINATE;
-
 	return E_OK;
 }
 
@@ -107,14 +93,8 @@ PUBLIC STATIC StatusType Schedule(void)
 		CurrentTask = task;				/* preempt */
 
 		Bitop.ClearBit(CurrentTask);	/* pop up the higher ready task from ready map */
-		TRY
-		{
-			declare->main();
-		}
-		EXCEPTION_TERMINATE
-		{
-			// do nothing as task terminate itself
-		}
+
+		declare->main();
 
 		CurrentTask = previous;
 	}

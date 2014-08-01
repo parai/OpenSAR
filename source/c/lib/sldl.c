@@ -15,8 +15,9 @@
 /* ============================= [ INCLUDE ] ================================== */
 #include "e4c.h"
 #include "sldl.h"
-#include <setjmp.h>
+#include <time.h>
 #include <stdlib.h>
+
 
 /* ============================= [ TYPES ] ==================================== */
 typedef jmp_buf task_context_t;
@@ -25,14 +26,33 @@ typedef jmp_buf task_context_t;
 #define SAVE_SP(stack) 		__asm__ ( "movl %%esp,%0":"=m" ( stack ) )
 #define RESTORE_SP(stack) 	__asm__ ( "movl %0,%%esp":"=m" ( stack ) )
 
+
+#define DRIVE_OS_TICK()		OsTick()
+#define OS_TICK_INIT()      PreviousClock = clock()
+#define OS_TICK_RESTART()   PreviousClock = clock()
+// normally CLOCKS_PER_SEC == 1000, so it is OK
+#define OS_TICK_1_MS_ELAPSED if( (clock() > PreviousClock) ||  (clock() </*overflow*/ PreviousClock))
+
 /* ============================= [ DATAS ] ==================================== */
+PRIVATE E4C_DEFINE_EXCEPTION(DispatcherException,"Dispatcher of the OS",RuntimeException);
 PRIVATE task_context_t  TaskContext[TASK_NUM];
 PRIVATE void*           pSystemStack;
 
+PRIVATE clock_t	PreviousClock;	// see CLOCKS_PER_SEC
+/* ============================= [ IMPORT ] ================================== */
+IMPORT PROTECT void OsTick(void);
 /* ============================= [ FUNCTION ] ================================= */
+PRIVATE void Simulator(void)
+{
+	OS_TICK_1_MS_ELAPSED
+	{
+		OS_TICK_RESTART();
+		OsTick();
+	}
+}
 PUBLIC STATIC void Init ( void )
 {
-
+	OS_TICK_INIT();
 }
 
 PUBLIC STATIC void SetContext ( TaskType TaskId, task_main_t task_main, stack_t stack , stack_size_t stack_size)
@@ -58,31 +78,50 @@ PUBLIC STATIC void SetContext ( TaskType TaskId, task_main_t task_main, stack_t 
 	}
 }
 
-PUBLIC STATIC void Start( AppModeType app_mode )
+PUBLIC STATIC void Start( void )
 {
-	//Os.Start(app_mode);
-
 	e4c_context_begin(false);
 	try
 	{
-		throw(RuntimeException,NULL);
+		EcuM.Init();
+
+		throw(RuntimeException,"Start the operating system failed.");
 	}
-	catch(RuntimeException)
+	catch(DispatcherException)
 	{
-		printf("Hello World!\n");
+
 	}
 	finally
 	{
-		printf("do finally!\n");
+		// do nothing...
+	}
+
+	for(;;)
+	{
+		try{
+
+		}
+		catch(DispatcherException)
+		{
+
+		}
+		finally
+		{
+			Simulator();
+		}
 	}
 	e4c_context_end();
 }
-
+PUBLIC STATIC void Dispatch(void)
+{
+	throw(DispatcherException,NULL);
+}
 
 /* ============================= [ INTERFACE ] ================================ */
 INSTANCE CONST SLDL_Class SLDL = {
 	.Init  = Init,
 	.Start = Start,
 	.SetContext = SetContext,
+	.Dispatch   = Dispatch,
 };
 

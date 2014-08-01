@@ -18,6 +18,6 @@
 int main(int argc,char* argv[])
 {
 	SLDL.Init();
-	SLDL.Start(OSDEFAULTAPPMODE);
+	SLDL.Start();
 	return 0;
 }
