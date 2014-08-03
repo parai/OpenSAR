@@ -40,7 +40,11 @@ PRIVATE void*           pSystemStack;
 
 PRIVATE clock_t	PreviousClock;	// see CLOCKS_PER_SEC
 /* ============================= [ IMPORT ] ================================== */
+IMPORT PROTECT CONST task_declare_t		TaskList[];
+IMPORT PROTECT TaskType    			CurrentTask;
+IMPORT PROTECT void OsSwitchContext(void);
 IMPORT PROTECT void OsTick(void);
+
 /* ============================= [ FUNCTION ] ================================= */
 PRIVATE void Simulator(void)
 {
@@ -55,13 +59,12 @@ PUBLIC STATIC void Init ( void )
 	OS_TICK_INIT();
 }
 
-PUBLIC STATIC void SetContext ( TaskType TaskId, task_main_t task_main, stack_t stack , stack_size_t stack_size)
+PUBLIC STATIC void SetContext ( TaskType TaskId )
 {
 	int result;
-	stack_t task_stack = (stack_t)(((stack_size_t)stack) + stack_size);
-
-	assert(stack != NULL);
-	assert( (stack_size > 255) && (0 == (stack_size&0x03u)) );
+	CONST task_declare_t* declare = &TaskList[TaskId];;
+	stack_t task_stack = (stack_t)(((stack_size_t)declare->stack) + declare->stack_size);
+	task_stack -= 16;	/* for safety consideration */
 
 	SAVE_SP(pSystemStack);
 	RESTORE_SP(task_stack);
@@ -73,7 +76,7 @@ PUBLIC STATIC void SetContext ( TaskType TaskId, task_main_t task_main, stack_t 
 			RESTORE_SP(pSystemStack);	/* set-up context done */
 			break;
 		case 1:
-			task_main();	/* execute this task */
+			TaskList[TaskId].main();	/* execute this task */
 			break;
 	}
 }
@@ -99,7 +102,17 @@ PUBLIC STATIC void Start( void )
 	for(;;)
 	{
 		try{
+			OsSwitchContext();
+			if (0 == CurrentTask )
+			{
 
+			}
+			else
+			{
+				longjmp(TaskContext[CurrentTask],1);
+
+				throw(RuntimeException,"Resume task failed.");
+			}
 		}
 		catch(DispatcherException)
 		{
@@ -112,9 +125,36 @@ PUBLIC STATIC void Start( void )
 	}
 	e4c_context_end();
 }
-PUBLIC STATIC void Dispatch(void)
+PUBLIC STATIC void StartDispatcher(void)
 {
 	throw(DispatcherException,NULL);
+}
+PUBLIC STATIC void Dispatch(void)
+{
+	// when do first dispatch, CurrentTask == OsIdle
+	int result;
+	TaskStateType State;
+
+	Os.GetTaskState(CurrentTask,&State);
+
+	if( SUSPENDED != State )
+	{
+		result = setjmp(TaskContext[CurrentTask]);
+		switch(result)
+		{
+			case 0:
+				throw(DispatcherException,NULL);
+				break;
+			case 1:
+				// task resuming...
+				return;
+				break;
+		}
+	}
+	else
+	{	// as task termination
+		throw(DispatcherException,NULL);
+	}
 }
 
 /* ============================= [ INTERFACE ] ================================ */
@@ -122,6 +162,7 @@ INSTANCE CONST SLDL_Class SLDL = {
 	.Init  = Init,
 	.Start = Start,
 	.SetContext = SetContext,
+	.StartDispatcher = StartDispatcher,
 	.Dispatch   = Dispatch,
 };
 

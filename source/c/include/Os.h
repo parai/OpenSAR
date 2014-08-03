@@ -23,6 +23,8 @@
 /*! standard OS types */
 typedef uint8			TaskType;
 typedef TaskType*		TaskRefType;
+typedef uint8   		TaskStateType;
+typedef TaskStateType * TaskStateRefType;
 typedef uint32			TickType;
 typedef TickType*		TickRefType;
 typedef uint8 			StatusType;
@@ -60,6 +62,7 @@ typedef struct
 	 */
 	PUBLIC void (*Start)	(AppModeType);
 	PUBLIC StatusType (*Schedule) (void);
+	PUBLIC StatusType (*GetTaskState) ( TaskType TaskID,TaskStateRefType State );
 	PUBLIC StatusType (*ActivateTask) (TaskType);
 	PUBLIC StatusType (*TerminateTask) ( void );
 	PUBLIC StatusType (*GetAlarmBase)  ( AlarmType, AlarmBaseRefType );
@@ -79,6 +82,11 @@ typedef struct
 #define	E_OS_RESOURCE 	(StatusType)6
 #define	E_OS_STATE 		(StatusType)7
 #define	E_OS_VALUE 		(StatusType)8
+
+#define SUSPENDED 		(TaskStateType)0
+#define RUNNING   		(TaskStateType)1
+#define READY     		(TaskStateType)2
+#define WAITING   		(TaskStateType)3
 
 #define OSDEFAULTAPPMODE (AppModeType)1
 

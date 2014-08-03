@@ -32,13 +32,15 @@ dir-y += $(src-dir)/source/system/os/osek
 dir-y += $(src-dir)/source/system/os
 
 ifeq ($(OS),)
-$(warning OS not defined,default "make all OS=NON_BCC1")
-dir-y += $(src-dir)/source/system/os/osek/bcc1/non_preempt
-dir-y += $(src-dir)/source/system/os/osek/bcc1/non_preempt/example
+$(warning OS not defined,default "make all OS=bcc1/non")
+dir-y += $(src-dir)/source/system/os/osek/bcc1/non
+dir-y += $(src-dir)/source/system/os/osek/bcc1/non/example
 else	
 dir-y += $(src-dir)/source/system/os/$(OS)
 dir-y += $(src-dir)/source/system/os/$(OS)/example
 endif
+
+#dir-y = $(src-dir)/test
 
 VPATH += $(dir-y) 
 

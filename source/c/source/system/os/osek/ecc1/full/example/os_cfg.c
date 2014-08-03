@@ -16,13 +16,16 @@
 
 TASK(OsIdle)
 {
+
 }
 
 ALARM(SchM_BswService)
 {
 	(void)Os.ActivateTask(TASKID_SchM_BswService);
 }
-
+DeclareStack(OsIdle,			1024);
+DeclareStack(SchM_Startup,		1024);
+DeclareStack(SchM_BswService,	1024);
 PROTECT CONST task_declare_t TaskList[TASK_NUM] =
 {
 	DeclareTask(OsIdle,			TRUE,	OSDEFAULTAPPMODE),

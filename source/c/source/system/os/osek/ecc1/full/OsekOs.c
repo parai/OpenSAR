@@ -27,6 +27,8 @@ PROTECT TaskType    			CurrentTask;
 PRIVATE AppModeType				AppMode;
 PRIVATE	TickType				OsTickCounter;
 
+PRIVATE TaskStateType			TaskState[TASK_NUM];
+
 PRIVATE TickType			 	AlarmTick[ALARM_NUM];
 PRIVATE TickType			 	AlarmPeriod[ALARM_NUM];
 
@@ -36,19 +38,46 @@ PUBLIC STATIC void Init ( void )
 {
 	Bitop.Init();
 	CurrentTask = 0;	/* 0 means OsIdle task is running */
+	memset(TaskState,SUSPENDED,sizeof(TaskState));
 
 	OsTickCounter = 0;
 	memset(AlarmTick,0,sizeof(AlarmTick));
 	memset(AlarmPeriod,0,sizeof(AlarmPeriod));
 }
-
+PUBLIC STATIC StatusType GetTaskState ( TaskType TaskID,TaskStateRefType State )
+{
+	StatusType ercd = E_OK;
+	if(TaskID < TASK_NUM)
+	{
+		*State = TaskState[TaskID];
+	}
+	else
+	{
+		ercd = E_OS_ID;
+	}
+	return ercd;
+}
 PUBLIC STATIC StatusType ActivateTask ( TaskType TaskID )
 {
 	StatusType ercd = E_OK;
 
 	if(TaskID < TASK_NUM)
 	{
-		Bitop.SetBit(TaskID);
+		if(SUSPENDED == TaskState[TaskID])
+		{
+			Bitop.SetBit(TaskID);
+			TaskState[TaskID] = READY;
+			SLDL.SetContext(TaskID);
+
+			if(TaskID > CurrentTask)
+			{
+				SLDL.Dispatch();
+			}
+		}
+		else
+		{
+			ercd = E_OS_LIMIT;
+		}
 	}
 	else
 	{
@@ -59,38 +88,16 @@ PUBLIC STATIC StatusType ActivateTask ( TaskType TaskID )
 
 PUBLIC STATIC StatusType TerminateTask ( void )
 {	/* task self-terminate when it do return */
+	Bitop.ClearBit(CurrentTask);
+	TaskState[CurrentTask] = SUSPENDED;
+
+	SLDL.Dispatch();
 	return E_OK;
 }
 
 PUBLIC STATIC StatusType Schedule(void)
 {
-	TaskType task;
-	CONST task_declare_t* declare;
 	StatusType ercd = E_OK;
-
-	task = Bitop.GetBit();
-	assert(task < TASK_NUM);
-	declare = &TaskList[task];
-
-	if (task > CurrentTask)
-	{	/* task with high priority */
-		TaskType previous = CurrentTask;	/* link it in the dynamic ram queue */
-
-		CurrentTask = task;				/* preempt */
-
-		Bitop.ClearBit(CurrentTask);	/* pop up the higher ready task from ready map */
-
-		declare->main();
-
-		CurrentTask = previous;
-	}
-	else
-	{
-		if(0 == CurrentTask)
-		{	/* no task is ready, execute idle*/
-			declare->main();
-		}
-	}
 
 	return ercd;
 }
@@ -108,14 +115,21 @@ PUBLIC STATIC void Start ( AppModeType app_mode )
 			if ( (TRUE == declare->autostart) &&
 				 (0u   != (declare->app_mode&AppMode)) )
 			{
-				Bitop.SetBit(task);
+				Os.ActivateTask(task);
 			}
 		}
 	}
 
-	SLDL.Dispatch();
+	SLDL.StartDispatcher();
 }
 
+PROTECT void OsSwitchContext(void)
+{
+	CurrentTask = Bitop.GetBit();
+
+	TaskState[CurrentTask] = RUNNING;
+
+}
 PROTECT void OsTick(void)
 {
 	AlarmType AlarmId;
@@ -205,6 +219,7 @@ INSTANCE CONST OsekOs_Class OsekOs = {
 	.Init  = Init,
 	.Start = Start,
 	.Schedule = Schedule,
+	.GetTaskState = GetTaskState,
 	.ActivateTask = ActivateTask,
 	.TerminateTask = TerminateTask,
 	.GetAlarmBase = GetAlarmBase,

@@ -30,6 +30,10 @@ PUBLIC STATIC void Start ( AppModeType app_mode )
 	OsekOs.Start(app_mode);
 }
 
+PUBLIC STATIC StatusType GetTaskState ( TaskType TaskID,TaskStateRefType State )
+{
+	return OsekOs.GetTaskState(TaskID,State);
+}
 PUBLIC STATIC StatusType ActivateTask ( TaskType TaskID )
 {
 	return OsekOs.ActivateTask(TaskID);
@@ -81,6 +85,7 @@ INSTANCE CONST Os_Class Os = {
 	.Schedule = Schedule,
 	.ActivateTask = ActivateTask,
 	.TerminateTask = TerminateTask,
+	.GetTaskState = GetTaskState,
 	.GetAlarmBase = GetAlarmBase,
 	.GetAlarm = GetAlarm,
 	.SetRelAlarm = SetRelAlarm,

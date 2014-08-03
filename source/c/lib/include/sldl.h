@@ -22,14 +22,12 @@
 /* ============================= [ MACROS ] =================================== */
 
 /* ============================= [ TYPES ] ==================================== */
-typedef void*  stack_t;
-typedef uint32 stack_size_t;
 typedef struct
 {
 	PUBLIC void (*Init) (void);
 	PUBLIC void (*Start) (void);
-	PUBLIC void (*SetContext) ( TaskType, task_main_t, stack_t, stack_size_t);
-
+	PUBLIC void (*SetContext) ( TaskType );
+	PUBLIC void (*StartDispatcher)(void);
 	PUBLIC void (*Dispatch) (void);
 
 }SLDL_Class;	/* system-level design language */

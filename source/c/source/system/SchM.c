@@ -19,7 +19,8 @@
 
 TASK(SchM_Startup)
 {
-	Os.SetRelAlarm(ALARMID_BswService,10,5);
+	//Os.SetRelAlarm(ALARMID_BswService,10,5);
+	Os.ActivateTask(TASKID_SchM_BswService);
 	Os.TerminateTask();
 }
 

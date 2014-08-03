@@ -18,6 +18,8 @@
 #include "Os.h"
 
 /* ============================= [ TYPES ] ==================================== */
+typedef void*  stack_t;
+typedef uint32 stack_size_t;
 
 typedef struct
 {
@@ -25,6 +27,8 @@ typedef struct
 	task_priority_t priority;	/*! priority also represent the task id, the same as TaskType */
 	bool            autostart;
 	AppModeType     app_mode;	/*! means task runnable modes */
+	stack_t*		stack;
+	stack_size_t	stack_size;
 }task_declare_t;
 
 typedef struct
@@ -38,6 +42,7 @@ typedef struct
 	PUBLIC void (*Init) 	(void);
 	PUBLIC void (*Start)	(AppModeType);
 	PUBLIC StatusType (*Schedule) (void);
+	PUBLIC StatusType (*GetTaskState) ( TaskType TaskID,TaskStateRefType State );
 	PUBLIC StatusType (*ActivateTask) (TaskType);
 	PUBLIC StatusType (*TerminateTask) ( void );
 	PUBLIC StatusType (*GetAlarmBase)  ( AlarmType, AlarmBaseRefType );
@@ -49,17 +54,20 @@ typedef struct
 }OsekOs_Class;
 
 /* ============================= [ MACROS ] =================================== */
+#define DeclareStack(Name,Size)  STATIC stack_t Stack##Name[(Size+3)/4];
 #define DeclareTask(Name,Autostart,AppMode)		\
 	{											\
 		.main = Name,							\
 		.priority = TASKID_##Name,				\
 		.autostart = Autostart,					\
-		.app_mode = AppMode						\
+		.app_mode = AppMode,					\
+		.stack = Stack##Name,					\
+		.stack_size = sizeof(Stack##Name)		\
 	}
 
 #define DeclareAlarm(Name)						\
 	{											\
-		.main = AlarmMain_##Name						\
+		.main = AlarmMain_##Name				\
 	}
 
 #include "os_cfg.h"
