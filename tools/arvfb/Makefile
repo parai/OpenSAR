@@ -25,17 +25,16 @@ ldflags-y += `pkg-config --cflags gtk+-3.0` \
 
 inc-y += -I$(BD)/tools/arvfb/include
 inc-y += -I$(BD)/tools/arvfb/source/parser
-inc-y += -I$(BD)/tools/arvfb/source/smalvl
+inc-y += -I$(BD)/tools/arvfb/source/lua
 inc-y += -I$(BD)/include
 
-def-y += 
+def-y += -DUSE_GTK
 #-DDEBUG_ENABLED
 
 #objects
-dir-y = $(BD)/tools/arvfb/source	\
-		$(BD)/tools/arvfb/source/parser
-		
-#		$(BD)/tools/arvfb/source/smalvl
+dir-y = $(BD)/tools/arvfb/source			\
+		$(BD)/tools/arvfb/source/parser		\
+		$(BD)/tools/arvfb/source/lua
 		
 VPATH += $(dir-y)
 		
@@ -101,11 +100,11 @@ POST:
 	@echo apple >> $(OUT)/source_file.txt
 	@echo banana >> $(OUT)/source_file.txt
 
-all:$(obj-dir) $(obj-y) $(OUT) POST
+all:$(obj-dir) $(obj-y) $(OUT)
 	@echo $(obj-y)
-	@echo ">> LD $(TARGET)"
+	@echo "  >> LD $(TARGET)"
 	@$(LD) $(obj-y) $(ldflags-y) -o $(OUT)/$(TARGET) 
-	@echo ">>>>>>>>>>>>>>>>>  BUILD $(TARGET) DONE   <<<<<<<<<<<<<<<<<<<<<<"	
+	@echo "  >>>>>>>>>>>>>>>>>  BUILD $(TARGET) DONE   <<<<<<<<<<<<<<<<<<<<<<"	
 
 clean:
 	@rm -fv $(obj-dir)/*

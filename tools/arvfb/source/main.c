@@ -21,13 +21,14 @@
 #include "arvfb.h"
 
 // ======================== [ IMPORTS        ] ==============================================
-extern void ArScriptLoad(const char* file);
-extern void ArScriptRun(void);
+extern void ArScriptRun(char* script);
 
 // ======================== [ LOCAL VARIANTS  ] ==============================================
 static boolean isPaused = TRUE;
 
 static GtkTextBuffer *pTextBuffer = NULL;
+
+static char* script = NULL;
 
 // ======================== [ LOCAL FUNCTIONS ] ==============================================
 static void on_menu_activate  (GtkMenuItem* item,gpointer data)
@@ -109,7 +110,7 @@ static void on_button_clicked(GtkButton *button,gpointer data)
 {
 	if(0==strcmp((const char*)data,"Run"))
 	{
-		//ArScriptRun();
+		ArScriptRun(script);
 	}
 	else
 	{
@@ -119,8 +120,8 @@ static void on_button_clicked(GtkButton *button,gpointer data)
 
 static void on_file_set(GtkFileChooser *button)
 {
-	const char* file = (const char*)gtk_file_chooser_get_filename(button);
-	//ArScriptLoad(file);
+	if(script != NULL) { free(script); script = NULL;}
+	script = strdup((const char*)gtk_file_chooser_get_filename(button));
 }
 
 static GtkWidget* Console(void)
@@ -135,7 +136,7 @@ static GtkWidget* Console(void)
 	gtk_box_pack_start(GTK_BOX(pBox),pButton,FALSE,FALSE,0);
 	g_signal_connect(G_OBJECT (pButton), "file_set", G_CALLBACK(on_file_set) , (gpointer)NULL);
 	GtkFileFilter* filter = gtk_file_filter_new();
-	gtk_file_filter_add_pattern(filter,"*.svl");
+	gtk_file_filter_add_pattern(filter,"*.lua");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(pButton),filter);
 
 	pButton = gtk_button_new_with_label("Run");
@@ -219,12 +220,20 @@ void Arch_Trace(const char* format,...)
 
 	gtk_text_iter_forward_visible_cursor_position(&Iter);
 }
+void Arch_Trace2(char* s, int size)
+{
+	GtkTextIter Iter;
+	gtk_text_buffer_get_end_iter(pTextBuffer,&Iter);
+	gtk_text_buffer_insert(pTextBuffer,&Iter,s,size);
+
+	gtk_text_iter_forward_visible_cursor_position(&Iter);
+}
 
 int main (int argc, char *argv[])
 {
 	g_type_init ();
 	g_thread_init(NULL);
-	gdk_threads_init();
+	//gdk_threads_init();
 
 	gtk_init (&argc, &argv);
 
@@ -246,7 +255,7 @@ int main (int argc, char *argv[])
 	// Initialize
 	Initialize();
 
-	ArParser(argc,argv);
+	//ArParser(argc,argv);
 
 	printf("Initialize Done.\n");
 

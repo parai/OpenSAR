@@ -58,5 +58,6 @@ typedef 	struct
 extern void ArvfbInit(void);
 extern boolean ArvfbCanProcess(const ArCanMsgType *ArMsgIn,ArCanMsgType *ArMsgOut);
 
-void Arch_Trace(const char* format,...); // Import from Arch
+void Arch_Trace(const char* format,...);
+void Arch_Trace2(char* s, int size);
 #endif /* ARVFB_H_ */
