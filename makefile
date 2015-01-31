@@ -32,7 +32,7 @@
 #BOARDDIR=stm32_stm3210c
 #BDIR=examples/os_simple
 
-BOARDDIR=mingw
+BOARDDIR=gtk
 BDIR=app
 
 export  BOARDDIR
@@ -234,7 +234,7 @@ run-support: tool binaries/$(BOARDDIR)/Flash.img binaries/$(BOARDDIR)/Eeprom.img
 run:
 	
 tool:
-	#@(cd ./tools/arvfb;make all)
+	@(cd ./tools/arvfb;make all)
 	
 
 		

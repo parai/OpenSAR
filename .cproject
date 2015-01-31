@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?>
+
+<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 		<cconfiguration id="cdt.managedbuild.toolchain.gnu.mingw.base.1012264272">
 			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="cdt.managedbuild.toolchain.gnu.mingw.base.1012264272" moduleId="org.eclipse.cdt.core.settings" name="Default">
 				<externalSettings/>
 				<extensions>
+					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 					<extension id="org.eclipse.cdt.core.GmakeErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.CWDLocator" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GCCErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GASErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
 					<extension id="org.eclipse.cdt.core.GLDErrorParser" point="org.eclipse.cdt.core.ErrorParser"/>
-					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
 				</extensions>
 			</storageModule>
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
@@ -31,6 +33,8 @@
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include\gtk-3.0&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include\glib-2.0&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\parai\opt\gtk_364_win32\include\gtk-3.0&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\parai\opt\gtk_364_win32\include\glib-2.0&quot;"/>
 								</option>
 								<inputType id="cdt.managedbuild.tool.gnu.assembler.input.1899998887" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
 							</tool>
@@ -44,6 +48,8 @@
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include\gtk-3.0&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;D:\MinGW\include\glib-2.0&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\parai\opt\gtk_364_win32\include\gtk-3.0&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;C:\parai\opt\gtk_364_win32\include\glib-2.0&quot;"/>
 								</option>
 								<option id="gnu.c.compiler.option.preprocessor.def.symbols.2113901385" name="Defined symbols (-D)" superClass="gnu.c.compiler.option.preprocessor.def.symbols"/>
 								<inputType id="cdt.managedbuild.tool.gnu.c.compiler.input.1318009084" superClass="cdt.managedbuild.tool.gnu.c.compiler.input"/>

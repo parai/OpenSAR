@@ -81,7 +81,7 @@ class easySARGui(QMainWindow):
                 return
         else:
             self.pdir = default
-        wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
+        wfxml = '%s/.config/AutosarConfig.arxml'%(self.pdir)
         if(os.path.exists(wfxml)==False):
             return
         root = ET.parse(wfxml).getroot();
@@ -98,7 +98,7 @@ class easySARGui(QMainWindow):
             self.pdir = QFileDialog.getExistingDirectory(None,'Save OpenSAR Configuration',gDefault_GEN,QFileDialog.DontResolveSymlinks)
         if(self.pdir == ''):
             return
-        wfxml = '%s/AutosarConfig.arxml'%(self.pdir)
+        wfxml = '%s/.config/AutosarConfig.arxml'%(self.pdir)
         ROOT = ET.Element('AUTOSAR')
         for module in self.modules:
             ROOT.append(module.toArxml())

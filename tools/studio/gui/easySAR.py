@@ -8,7 +8,7 @@ from easyNvM  import easyNvMGui
 
 __all__ = ['easySAR']
 
-gDefault_GEN = '../../app/config/GEN'
+gDefault_GEN = '../../app/config/GEN/.config'
 
 class easyDockWidget(QDockWidget):
     isClosed = False
@@ -78,6 +78,7 @@ class easySARGui(QMainWindow):
             self.pdir = QFileDialog.getExistingDirectory(None,'Open OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
             if(self.pdir == ''):
                 return
+            self.pdir += '/.config'
         else:
             self.pdir = default
         self.easyOsCfg.mOpen(self.pdir)
@@ -95,6 +96,7 @@ class easySARGui(QMainWindow):
             self.pdir = QFileDialog.getExistingDirectory(None,'Save OpenSAR Config',gDefault_GEN,QFileDialog.DontResolveSymlinks)
         if(self.pdir == ''):
             return
+        self.pdir += '/.config'
         self.easyOsCfg.mSave(self.pdir)
         self.easyComCfg.mSave(self.pdir)
         self.easyNvMCfg.mSave(self.pdir)

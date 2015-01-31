@@ -109,7 +109,7 @@ static void on_button_clicked(GtkButton *button,gpointer data)
 {
 	if(0==strcmp((const char*)data,"Run"))
 	{
-		ArScriptRun();
+		//ArScriptRun();
 	}
 	else
 	{
@@ -120,7 +120,7 @@ static void on_button_clicked(GtkButton *button,gpointer data)
 static void on_file_set(GtkFileChooser *button)
 {
 	const char* file = (const char*)gtk_file_chooser_get_filename(button);
-	ArScriptLoad(file);
+	//ArScriptLoad(file);
 }
 
 static GtkWidget* Console(void)

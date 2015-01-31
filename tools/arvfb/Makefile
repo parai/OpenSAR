@@ -9,19 +9,19 @@ BD = ../..
 OUT = $(BD)/binaries/gtk
 
 #common compilers
-AS  = g++
-CC  = g++
-LD  = g++
+AS  = gcc
+CC  = gcc
+LD  = gcc
 AR  = ar
 RM  = rm
 
 #common flags
-cflags-y   = -c -g --std=c++11 -O2 -Wall
-ldflags-y  = -g --std=c++11 -O2 -Wall
+cflags-y   = -c -g --std=gnu99 -O2 -Wall
+ldflags-y  = -g --std=gnu99 -O2 -Wall
 cflags-y  += `pkg-config --cflags gtk+-3.0`
 ldflags-y += `pkg-config --cflags gtk+-3.0` \
 			 `pkg-config --libs gtk+-3.0 glib-2.0 gthread-2.0` \
-			 -lpthread -lm -lfl -ldl		
+			 -lpthread -lm		
 
 inc-y += -I$(BD)/tools/arvfb/include
 inc-y += -I$(BD)/tools/arvfb/source/parser
@@ -33,8 +33,9 @@ def-y +=
 
 #objects
 dir-y = $(BD)/tools/arvfb/source	\
-		$(BD)/tools/arvfb/source/parser	\
-		$(BD)/tools/arvfb/source/smalvl
+		$(BD)/tools/arvfb/source/parser
+		
+#		$(BD)/tools/arvfb/source/smalvl
 		
 VPATH += $(dir-y)
 		
