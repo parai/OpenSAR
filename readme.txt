@@ -1,5 +1,5 @@
-
 # https://github.com/parai/as
+
 ## This repository has been dropped and all the code has been merged into my new Automotive Software repository https://github.com/parai/as
 Arctic Core - the open source AUTOSAR embedded platform
 
